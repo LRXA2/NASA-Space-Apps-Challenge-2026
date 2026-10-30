@@ -1,0 +1,79 @@
+﻿# Local datasets and all generated analysis artifacts
+/data/
+/reports/
+/notebooks/diagnostics/
+/.scratch/
+/outputs/
+/artifacts/
+/checkpoints/
+/runs/
+/mlruns/
+/wandb/
+
+# Python environments, bytecode and tool caches
+.venv/
+.venv-*/
+venv/
+ENV/
+.env/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.pyright/
+.ipynb_checkpoints/
+.tox/
+.nox/
+.cache/
+
+# Test coverage and packaging outputs
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+/build/
+/dist/
+*.egg-info/
+
+# Local credentials; example environment files remain trackable
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+/.aws/
+/.azure/
+/.ssh/
+/.kube/
+/.secrets/
+/credentials.json
+*.key
+*.p12
+*.pfx
+
+# Editor-specific local settings and state
+.vscode/
+.idea/
+.vs/
+*.code-workspace
+
+# Logs, temporary files and incomplete downloads
+/logs/
+/tmp/
+/temp/
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+*.part
+*.part.json
+*.crdownload
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
