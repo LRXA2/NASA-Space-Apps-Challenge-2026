@@ -1,12 +1,12 @@
-﻿# NASA Space Apps 2026
+# NASA Space Apps 2026
 
-Find Earth training analogs for lunar terrain and assess mission-specific environmental constraints. **Earth and Moon only; Mars is excluded.**
+Proof of concept: use a trained terrain CNN to retrieve plausible Earth training analogs for lunar terrain, with measured differences and clear limitations. **Earth and Moon only; Mars is excluded.**
 
-Broad EDA is complete across five Earth sites and seven lunar regions. Next: define a mission/training scenario and an independent relevance rubric before model development.
+Broad EDA is complete across five Earth sites and seven lunar regions. [Notebook 28](notebooks/modeling/terrain_similarity/28_training_data_readiness_and_baseline.ipynb) prepares terrain tensors; [notebook 29](notebooks/modeling/terrain_similarity/29_similarity_cnn_experiment.ipynb) trains the first similarity CNNs. Start with [notebook 35's terrain comparison](notebooks/modeling/terrain_similarity/35_slope_and_relative_elevation_demo.ipynb), using the rotation/reflection cache built by [notebook 34](notebooks/modeling/terrain_similarity/34_rotation_and_reflection_inference.ipynb). Both reuse saved weights on CPU. The demo shows ranked Earth locations, slope and relative elevation; outperforming the physical baseline is not required, and general retrieval accuracy remains unvalidated.
 
 ## Start here
 
-- [EDA summary](EDA_PLAN.md) — key problems, decisions and next steps.
+- [Current findings and decisions](outline.md#current-findings-and-evaluation-decisions) — completed work, limitations and evaluation scope.
 - [Notebooks](notebooks/README.md) — analysis index and running instructions.
 - [Project outline](outline.md) — intended pipeline and sources.
 - [Download instructions](download%20scripts/README.md) and [inventory](DOWNLOAD_CHECKLIST.md) — source acquisition.
@@ -17,8 +17,7 @@ Paths below are relative to the repository root. See [notebooks/README.md](noteb
 
 ```text
 README.md                            Project overview
-EDA_PLAN.md                          EDA findings, problems and next steps
-outline.md                           Pipeline and data sources
+outline.md                           Pipeline, findings, decisions and data sources
 DOWNLOAD_CHECKLIST.md                Acquisition and readiness checklist
 .gitignore                           Files excluded from Git
 download scripts/
@@ -28,24 +27,38 @@ download scripts/
 notebooks/
   README.md                          Notebook index and running instructions
   requirements-processing.txt        Python dependencies
+  requirements-modeling.txt           Pinned PyTorch dependency for CNN experiments
   setup/                             01: original data organization
   preprocessing/                     02–13, 19, 21, 26: processing and checks
   exploration/                       14–18, 20, 22–25, 27: EDA
+  modeling/
+    terrain_similarity/              28: data; 29: CNN; 30–33: diagnostics/review; 34: orientation cache; 35: terrain demo
+      terrain_dataset.json           Accepted inputs and development fold roles
+      similarity_experiment.json     Fixed training and retrieval configuration
+      tests/                         CNN transformation and leakage checks
+  terrain_dataset.py                 Reproducible tensor and baseline builder
+  terrain_learning.py                Tensor, split and normalization contracts
+  similarity_cnn.py                  Shared encoder, similarity head and objective
+  similarity_experiment.py           Training, inference and retrieval comparison
   processing.py                      Shared processing operations
   osm_processing.py                  OSM extraction and geometry handling
   inspection.py                      Shared validation utilities
+  analysis_artifacts.py              Separates reusable data from disposable reports
+  select_source_check_sample.py       Reproduces the frozen development sample
   *_analysis.py                      Terrain, candidate and environment helpers
   tests/                             Processing and analysis tests
-  diagnostics/                       Local analysis reports, tables and figures
 data/
   raw/                               Local downloaded source data
   processed/                         Local versioned processing runs
+    analysis/                        Reusable EDA tables, rasters and manifests
+  reference/                         Source research, unit policies and frozen sample
   manifests/                         Local organization and acquisition records
-reports/                             Local audits and maintenance records
+reports/                             Disposable figures, reports and the current demo
+  analysis/                          Regenerated EDA figures and reports
 .scratch/                            Temporary local working files
 .venv/                               Local Python environment
 ```
 
-Git keeps code, tests, documentation and notebooks with cleared outputs. Data, reports, diagnostics, scratch work and local environments are ignored; cloning the repository will not include those files.
+Git keeps code, tests, documentation and notebooks with saved plots, tables and other useful outputs so readers can view results without rerunning the analysis. Retain these outputs when committing notebooks. Standalone data, reports, scratch work and local environments are ignored; cloning the repository will not include those files. Keep required `data/` inputs; `reports/` can be deleted and regenerated.
 
-Existing findings can be read without rerunning preprocessing. Models and operational suitability scores have not been validated.
+The similarity CNN proof of concept is complete. Next: environmental, access and equipment checks. General analog relevance and operational suitability remain unvalidated.

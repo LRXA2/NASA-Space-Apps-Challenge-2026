@@ -1,0 +1,17 @@
+{
+  "dataset_run": "data/processed/terrain_learning_readiness/20261101T064233918547Z_4a05ac",
+  "views": ["full_context", "image_supported"],
+  "sampling_modes": ["region_balanced", "count_weighted"],
+  "seed": 29,
+  "epochs": 10,
+  "steps_per_epoch": 32,
+  "batch_size": 128,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "temperature": 0.2,
+  "queries_per_region": 32,
+  "top_k": 5,
+  "device": "cuda:0",
+  "selection_rule": "Use the final epoch for every experiment; no tuning or model selection on holdout results",
+  "quality_gate": "Exploratory only: independent relevance judgments are missing; no model promotion or suitability claims"
+}

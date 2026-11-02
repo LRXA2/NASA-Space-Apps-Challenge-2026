@@ -1,6 +1,6 @@
 ﻿# Data acquisition and readiness checklist
 
-Updated **30 October 2026 (Asia/Singapore)** against saved acquisition records and completed processing manifests. **Earth and Moon only; Mars is excluded.** Checked items mean the stated work is complete, not that the data establish analog relevance or mission safety.
+Acquisition snapshot: **30 October 2026 (Asia/Singapore)**, from saved acquisition records and completed processing manifests. Project status updated **2 November 2026**. **Earth and Moon only; Mars is excluded.** Checked items mean the stated work is complete, not that the data establish analog relevance or mission safety.
 
 ## Completed acquisition
 
@@ -13,7 +13,7 @@ Updated **30 October 2026 (Asia/Singapore)** against saved acquisition records a
 - [x] **Mapped support for all five sites:** six dated Geofabrik extracts—Arizona, Canary Islands, Chile, Bolivia, Northern California and Jordan—with receipts and checksums. Northern California covers the selected Death Valley box.
 - [x] **Bounded candidate source checks:** 10 NAIP image subsets, five USGS elevation exports and four Landsat patch observations for nine selected development patches.
 
-See the [environmental expansion acquisition record](notebooks/diagnostics/environment-expansion-research-20261030/ACQUISITION.md), [source-check inventory and findings](notebooks/diagnostics/source-check-20261029T144220349448Z/REPORT.md), and [download instructions](download%20scripts/README.md) for source selections and commands.
+See the [environmental expansion acquisition record](data/reference/environment-expansion-research-20261030/ACQUISITION.md), [source-check inventory and findings](notebooks/exploration/24_candidate_source_check_eda.ipynb), and [download instructions](download%20scripts/README.md) for source selections and commands.
 
 ## Completed processing and inspection
 
@@ -25,14 +25,16 @@ See the [environmental expansion acquisition record](notebooks/diagnostics/envir
 - [x] Process Diviner for all seven regions and inspect per-cell/bin coverage and missingness.
 - [x] Complete broad terrain and environmental EDA across the five Earth and seven lunar development regions.
 
-Processing and input records are available in the [notebooks](notebooks/README.md). Read the [EDA summary](EDA_PLAN.md) for key problems: incomplete lunar thermal support, unresolved units/quality, screening sensitivity and unverified operational constraints remain limitations despite completed processing.
+Processing and input records are available in the [notebooks](notebooks/README.md). Read the [current findings](outline.md#current-findings-and-evaluation-decisions) for key problems: incomplete lunar thermal support, unresolved units/quality, screening sensitivity and unverified operational constraints remain limitations despite completed processing.
 
 ## Still needed—before selecting further data
 
-- [ ] Define one mission/training scenario: activity, duration, season, equipment and what Earth must reproduce.
+- [x] Select the first activity: coarse rover route-planning practice using 960 m terrain patches.
+- [ ] Specify duration, season, equipment and operational limits before assessing exercise feasibility.
 - [ ] Collect documented equipment capabilities and operating limits for that scenario.
 - [ ] Define independently assessed analog relevance, including weak/no-match cases.
-- [ ] Verify proposed evaluation regions' footprints, shared context and prior exposure; implement a region-role manifest before training. Keep final reserves unopened for EDA.
+- [x] Implement development-region roles and context checks for the initial CNN experiment; Atacama and Leibnitz remain EDA-exposed holdouts.
+- [ ] Verify proposed reserve regions' footprints, shared context and prior exposure before future evaluation. Keep final reserves unopened for EDA.
 - [ ] Identify consequential evidence gaps: daily extremes, continuous darkness, thermal-quality concerns, access or other scenario-specific hazards. Acquire additional evidence only where needed; otherwise retain Unknown.
 
 Additional LOLA products, GHSL, alternative climate sources, REMA/ArcticDEM and lunar resource products are **conditional options, not outstanding required downloads**. Proposed reserve acquisitions also require the evaluation checks above; do not bulk-download or inspect them as more development data.
@@ -42,6 +44,6 @@ Additional LOLA products, GHSL, alternative climate sources, REMA/ArcticDEM and 
 1. Record the question, region, product/version, source dates, license and intended role.
 2. Retain URLs, selections, receipts and available publisher checksums; incomplete `.part` files do not count as downloaded.
 3. Check integrity and required spatial/temporal coverage, then process in a reproducible notebook and record exact input/output hashes.
-4. Update this checklist and the EDA summary when the evidence changes a decision.
+4. Update this checklist and the decisions in `outline.md` when the evidence changes a decision.
 
 This update reconciles existing records; it does not repeat raw-file checksum verification or execute preprocessing.

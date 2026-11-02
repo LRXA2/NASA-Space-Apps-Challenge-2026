@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "objective": "Development-only terrain morphology retrieval for rover traversal exercises; no mobility or suitability labels",
+  "patch_size_m": 960,
+  "spacing_m": 30,
+  "context_m": 150,
+  "top_k": 5,
+  "runs": {
+    "original": "data/processed/earth_terrain_landcover/20261028T063142045472Z_9d6d3b",
+    "death_valley": "data/processed/earth_terrain_expansion/20261029T075850772998Z_b58cb9",
+    "wadi_rum": "data/processed/earth_terrain_expansion/20261029T084504362605Z_6b826e",
+    "moon": "data/processed/lunar_terrain_views/20261028T084443441751Z_1a794f"
+  },
+  "regions": [
+    {"body": "earth", "region": "atacama_san_pedro", "role": "development", "fold": "holdout", "run": "original"},
+    {"body": "earth", "region": "lanzarote", "role": "development", "fold": "train", "run": "original"},
+    {"body": "earth", "region": "northern_arizona", "role": "development", "fold": "train", "run": "original"},
+    {"body": "earth", "region": "death_valley", "role": "development", "fold": "train", "run": "death_valley"},
+    {"body": "earth", "region": "wadi_rum", "role": "development", "fold": "train", "run": "wadi_rum"},
+    {"body": "moon", "region": "A3CLR22_10_Leibnitz_Beta_Plateau", "role": "development", "fold": "holdout", "run": "moon"},
+    {"body": "moon", "region": "A3CLR22_11_Malapert_Massif", "role": "development", "fold": "train", "run": "moon"},
+    {"body": "moon", "region": "A3CLR22_12_deGerlache_Kocher_Massif", "role": "development", "fold": "train", "run": "moon"},
+    {"body": "moon", "region": "A3CLR22_2_Haworth", "role": "development", "fold": "train", "run": "moon"},
+    {"body": "moon", "region": "A3CLR22_3_Faustini_Rim_A", "role": "development", "fold": "train", "run": "moon"},
+    {"body": "moon", "region": "A3CLR22_4_deGerlache_Rim_2", "role": "development", "fold": "train", "run": "moon"},
+    {"body": "moon", "region": "A3CLR22_5_Connecting_Ridge_Extension", "role": "development", "fold": "train", "run": "moon"}
+  ],
+  "protected_reserves": {
+    "earth_validation": ["Askja", "Flinders Ranges"],
+    "earth_final": ["Mauna Loa", "Namib-Sossusvlei"],
+    "moon_validation": ["Peak Near Shackleton"],
+    "moon_final_one_block": ["Amundsen Rim", "Nobile Rim 2"]
+  }
+}

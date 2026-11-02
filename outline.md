@@ -1,6 +1,6 @@
 # Technical Pipeline & Data Sources
 
-**Active project scope — 30 October 2026:** Earth and Moon only. Mars is excluded, including future extensions. The broader challenge wording and Mars references below are historical context, not planned work. Use the [living EDA plan](EDA_PLAN.md) and [current notebook index](notebooks/README.md) for implemented scope, accepted inputs and next steps.
+**Active project scope — 2 November 2026:** Earth and Moon only. Mars is excluded, including future extensions. The broader challenge wording and Mars references below are historical context, not planned work. Current decisions are summarized here; the [notebook index](notebooks/README.md) links to methods, evidence and running instructions.
 
 **Project:** NASA Space Apps Challenge 2026
 
@@ -18,9 +18,71 @@ The system consists of three primary components:
 
 1. **Environmental and Equipment Suitability Engine:** Evaluates whether a specified mission can operate in an environment, considering environmental hazards, survival requirements, equipment capabilities, and operational limitations.
 
-2. **CNN Terrain Assessment:** Analyzes terrain morphology and identifies characteristics that may increase the difficulty of landing, traversing, exploring, or constructing a base.
+2. **CNN Terrain Assessment:** Characterizes terrain and, where supported by labels, predicts how its spatial arrangement affects a specified operation. Physical measurements and equipment limits determine which characteristics are problematic for that mission.
 
-3. **CNN Terrain Similarity Search:** Identifies comparable terrain across Earth, the Moon, and Mars to locate terrestrial environments suitable for mission training and simulation.
+3. **CNN Terrain Similarity Search:** Retrieves Earth terrain that reproduces the conditions relevant to an exercise at a selected lunar location. Moon-to-Earth retrieval is the primary task; reverse search is a secondary diagnostic. Environmental suitability and practical access are assessed separately.
+
+### First similarity use case: rover route-planning practice
+
+**Goal:** given a lunar terrain patch, find Earth terrain on which a team could practise comparable route-planning decisions. Start with 960 m patches on the current 30 m grid. Compare broad slopes, ridges, depressions and uneven areas; grid spacing does not establish equal effective resolution. This first exercise does not certify rover passability or reproduce lunar gravity, soil, traction, wheel-scale obstacles, communications or thermal conditions.
+
+**Current target — proof of concept:** demonstrate that the existing trained CNN can take a lunar query and retrieve Earth terrain candidates relevant to this exercise, within the available data and compute. Beating the physical baseline is not a completion requirement. Reuse saved weights and embeddings; further training, a larger benchmark and completion of all 44 review ratings are optional follow-up work.
+
+The demonstration should:
+
+- Run the lunar-query → CNN embedding → ranked Earth-candidate path reproducibly, with identifiable locations and source data.
+- Show a few actual CNN retrieval examples with side-by-side terrain, relief and slope measurements, and an explanation of the plausible exercise correspondence. Keep candidate-selection methods visible; do not present geographic supplements or baseline results as CNN results.
+- Include a weak or uncertain result and state the limited region coverage and resolution. Describe the outcome as a feasibility demonstration; general accuracy and mission suitability remain unvalidated.
+
+**Current inference and comparison:** notebook 34 reuses the saved CNN and training scaler, averaging embeddings over four quarter-turn rotations and their reflections for both Moon queries and Earth candidates. This creates a separate cache; original four-rotation caches remain separate. Notebook 35 compares slope magnitude, patch-mean-relative elevation and local elevation variation at a fixed physical scale. Preserve height differences in metres; absolute elevation is not a matching target. Physical measurements explain the CNN results without reranking them. Orientation consistency is checked separately from retrieval relevance.
+
+The rubric below can guide example explanations or optional later review. For a scored review, record **0 = poor correspondence, 1 = partial, 2 = close, U = insufficient evidence**, with a short explanation. These are provisional review categories, not trained labels or equipment limits. Keep dimensions separate; do not turn them into an unvalidated total score.
+
+| Dimension | What must Earth reproduce for this exercise? |
+| --- | --- |
+| Physical scale | Comparable relief and slopes over the same ground distance; a similar-looking shape at a very different vertical scale is insufficient. |
+| Landform arrangement | Comparable broad ridge/valley/depression structure and relative placement of flatter and steeper areas. |
+| Route-planning challenge | Comparable choices about going around versus across broad terrain features; explain the relevant feature without claiming a traversable route. |
+| Evidence confidence | Record source/support limitations separately as high, medium, low or unknown. A visually plausible match can still have weak evidence. |
+
+For each query, record **promising / partial / none among reviewed candidates / uncertain**, plus the missing condition. “None” applies only to the reviewed set. Quarter-turn rotations and reflections are acceptable for this terrain-only exercise; direction-dependent lighting and communications remain separate. Do not rescale heights to make a pair appear similar. Climate, land cover, access, permissions and equipment feasibility are later checks on whether a terrain analog is usable.
+
+**Status:** broad EDA and the similarity CNN proof of concept are complete. Notebook 35 is the current demonstration. The next stage is to connect candidate terrain with environmental, access and equipment checks. Notebook 33's rating forms and further training remain optional follow-up work; independent relevance judgments are required before broader accuracy claims.
+
+### Current findings and evaluation decisions
+
+| Finding | Decision |
+| --- | --- |
+| High CNN cosine can coexist with large slope or relief differences. The physical baseline performed better on descriptor agreement in notebook 30. | Keep physical measurements and weak examples visible. Descriptor bands are not relevance labels, mission limits or a similarity percentage. |
+| Candidate matches reuse locations and are sensitive to land-cover screening; relaxed Arizona screens included woody cover. | Keep screening alternatives separate. More nearby patches do not establish geographic transfer. |
+| Lunar full-context terrain can be prior-dominated; matching grid spacing does not establish matching effective resolution. | Retain full-context and image-supported views separately and report source limitations. |
+| Requiring every thermal product removes regions; phase averages and mean illumination do not describe extremes or continuous darkness. | Preserve missingness and native environmental resolution; mark unsupported constraints Unknown. |
+| OSM does not establish permission, passability or emergency readiness. | Assess practical access, equipment limits and environmental suitability separately. |
+
+The original Arizona elevation gaps were a tile-selection defect; derivative losses required more processing context. Lunar elevation holes were introduced by our support mask. These issues were corrected; historical masked maps do not establish missing source heights. Current full-context elevation is complete inside the seven selected lunar ROIs. Genuine environmental missingness and derivative edge exclusions remain distinct.
+
+- **Development data:** Arizona, Lanzarote, Atacama, Death Valley, Wadi Rum and the seven explored lunar regions. Atacama and Leibnitz are EDA-exposed development holdouts, not untouched final tests. Climate and mapped-support coverage exist for all five Earth sites.
+- **Split policy:** keep overlapping patches, scales, augmentations, support views and source versions together. Check full feature context, currently at least 150 m beyond grid footprints. Fit normalization on training regions only.
+- **Proposed reserves:** Earth validation—Askja and Flinders Ranges; Earth final—Mauna Loa and Namib–Sossusvlei; lunar validation—Peak Near Shackleton; lunar final—Amundsen Rim and Nobile Rim 2 as one conservative block. These roles are not yet verified or enforced. Keep reserves unopened; verify footprints, context and prior exposure before assigning roles. Exposure invalidates an untouched-test claim; do not replace a region because it performs poorly.
+- **Later evaluation:** freeze the candidate pool, splits, preprocessing, model, top-k and review rubric. Evaluate unseen queries, unseen candidates and both unseen; report regional failures. Independent judgments and relevant equipment evidence remain future work. The current 960 m scale is provisional; additional scales and acquisitions need a concrete question.
+
+Detailed findings remain in notebooks 14–33. Source-specific evidence is retained in the [environmental acquisition record](data/reference/environment-expansion-research-20261030/ACQUISITION.md), [units policy](data/reference/environment-readiness-20261028/REPORT.md), [Diviner interpretation](data/reference/environment-eda-research-20261029/SOURCES.md) and [region research](data/reference/region-diversity-20261029/REGION_RESEARCH.md).
+
+### Two CNN tasks, separate outputs
+
+| | Terrain assessment — Stage 2 | Terrain similarity — Stage 5 |
+| --- | --- | --- |
+| Question | What is this terrain like, and how could it affect the specified operation? | Which locations have comparable terrain morphology? |
+| Learned output | Terrain characteristics; a difficulty prediction only with suitable labels | An embedding used to rank candidate matches |
+| Evidence for evaluation | Independent terrain or mobility labels, or validated simulations tied to the mission | Current proof of concept: reproducible retrieval and explained examples; later validation: independent relevance judgments, including weak and no-match cases |
+| Physical baseline | Measured slope, relief and local elevation variability | Retrieval using physical terrain descriptors |
+| Downstream use | Mission-specific operational suitability | Earth analog selection and simulation readiness |
+
+A steep, irregular patch may be difficult to traverse yet be an excellent analog for training on similarly difficult lunar terrain. A similarity score must not be interpreted as an assessment of mission suitability.
+
+**Proposed architecture:** start with one shared terrain encoder and task-specific heads: an assessment head and a similarity head. These are two learning objectives, not an Earth CNN and a Moon CNN. Sharing is provisional; compare separate encoders if one task harms the other. Separately trained retrieval encoders would require alignment into a common embedding space.
+
+**Implementation order:** notebook 28 prepares the dataset and physical retrieval baseline; notebook 29 implements the first bidirectional similarity-learning experiments. Use those saved models for the proof-of-concept demonstration. Independent relevance judgments remain necessary for broader performance claims. The assessment prediction head depends on suitable labels. Until then, assessment uses physical measurements and explicit mission constraints, with unsupported properties marked Unknown.
 
 The results will be combined into two primary assessments:
 
@@ -219,7 +281,7 @@ The system will not assume that adding equipment automatically makes an environm
 
 ### Stage 2 — CNN Terrain Assessment
 
-**Objective:** Analyze how terrain morphology may affect mission operations.
+**Objective:** Describe terrain characteristics and assess their implications for a specified activity and equipment configuration. This stage evaluates terrain difficulty; it does not search for analog locations.
 
 **Inputs:**
 
@@ -233,19 +295,21 @@ The system will not assume that adding equipment automatically makes an environm
 
 **Model:**
 
-A CNN will learn spatial representations of terrain morphology. We may use a pretrained CNN initially or train a custom model using self-supervised or appropriately labeled terrain examples.
+A terrain encoder will learn spatial representations of morphology. A task-specific assessment head may use these features to predict terrain characteristics or mission-relevant difficulty. The encoder may be shared with Stage 5; the assessment output and training objective remain distinct.
 
 The model will investigate features such as ridges, craters, steep transitions, irregular terrain and spatial arrangements that may complicate traversal or site preparation.
+
+The current 30 m terrain grids cannot reliably identify individual rocks or small boulders. Rock and boulder hazard detection would require suitable higher-resolution evidence and labels. Local elevation variability must not be presented as a direct measurement of rockiness.
 
 **Physical analysis:**
 
 Deterministic calculations will measure observable characteristics including slope, local relief and roughness.
 
-These measurements provide the baseline against which the CNN's additional value can be evaluated.
+These measurements provide the baseline against which the CNN's additional value can be evaluated. Predicting a slope threshold calculated from the same input DEM would demonstrate imitation of that rule, not independent validation of mission difficulty.
 
 A terrain-difficulty prediction head may be trained if suitable mobility labels or validated simulated labels are available. Otherwise, the CNN will provide morphology features while physical constraints determine the provisional difficulty assessment.
 
-**Output:** Terrain embeddings, physical measurements, and mission-specific terrain difficulty indicators.
+**Output:** Physical terrain measurements, supported terrain-characteristic predictions, and mission-specific difficulty indicators with their evidence and uncertainty. Difficulty predictions require suitable labels; unsupported hazards remain Unknown. Embeddings are an internal representation shared with retrieval, not the assessment result.
 
 ### Stage 3 — Environmental and Equipment Suitability Engine
 
@@ -319,7 +383,7 @@ This score evaluates the feasibility of a specified operation with specified equ
 
 ### Stage 5 — CNN Earth Analog Similarity Search
 
-**Objective:** Find terrestrial locations suitable for simulating terrain conditions at selected lunar or Martian sites.
+**Objective:** Find Earth locations with morphology comparable to a selected lunar patch. This stage evaluates resemblance; Stage 6 determines whether a candidate is practical for the intended training exercise.
 
 **Inputs:**
 
@@ -333,7 +397,7 @@ This score evaluates the feasibility of a specified operation with specified equ
 
 A CNN terrain encoder will generate a numerical representation of each location.
 
-The system may reuse the encoder from Stage 2 with a separate similarity-learning head, or train an independent terrain-retrieval CNN if necessary.
+The proposed model shares the terrain encoder with Stage 2 and uses a separate similarity head to produce retrieval embeddings. Train this head for terrain resemblance, not for predicting difficulty or selecting only easy terrain. Use a separate encoder only if evaluation shows that sharing harms a task.
 
 A similarity-search algorithm will compare embeddings using cosine similarity or another validated distance function.
 
@@ -351,9 +415,9 @@ A similarity-search algorithm will compare embeddings using cosine similarity or
 
 6. Retain candidate locations for environmental and operational screening.
 
-A corresponding Earth-to-Moon/Mars retrieval capability can use the same shared embedding database.
+A corresponding Earth-to-Moon search uses the same encoder, similarity head and embedding database, with the query and candidate bodies exchanged. Evaluate both directions separately: symmetric pairwise similarity does not guarantee reciprocal nearest-neighbor rankings.
 
-**Output:** Ranked terrain-similarity candidates and their measurable differences from the target.
+**Output:** Ranked terrain-similarity candidates and their measurable differences from the target. The current proof of concept demonstrates the retrieval path with explained examples. Broader validation would require independent relevance judgments; neither training loss nor agreement with the physical baseline establishes analog relevance. A high similarity score does not establish low terrain difficulty, safe access or mission suitability.
 
 ### Stage 6 — Earth Simulation Readiness Assessment
 
@@ -437,99 +501,36 @@ All essential datasets and model outputs will be stored locally wherever practic
 
 ## 4. Overall Pipeline
 
-```text
+The two terrain branches answer different questions. The shared encoder below is the starting architecture; the assessment head remains conditional on suitable labels.
 
-EARTH + MOON + MARS DATA
-
-           |
-
-           v
-
-DATA ACQUISITION AND PREPROCESSING
-
-           |
-
-           +----------------------------+
-
-           |                            |
-
-           v                            v
-
-    TERRAIN DATA                ENVIRONMENTAL DATA
-
-           |                            |
-
-           v                            v
-
-     CNN ENCODER               EQUIPMENT DATABASE
-
-           |                            |
-
-      +----+----+                       |
-
-      |         |                       v
-
-      v         v               HARD / SOFT RULES
-
- CNN TERRAIN  CNN TERRAIN                |
-
- ASSESSMENT  SIMILARITY                  v
-
-      |       SEARCH             ENVIRONMENTAL AND
-
-      |         |                EQUIPMENT ASSESSMENT
-
-      |         |                       |
-
-      +---------|-----------------------+
-
-      |         |                       |
-
-      v         |                       v
-
- PLANETARY      |              OPERATIONAL SUITABILITY
-
- TERRAIN        |              WITH EQUIPMENT
-
- DIFFICULTY     |                       |
-
-      |         |                       |
-
-      +---------|-----------------------+
-
-                |
-
-        +-------+-------+
-
-        |               |
-
-        v               v
-
- PLANETARY SITE     EARTH ANALOG
-
-   RANKING           CANDIDATES
-
-                        |
-
-                        v
-
-                EARTH ENVIRONMENT +
-
-                OPERATIONAL ACCESS
-
-                        |
-
-                        v
-
-                SIMULATION READINESS
-
-                        |
-
-                        v
-
-                   FINAL REPORT
-
+```mermaid
+flowchart TD
+    D[Earth and Moon data] --> P[Acquisition and preprocessing]
+    P --> T[Standardized terrain patches]
+    P --> E[Environmental evidence]
+    T --> C[Shared CNN terrain encoder]
+    T --> F[Physical terrain measurements]
+    C --> A[Assessment head: supported terrain predictions]
+    C --> S[Similarity head: retrieval embeddings]
+    A --> TA[Mission-specific terrain assessment]
+    F --> TA
+    S --> R[Earth to Moon / Moon to Earth search]
+    F --> R
+    M[Mission requirements and equipment] --> TA
+    M --> G[Environmental and equipment constraints]
+    E --> G
+    TA --> O[Planetary operational suitability]
+    G --> O
+    R --> X[Earth analog candidates]
+    X --> Y[Earth simulation readiness]
+    E --> Y
+    M --> Y
+    L[Access and logistics evidence] --> Y
+    O --> Z[Separate assessments and supporting evidence]
+    Y --> Z
 ```
+
+Assessment combines supported terrain predictions with physical measurements and mission constraints. Retrieval ranks morphological resemblance. Environmental evidence and access checks remain separate from the CNN terrain representation.
 
 ---
 
@@ -538,13 +539,13 @@ DATA ACQUISITION AND PREPROCESSING
 The initial prototype will include:
 
 - Data acquisition, alignment and terrain preprocessing.
-- CNN terrain representation and physical-feature baseline.
-- Terrain similarity retrieval between Earth, Moon and Mars.
+- A shared CNN terrain representation, with distinct assessment and similarity objectives; physical baselines provide context without a requirement to outperform them for the proof of concept.
+- Bidirectional Earth–Moon terrain retrieval; a learned assessment head only when suitable labels are available.
 - Environmental and equipment hard/soft constraint system.
 - Planetary operational suitability assessment.
 - Terrestrial simulation readiness assessment.
 - Integrated ranking and interactive demonstration.
-- Model validation and documentation.
+- Reproducible example checks and documentation; broader model validation is follow-up work.
 
 The prototype will be a functional end-to-end system using a limited number of locations, one or two mission scenarios, and clearly defined equipment profiles.
 

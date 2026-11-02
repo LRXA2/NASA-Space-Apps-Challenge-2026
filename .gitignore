@@ -1,7 +1,6 @@
 ﻿# Local datasets and all generated analysis artifacts
 /data/
 /reports/
-/notebooks/diagnostics/
 /.scratch/
 /outputs/
 /artifacts/
@@ -9,6 +8,7 @@
 /runs/
 /mlruns/
 /wandb/
+personal notes.md
 
 # Python environments, bytecode and tool caches
 .venv/
