@@ -8,8 +8,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-sys.path.insert(0, str(Path(__file__).parents[1]))
-from analysis_artifacts import publish_analysis
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from notebooks.shared.analysis_artifacts import publish_analysis
 
 
 class AnalysisArtifactTests(unittest.TestCase):

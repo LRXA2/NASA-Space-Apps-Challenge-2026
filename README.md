@@ -30,23 +30,28 @@ notebooks/
   requirements-modeling.txt           Pinned PyTorch dependency for CNN experiments
   setup/                             01: original data organization
   preprocessing/                     02–13, 19, 21, 26: processing and checks
+    osm_processing.py                OSM extraction and geometry handling
   exploration/                       14–18, 20, 22–25, 27: EDA
+    *_analysis.py                    Candidate, environment, screening and source helpers
+    select_source_check_sample.py    Reproduces the frozen development sample
   modeling/
-    terrain_similarity/              28: data; 29: CNN; 30–33: diagnostics/review; 34: orientation cache; 35: terrain demo
+    terrain_similarity/              28–35: dataset, CNN, diagnostics and demo
+      terrain_dataset.py             Reproducible tensor and baseline builder
+      terrain_learning.py            Tensor, split and normalization contracts
+      similarity_cnn.py              Encoder, similarity head and training objective
+      similarity_experiment.py       Training, inference and retrieval comparison
+      candidate_coverage.py          Physical compatibility and ranking diagnostics
+      terrain_perturbation.py        Controlled vertical-scale sensitivity
       terrain_dataset.json           Accepted inputs and development fold roles
       similarity_experiment.json     Fixed training and retrieval configuration
-      tests/                         CNN transformation and leakage checks
-  terrain_dataset.py                 Reproducible tensor and baseline builder
-  terrain_learning.py                Tensor, split and normalization contracts
-  similarity_cnn.py                  Shared encoder, similarity head and objective
-  similarity_experiment.py           Training, inference and retrieval comparison
-  processing.py                      Shared processing operations
-  osm_processing.py                  OSM extraction and geometry handling
-  inspection.py                      Shared validation utilities
-  analysis_artifacts.py              Separates reusable data from disposable reports
-  select_source_check_sample.py       Reproduces the frozen development sample
-  *_analysis.py                      Terrain, candidate and environment helpers
-  tests/                             Processing and analysis tests
+      tests/                         Dataset, CNN transformation and leakage checks
+  shared/
+    processing.py                    Raster processing and versioned runs
+    inspection.py                    Shared validation utilities
+    patch_analysis.py                Terrain patch measurements
+    retrieval_analysis.py            Physical terrain comparisons
+    analysis_artifacts.py            Separates reusable data from disposable reports
+    tests/                           Shared and cross-stage processing/analysis checks
 data/
   raw/                               Local downloaded source data
   processed/                         Local versioned processing runs

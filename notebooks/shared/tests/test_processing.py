@@ -15,13 +15,13 @@ from rasterio.enums import Resampling
 from rasterio.transform import from_origin
 from rasterio.warp import reproject
 
-sys.path.insert(0, str(Path(__file__).parents[1]))
-from candidate_analysis import terrain_band_components
-from environment_analysis import diviner_cell_matrix
-from inspection import complete_blocks
-from osm_processing import extract_support
-from patch_analysis import measure_patch, measure_planarity
-from processing import (
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from notebooks.exploration.candidate_analysis import terrain_band_components
+from notebooks.exploration.environment_analysis import diviner_cell_matrix
+from notebooks.shared.inspection import complete_blocks
+from notebooks.preprocessing.osm_processing import extract_support
+from notebooks.shared.patch_analysis import measure_patch, measure_planarity
+from notebooks.shared.processing import (
     MOON_CRS,
     Grid,
     crop_native,
@@ -37,9 +37,9 @@ from processing import (
     terrain,
     warp,
 )
-from retrieval_analysis import terrain_discrepancies
-from screening_analysis import screen_patch
-from source_analysis import compare_elevation_surfaces
+from notebooks.shared.retrieval_analysis import terrain_discrepancies
+from notebooks.exploration.screening_analysis import screen_patch
+from notebooks.exploration.source_analysis import compare_elevation_surfaces
 
 
 class ProcessingTests(unittest.TestCase):
@@ -366,7 +366,7 @@ class ProcessingTests(unittest.TestCase):
                 self.assertIsNone(original.crs)
 
     def test_lunar_notebook_aligns_count_mask_without_filling_gaps(self):
-        notebook = json.loads((Path(__file__).parents[1] / 'preprocessing/05_lunar_terrain_environment.ipynb').read_text(encoding='utf-8'))
+        notebook = json.loads((Path(__file__).resolve().parents[3] / 'notebooks/preprocessing/05_lunar_terrain_environment.ipynb').read_text(encoding='utf-8'))
         cell = next(''.join(c['source']) for c in notebook['cells']
                     if 'with Run(ROOT, "lunar_terrain_environment"' in ''.join(c['source']))
         # Exercise the notebook's actual alignment/aggregation block, without its run/output shell.

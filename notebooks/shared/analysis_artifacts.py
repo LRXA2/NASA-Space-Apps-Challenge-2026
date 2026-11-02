@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import quote, unquote, urlsplit, urlunsplit
 
-from inspection import file_hash
+from notebooks.shared.inspection import file_hash
 
 PRESENTATION_SUFFIXES = frozenset({'.png', '.pdf', '.svg', '.html', '.md'})
 

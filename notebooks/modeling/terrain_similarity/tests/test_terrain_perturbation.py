@@ -5,8 +5,8 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).parents[3]))
-from terrain_perturbation import rescale_terrain
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from notebooks.modeling.terrain_similarity.terrain_perturbation import rescale_terrain
 
 
 class PerturbationTests(unittest.TestCase):

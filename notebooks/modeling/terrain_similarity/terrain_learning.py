@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 
 import numpy as np
-from retrieval_analysis import terrain_discrepancies
+from notebooks.shared.retrieval_analysis import terrain_discrepancies
 
 
 @dataclass(frozen=True)

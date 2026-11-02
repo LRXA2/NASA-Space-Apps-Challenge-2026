@@ -15,11 +15,11 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import rasterio
-from inspection import check_input, verify_run
-from patch_analysis import measure_patch, measure_planarity
-from processing import MOON_CRS, Run
+from notebooks.shared.inspection import check_input, verify_run
+from notebooks.shared.patch_analysis import measure_patch, measure_planarity
+from notebooks.shared.processing import MOON_CRS, Run
 from rasterio.warp import transform_bounds
-from terrain_learning import (
+from notebooks.modeling.terrain_similarity.terrain_learning import (
     SplitFootprint,
     fit_scaler,
     prepare_patch,
@@ -246,7 +246,7 @@ def build_dataset(root: Path, config_path: Path) -> Path:
     with Run(root, 'terrain_learning_readiness', config,
              'modeling/terrain_similarity/28_training_data_readiness_and_baseline.ipynb') as run:
         for path in [config_path, Path(__file__), *(root / 'notebooks' / name for name in
-                     ['terrain_learning.py', 'inspection.py', 'patch_analysis.py', 'retrieval_analysis.py'])]:
+                     ['modeling/terrain_similarity/terrain_learning.py', 'shared/inspection.py', 'shared/patch_analysis.py', 'shared/retrieval_analysis.py'])]:
             run.input(path)
         revision = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root, capture_output=True, text=True, check=False)
         run.record['git_revision'] = revision.stdout.strip() or 'unavailable'
@@ -292,7 +292,7 @@ def build_dataset(root: Path, config_path: Path) -> Path:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[3])
     parser.add_argument('--config', type=Path)
     args = parser.parse_args()
     print(build_dataset(args.root, args.config or args.root / 'notebooks/modeling/terrain_similarity/terrain_dataset.json'))

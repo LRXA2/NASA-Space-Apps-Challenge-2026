@@ -6,8 +6,8 @@ from pathlib import Path
 import numpy as np
 import torch
 
-sys.path.insert(0, str(Path(__file__).parents[3]))
-from similarity_cnn import (
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from notebooks.modeling.terrain_similarity.similarity_cnn import (
     TerrainSimilarityCNN,
     context_overlap,
     contrastive_loss,
@@ -15,7 +15,7 @@ from similarity_cnn import (
     rotate_batch,
     training_probabilities,
 )
-from similarity_experiment import embed
+from notebooks.modeling.terrain_similarity.similarity_experiment import embed
 
 
 class SimilarityTests(unittest.TestCase):

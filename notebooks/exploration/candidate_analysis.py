@@ -1,6 +1,6 @@
 """Component-level diagnostics for the fixed exploratory terrain bands."""
 import numpy as np
-from retrieval_analysis import terrain_discrepancies
+from notebooks.shared.retrieval_analysis import terrain_discrepancies
 
 
 def terrain_band_components(query: np.ndarray, candidates: np.ndarray) -> np.ndarray:

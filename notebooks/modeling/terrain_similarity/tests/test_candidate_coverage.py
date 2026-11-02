@@ -5,8 +5,8 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).parents[3]))
-from candidate_coverage import candidate_coverage
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from notebooks.modeling.terrain_similarity.candidate_coverage import candidate_coverage
 
 
 class CoverageTests(unittest.TestCase):

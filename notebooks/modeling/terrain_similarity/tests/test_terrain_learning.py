@@ -6,14 +6,14 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).parents[1]))
-import terrain_learning as learning
-from terrain_dataset import validate_config
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+import notebooks.modeling.terrain_similarity.terrain_learning as learning
+from notebooks.modeling.terrain_similarity.terrain_dataset import validate_config
 
 
 class TerrainLearningTests(unittest.TestCase):
     def test_noninteger_dimensions_are_rejected_before_raster_reads(self):
-        config_path = Path(__file__).parents[1] / 'modeling/terrain_similarity/terrain_dataset.json'
+        config_path = Path(__file__).resolve().parents[4] / 'notebooks/modeling/terrain_similarity/terrain_dataset.json'
         for field, value in [('patch_size_m', 960.0), ('spacing_m', 30.0),
                              ('schema_version', True), ('context_m', True)]:
             config = json.loads(config_path.read_text(encoding='utf-8'))
@@ -22,7 +22,7 @@ class TerrainLearningTests(unittest.TestCase):
                 validate_config(config)
 
     def test_reserves_and_unassigned_roles_fail_before_data_access(self):
-        config_path = Path(__file__).parents[1] / 'modeling/terrain_similarity/terrain_dataset.json'
+        config_path = Path(__file__).resolve().parents[4] / 'notebooks/modeling/terrain_similarity/terrain_dataset.json'
         config = json.loads(config_path.read_text(encoding='utf-8'))
         validate_config(config)
         for field, value in [('region', 'Mauna Loa'), ('role', 'final'), ('fold', 'test')]:

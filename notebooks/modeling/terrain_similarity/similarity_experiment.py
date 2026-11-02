@@ -12,10 +12,10 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import torch
-from inspection import check_input, verify_run
-from processing import MOON_CRS, Run
+from notebooks.shared.inspection import check_input, verify_run
+from notebooks.shared.processing import MOON_CRS, Run
 from rasterio.warp import transform_bounds
-from similarity_cnn import (
+from notebooks.modeling.terrain_similarity.similarity_cnn import (
     TerrainSimilarityCNN,
     context_overlap,
     contrastive_loss,
@@ -23,9 +23,9 @@ from similarity_cnn import (
     rotate_batch,
     training_probabilities,
 )
-from terrain_dataset import FEATURES
-from terrain_dataset import validate_config as validate_dataset_config
-from terrain_learning import (
+from notebooks.modeling.terrain_similarity.terrain_dataset import FEATURES
+from notebooks.modeling.terrain_similarity.terrain_dataset import validate_config as validate_dataset_config
+from notebooks.modeling.terrain_similarity.terrain_learning import (
     SplitFootprint,
     normalize_tensors,
     rank_candidates,
@@ -251,8 +251,8 @@ def run_experiments(root: Path, config_path: Path) -> Path:
         raise ValueError('Configured CUDA is unavailable; explicitly choose CPU in the configuration if needed')
     with Run(root, 'terrain_similarity_cnn', config, 'modeling/terrain_similarity/29_similarity_cnn_experiment.ipynb') as run:
         for path in [config_path, Path(__file__), *(root / 'notebooks' / name for name in
-                     ['similarity_cnn.py', 'terrain_learning.py', 'terrain_dataset.py', 'inspection.py',
-                      'patch_analysis.py', 'retrieval_analysis.py', 'requirements-modeling.txt'])]:
+                     ['modeling/terrain_similarity/similarity_cnn.py', 'modeling/terrain_similarity/terrain_learning.py', 'modeling/terrain_similarity/terrain_dataset.py', 'shared/inspection.py',
+                      'shared/patch_analysis.py', 'shared/retrieval_analysis.py', 'requirements-modeling.txt'])]:
             run.input(path)
         revision = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root, capture_output=True, text=True, check=False)
         run.record.update({'git_revision': revision.stdout.strip(), 'torch': str(torch.__version__),
@@ -321,7 +321,7 @@ def run_experiments(root: Path, config_path: Path) -> Path:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
+    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[3])
     parser.add_argument('--config', type=Path)
     args = parser.parse_args()
     print(run_experiments(args.root, args.config or args.root / 'notebooks/modeling/terrain_similarity/similarity_experiment.json'))

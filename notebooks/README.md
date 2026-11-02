@@ -34,11 +34,11 @@ Use a Python 3.12 `.venv`; on a fresh clone, create it with `uv venv --python 3.
 uv pip install --python .\.venv\Scripts\python.exe -r notebooks/requirements-processing.txt
 ```
 
-Select `.venv\Scripts\python.exe` as the notebook kernel. Save configuration changes, then run cells from the top. Download instructions are [separate](../download%20scripts/README.md). A fresh clone does not contain the pinned `data/` inputs, reference records or trained models: restore those local artifacts, or rebuild the required inputs and update the pinned paths before running the notebooks.
+Select `.venv\Scripts\python.exe` as the notebook kernel. Save configuration changes, then run cells from the top. After updating to the topic-based Python layout, restart any open kernels before rerunning; they may still hold modules imported from the old paths. Download instructions are [separate](../download%20scripts/README.md). A fresh clone does not contain the pinned `data/` inputs, reference records or trained models: restore those local artifacts, or rebuild the required inputs and update the pinned paths before running the notebooks.
 
-Notebook 28 uses the same dependencies. Its [configuration](modeling/terrain_similarity/terrain_dataset.json) pins accepted terrain runs and a development fold; the builder can also run from the root with `.\.venv\Scripts\python.exe notebooks/terrain_dataset.py`. Outputs go to ignored `data/processed/terrain_learning_readiness/`. Atacama and Leibnitz are EDA-exposed development holdouts, not final tests. No CNN is trained in 28.
+Notebook 28 uses the same dependencies. Its [configuration](modeling/terrain_similarity/terrain_dataset.json) pins accepted terrain runs and a development fold; the builder can also run from the root with `.\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.terrain_dataset`. Outputs go to ignored `data/processed/terrain_learning_readiness/`. Atacama and Leibnitz are EDA-exposed development holdouts, not final tests. No CNN is trained in 28.
 
-Notebook 29 adds PyTorch: install `uv pip install --python .venv/Scripts/python.exe -r notebooks/requirements-modeling.txt` after the processing dependencies. Its [configuration](modeling/terrain_similarity/similarity_experiment.json) pins the notebook-28 dataset and defaults to `cuda:0`. Run the notebook or `.\.venv\Scripts\python.exe notebooks/similarity_experiment.py`. Four fixed experiments compare sampling and lunar support policies using one encoder architecture for both bodies. Models and tables stay in ignored `data/processed/terrain_similarity_cnn/`; figures stay in `reports/terrain-similarity-cnn/`. Training loss and baseline agreement are diagnostics, not relevance validation.
+Notebook 29 adds PyTorch: install `uv pip install --python .venv/Scripts/python.exe -r notebooks/requirements-modeling.txt` after the processing dependencies. Its [configuration](modeling/terrain_similarity/similarity_experiment.json) pins the notebook-28 dataset and defaults to `cuda:0`. Run the notebook or `.\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.similarity_experiment`. Four fixed experiments compare sampling and lunar support policies using one encoder architecture for both bodies. Models and tables stay in ignored `data/processed/terrain_similarity_cnn/`; figures stay in `reports/terrain-similarity-cnn/`. Training loss and baseline agreement are diagnostics, not relevance validation.
 
 For the demonstration, run [34](modeling/terrain_similarity/34_rotation_and_reflection_inference.ipynb) once to build a separate cache under ignored `data/processed/terrain_similarity_orientation/<run>/`. It averages four rotations and their reflections for both bodies, checks transformed-query consistency and retains the original weights/scaler. [35](modeling/terrain_similarity/35_slope_and_relative_elevation_demo.ipynb) is already pinned to a completed run; if you rerun 34, copy its printed path into `ORIENTATION_RUN` in 35. Run 35 to see slope and relative elevation side by side, physical differences and distribution curves. Its `DEMO.md`, CSVs and figures go to ignored `reports/terrain-similarity-oriented-demo/<run>/`. These measurements explain CNN rankings without changing them.
 
@@ -54,13 +54,14 @@ Exact inputs, parameters and source hashes are recorded in notebook configuratio
 
 Before staging notebooks in Git, **save with useful outputs retained**, including plots, tables and results. Review the saved outputs for errors, credentials and personal filesystem paths before publishing. Embedded images are part of the notebook file and are not excluded by `.gitignore`. Code, notebook Markdown and saved outputs remain trackable; standalone data, figures, reports and their provenance records stay local in the ignored output directories.
 
-## Check the shared code
+## Python helpers and tests
+
+Python helpers live with their topic: `preprocessing/`, `exploration/` and `modeling/terrain_similarity/`. Common raster, terrain-measurement, validation and report utilities live in `shared/`. Imports use the `notebooks` package from the repository root; each notebook locates that root automatically.
 
 From the project root:
 
 ```powershell
-.\.venv\Scripts\python.exe -m unittest discover -s notebooks/tests -v
-.\.venv\Scripts\python.exe -m unittest discover -s notebooks/modeling/terrain_similarity/tests -v
+.\.venv\Scripts\python.exe -m unittest discover -s notebooks -t . -v
 ```
 
-These focused tests check processing and analysis behavior; they do not validate source accuracy or mission suitability.
+Shared and cross-stage tests live in `shared/tests/`; dataset and CNN tests live in `modeling/terrain_similarity/tests/`. These focused tests check processing and analysis behavior; they do not validate source accuracy or mission suitability.
