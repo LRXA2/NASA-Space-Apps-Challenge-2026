@@ -2,7 +2,7 @@
 
 Proof of concept: use a trained terrain CNN to retrieve plausible Earth training analogs for lunar terrain, with measured differences and clear limitations. **Earth and Moon only; Mars is excluded.**
 
-Broad EDA is complete across five Earth sites and seven lunar regions. [Notebook 28](notebooks/modeling/terrain_similarity/28_training_data_readiness_and_baseline.ipynb) prepares terrain tensors; [notebook 29](notebooks/modeling/terrain_similarity/29_similarity_cnn_experiment.ipynb) trains the first similarity CNNs. Start with [notebook 35's terrain comparison](notebooks/modeling/terrain_similarity/35_slope_and_relative_elevation_demo.ipynb), using the rotation/reflection cache built by [notebook 34](notebooks/modeling/terrain_similarity/34_rotation_and_reflection_inference.ipynb). Both reuse saved weights on CPU. The demo shows ranked Earth locations, slope and relative elevation; outperforming the physical baseline is not required, and general retrieval accuracy remains unvalidated.
+Broad EDA is complete across five Earth sites and seven lunar regions. [Notebook 28](notebooks/modeling/terrain_similarity/28_training_data_readiness_and_baseline.ipynb) prepares terrain tensors; [notebook 29](notebooks/modeling/terrain_similarity/29_similarity_cnn_experiment.ipynb) trains the first similarity CNNs. Start with [notebook 35's four-model comparison](notebooks/modeling/terrain_similarity/35_four_model_comparison.ipynb), which supports choosing the full-context, region-balanced CNN for the demonstration. [Notebook 36](notebooks/modeling/terrain_similarity/36_slope_and_relative_elevation_demo.ipynb) shows its terrain matches, using the rotation/reflection cache built by [notebook 34](notebooks/modeling/terrain_similarity/34_rotation_and_reflection_inference.ipynb). These notebooks reuse saved models and artifacts. The demo shows ranked Earth locations, slope and relative elevation; outperforming the physical baseline is not required, and general retrieval accuracy remains unvalidated.
 
 ## Start here
 
@@ -35,12 +35,13 @@ notebooks/
     *_analysis.py                    Candidate, environment, screening and source helpers
     select_source_check_sample.py    Reproduces the frozen development sample
   modeling/
-    terrain_similarity/              28–35: dataset, CNN, diagnostics and demo
+    terrain_similarity/              28–36: dataset, CNN, diagnostics, comparison and demo
       terrain_dataset.py             Reproducible tensor and baseline builder
       terrain_learning.py            Tensor, split and normalization contracts
       similarity_cnn.py              Encoder, similarity head and training objective
       similarity_experiment.py       Training, inference and retrieval comparison
       candidate_coverage.py          Physical compatibility and ranking diagnostics
+      model_comparison.py            Shared-location alignment and regional comparison summaries
       terrain_perturbation.py        Controlled vertical-scale sensitivity
       terrain_dataset.json           Accepted inputs and development fold roles
       similarity_experiment.json     Fixed training and retrieval configuration

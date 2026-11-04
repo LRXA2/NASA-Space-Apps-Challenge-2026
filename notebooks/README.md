@@ -2,7 +2,7 @@
 
 Read the [current findings and decisions](../outline.md#current-findings-and-evaluation-decisions) for scope and next steps. This page is an index; detailed methods and results are in the notebooks and their saved reports.
 
-The similarity CNN **proof of concept is complete**: lunar query to Earth candidates with explained examples. Notebook 35 is the main demonstration; notebook 34 builds its orientation-invariant cache. Notebook 33's rating forms remain optional follow-up work.
+The similarity CNN **proof of concept is complete**: lunar query to Earth candidates with explained examples. Notebook 35 compares the four trained variants and explains the demo choice. Notebook 36 demonstrates the chosen full-context, region-balanced CNN; notebook 34 builds its orientation-invariant cache. Notebook 33's rating forms remain optional follow-up work.
 
 ## Find an analysis
 
@@ -22,7 +22,8 @@ The similarity CNN **proof of concept is complete**: lunar query to Earth candid
 | Candidate coverage | [32 Physical compatibility and ranking](modeling/terrain_similarity/32_candidate_coverage_and_ranking.ipynb) |
 | Mission relevance | [33 Earth analog review for rover route-planning practice](modeling/terrain_similarity/33_mission_analog_review.ipynb) |
 | Rotation and reflection handling | [34 Rebuild the saved-model cache and check orientation consistency](modeling/terrain_similarity/34_rotation_and_reflection_inference.ipynb) |
-| Slope and relative elevation | [35 Eight-orientation Earth analog demo with physical comparisons](modeling/terrain_similarity/35_slope_and_relative_elevation_demo.ipynb) |
+| Four-model comparison and demo choice | [35 Same-location comparison of all four trained variants](modeling/terrain_similarity/35_four_model_comparison.ipynb) |
+| Slope and relative elevation | [36 Eight-orientation demo using the chosen CNN](modeling/terrain_similarity/36_slope_and_relative_elevation_demo.ipynb) |
 
 ## Run a notebook
 
@@ -40,7 +41,11 @@ Notebook 28 uses the same dependencies. Its [configuration](modeling/terrain_sim
 
 Notebook 29 adds PyTorch: install `uv pip install --python .venv/Scripts/python.exe -r notebooks/requirements-modeling.txt` after the processing dependencies. Its [configuration](modeling/terrain_similarity/similarity_experiment.json) pins the notebook-28 dataset and defaults to `cuda:0`. Run the notebook or `.\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.similarity_experiment`. Four fixed experiments compare sampling and lunar support policies using one encoder architecture for both bodies. Models and tables stay in ignored `data/processed/terrain_similarity_cnn/`; figures stay in `reports/terrain-similarity-cnn/`. Training loss and baseline agreement are diagnostics, not relevance validation.
 
-For the demonstration, run [34](modeling/terrain_similarity/34_rotation_and_reflection_inference.ipynb) once to build a separate cache under ignored `data/processed/terrain_similarity_orientation/<run>/`. It averages four rotations and their reflections for both bodies, checks transformed-query consistency and retains the original weights/scaler. [35](modeling/terrain_similarity/35_slope_and_relative_elevation_demo.ipynb) is already pinned to a completed run; if you rerun 34, copy its printed path into `ORIENTATION_RUN` in 35. Run 35 to see slope and relative elevation side by side, physical differences and distribution curves. Its `DEMO.md`, CSVs and figures go to ignored `reports/terrain-similarity-oriented-demo/<run>/`. These measurements explain CNN rankings without changing them.
+Notebook [35](modeling/terrain_similarity/35_four_model_comparison.ipynb) compares all four saved notebook-29 variants on shared query locations and identical candidate pools. It includes the mathematical reference, physical-match metrics, training curves, threshold sensitivity, regional results and terrain examples. The full-context, region-balanced CNN is chosen for the demo: it ties for the best top-five physical-match rate and has lower slope and relief errors than the other tied model on the main development comparison. Another CNN has lower relief error overall. This is a practical choice from development results, not independently validated analog accuracy.
+
+Run All in 35 uses the pinned local artifacts without retraining. It compares the original four-rotation embeddings for every variant. Tables go to `data/processed/analysis/four-model-comparison-<run>/`, with reports and figures under `reports/analysis/`. Restricting the comparison to common locations excludes the full-context view's extra coverage.
+
+For the demonstration, run [34](modeling/terrain_similarity/34_rotation_and_reflection_inference.ipynb) if its orientation cache needs rebuilding. It averages four rotations and their reflections for both bodies and retains the chosen model's weights/scaler. [36](modeling/terrain_similarity/36_slope_and_relative_elevation_demo.ipynb) is already pinned to a completed cache; if you rerun 34, copy its printed path into `ORIENTATION_RUN` in 36. Run 36 to see the chosen CNN's slope and relative-elevation comparisons, physical differences and distributions. Its `DEMO.md`, CSVs and figures go to ignored `reports/terrain-similarity-oriented-demo/<run>/`. These measurements explain CNN rankings without changing them. Notebook 35's metrics use four rotations; they do not measure this demo's eight-orientation policy.
 
 - **To read existing findings:** open the relevant notebook; no preprocessing rerun is needed.
 - **To rerun EDA:** check the notebook's pinned input paths. Running every notebook in numeric order does not automatically select new outputs.
