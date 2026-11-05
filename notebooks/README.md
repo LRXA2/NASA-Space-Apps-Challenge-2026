@@ -39,7 +39,7 @@ Select `.venv\Scripts\python.exe` as the notebook kernel. Save configuration cha
 
 Notebook 28 uses the same dependencies. Its [configuration](modeling/terrain_similarity/terrain_dataset.json) pins accepted terrain runs and a development fold; the builder can also run from the root with `.\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.terrain_dataset`. Outputs go to ignored `data/processed/terrain_learning_readiness/`. Atacama and Leibnitz are EDA-exposed development holdouts, not final tests. No CNN is trained in 28.
 
-Notebook 29 adds PyTorch: install `uv pip install --python .venv/Scripts/python.exe -r notebooks/requirements-modeling.txt` after the processing dependencies. Its [configuration](modeling/terrain_similarity/similarity_experiment.json) pins the notebook-28 dataset and defaults to `cuda:0`. Run the notebook or `.\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.similarity_experiment`. Four fixed experiments compare sampling and lunar support policies using one encoder architecture for both bodies. Models and tables stay in ignored `data/processed/terrain_similarity_cnn/`; figures stay in `reports/terrain-similarity-cnn/`. Training loss and baseline agreement are diagnostics, not relevance validation.
+Notebook 29 adds PyTorch: install `uv pip install --python .venv/Scripts/python.exe -r notebooks/requirements-modeling.txt` after the processing dependencies. Its [configuration](modeling/terrain_similarity/similarity_experiment.json) pins the notebook-28 dataset and defaults to `cuda:0`. Run the notebook or `.\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.similarity_experiment`. Four fixed experiments compare sampling and lunar support policies using one encoder architecture for both bodies. Weights go to ignored `notebooks/modeling/terrain_similarity/weights/<run>/<view>/<sampling>/model.pt`; preprocessing, tables and provenance stay in `data/processed/terrain_similarity_cnn/<run>/`. Figures stay in `reports/terrain-similarity-cnn/`. Training loss and baseline agreement are diagnostics, not relevance validation.
 
 Notebook [35](modeling/terrain_similarity/35_four_model_comparison.ipynb) compares all four saved notebook-29 variants on shared query locations and identical candidate pools. It includes the mathematical reference, physical-match metrics, training curves, threshold sensitivity, regional results and terrain examples. The full-context, region-balanced CNN is chosen for the demo: it ties for the best top-five physical-match rate and has lower slope and relief errors than the other tied model on the main development comparison. Another CNN has lower relief error overall. This is a practical choice from development results, not independently validated analog accuracy.
 
@@ -58,6 +58,37 @@ Processing writes versioned runs under `data/processed/`. EDA saves reusable tab
 Exact inputs, parameters and source hashes are recorded in notebook configuration and provenance. Keep referenced data runs and reference records intact. Reports are optional exports: deleting `reports/` does not invalidate reusable data manifests or notebook inputs. The relocation receipt at `data/reference/analysis-relocation-20261102.json` preserves original paths and hashes; historical source hashes describe the code or notes used at the time. Scientific limitations and evaluation rules are summarized in [outline.md](../outline.md#current-findings-and-evaluation-decisions).
 
 Before staging notebooks in Git, **save with useful outputs retained**, including plots, tables and results. Review the saved outputs for errors, credentials and personal filesystem paths before publishing. Embedded images are part of the notebook file and are not excluded by `.gitignore`. Code, notebook Markdown and saved outputs remain trackable; standalone data, figures, reports and their provenance records stay local in the ignored output directories.
+
+## Saved-model site comparison
+
+The [Python pipeline](modeling/terrain_similarity/pipeline/main.py) compares a whole prepared lunar region with one prepared Earth region. Its files live together in the `terrain_similarity/pipeline/` package. It reuses the full-context, region-balanced CNN selected in notebook 35 and notebook 34's eight-orientation cache. Notebooks 34–36 remain saved records of the experiments; the command needs no notebook runtime.
+
+Training and all notebook/pipeline readers share [model_weights.py](modeling/terrain_similarity/model_weights.py). The configured `model_run` identifies the training metadata; its run ID determines the weights folder. New training runs register a `weights.json` location/hash descriptor beside their preprocessing. Relocated checkpoints are checked against their original manifest hashes, so historical manifests and orientation caches remain unchanged. Keep both the weights folder and the referenced data runs when transferring the pipeline.
+
+The script compares **one Moon site and one Earth site per call**. Your application owns the loop over Earth sites and selects the highest-scoring result. For in-memory integration, `compare_sites(terrain, moon_site, earth_site)` returns match tables and a summary; the score is `summary["median_best_patch_cosine"]`.
+
+Import the callable interface from `notebooks.modeling.terrain_similarity.pipeline`: `ArtifactConfig`, `TerrainModel`, `compare_sites` and `run_inference`. `main.py` is the implementation entry point; `__main__.py` enables the shorter package command below.
+
+```powershell
+.\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.pipeline --list-sites
+.\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.pipeline --moon-site Haworth --earth-site wadi_rum
+```
+
+Full region IDs and readable names are accepted. Matching ignores spaces, underscores, hyphens and capitalization. Every eligible lunar patch is matched against only the selected Earth's prepared patches, with all development folds included. `--top-k` defaults to 3; `--no-plots` skips the figures. The selected regions must already exist in the accepted dataset; this command does not process arbitrary coordinates or raw elevation files.
+
+Each run writes:
+
+- `summary.json`: patch counts, median/mean best-patch cosine, median physical differences, the count of lunar patches with a candidate passing all five exploratory checks, and how often distinct Earth patches are used.
+- `retrieval.csv` and `physical_comparison.csv`: all ranked pairs, Earth coordinates, cosine scores and measurements in their original units.
+- `selected_patches.csv`: the prepared patches belonging to both selected sites.
+- `report_examples.csv`: the highest, middle and lowest first-match score examples selected for the report.
+- `provenance.json`: completion or failure status, exact settings, input/source hashes and code revision.
+
+Tables and provenance live under `data/processed/terrain_similarity_pipeline/<run>/`. Optional `REPORT.md`, pair maps and slope/height distributions live separately under `reports/terrain-similarity-pipeline/<run>/`. Report deletion does not invalidate the reusable data. Summaries cover all prepared lunar patches; visual examples illustrate score extremes and the middle, rather than forming a random evaluation sample.
+
+**Interpretation:** this is a directed comparison: does the Earth site contain terrain resembling the lunar site? The median best-patch cosine is not a percentage of site similarity, and larger Earth candidate pools offer more opportunities for a close match. Repeated use of one Earth patch does not imply extensive matching terrain. Physical thresholds explain the results without reranking them. General accuracy and environmental, access or equipment suitability remain unvalidated.
+
+The [configuration](modeling/terrain_similarity/pipeline/config.json) pins local training, dataset and orientation runs. The loader rejects changed hashes or mismatched model, dataset, scaler, patch IDs, support view and inference policy. Use `--config path/to/config.json` for another accepted artifact set. Use `--rebuild-cache` to explicitly regenerate embeddings with the saved weights/scaler; it checks rotation/reflection consistency and writes `embeddings.npz`, `preprocessing.json`, `patches.csv` and `orientation_checks.csv` into the new data run. To reuse that cache, set `orientation_run` in a configuration copy to the printed data-run path. A failed cache validation never triggers silent rebuilding.
 
 ## Python helpers and tests
 
