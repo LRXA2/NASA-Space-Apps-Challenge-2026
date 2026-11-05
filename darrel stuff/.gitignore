@@ -4,3 +4,6 @@
 # Research folder
 research/Lunar_Base_Conditions_Research_Backup (1).xlsx
 
+# Environmental datasets, partial downloads and acquisition manifests
+/data/
+
