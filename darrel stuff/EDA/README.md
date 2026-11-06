@@ -5,7 +5,21 @@ These notebooks copy the existing environmental preprocessing and analysis code 
 - Raw inputs: `darrel stuff/data/`.
 - Processed tables, rasters, figures and manifests: `darrel stuff/data/processed/` (the lunar support-view gallery uses `darrel stuff/data/reports/`).
 - No automatic downloads, data substitutions, OSM analysis or CNN training.
-- Notebooks are provided **without execution outputs**. This port does not claim processing or EDA is complete.
+- Earth notebooks now retain verified local execution outputs. Moon notebooks remain unexecuted beyond input preflight because supporting inputs are missing; this is not a claim that Moon EDA is complete.
+
+## Verification status — 6 November 2026
+
+| Check | Result |
+| --- | --- |
+| Earth 03 — original three sites | **Passed:** 150 source files processed into 150 native monthly exports and 1,800 regional monthly rows. |
+| Earth 26 — two added sites | **Passed:** 100 source files processed into 100 native monthly exports and 1,200 regional monthly rows. |
+| Earth 27 — five-site EDA | **Passed:** 3,000 monthly rows, five regional coverage records and 50 annual precipitation records checked. Both saved figures were inspected; notebook outputs are retained. |
+| Earth output integrity | All 267 output hashes across the three completed runs matched their manifests. A separate two-file pilot tested normal and coastal missingness before the full runs. |
+| Moon P1 downloads | **Passed bounded checks:** all 144 table/XML pairs match manifest sizes and XML table layouts; one record per product decoded successfully. All ten illumination maps match receipt sizes and expected lunar CRS/resolution, with readable sample windows. This is not a full 30 GB row-by-row audit or publisher-checksum verification. |
+| Moon 05/06/13/25 execution | **Blocked:** the original seven SDEM region inputs, six selected LOLA files and documented unit-policy JSON are missing. Input setup was checked; the full regional processing/EDA was not run. |
+| Existing processing tests | Six focused tests passed for Diviner parsing/missingness, packed-value decoding, raster crop/warp and lunar CRS handling. Existing tests were not changed. |
+
+The P1 downloads are complete, but the original regional Moon EDA also needs its supporting inputs. Do not mark that EDA complete or replace missing footprints/units with guesses. Full processing details and selected run paths are recorded in [the verification report](../data/verification/20261105T175111061360Z/verification.json). The report and generated data stay local under the ignored `data/` directory.
 
 ## Run order
 
@@ -34,9 +48,9 @@ This plan is based on the copied Moon code, the downloaded Diviner XML labels an
 
 ### Current data availability
 
-**Inspection snapshot — 5 November 2026:** 20 Diviner `.tab` files match their download-manifest sizes, with 20 XML labels and one `.part` transfer. All 20 completed tables are in the filename's `ls030` group, so they do not represent the full phase collection. The downloaded labels share the same six-field schema. Counts will change as downloading continues; matching file size alone does not validate the science.
+**Inspection snapshot — 6 November 2026:** all **144 Diviner `.tab` files and 144 XML labels** are present and match their download-manifest sizes, with no partial table remaining. All labels share the same six-field/unit schema, and their declared layouts and a small record sample were checked. The **ten illumination GeoTIFFs** are also present and passed the receipt/header checks described above. These checks confirm file availability and bounded technical readability, not scientific accuracy of every observation.
 
-There are currently **no illumination GeoTIFFs**, no local SDEM/LOLA supporting files, no processed Moon runs and no restored unit-policy JSON. Source-field checks can begin on completed files, but the full regional notebooks still need the [required inputs](#required-inputs). Do not count a `.part` file as data or interpret missing downloads as missing lunar observations.
+There are still **no local SDEM/LOLA supporting files**, no processed Moon runs and no restored unit-policy JSON. Source-field checks are possible, but the full regional notebooks still need the [required inputs](#required-inputs). Missing supporting files must not be interpreted as missing lunar observations.
 
 ### Fields available for analysis
 
@@ -55,7 +69,7 @@ Diviner `.tab` files are fixed-width tables: the XML label supplies the field po
 
 The inspected labels use `-9998` and `-9999` as special values. The parser masks these before analysis; they must not enter temperature statistics as physical values.
 
-Illumination products are **raster pixel bands plus coordinates**, not Diviner table columns. Their planned quantities are solar visibility, Earth visibility, permanent-shadow class and sky visibility. Notebook 25 uses three 60 m products (`85S`) plus the 240 m sky-view product (`65S`); the other downloaded resolutions are not extra independent observations. Actual TIFF metadata has not been checked locally because the files are absent. The original EDA uses fractions for visibility/shadow summaries and steradians for sky view, but the documented unit policy must be restored and checked rather than assuming units from filenames.
+Illumination products are **raster pixel bands plus coordinates**, not Diviner table columns. Their quantities are solar visibility, Earth visibility, permanent-shadow class and sky visibility. Notebook 25 uses three 60 m products (`85S`) plus the 240 m sky-view product (`65S`); the other downloaded resolutions are not extra independent observations. All ten TIFFs have now been checked for readable windows, lunar CRS, grid resolution and packing metadata. They carry scale/offset values but **no embedded band-unit metadata**. The original EDA uses fractions for visibility/shadow summaries and steradians for sky view, so its documented unit policy must still be restored and checked rather than assuming units from filenames.
 
 ### Analysis to do
 
@@ -73,6 +87,57 @@ All items below remain pending local execution and input validation.
 | **Temperature versus illumination or terrain** — Are spatial patterns associated? | `tbol` joined to compatible illumination pixels, elevation/slope or support/quality layers. | **To add.** These explanatory associations are not calculated by the current availability checks. Match coordinates, native support and phase/time meaning; do not infer causation or mission suitability. |
 
 **Not supported by the current Diviner columns alone:** calendar-date trends, continuous hot/cold exposure, radiation dose, dust concentration, subsurface temperature/depth, rock abundance, per-row temperature uncertainty or equipment limits. These require other evidence or datasets. `ltim` is not a date, and a mean illumination map cannot supply the longest continuous darkness interval.
+
+## TODO — Moon environmental EDA
+
+**Goal:** understand how the available lunar temperatures vary with local time and environmental context across the seven study regions. Both tasks below are **planned, not implemented or verified results**. Use the existing Moon datasets first; these TODOs do not request another download collection.
+
+### 1. Temperature versus lunar local time
+
+- [ ] **Analyse `tbol` against `ltim`, separated by region and solar-phase group.**
+
+| Item | Details |
+| --- | --- |
+| Dataset used | Diviner seasonal bolometric-temperature tables and their XML labels in `darrel stuff/data/moon/diviner/seasonal/`. The seven SDEM footprints define the regions. |
+| Fields needed | `tbol` (K), `ltim` (hours), `valid_temperature`, `clon`, `clat`, `source_product`, `seasonal_ls_bin` and `subsolar_longitude_bin`; retain region identity from each export folder. |
+| Processed input | Notebook 06's `moon/<region>/native_240m/*.csv.gz` files inside a completed local `diviner_temperature` run. These already retain `ltim` and `tbol`; `regional_bin_summary.csv` alone is not sufficient. |
+| Main notebook to modify | [25_environment_native_support_eda.ipynb](Moon/25_environment_native_support_eda.ipynb): extend the regional thermal-analysis loop, where `observations` is loaded, **before it is deleted**. Keep the existing coverage and phase-bin analyses. |
+| Preprocessing notebook | [06_diviner_temperature.ipynb](Moon/06_diviner_temperature.ipynb): reuse its existing exports. Change it only if source-label checks reveal a genuine encoding/export issue; no new column is currently required. |
+
+Planned steps:
+1. Check the XML definition, special values and actual `ltim` distribution/range. Report unusable or missing local times rather than inventing values; retain only valid temperature/local-time pairs for this analysis.
+2. Plot temperature against local time by region, with solar-phase groups visible. Treat local time as cyclic: the midnight boundary is not a large time separation.
+3. Summarise local-time bins using counts, median temperature and 10th–90th percentiles. Show empty bins and uneven coverage rather than connecting unsupported intervals.
+4. Compare the available-cell patterns with a consistent spatial cohort where feasible, so changing observation locations are not mistaken for a local-time effect.
+
+**Planned outputs:** per-region plots and a summary CSV with region, phase group, local-time bin, valid-row count, distinct-cell count and temperature quantiles. These are composite-data associations, **not** a dated heating/cooling curve or measured duration of hot/cold exposure.
+
+### 2. Temperature–illumination or temperature–terrain relationships
+
+- [ ] **Calculate spatial associations between temperature and solar visibility/shadow, elevation or slope.** Start with temperature–solar visibility, then add terrain comparisons using the same matching rules.
+
+| Item | Details |
+| --- | --- |
+| Temperature dataset | The same Diviner exports from notebook 06, retaining temperature, product/phase identity, local time and native-cell coordinates. |
+| Illumination dataset | Existing 2016 maps in `darrel stuff/data/moon/illumination_2016/`. Start with `AVGVISIB_85S_060M_201608.TIF` (solar visibility) and `LPSR_85S_060M_201608.TIF` (permanent-shadow class). Use notebook 05's decoded regional crops and the documented unit policy, not raw packed pixel values. |
+| Terrain dataset | The seven SDEM regions in `darrel stuff/data/moon/sdem/regions/`, processed into `elevation_m.tif` and `slope_deg.tif`. Notebook 13 provides separate `full_context` and `image_supported` views; do not pool those views as independent observations. The six LOLA maps remain prerequisites of notebook 05's current pipeline. |
+| Main notebook to modify | [25_environment_native_support_eda.ipynb](Moon/25_environment_native_support_eda.ipynb): extend the existing regional thermal/joint-availability loop. Reuse `sample_native`, `illumination_paths`, `centers` and the terrain-view paths. |
+| Supporting notebooks | [05_lunar_terrain_environment.ipynb](Moon/05_lunar_terrain_environment.ipynb) supplies decoded native illumination crops; [13_build_lunar_terrain_views.ipynb](Moon/13_build_lunar_terrain_views.ipynb) supplies terrain values and support views. Reuse these outputs rather than changing their grids or masks for a plot. |
+
+Planned steps:
+1. Sample each environmental raster's containing native pixel at the Diviner centre (`x_m`, `y_m`), reusing the current no-interpolation lookup. Preserve CRS checks and missing/support flags; this is centre-based context, not a matched 240 m footprint average.
+2. Join those sampled values back to temperature observations using region plus native-cell coordinates, keeping product/phase and local time. Preserve the actual sampled elevation/slope values: the current terrain-availability boolean alone cannot measure a relationship.
+3. Make temperature–solar-visibility, temperature–elevation and temperature–slope scatter/hexbin plots. Compare temperature distributions for shadow classes separately because shadow is categorical.
+4. Report paired counts, missingness and descriptive correlations for continuous variables, separated by region and phase and checking local-time differences. Compare terrain views separately; do not treat repeated products at one cell or nearby pixels as independent evidence for significance.
+
+**Planned outputs:** traceable paired-data tables, relationship plots and grouped summaries/correlations, with dataset, units, cohort and terrain view identified. Modeled illumination averages and Diviner phase averages are not simultaneous measurements; associations do **not** establish causation or base-site suitability.
+
+### Implementation order and completion checks
+
+- Finish support restoration, then run **05 → 06 → 13 → 25** successfully. Downloads alone do not produce the processed inputs.
+- Add the two analysis sections to notebook **25**, before its final completion cell. Reuse the completed runs selected by its existing setup and record their provenance.
+- Save new tables/figures under the existing analysis `OUT` directory (`darrel stuff/data/processed/analysis/moon_environment_eda/<run>/`), not in the original project folders.
+- Extend notebook 25's final required-output checks when implementing the new outputs. Keep both TODO checkboxes open until the new cells execute and their units, joins, counts, missingness and plots have been checked.
 
 ## Before running
 
@@ -100,7 +165,13 @@ The required supporting source files and unit policy are not silently downloaded
 
 ## Local processing and provenance
 
-`environment_workflow.py` reuses the original `Run` implementation with a local output root and notebook path. It retains source hashes, output hashes and completion/failure records without changing the original shared code.
+`environment_workflow.py` is a small **file/run-management helper**, not a dataset, model or scientific analysis. The notebooks still contain the actual processing and EDA calculations.
+
+- **`LocalRun`:** reuses the original `Run` implementation but directs new runs to `darrel stuff/data/processed/`. It records input/output hashes, settings and completion/failure status. Original source files remain read-only.
+- **`latest_completed_run`:** locates an explicitly pinned run or the latest completed local run for the required processing stage. It does not substitute partial runs or data from the original project folders.
+- **`select_climate_manifest`:** selects a completed download manifest matching the original regions, bounding boxes, years and variables.
+
+The data flow is: **downloaded source files → preprocessing notebooks → versioned processed runs → EDA notebooks → figures/tables and provenance**. This keeps repeated analyses traceable without changing the original shared code.
 
 EDA setup defaults to the **latest completed local run** for each required stage. Set the explicit `*_RUN_ID` variables to pin runs. The selected paths and hashes are recorded; original-project data and partial/failed runs are not substituted. A missing input raises an error rather than producing made-up or silently reduced results.
 

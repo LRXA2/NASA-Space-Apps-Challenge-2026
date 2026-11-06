@@ -1,4 +1,4 @@
-"""Inventory/download only the P1 environmental datasets in project_dataset.md.
+"""Inventory/download the environmental datasets and required Moon EDA support.
 
 Reuses the existing downloaders, their manifests and verification behavior:
   * TerraClimate v1.1, 2015-2024, five variables, original three Earth sites.
@@ -8,12 +8,15 @@ Reuses the existing downloaders, their manifests and verification behavior:
 
 Inventory only by default. Add --download for data transfers, or --dry-run
 to print commands without network access or filesystem writes. No processing,
-Excel conversion, P2/P3 sources, terrain, OSM or Mars downloads are performed.
+Excel conversion, OSM or Mars downloads are performed. The default also restores
+the original seven SDEM regions, six LOLA maps and documented illumination units
+needed by the Moon EDA. Existing verified files are reused by the original handlers.
 
-Run from the project root with Python 3.10+:
+Run from the project root with the project's Python 3.12 environment:
   python "darrel stuff/download_script/download_environmental.py" --dry-run
   python "darrel stuff/download_script/download_environmental.py"
   python "darrel stuff/download_script/download_environmental.py" --download
+  python "darrel stuff/download_script/download_environmental.py" --restore-moon-support --download
 
 Default output: darrel stuff/data, created if missing before running downloaders.
 The original download scripts are reused without modification.
@@ -72,8 +75,10 @@ def build_commands(output: Path, datasets: list[str], *, download: bool = False,
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--datasets", choices=DATASETS, nargs="+", default=list(DATASETS),
-                        help="P1 entries to include (default: all four)")
+    parser.add_argument("--datasets", choices=DATASETS, nargs="+", default=None,
+                        help="Restrict to selected P1 entries (default: all four plus required Moon support)")
+    parser.add_argument("--restore-moon-support", action="store_true",
+                        help="Restore only Moon support, or add support to an explicit --datasets selection")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT,
                         help="Data root, created if missing (default: darrel stuff/data)")
     parser.add_argument("--download", action="store_true", help="Transfer source files; default is inventory only")
@@ -81,9 +86,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--timeout", type=int, default=120, help="Child HTTP read timeout in seconds")
     parser.add_argument("--attempts", type=int, default=3, help="Child transfer attempts per source URL")
     args = parser.parse_args(argv)
+    selected = args.datasets if args.datasets is not None else ([] if args.restore_moon_support else list(DATASETS))
     try:
-        commands = build_commands(args.output, args.datasets, download=args.download,
-                                  timeout=args.timeout, attempts=args.attempts)
+        commands = build_commands(args.output, selected, download=args.download,
+                                  timeout=args.timeout, attempts=args.attempts) if selected else []
+        if args.restore_moon_support or args.datasets is None:
+            if args.timeout < 1 or args.attempts < 1:
+                raise ValueError("Timeout and attempts must be positive integers")
+            command = [sys.executable, str(Path(__file__).resolve().with_name("download_moon_support.py")),
+                       "--output", str(args.output.expanduser().resolve()),
+                       "--timeout", str(args.timeout), "--attempts", str(args.attempts)]
+            if args.download:
+                command.append("--download")
+            commands.append(("moon-support", command))
     except ValueError as error:
         parser.error(str(error))
     # Check all required child scripts before any inventory or data transfer starts.
@@ -91,7 +106,7 @@ def main(argv: list[str] | None = None) -> int:
         if not Path(command[1]).is_file():
             parser.error(f"Required downloader is missing: {command[1]}")
     mode = "download" if args.download else "inventory only"
-    print(f"P1 environmental scope: {', '.join(args.datasets)} ({mode}).", flush=True)
+    print(f"Environmental scope: {', '.join(name for name, _ in commands)} ({mode}).", flush=True)
     for name, command in commands:
         print(f"\n{name}:\n  {subprocess.list2cmdline(command)}", flush=True)
     if args.dry_run:
@@ -118,7 +133,7 @@ def main(argv: list[str] | None = None) -> int:
     except KeyboardInterrupt:
         print("\nInterrupted. Rerun with the same options to reuse existing downloads/partials.", file=sys.stderr)
         return 130
-    print(f"\nAll selected P1 environmental {mode} jobs completed.", flush=True)
+    print(f"\nAll selected environmental {mode} jobs completed.", flush=True)
     return 0
 
 
