@@ -1,135 +1,149 @@
-# Environmental Dataset Downloads
+# Environmental dataset downloader
 
-`download_environmental.py` inventories/downloads the **four P1 entries** in [Critical_Project_Dataset.md](../Critical_Project_Dataset.md), plus the original supporting inputs required by the Moon environmental EDA. The P1 entries span three dataset families:
+There is now **one downloader file in this folder: `download_environmental.py`**. It combines the former core runner, Moon-support restorer and threaded research downloader. The root repository's `download scripts/` helpers are reused read-only; this is not a standalone script that can be moved out of the repository.
 
-1. **TerraClimate v1.1:** 2015–2024, `tmin tmax ppt ws srad`, for northern Arizona, Lanzarote and Atacama — 150 regional NetCDF subsets.
-2. **TerraClimate expansion:** the same years/variables for Death Valley and Wadi Rum — 100 additional subsets.
-3. **Diviner south-polar seasonal temperature:** tables and source labels only; the recorded collection has 144 tables and 144 XML labels. Live inventories determine available files.
-4. **2016 south-polar illumination/visibility:** ten GeoTIFFs only, excluding north-polar maps and IMG/LBL originals.
+All data, partial files, receipts, manifests and logs default to **`darrel stuff/data/`**, created if missing and excluded by `darrel stuff/.gitignore`. Existing datasets are not moved or deleted.
 
-The default now also restores **seven SDEM region archives**, **six selected LOLA Product 90 maps**, and the small source metadata/unit policy needed by the copied Moon notebooks. It does not collect other optional sources, reserve regions, WorldCover, OSM or Mars. It does not run EDA or convert data to Excel.
+## Start with a preview and inventory
 
-The entry point reuses the [original downloaders in root `/download scripts`](../../download%20scripts/README.md), leaving those files unchanged. `download_moon_support.py` supplies the missing SDEM selection/extraction and documented-unit restoration, reusing the original discovery, transfer and checksum routines. No OSM dataset is requested when reusing its generic byte/checksum helper.
+### Download all, skipping the preview
 
-Manifests and downloaded data default to **`darrel stuff/data/`**, independent of the terminal's current directory. Missing directories are created; matching existing files are checked and skipped using each handler's verification rules. Conflicting files are preserved and reported, not silently overwritten. The directory is excluded by [`darrel stuff/.gitignore`](../.gitignore).
-
-## Setup
-
-Use the project's **Python 3.12** environment, as used for the EDA verification. All commands below run from `darrel stuff/download_script`. From the project root, enter it with:
+From the **repository root** in Windows CMD:
 
 ```cmd
-cd "darrel stuff/download_script"
+.\.venv\Scripts\python.exe "darrel stuff\download_script\download_environmental.py" --download --workers 4 --connection-retries 3
 ```
 
-**Use `python`, not `.\.venv\Scripts\python.exe`.** The latter only works if a virtual environment actually exists inside this folder. An active `(.venv)` prompt can refer to an environment elsewhere; `python` uses the activated interpreter without assuming its location. Dry-run mode needs only Python's standard library.
+From **`darrel stuff\download_script`**:
 
-This checkout's existing `.venv` is at the **repository root**, two folders above `download_script`. To use it explicitly without activation, this command has been verified from this folder:
+```cmd
+..\..\.venv\Scripts\python.exe download_environmental.py --download --workers 4 --connection-retries 3
+```
+
+If the repository environment is already activated, `python download_environmental.py ...` also works from this folder. The environment is at the **repository root**, not `download_script\.venv`.
+
+**This means all configured selections, not complete copies of every archive.** Core environmental collections retain their original full selections. Research datasets remain bounded EDA subsets. Gated entries are logged as unresolved/KIV; an incomplete exit code does not mean all the other transfers stopped.
+
+### Optional offline preview
 
 ```cmd
 ..\..\.venv\Scripts\python.exe download_environmental.py --dry-run
 ```
 
-The same interpreter prefix can be used for the inventory, `--download`, dependency-install and test commands below instead of `python`.
+No network requests, downloads, extraction or filesystem writes. It prints the selected scopes and limits. Without either `--dry-run` or `--download`, the script contacts providers and saves inventories only.
 
-If an environment is already active, keep using it. To create a new local environment instead, run `py -3 -m venv .venv`, then activate it with `.venv\Scripts\activate.bat` in Command Prompt or `.\.venv\Scripts\Activate.ps1` in PowerShell. After activation, install the download dependencies:
+## What the single file includes
+
+| Scope / selector | Actual selection | Local data location |
+| --- | --- | --- |
+| `--scope all` (default) | Core collections + required Moon support, then 36 bounded research datasets and two new reference datasets. Scopes run sequentially to avoid overlapping writes; files within each transfer phase run concurrently. | Existing paths below. |
+| `--scope core` | TerraClimate v1.1 for five Earth sites, 2015-2024, `tmin/tmax/ppt/ws/srad` (250 year-variable requests); all south-polar seasonal Diviner products/labels; ten south-polar illumination GeoTIFFs; required Moon support. | `earth/terraclimate/`, `earth/environment_expansion/20261030/terraclimate/`, `moon/diviner/`, `moon/illumination_2016/`. |
+| `--scope moon-support` | Original seven SDEM region archives, six selected 40 m LOLA maps, illumination labels/docs and documented unit policy. Only verified archives are extracted; CRC/path checks retained. | `moon/sdem/`, `moon/lola_product90/`, existing illumination/reference paths. |
+| `--scope research` | Original 36 Dxx selections plus R01/R02; bounded groups and byte limits. Not full archives or guaranteed coverage of all study regions. | Primarily `moon/eda_pilots/Dxx/`; known core products reuse existing paths. |
+| `--scope references` | Only R01 battery experiments and R02 Apollo 15 soil-mechanics tables. | `reference/battery_tests/`, `reference/apollo15_soil/`. |
+
+Selecting `--datasets` restricts the run. Core names are `earth-climate`, `earth-climate-expansion`, `lunar-temperature` and `lunar-illumination`. Dxx/Rxx IDs select bounded research/reference sources. **`--datasets lunar-temperature` is the full seasonal collection; `--datasets D01` is a bounded pilot.**
+
+### New public data sources
+
+| ID | Download source / content | Limits |
+| --- | --- | --- |
+| **R01** | [NASA PCoE section 5 Batteries](https://www.nasa.gov/intelligent-systems-division/discovery-and-systems-health/pcoe/pcoe-data-set-repository/), using its published [battery ZIP mirror](https://phm-datasets.s3.amazonaws.com/NASA/5.+Battery+Data+Set.zip). About 200 MiB, one package. | Lab charge/discharge/impedance experiments, not our chosen battery specification or lunar qualification. ZIP stays unextracted. |
+| **R02** | [Apollo 15 PDS4 soil-mechanics bundle](https://pds-geosciences.wustl.edu/missions/apollo/a15lsrp.htm): all six digitized runs (`011`-`016`), `.tab` numeric data, `.txt` headers/raw readings, PDS4 XML labels, dataset and instrument documentation. **22 files, 144,305 bytes** at the verified selection. | Historical non-polar reference. No thumbnails, obsolete FTP paths, Apollo 16 substitution or claim of site-specific mobility certification. |
+
+PGDA illumination/terrain and NAIF kernels are already covered by D02-D06/D19; they are not duplicated under new IDs. Geant4 is simulation software, not a missing environmental dataset; it is not automatically installed/downloaded. OLTARIS requires account approval and remains KIV. Mission/equipment parameters and project-specific modeled outputs cannot be fabricated by a downloader.
+
+## Threading, retries and failure behaviour
+
+- **4 simultaneous files by default**, configurable with `--workers 1` through `--workers 16`. Each worker has its own HTTP session. More workers may increase provider throttling; start with 4.
+- **One initial attempt + three retries = at most four attempts** per file transfer or discovery operation by default. Backoff is 5, 10 and 20 seconds. Metadata discovery has its own finite budget; restarting discovery can involve several requests.
+- Connection loss, timeouts, incomplete bodies and typed transient HTTP responses (408/429/500/502/503/504) are retried. No hidden HTTP-adapter retry loop multiplies the transfer budget.
+- Authentication/permission errors (401/403), missing URLs (404), TLS/certificate failures and validation/checksum errors are **logged, not endlessly retried**. Other files/datasets continue.
+- `--connection-retries 0` means **no extra retries**, not infinite retrying. The previous unlimited-retry behaviour has been retired. Legacy `--attempts N` means N total attempts when no explicit `--connection-retries` is supplied; prefer the latter. `--continue-on-error` is accepted for compatibility but continuation is already the public CLI default.
+- Per-destination `.download.lock` files prevent two workers/instances from writing the same file. Separate processes may work on different files/scopes; overlapping targets are logged as busy, never overwritten. A crash can leave a stale lock: inspect its PID and confirm no downloader is active before manually removing that specific lock.
+- Ctrl+C stops subsequent work; completed files remain. Workers may need to finish an active request up to its timeout.
+
+### Existing files and partial transfers
+
+A filename alone is not proof of completion. Reuse checks size, source identity, publisher checksum where available and/or the saved local SHA-256 receipt. Original legacy manifests are recognized where supported, with any new local hash baseline explicitly labelled **not publisher verification**. Conflicts are logged and preserved rather than overwritten.
+
+Research partials resume only when their saved source identity/validators and HTTP range match. Moon support retains its existing receipt/resume/CRC rules. TerraClimate is a generated subset response: an interrupted subset is safely restarted, not blindly appended. An old partial without sufficient identity evidence is retained for investigation, not silently trusted.
+
+Keep receipts, `.eda-part.json` / `.part.json` sidecars and manifests with the data. Do not copy only the `.part` file to another source/destination. Never disable TLS verification. If your environment uses a trusted custom CA, configure `REQUESTS_CA_BUNDLE` with that CA file.
+
+## Commands for specific work
+
+All examples below run from `darrel stuff\download_script`:
 
 ```cmd
-python -m pip install requests beautifulsoup4 numpy scipy
+REM New reference datasets only
+..\..\.venv\Scripts\python.exe download_environmental.py --scope references --download --workers 4
+
+REM Small bounded research selection only; does not redownload full core collections
+..\..\.venv\Scripts\python.exe download_environmental.py --datasets D13 D31 --files-per-dataset 1 --download --workers 2
+
+REM Full original temperature collection only
+..\..\.venv\Scripts\python.exe download_environmental.py --datasets lunar-temperature --download --workers 4
+
+REM Required Moon support only
+..\..\.venv\Scripts\python.exe download_environmental.py --scope moon-support --download --workers 4
+
+REM Moon support: reuse a previous exact selection if the catalogue is unavailable
+..\..\.venv\Scripts\python.exe download_environmental.py --scope moon-support --from-inventory latest --download --workers 4
+
+REM All selected data, using a previous Moon-support inventory
+..\..\.venv\Scripts\python.exe download_environmental.py --download --moon-support-inventory latest --workers 4
+
+REM Additional research P1 notebook input files (not substituted for primary pilots)
+..\..\.venv\Scripts\python.exe download_environmental.py --datasets D14 D16 D28 --selections p1_research_eda_support.json --download --workers 3
+
+REM Reuse an exact research/reference inventory without source rediscovery
+..\..\.venv\Scripts\python.exe download_environmental.py --scope research --from-inventory "..\data\manifests\eda_datasets\RUN_ID\inventory.json" --download --workers 4
 ```
 
-The source files and tests stay in this script folder; inventories and downloaded data go to the sibling `darrel stuff/data/` folder.
+Replace `RUN_ID` with a real folder printed by the script. A pinned inventory preserves exact URLs/paths/selections; it does not waive current size limits, checksums or receipt checks. The full core collection runner recreates its request plan and checks existing files; research `inventory.json` and Moon `run.json` have different schemas and are not interchangeable.
 
-## Start with a preview and inventory
+### Bounded research limits
 
-### Download all required datasets immediately (skip preview)
+Defaults: **2 primary groups per dataset, 512 MiB per file, 1,024 MiB per dataset and 8,192 MiB across research selections**, up to 12 listing pages per source. A group includes its companion labels. R01 is one ZIP group; R02 is one group containing all 22 small files. Existing files are verified, not blindly redownloaded; pending transfers must fit the chosen limits. Source selection/validation can still fail even when an item fits the byte budget.
 
-From `darrel stuff/download_script`, run the same command as before. It checks the four P1 entries, skips verified completed files and restores the missing Moon support without requiring a separate command:
+Use `--files-per-dataset`, `--max-file-mib`, `--max-dataset-mib`, `--max-total-mib` and `--pages-per-dataset` to change these explicit bounds. These limits **do not truncate the original full core collections** or cap SDEM extraction. Plan sufficient disk space: core datasets/archives can require many GB, with additional extraction space. Known-size transfer pools retain a 1 GiB free-space reserve; generated TerraClimate response sizes are not known in advance.
 
-```cmd
-..\..\.venv\Scripts\python.exe download_environmental.py --download
+### Login and exact product selections
+
+**D21 ChaSTE, D22 RAMBHA-LP, D23 ILSA and D24 DFSAR remain KIV/login_required** by default. The tool does not log in or bypass access controls. An optional `--cookies PATH` accepts an existing authorized Netscape cookie file; cookie contents are never written to manifests. Keep credentials out of Git.
+
+`--selections FILE.json` retains the existing override format: dataset IDs map to a `scope` and `groups` of explicit HTTPS science/label file objects. Optional fields are `filename`, `relative_path`, `size_bytes`, `md5` and `sha256`.
+
+```json
+{
+  "D15": {
+    "scope": "Example schema only: exact authorized calibrated product and label",
+    "groups": [[
+      {"url": "https://ARCHIVE_HOST/PRODUCT.img"},
+      {"url": "https://ARCHIVE_HOST/PRODUCT.xml", "metadata": true}
+    ]]
+  }
+}
 ```
 
-Downloads go to `darrel stuff/data/`. Source inventories, manifests and validation still run; only the separate preview step is skipped. The existing P1 collection is approximately **31.1 GB**. A source inventory checked on **6 November 2026** lists approximately **21.14 GB of additional SDEM/LOLA/support downloads**, plus further space for extracted archives. The live inventory prints the exact transfer size; extraction checks its own required space with a 1 GiB reserve. Verified existing files are not downloaded again. Do not use the old P1-only disk-space estimate for the full collection.
+The example URLs above are placeholders, not download sources. D15 retains migrated PDS discovery; D27 retains unstretched float32 TIFF checks; D26 retains detached-label validation. Known validation-policy corrections preserve compatible partial bytes only when source identity remains identical. No browse image is substituted for a required numeric science product.
 
-Support restoration downloads only these original dependencies:
+## Logs and resuming failures
 
-| Input | Selection / purpose | Source |
-| --- | --- | --- |
-| SDEM terrain and quality archives | Leibnitz Beta Plateau, Malapert Massif, deGerlache–Kocher Massif, Haworth, Faustini Rim A, deGerlache Rim 2 and Connecting Ridge Extension. These preserve the original footprints, terrain and image-support evidence. | [PGDA Product 104](https://pgda.gsfc.nasa.gov/products/104), pinned [Zenodo record 17954508](https://zenodo.org/records/17954508). |
-| LOLA context maps | Six exact `80S_40MPP_ADJ` products: elevation, effective resolution, elevation error, spot counts, slope and slope error. No point clouds, imagery or unrelated resolutions. | [PGDA Product 90](https://pgda.gsfc.nasa.gov/products/90). |
-| Illumination documentation | Ten small PDS labels and the source README, without redownloading illumination rasters or their IMG originals. | [NASA PDS illumination archive](https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/). |
-| Unit policy | Generates the JSON required by notebook 25 only after checking the labels' product IDs, units, descriptions and scale/offset values. Label URLs and SHA-256 evidence are retained; no guessed unit defaults. | The downloaded publisher labels. This JSON is supporting metadata, not another measurement dataset. |
+Under `darrel stuff/data/manifests/`:
 
-Archives are checked against Zenodo's published MD5 and extracted with path, size and CRC checks. Existing extracted files are skipped only if their size/CRC match. All archive contents stay within the original seven region folders, with source archives retained. A compatible existing unit policy is preserved; a conflicting one causes an explicit error.
+- `core/<collection>/<run>/debug.txt` and `errors.txt`: per-file core diagnostics. Climate request/results remain in their original `earth/.../manifests/*_run.json` locations for notebook compatibility.
+- `moon_support/<run>/run.json`, `debug.txt`, `errors.txt`: transfers, extraction, missing regions and unit-policy readiness.
+- `eda_datasets/<run>/inventory.json`, `download.json`, `debug.txt`, `errors.txt`: URLs, sizes, exclusions, transfer outcomes, source errors and gated entries.
+- `environmental_runner/<run>/errors.txt`: failed child scopes; later selected scopes still run.
 
-After restoration completes, run Moon preprocessing **05 → 06 → 13**, then EDA **25**. This supplies existing notebook prerequisites; it does **not** implement the new local-time/relationship TODO analyses.
+`errors.txt` also includes recoverable retry warnings. Check the final JSON statuses to distinguish an eventually successful retry from an unresolved file. Re-run the same command or use a pinned inventory: verified files are skipped and failed eligible files are retried. For manual downloads, use the **exact URL and destination in the inventory**, retain labels and verification metadata, and do not rename a `.part` file to claim success.
 
-### Optional preview and inventory
+Exit codes: **0** selected work completed/planned, **1** transfer/runtime failure, **2** unresolved research selection/access/byte-limit entries, **130** interrupted. Core failure does not suppress subsequent research work, and a nonzero code does not delete successful downloads.
 
-Inspect the exact commands offline, without network requests or filesystem writes:
+## Validation of the consolidation
 
-```powershell
-python download_environmental.py --dry-run
-```
+Offline tests cover selection preservation, source/receipt checks, safe extraction, partial/range recovery, login handling, concurrency, destination locks and exact retry limits. A real R02 sample transferred all 22 files (144,305 bytes) under `data/verification/unified_live_sample/`; labels, hashes and skip-on-rerun were checked. Battery source size was checked with HEAD; the ~200 MiB ZIP and full archives were not bulk-downloaded as a test.
 
-Create source inventories without downloading datasets, inspect their manifests and size estimates, then explicitly request transfers:
-
-```powershell
-python download_environmental.py
-python download_environmental.py --download
-```
-
-Inventory mode still contacts the source servers and writes manifests. Diviner's recorded table inputs alone total approximately **30.74 GB**. Restore existing data where practical; review inventories and disk space before requesting the full collection.
-
-For a smaller first inventory, select only the ten illumination products; inspect its manifest before adding `--download`:
-
-```powershell
-python download_environmental.py --datasets lunar-illumination
-```
-
-## Options
-
-| Flag | Default | Behavior |
-| --- | --- | --- |
-| `--datasets NAME [NAME ...]` | All four P1 entries **plus Moon support** when omitted | Restrict a run to selected P1 entries: `earth-climate`, `earth-climate-expansion`, `lunar-temperature`, `lunar-illumination`. Explicit selections do not add support unless `--restore-moon-support` is also supplied. Duplicates are rejected. |
-| `--restore-moon-support` | Included in the default full run | Optional shortcut to restore only Moon support, skipping the primary-data inventory. Can also add support to an explicit `--datasets` selection. |
-| `--output PATH` | `darrel stuff/data` | Override the data root; dataset-specific subfolders are retained. Relative overrides resolve from the terminal's current directory. Missing directories are created before child execution; existing directories are reused. |
-| `--download` | Off | Transfer selected files; otherwise inventory only. |
-| `--dry-run` | Off | Print commands without child execution, network requests or writes, even when combined with `--download`. |
-| `--timeout SECONDS` | `120` | Positive HTTP read timeout passed to each child. |
-| `--attempts N` | `3` | Positive transfer-attempt count; maps to the illumination child's `--retries`. |
-| `-h`, `--help` | — | Print help without contacting servers. |
-
-Years, variables, lunar collections and formats remain fixed. Support restoration selects the original seven development regions, not the unopened reserves. Without `--download`, restoration writes inventories only; without `--dry-run`, those inventories require network access.
-
-## Outputs and resuming
-
-Default paths, relative to the **repository root**:
-
-```text
-darrel stuff/data/earth/terraclimate/                                  Original three Earth sites
-darrel stuff/data/earth/environment_expansion/20261030/terraclimate/    Death Valley and Wadi Rum
-darrel stuff/data/moon/diviner/seasonal/                               Temperature tables and labels
-darrel stuff/data/moon/illumination_2016/                              GeoTIFFs and manifests
-darrel stuff/data/moon/sdem/archives/                                  Original seven ZIPs and receipts
-darrel stuff/data/moon/sdem/regions/                                   Extracted original region folders
-darrel stuff/data/moon/lola_product90/large_area_dem/                   Six selected maps and receipts
-darrel stuff/data/reference/environment-readiness-20261028/            Documented native_layer_units.json
-darrel stuff/data/manifests/moon_support/                              Timestamped restore inventories/status
-```
-
-The expansion's `20261030` folder preserves the existing source layout; it is not a new acquisition date. The children record actual timestamps. Expansion subsets use `region_01` = Death Valley and `region_02` = Wadi Rum.
-
-Each original downloader retains its manifest, receipt, validation and existing-file behavior. TerraClimate retries restart incomplete generated subsets; the lunar downloaders can resume partial transfers. A failed child stops subsequent jobs. Press Ctrl+C to interrupt, then rerun with the same options and output root. Do not run concurrent downloads into the same output folders.
-
-The unit-policy folder's `20261028` date preserves the path expected by the copied notebook; source labels and current restore manifests provide the evidence. These local inputs serve the copies under `darrel stuff/EDA`, not the original project's pinned data folders. No original project source folders are changed.
-
-TLS verification stays enabled. If a corporate/system certificate setup causes a certificate error, configure `REQUESTS_CA_BUNDLE` with a trusted CA bundle rather than disabling verification. A network/catalog failure is reported explicitly and leaves existing data intact.
-
-## Offline tests
-
-```powershell
-python -B -m unittest discover -s tests -v
-```
-
-The tests mock child execution and make no source-server requests or dataset transfers.
+See [EDA results and implementation recommendations](../EDA/EDA_Results.md) for how public reference data differs from mission/equipment inputs. This downloader does not perform EDA, assign equipment limits or generate transport/power simulations.

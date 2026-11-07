@@ -72,13 +72,13 @@ class EnvironmentalDownloadTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "not created"
             with patch.object(env.subprocess, "run") as run, redirect_stdout(io.StringIO()):
-                self.assertEqual(env.main(["--dry-run", "--download", "--output", str(output)]), 0)
+                self.assertEqual(env.core_main(["--dry-run", "--download", "--output", str(output)]), 0)
             run.assert_not_called()
             self.assertFalse(output.exists())
 
     def test_inventory_executes_selected_commands_without_shell_or_download(self):
         with patch.object(env.subprocess, "run") as run, redirect_stdout(io.StringIO()):
-            self.assertEqual(env.main(["--datasets", "lunar-temperature", "lunar-illumination"]), 0)
+            self.assertEqual(env.core_main(["--datasets", "lunar-temperature", "lunar-illumination"]), 0)
         self.assertEqual(run.call_count, 2)
         for call in run.call_args_list:
             self.assertEqual(call.kwargs, {"check": True})
@@ -87,17 +87,17 @@ class EnvironmentalDownloadTests(unittest.TestCase):
             destination = Path(call.args[0][call.args[0].index("--output") + 1])
             self.assertTrue(destination.is_relative_to(Path(env.__file__).resolve().parents[1] / "data"))
             self.assertEqual(Path(call.args[0][1]).parent,
-                             Path(env.__file__).resolve().parents[2] / "download scripts")
+                             Path(env.__file__).resolve().parent)
 
     def test_failed_child_stops_remaining_jobs_and_interrupt_is_reported(self):
         failure = subprocess.CalledProcessError(7, ["failed child"])
         with patch.object(env.subprocess, "run", side_effect=failure) as run:
             with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
-                self.assertEqual(env.main([]), 7)
+                self.assertEqual(env.core_main([]), 7)
             self.assertEqual(run.call_count, 1)
         with patch.object(env.subprocess, "run", side_effect=KeyboardInterrupt):
             with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
-                self.assertEqual(env.main([]), 130)
+                self.assertEqual(env.core_main([]), 130)
 
     def test_default_storage_is_the_darrel_stuff_data_directory(self):
         expected = Path(env.__file__).resolve().parents[1] / "data"
@@ -118,10 +118,10 @@ class EnvironmentalDownloadTests(unittest.TestCase):
 
             flags = ["--datasets", "lunar-illumination", "--output", str(output)]
             with patch.object(env.subprocess, "run", side_effect=child_run), redirect_stdout(io.StringIO()):
-                self.assertEqual(env.main(flags), 0)
+                self.assertEqual(env.core_main(flags), 0)
                 sentinel = output / "existing.txt"
                 sentinel.write_text("preserve", encoding="utf-8")
-                self.assertEqual(env.main(flags), 0)
+                self.assertEqual(env.core_main(flags), 0)
             self.assertEqual(sentinel.read_text(encoding="utf-8"), "preserve")
 
     def test_file_instead_of_data_directory_fails_before_children(self):
@@ -131,7 +131,7 @@ class EnvironmentalDownloadTests(unittest.TestCase):
             errors = io.StringIO()
             with patch.object(env.subprocess, "run") as run:
                 with redirect_stdout(io.StringIO()), redirect_stderr(errors):
-                    self.assertEqual(env.main(["--output", str(output)]), 1)
+                    self.assertEqual(env.core_main(["--output", str(output)]), 1)
             run.assert_not_called()
             self.assertIn("Unable to create data directory", errors.getvalue())
             self.assertEqual(output.read_text(encoding="utf-8"), "existing file")
@@ -146,7 +146,7 @@ class EnvironmentalDownloadTests(unittest.TestCase):
         for flags in (["--datasets", "worldcover"], ["--attempts", "0"], ["--datasets"]):
             with patch.object(env.subprocess, "run") as run, redirect_stderr(io.StringIO()):
                 with self.assertRaises(SystemExit):
-                    env.main(flags)
+                    env.core_main(flags)
             run.assert_not_called()
 
 

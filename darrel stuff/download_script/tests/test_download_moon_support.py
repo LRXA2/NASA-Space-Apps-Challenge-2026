@@ -22,7 +22,7 @@ def module(name, filename):
     return result
 
 
-support = module("moon_support", "download_moon_support.py")
+support = module("moon_support", "download_environmental.py")
 entrypoint = module("environmental_restore_entrypoint", "download_environmental.py")
 
 
@@ -49,27 +49,28 @@ class SupportTests(unittest.TestCase):
 
     def test_default_entrypoint_adds_support_and_explicit_p1_selection_stays_restricted(self):
         with patch.object(entrypoint.subprocess, "run") as run, redirect_stdout(io.StringIO()):
-            self.assertEqual(entrypoint.main(["--download", "--output", str(self.root)]), 0)
+            self.assertEqual(entrypoint.core_main(["--download", "--output", str(self.root)]), 0)
         self.assertEqual(run.call_count, 5)
-        self.assertEqual(Path(run.call_args_list[-1].args[0][1]).name, "download_moon_support.py")
+        self.assertEqual(Path(run.call_args_list[-1].args[0][1]).name, "download_environmental.py")
         for call in run.call_args_list:
             self.assertIn("--download", call.args[0])
             self.assertEqual(call.kwargs, {"check": True})
         with patch.object(entrypoint.subprocess, "run") as run, redirect_stdout(io.StringIO()):
-            self.assertEqual(entrypoint.main(["--datasets", "lunar-temperature", "--output", str(self.root)]), 0)
+            self.assertEqual(entrypoint.core_main(["--datasets", "lunar-temperature", "--output", str(self.root)]), 0)
         self.assertEqual(run.call_count, 1)
-        self.assertEqual(Path(run.call_args.args[0][1]).name, "download_diviner_south_polar.py")
+        self.assertEqual(Path(run.call_args.args[0][1]).name, "download_environmental.py")
+        self.assertIn("--internal-core", run.call_args.args[0])
 
     def test_support_only_and_dry_run_do_not_revisit_finished_primary_downloads(self):
         with patch.object(entrypoint.subprocess, "run") as run, redirect_stdout(io.StringIO()):
-            self.assertEqual(entrypoint.main(["--restore-moon-support", "--output", str(self.root)]), 0)
+            self.assertEqual(entrypoint.core_main(["--restore-moon-support", "--output", str(self.root)]), 0)
         self.assertEqual(run.call_count, 1)
         with patch.object(entrypoint.subprocess, "run") as run, redirect_stdout(io.StringIO()):
-            self.assertEqual(entrypoint.main(["--restore-moon-support", "--dry-run", "--download"]), 0)
+            self.assertEqual(entrypoint.core_main(["--restore-moon-support", "--dry-run", "--download"]), 0)
         run.assert_not_called()
         missing = self.root / "not created"
         with patch.object(support.requests, "Session") as session, redirect_stdout(io.StringIO()):
-            self.assertEqual(support.main(["--dry-run", "--output", str(missing)]), 0)
+            self.assertEqual(support.moon_support_main(["--dry-run", "--output", str(missing)]), 0)
         session.assert_not_called()
         self.assertFalse(missing.exists())
 
