@@ -1,12 +1,53 @@
 # Environmental EDA work plan
 
-**Purpose:** one place for notebook scope, analysis questions and remaining work. Measured findings/runs belong in [EDA_Results.md](EDA_Results.md); algorithm integration belongs in [algorithm proposal](../Brief_Overview.md#algorithm-proposal); impact ranking and source/field definitions belong in [Research_Notes.md](../research/Research_Notes.md) and its CSV.
+## Required Stage 3 — first priority
 
-**Goal:** support Moon base-location comparison through temperature, illumination, Earth visibility and terrain evidence, retaining coverage and uncertainty. Local, regional and reference evidence are not interchangeable; exact CNN-patch matching is optional.
+**Controlling objective:** [outline Stage 3](../../outline.md#stage-3--environmental-and-equipment-suitability-engine), not just collecting environmental charts or adding CNN features. Required Stage 3 input/adequacy/margin gaps come first; original research **P1 → P2 → P3** tags remain unchanged for supporting additions. [Chosen/reference/deferred/rejected table](../purposal.md#3-what-to-recommend).
+
+| Notebook | Required Stage 3 questions / executed work | Dataset / output |
+| --- | --- | --- |
+| [Dar_029](Moon/Stage3_Requirements/Dar_029_stage3_golden_dataset_audit.ipynb) | G01–G04: five input types/process coverage; file presence including core; all P1 status; project inputs versus downloads. | All 53 research entries; latest/completed selections and Moon support; `golden_input_coverage.csv`, `p1_dataset_audit.csv`, file audit and eleven P1 M-input contracts. |
+| [Dar_030](Moon/Stage3_Requirements/Dar_030_stage3_time_season_terrain.ipynb) | G05–G10: local-hour×Ls coverage; matched-hour seasonal contrasts; held-out-Ls cyclic model versus baseline; terrain/control/phase sign support; monthly dated geometry; censored below-horizon sample spans. | Accepted Dar_001/010/025 outputs and D19 kernels; bounded new SPICE calculation. No phase-bin-to-calendar conversion, continuous darkness or mission forecast claim. |
+| [Dar_031](Moon/Stage3_Requirements/Dar_031_stage3_crew_equipment_margins.ipynb) | G11–G15: published crew-day scaling; human-system quantity applicability; battery protocols; shielding/soil response domains; actual margin readiness. | S01 curated BVAD Rev2 table, S02 NASA-STD-3001 V2 F, R01/R02 and D31 accepted references. Illustrative axes, not a selected crew/mission. |
+| [Dar_032](Moon/Stage3_Requirements/Dar_032_native_terrain_illumination_support.ipynb) | Native units, source/crop and terrain-neighborhood policy checks; static support cohorts. | Seven regions, 28 map comparisons and 1,792 native sample positions. Not dated histories. |
+| [Existing notebook 13](Moon/Terrain_And_Soil/13_build_lunar_terrain_views.ipynb) | Strict versus full-source terrain views with real-source halo/boundary masks. | Seven regions; preserves strict layers. Context is not independent image support or soil strength. |
+| [Dar_028 pipeline experiment](../Pipeline_Proto/Dar_028_environment_pipeline.ipynb) | Verified evidence → requirements → checks/margins → uncertainty → gate-first preferences. | Consumes the required Stage 3 exports and candidate profiles. Actual operational results are separate from proxy diagnostics. |
+
+### Required Stage 3 backlog — do not replace with optional features
+
+1. Supply a documented mission period/activities, crew, selected equipment and a complete applicable requirements inventory; blank input schema is in `Pipeline_Proto/mission_profile_template.json`.
+2. Produce/select applicable terrain-aware generation/contact intervals, component thermal response, local mechanics/loads and radiation/other protection evidence. Mean maps/reference experiments do not fill these fields.
+3. Select a dated, quality-qualified **polar** D20 subset for the actual period; current pilot has no usable polar history. D21–D24 remain KIV pending access.
+4. Validate spatial support and temporal model resolution, then evaluate configured margins/preferences. Existing 21 components are diagnostic examples, not validated base/CNN footprints.
+5. Continue remaining original research P1 tasks; P2/P3 require a stated added contribution. Missing M-data has schema/readiness EDA only—no fabricated measurement results.
+
+The older question register below remains the historical detailed trail; statements about an unimplemented handoff describe those original runs. Current integration status is in the required Stage 3 proposal/pipeline, not inferred from old captions.
+
+**Purpose:** one place for notebook scope, analysis questions and remaining work. Measured findings/runs belong in [EDA_Results.md](EDA_Results.md); algorithm integration belongs in [algorithm proposal](../purposal.md); research priorities and source/field definitions belong in [Research_Notes.md](../research/Research_Notes.md) and its CSV.
+
+**Goal:** provide the applicable environmental and equipment evidence needed by Stage 3. Local, regional and reference evidence are not interchangeable; exact CNN-patch matching is optional, but validated support is required for operational use.
+
+## Original notebook reuse and datasets — re-check, 8 November 2026
+
+Reviewed **all 36 original notebooks**, shared helpers and original download scripts. The [per-notebook inventory](../data/verification/source_port_review/original_notebook_dataset_inventory.csv) records source hashes, datasets, derived prerequisites and local readiness. This is a repository snapshot, not a live archive-availability check.
+
+| Original notebooks / useful work | Datasets / prerequisites | Local reuse and remaining work |
+| --- | --- | --- |
+| 01, 05, 07, 10–13: lunar preparation, coverage, units, shadow/support and terrain views | Seven SDEM regions (`GLDELEV`/`GLDMASK`), LOLA terrain/quality and 2016 solar/Earth visibility, PSR and sky-view maps with labels. Local `data/moon/` and accepted local 05 outputs. | Existing local 05/13 and new [Dar_032](Moon/Stage3_Requirements/Dar_032_native_terrain_illumination_support.ipynb). Dar_032 and **existing local 13** executed across seven regions; no duplicate 13. Root 12's full maximum-lit orthomosaic gallery was not ported. |
+| 06, 11, 25: thermal/native-support EDA | Diviner south-polar seasonal PCP: 144 TAB products + 144 XML labels; processed native thermal/terrain/map crops. | Existing local 06/25 and Dar_001/002/025/030/032 reuse relevant methods. PCP bins are **not calendar-dated histories**. |
+| 03, 26, 27: Earth climate | TerraClimate v1.1, `tmin/tmax/ppt/ws/srad`, 2015–2024, five Earth areas: **250 local NetCDF subsets** and manifests. | Local 03/26 and climate-only 27/Dar_003 already execute. **Full original 27 also needs OSM outputs**; the local port is not the entire original analysis. |
+| 02, 04, 09, 19, 21, 26: Earth terrain/support preparation | **FABDEM v1.2** DEM archives with neighboring/halo coverage; **ESA WorldCover v200/2021** maps; **Geofabrik OSM `.osm.pbf`** extracts with selection/licensing receipts. | No Earth TIFF/PBF science inputs found locally. Sources/options: original [FABDEM](../../download%20scripts/download_fabdem.py), [WorldCover](../../download%20scripts/download_worldcover.py), [OSM](../../download%20scripts/download_osm.py) downloaders. Acquire bounded five-area selections and rebuild processed outputs before porting. |
+| 08, 14–18, 20, 22–23: diagnostics, patches and candidate comparisons | Approved lunar **and Earth** terrain/support runs, patch summaries, configurations and screening selections. | Reuse matched-support, coverage, gate-first and sensitivity methods. Existing Darrel EDA covers relevant Moon questions; full mixed-domain replay still needs Earth inputs/artifacts. Old run IDs are not datasets. |
+| 24: independent candidate source checks | Selected **NAIP 2021/2023**, **USGS 3DEP** elevations and **Landsat 8 Collection 2 Level 2** reflectance; matched item/geometry/selection records. | Optional independent-validation route; these data/receipts are not local. Verify matched acquisitions before copying as runnable. |
+| 28–36: terrain CNN, validation, ranking and orientation | Approved Earth/Moon patch catalog/tensor shards, train-only scalers/splits, trained `.pt` checkpoints, embeddings and retrieval/orientation caches. | Retain original architecture/contracts; do not fabricate weights or substitute climate for terrain. Lunar view outputs now exist; Earth preparation and trained artifacts are still missing locally. |
+
+**No dated terrain-aware illumination/contact history generator or saved mission-window history was found in the reviewed sources.** Root 05/11/12/25 use static spatial products. Root 33 reviews Earth analog relevance; root 34 rotates patch images, not Moon/time geometry. D19 geometry is reusable, but terrain horizons/occlusion, observer/window, sampling validation and communications link/station assumptions remain necessary.
+
+Do not run the originals with unchanged `ROOT/data` defaults. Local ports use `darrel stuff/data` and rebuild dependencies explicitly; root `data/` stays absent. Use an explicit local `--output` for original downloaders. No new source downloads or CNN retraining were performed in this review.
 
 ## Darrel notebook naming and current P1 implementation
 
-New notebooks use `Dar_0xx_descriptive_name.ipynb`, numbered across Earth/Moon; legacy names stay unchanged. Categories with at least three notebooks use `EDA/<planet>/<category>/`; smaller groups remain at planet level. See the [folder guide](../Brief_Overview.md#notebook-organisation). [Naming rule](AGENTS.md). Dar_001–022 have executed on their documented scopes; **65 targeted EDA tests pass**. Completion of EDA is not completion of operational requirements or the selection engine.
+New notebooks use `Dar_0xx_descriptive_name.ipynb`, numbered across Earth/Moon; legacy names stay unchanged. Categories with at least three notebooks use `EDA/<planet>/<category>/`; smaller groups remain at planet level. See the [folder guide](../Brief_Overview.md#notebook-organisation). [Naming rule](AGENTS.md). Dar_001–027 and required Stage 3 Dar_029–032 have executed on their documented scopes; targeted checks are recorded in the [latest reuse verification](../data/verification/source_port_review/final_verification.json). Dar_028 is the separate pipeline experiment. Completion of EDA is not completion of operational requirements or the selection engine.
 
 | Notebook | Study | Data / scope |
 | --- | --- | --- |
@@ -32,6 +73,11 @@ New notebooks use `Dar_0xx_descriptive_name.ipynb`, numbered across Earth/Moon; 
 | [Dar_020](Moon/Site_Assessment/Dar_020_candidate_environment_profiles.ipynb) | Candidate profiles | Illustrative component-cell static/thermal profiles and point-association support. |
 | [Dar_021](Moon/Site_Assessment/Dar_021_environment_preference_sensitivity.ipynb) | Preference sensitivity | Separate pools; Pareto, weights, normalization, rank stability and redundancy. |
 | [Dar_022](Moon/Site_Assessment/Dar_022_environment_hard_soft_rule_influence.ipynb) | Hard/soft diagnostics | Proxy gate availability, filtering order, cohorts and unresolved readiness. |
+| [Dar_023](Moon/Terrain_And_Soil/Dar_023_terrain_environment_source_sensitivity.ipynb) | Terrain-source sensitivity | Completed 30 m image-supported SDEM versus 40 m LOLA at the same 60 m analysis centres; support, slope cuts and illumination/roughness comparisons. |
+| [Dar_024](Moon/Site_Assessment/Dar_024_nominal_thermal_bin_support.ipynb) | Nominal thermal spatial support | Declared square/lattice overlap, overlap-conditioned phase cohorts and exact zero-cut identity control against Dar_020. |
+| [Dar_025](Moon/Thermal/Dar_025_conditional_terrain_temperature.ipynb) | Conditional terrain/temperature | Same-region/product rank-residual associations controlling solar visibility and an explicit cyclic local-time basis. |
+| [Dar_026](Moon/Dar_026_shadowcam_manual_environment.ipynb) | Manual ShadowCam | D27 south-polar scene; exact special-pixel decoding, actual image support and within-region context. |
+| [Dar_027](Moon/Dar_027_minirf_cpr_environment.ipynb) | Manual Mini-RF CPR | D30 global numeric mosaic; label/byte validation, signed/nonnegative cohorts and seven-region terrain/shadow context. |
 
 ## All research P1 — implemented EDA and remaining scope
 
@@ -41,7 +87,7 @@ R01 battery and R02 soil are additional reference experiments. Detailed findings
 
 ## EDA question register
 
-The **32 related questions Q01–Q32** below extend Dar_017/018 and have corresponding comparisons/exports or explicit readiness findings. They are not independent experiments. Use the existing question → declared controls → comparison → findings format; proposed algorithm consumption is documented only in [the proposal](../Brief_Overview.md#10-how-the-eda-outputs-will-be-used-in-the-algorithm).
+The **62 related questions Q01–Q62** below extend the core EDA and have corresponding comparisons/exports or explicit readiness findings. They are not independent experiments. Use the existing question → declared controls → comparison → findings format; proposed algorithm consumption is documented only in [the proposal](../purposal.md#3-what-to-recommend).
 
 ### Dar_019 — spatial connectivity
 
@@ -107,9 +153,53 @@ These are **diagnostic preference scores only**. Actual mandatory readiness rema
 | Q31 | How does the study follow the existing notebook decision flow? | `eda_to_algorithm_lineage.csv`; explicit mapping to notebooks 31–32 and Dar_017/018, not a claim of a fresh CNN-integrated run. |
 | Q32 | Which methods are now reusable, and what remains proposed? | `rule_handoff_contract.json` and tested helper functions; no adopted requirements/weights, engine integration or best-base conclusion. |
 
+### Dar_023–025 — terrain/source and thermal-support follow-up
+
+**Executed 7 November 2026.** Inputs are existing completed runs, including the newly available 30 m image-supported terrain products—not fresh extraction or downloads. See [measured findings](EDA_Results.md#12-terrain-source-thermal-support-and-conditional-relationship-follow-up) and [verification](../data/verification/terrain_followup_final/verification.json).
+
+| ID | Question / comparison | Evidence / output |
+| --- | --- | --- |
+| Q33 | How much regional context has finite image-supported SDEM terrain? | Dar_023 `sdem_sampling_coverage.csv`; explicit image-supported gaps. |
+| Q34 | How do paired 30 m SDEM and 40 m LOLA slopes/elevations differ? | `terrain_source_pair_statistics.csv`; source/processing differences, not accuracy estimates. |
+| Q35 | Do diagnostic slope classifications change with terrain source? | `slope_source_classification.csv`; finite-pair partitions and unknown support. |
+| Q36 | Does the joint solar/Earth-visibility subset change the comparison? | Same classification table, separate all-pair and visibility-conditioned contexts. |
+| Q37 | What SDEM support and source differences exist in the 21 component examples? | `candidate_sdem_support.csv` and selected case-cell exports; no operational failure labels. |
+| Q38 | How does image-supported local elevation SD vary by solar-visibility band? | `solar_band_sdem_roughness.csv`; counts and spatial quantiles, no roughness limit. |
+| Q39 | What nominal bin size is explicitly documented in the downloaded Diviner label? | Dar_024 pinned PDS description: binned at 240 m resolution; no inference from the filename alone. |
+| Q40 | How much of each declared nominal square overlaps its component? | `center_nominal_box_overlap.csv`; exact intersections conditional on the declared square/lattice model. |
+| Q41 | Does that overlap change under 120/240/480 m square sizes? | Same centre/component comparisons; alternative sizes are diagnostics, not instrument FOVs. |
+| Q42 | Which component examples lack fully overlapping nominal 240 m squares? | `candidate_nominal_overlap_summary.csv`; retain examples with no associated centres. |
+| Q43 | How do phase support and summaries change with overlap-cohort cuts? | `overlap_conditioned_thermal_profiles.csv` and `overlap_cohort_support.csv`; no temperature unmixing or adopted cutoff. |
+| Q44 | Does the zero-overlap-cut control reproduce Dar_020? | All 714 original candidate/product/cohort rows match in counts and temperature quantiles. |
+| Q45 | How much native thermal-centre support survives the SDEM join? | Dar_025 `thermal_center_sdem_support.csv`; source gaps remain explicit. |
+| Q46 | Do terrain/temperature associations remain after conditioning on solar visibility? | `within_product_conditional_rank_relationships.csv`; same-row raw versus rank-residual association. |
+| Q47 | What changes with an additional cyclic local-time control basis? | Separate solar-rank and solar-rank plus unranked sine/cosine design; no chronological forecast. |
+| Q48 | How do available, positive-spot and fixed-common cohorts compare? | `supported_phase_relationship_summary.csv`; different location support, not physical change. |
+| Q49 | Which fits are insufficient, constant, rank-deficient or without residual variation? | `conditional_fit_status_counts.csv`; undefined associations stay NaN. |
+| Q50 | Are associations consistent across products and regions? | Per-product coefficients/counts and phase summaries; no independent-trial, causal or universal-weight claim. |
+
+### Dar_026–027 — manually supplied ShadowCam and Mini-RF
+
+[Executed findings](EDA_Results.md#13-manual-shadowcam-and-mini-rf-incorporation) and [verification](../data/verification/manual_raster_final/verification.json) cover the registered manual selections, not the full archives. Original Dar_008's northern pilot stays unchanged.
+
+| ID | Question / comparison | Evidence / output |
+| --- | --- | --- |
+| Q51 | Do the ShadowCam label/type/CRS/scale and TIFF agree? | Dar_026 metadata; native variant-B projection retained. |
+| Q52 | Which regional comparison centres fall inside the image grid and have ordinary pixels? | `regional_source_support.csv`, `centre_pixel_status_counts.csv`; rectangle overlap is not valid image coverage. |
+| Q53 | What NULL/saturation classes occur in a declared native-patch sample? | `native_patch_sample.csv`, `sample_pixel_status_counts.csv`; exact ISIS bits, not whole-image statistics. |
+| Q54 | Is radiance associated with terrain/visibility within supported regions? | `within_region_relationships.csv`; distinct source pixels, descriptive only. |
+| Q55 | How do parent-shadow cohorts differ? | `parent_shadow_context_distributions.csv`; centre-associated mask, not a source-pixel shadow map. |
+| Q56 | What coverage/geometry limits prevent broad site claims? | Findings and actual support; unknown/empty groups retained. |
+| Q57 | Do Mini-RF PDS3/PDS4 dimensions and binary bytes agree? | Dar_027 metadata and byte/scale/origin checks. |
+| Q58 | How are special pixels and ordinary negative CPR separated? | `source_at_environment_centres.csv.gz`; negative values retained but excluded from the declared nonnegative cohort. |
+| Q59 | Which regions have nonnegative CPR at the existing centres? | `regional_source_support.csv`; regional centre counts, not area coverage. |
+| Q60 | How do CPR distributions vary by region and parent-shadow context? | Regional and parent-mask distributions with counts and undefined groups. |
+| Q61 | Does CPR consistently track terrain/visibility? | Per-region correlations; mixed slope-association signs, no universal coefficient. |
+| Q62 | Which mosaic/scale/geometry limitations remain? | Findings, official user guide and special-constant mismatch; no ice or operational score. |
+
 ## Retrievable dataset study scope
 
-The **36 external dataset/geometry entries** below preserve the priority order of the earlier plan. Source URLs and field evidence are maintained in [environmental_data.csv](../research/environmental_data.csv), not copied into another acquisition register. Tier ordering reflects impact, not download completion. CSV-recorded status is distinct from local EDA; access-gated releases remain KIV.
+The **36 external dataset/geometry entries** below use the impact ordering from the research report. Source URLs and field evidence are maintained in [environmental_data.csv](../research/environmental_data.csv), not copied into another acquisition register. Tier ordering reflects impact, not download completion. CSV-recorded status is distinct from local EDA; access-gated releases remain KIV.
 
 Unsupplied project records, unselected LSDA studies, unverified PACE numeric access and the non-statistical planetary baseline are excluded from this retrievable-data plan, not deleted from the overall research report. Named fields require the source label/calibration and supported spatial/time context. These data do not automatically provide equipment response or mission limits.
 
@@ -125,13 +215,13 @@ Unsupplied project records, unselected LSDA studies, unverified PACE numeric acc
 | 1 | **D31 — REDMoon radiation shielding and mission-scenario study tables** | Local EDA: [Dar_005](Moon/Dar_005_research_radiation.ipynb) - bounded EDA. Remaining: Published scenarios; project transport/approved limits still required. | Modeled scenario/sensitivity EDA: published dose profiles, shielding and mission schedules. |
 | 1 | **D03 — LOLA mean Earth-visibility rasters** | Dar_002/012/018–020 executed; static Earth visibility, not RF links or outage histories. | Spatial/joint-coverage EDA: Earth visibility versus location, thermal/solar cohorts and terrain support. |
 | 1 | **D10 — LADEE LDEX calibrated dust-impact data** | CSV status: Not started. Continue: Select calibrated or derived products explicitly; compare occurrence across supported orbital/time bins. | Event/geometry EDA: detector impacts, calibrated dust parameters, time and observing geometry. |
-| 1 | **D05 — South-polar SDEM terrain and quality layers** | Dar_006 bounded SDEM support; Dar_019 uses original region rectangles, not full image-supported terrain views. | Spatial/scale/support EDA: elevation, slope/roughness, image/solar-bin coverage and best-input resolution. |
-| 1 | **D06 — LOLA regional terrain uncertainty and effective-resolution layers** | Dar_002/006/013/019/020 selected-map EDA; unfinished slope-error raster remains excluded. | Quality/uncertainty EDA: height/slope error, effective resolution, spot count and native terrain values. |
+| 1 | **D05 — South-polar SDEM terrain and quality layers** | Dar_006 bounded support; Dar_023/025 reuse completed 30 m image-supported SDEM products. Dar_019's analysis lattice remains distinct from the original full-context/image-supported CNN views. | Spatial/scale/support EDA: elevation, slope/roughness, image/solar-bin coverage and best-input resolution. |
+| 1 | **D06 — LOLA regional terrain uncertainty and effective-resolution layers** | Dar_002/006/013/019/020/023 selected-map EDA; the previously excluded slope-error layer is not used. Audit support before adding it. | Quality/uncertainty EDA: height/slope error, effective resolution, spot count and native terrain values. |
 | 2 | **D13 — Apollo expanded seismic-event catalog** | Local EDA: [Dar_007](Moon/Dar_007_research_seismic.ipynb) - bounded EDA. Remaining: Two distinct catalogs; no polar recurrence estimate. | Event-catalog EDA: event class, time, available location and uncertainty. |
 | 2 | **D14 — Apollo Passive Seismic Experiment waveforms** | Local EDA: [Dar_007](Moon/Dar_007_research_seismic.ipynb) - partial scope. Remaining: Actual MHZ plus ATT; instrument response and event windows still missing. | Waveform/spectral EDA: station/channel records, event duration, noise and response. |
 | 2 | **D23 — Chandrayaan-3 ILSA surface vibration observations** | Local EDA: [Dar_011](Moon/Environmental_Context/Dar_011_research_p1_coverage_gaps.ipynb) - login required. Remaining: Authorised ILSA release, response, timing and disturbance/activity metadata needed. | Waveform/transient EDA: local acceleration, spectra, noise and activity timing. |
 | 2 | **D15 — LROC NAC calibrated imagery** | Local EDA: [Dar_008](Moon/Dar_008_research_imagery_change.ipynb) - partial scope. Remaining: CDR pixel/quality EDA; calibrated map-projected site overlap unestablished. | Image/coverage EDA: calibrated brightness, footprints, geometry and quality. |
-| 2 | **D27 — KPLO ShadowCam calibrated 32-bit radiance map COGs** | Local EDA: [Dar_008](Moon/Dar_008_research_imagery_change.ipynb) - partial scope. Remaining: North-polar pilot; physical unit and south-polar co-registration unresolved. | Shadow-region image EDA: calibrated radiance COGs, texture and PSR/terrain overlap. |
+| 2 | **D27 — KPLO ShadowCam calibrated 32-bit radiance map COGs** | Dar_008's original northern pilot remains separate. [Dar_026](Moon/Dar_026_shadowcam_manual_environment.ipynb) executes the manual southern scene: ordinary values at 1,455 existing centres, deGerlache Rim 2 only. Physical co-registration remains unvalidated. | Image/support and within-region EDA; exact special-pixel categories, native patches, radiance, source row/column and terrain/visibility context. |
 | 2 | **D33 — LROC new-crater shapefile and before/after image identifiers** | Local EDA: [Dar_008](Moon/Dar_008_research_imagery_change.ipynb) - partial scope. Remaining: Crater catalog EDA; image-time brackets and search-effort normalization missing. | Event/spatial EDA: crater location/diameter and before/after image IDs. |
 | 2 | **D16 — LCROSS calibrated near-IR and visible spectra** | Local EDA: [Dar_009](Moon/Dar_009_research_lcross_spectra.ipynb) - partial scope. Remaining: Calibrated pre-impact spectra only; no post-impact/species fit. | Spectral/event EDA: calibrated near-IR/visible spectra, time, saturation and geometry. |
 | 2 | **D18 — NASA OSDR OSD-82: microbial monitoring in ISS Kibo** | CSV status: Not started. Continue: Apply sequence-processing controls; compare supported microbial community patterns. | Compositional/community EDA: 16S sequences and sample location/time metadata. |
@@ -147,7 +237,7 @@ Unsupplied project records, unselected LSDA studies, unverified PACE numeric acc
 | 3 | **D36 — Diviner Level-3 rock-abundance and soil-temperature maps** | CSV status: Not started. Continue: Check polar coverage and fit uncertainty; compare supported terrain/imagery context. | Model-retrieval/relationship EDA: fitted rock fraction, soil temperature and fit RMS. |
 | 3 | **D37 — USGS Unified Geologic Map of the Moon GIS v2** | CSV status: Not started. Continue: Join regional summaries; retain coarse map scale and uncertain boundaries. | GIS/spatial-group EDA: mapped geological units, contacts and linework. |
 | 3 | **D24 — Chandrayaan-2 DFSAR L/S-band polarimetric radar products** | Access: PRADAN registration/login required; not retrieved here. CSV status: Not started. Continue: Select science modes/products; compare geometry, terrain and PSR context. | Radar/polarimetric EDA: calibrated DFSAR backscatter and documented polarimetric measures. |
-| 3 | **D30 — LRO Mini-RF map-projected calibrated radar and global mosaics** | CSV status: Not started. Continue: Review numeric products and geometry; cross-check anomalies, not browse-image brightness. | Radar/mosaic EDA: calibrated Mini-RF map products and backscatter. |
+| 3 | **D30 — LRO Mini-RF map-projected calibrated radar and global mosaics** | [Dar_027](Moon/Dar_027_minirf_cpr_environment.ipynb) executes the manual global CPR mosaic: 52,222 nonnegative paired centres across seven regions. Ordinary negative values and missing/saturation classes remain separate. | Dimensionless CPR distribution and terrain/parent-shadow relationships; native angular grid, mixed geometry and quality caveats retained. |
 | 3 | **D34 — Chandrayaan-1 Moon Mineralogy Mapper (M3) spectral data** | CSV status: Not started. Continue: Select processing level; check thermal/photometric effects before contextual joins. | Hyperspectral/coverage EDA: calibrated spectra, indices and footprints. |
 | 3 | **D12 — Lunar Prospector calibrated magnetometer data** | CSV status: Not started. Continue: Handle coordinates and altitude before spatial comparisons or surface inference. | Field/position/altitude EDA: calibrated magnetic components and geometry. |
 | 3 | **D35 — LADEE NMS calibrated and derived exosphere observations** | CSV status: Not started. Continue: Select documented species/products; compare supported geometry/time bins. | Species/time/altitude EDA: calibrated or derived neutral-gas abundance. |
@@ -160,16 +250,23 @@ Unsupplied project records, unselected LSDA studies, unverified PACE numeric acc
 - [x] Dar_017/018: regional profiles, matched-product/cohort comparisons and joint-condition evidence.
 - [x] Dar_019/020: connected diagnostic zones and illustrative candidate profiles; nominal projected extent and center-only thermal association are not validated engineering footprints.
 - [x] Dar_021/022: counterfactual preference/gate sensitivity, missing/no-match handling and filtering-order comparisons; no operational policy adopted.
+- [x] Dar_023: terrain-source and image-support sensitivity using the completed 30 m SDEM products; neither terrain source is treated as ground truth.
+- [x] Dar_024: nominal-square spatial-support diagnostics and overlap-cohort controls; not actual radiometer-FOV containment or physical co-registration.
+- [x] Dar_025: solar/local-time-conditioned rank-residual relationships, with matched rows, cohorts and explicit undefined-fit handling.
+
+- [x] Dar_026/027: manually supplied D27/D30 validated and analysed in place; original source bytes retained, no full raster loaded into memory.
 
 ### Remaining work
 
 - [ ] Validate physical co-registration and the spatial support required by any actual footprint/layout criterion; exact CNN association is optional.
 - [ ] Generate dated terrain-aware illumination/contact histories for an explicitly specified scenario before endurance or continuity checks.
-- [ ] Resolve documented product-quality/calibration/coverage holds and the unfinished slope-error support where needed; preserve absent evidence.
+- [ ] Resolve remaining product-quality/calibration/coverage holds and audit previously excluded slope-error support before using it; preserve absent evidence. Dar_023–025 do not use that error layer.
 - [ ] Obtain authorised access for gated datasets when available; do not substitute unrelated missions as equivalent observations.
-- [ ] Supply applicable mission/equipment/layout requirements and justified preferences before operational screening/ranking. Implementation details and applicability rules belong in [the proposal](../Brief_Overview.md#algorithm-proposal), not another EDA plan.
+- [ ] Supply applicable mission/equipment/layout requirements and justified preferences before operational screening/ranking. Implementation details and applicability rules belong in [the proposal](../purposal.md), not another EDA plan.
 
 ## Sources and reproducibility
+
+- Manual D27/D30 selections and local-only SHA-256 baselines are pinned in [this inventory](../data/manifests/eda_datasets/20261107T182412585915Z/inventory.json). The supplied files remain at the data root; the XML saved as `.xml.txt` is parsed in place. No publisher-checksum, new-download or physical-registration claim is made. Reusable readers: [manual_raster_eda.py](manual_raster_eda.py).
 
 - Original bounded research selections are pinned in `data/manifests/eda_datasets/20261106T053410890901Z/inventory.json`; raw pilots are under `data/moon/eda_pilots/Dxx/<source-hash>/`. Notebook readers check selected paths, source URLs, sizes and download-receipt hashes. Original raw files are unchanged.
 - Eight small, necessary supplements were retrieved under **`data/moon/eda_support/`**: an actual MHZ channel/label and the PSE missing-value documentation, the NSP1 wavelength mapping/label, and Apollo depth/label/bitmask documentation. Exact URLs and sizes are recorded in `data/verification/p1_research_support_inventory.json` and the reusable [support selection](../download_script/p1_research_eda_support.json). Their total is **10,001,995 bytes**; the primary pilots were not replaced. TLS certificate verification remained enabled.
@@ -189,8 +286,6 @@ To restore **only the eight supplements**, from `darrel stuff/download_script` (
 
 This is an explicit supplement selection, not a change to the default downloader scope. Use a trusted `REQUESTS_CA_BUNDLE` if required by the local TLS configuration; do not disable certificate checks.
 
-**Next research work:** resolve the documented product/quality/footprint/response holds before extending the affected comparisons. Obtain authorised D21/D23 releases and the missing mission/equipment records when available. Keep those requirements Unknown rather than substituting other missions or published study limits.
-
 ## Notebook implementation references
 
 | Notebook | Role / changes |
@@ -201,6 +296,6 @@ This is an explicit supplement selection, not a change to the default downloader
 | [Moon 25](Moon/Environmental_Context/25_environment_native_support_eda.ipynb) | Unchanged reference for native illumination decoding, coverage/phase analyses and containing-pixel joins. The requested new analyses now live in Dar_001/002 rather than modifying this reference notebook. |
 | [Earth 03](Earth/Climate/03_earth_climate.ipynb), [26](Earth/Climate/26_earth_environment_expansion.ipynb), [27](Earth/Climate/27_five_site_environment_eda.ipynb) | Existing climate preparation and five-site EDA, relevant only to Earth training-site questions. |
 
-The **legacy reference route** is **05 → 06 → 13 → 25**, after its required inputs are verified, when recreating the original terrain views/native-support analyses. It remains separate from the new Dar_001–011 route and is not a prerequisite for the new raw-input research notebooks. Select the correct notebook kernel; base dependencies are in [requirements-processing.txt](../../notebooks/requirements-processing.txt), with the research additions listed above. Neither route by itself completes every unresolved scientific or mission/equipment requirement.
+**Dependencies:** recreating the original terrain-view/native-support route requires verified inputs for **05 → 06 → 13 → 25**. The completed local 05 run is reused by Dar_023/025; it is not a completed 13 terrain-view run. Dar raw-input notebooks do not require replaying that entire route. Select the project kernel; base dependencies are in [requirements-processing.txt](../../notebooks/requirements-processing.txt), with research additions above.
 
 Use completed local runs and their provenance; retain source labels, documented units and quality masks. Write generated outputs under `darrel stuff/data/`, in each notebook's isolated run directory. Missing inputs should fail clearly, not trigger fabricated data or silent substitutions.

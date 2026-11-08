@@ -4,6 +4,14 @@ Default: inventory only. --download transfers; --dry-run is offline and writes n
 All data/manifests default to darrel stuff/data. Root download scripts are reused read-only.
 Threaded per-file transfers, checked existing files, safe partials, bounded retries and logs.
 See Download_Dataset_Instructions.md for scopes, exact selections and resume commands.
+
+Targeted Diviner RDR (ODE/GDS), instead of the legacy D20 archive pilot:
+  --diviner-ode --diviner-bbox WEST SOUTH EAST NORTH
+  --diviner-start 2020-11-01 --diviner-stop 2020-11-08 --download
+Dates/area are explicit research selections, not a mission profile. Default channels
+are 7/8/9, all three quality flags default to zero, and count/byte caps apply.
+--diviner-quality-max 0 12 0 explicitly includes definitive but unreprocessed
+geometry for quality-aware EDA; it does not certify geometry or equipment suitability.
 """
 from __future__ import annotations
 
@@ -68,6 +76,25 @@ ORIGINAL_SCRIPTS = Path(__file__).resolve().parents[2] / "download scripts"
 
 
 DEFAULT_OUTPUT = Path(__file__).resolve().parents[1] / "data"
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from data_maintenance import atomic_text, cleanup_completed_transfer_state, write_error_log, resolve_data_path
+
+
+def refresh_error_log(output):
+    """Keep a human-readable current-gap index without changing transfer outcomes."""
+    try:
+        path = write_error_log(output)
+        print("Missing/unresolved dataset report:", path, flush=True)
+    except (OSError, ValueError) as error:
+        print(f"Could not refresh error_log.txt; per-run logs retained: {error}", file=sys.stderr)
+
+
+def clear_completed_transfer_state(output, path):
+    try:
+        cleanup_completed_transfer_state(output, path)
+    except (OSError, ValueError) as error:
+        LOG.warning("Completed file kept; redundant transfer metadata cleanup failed: %s", error)
 
 
 ZENODO_RECORD = "17954508"
@@ -192,13 +219,11 @@ def destination(root: Path, relative: str) -> Path:
     target = (root / relative).resolve()
     if not target.is_relative_to(root.resolve()):
         raise ValueError(f"Output escapes the data root: {relative}")
-    return target
+    return resolve_data_path(root, target)
 
 
 def save_json(path: Path, value) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    _, _, transfer = original_helpers()
-    transfer.save_json(path, value)
+    atomic_text(path, json.dumps(value, indent=2, sort_keys=True) + "\n", logger=LOG)
 
 
 def select_sdem_files(record: dict) -> list[dict]:
@@ -342,6 +367,7 @@ def download_file(session: requests.Session, item: dict, output: Path, timeout: 
                 or saved.get("sha256") != transfer.checksums(path)[1]):
             raise ValueError(f"Existing file/receipt mismatch; preserved: {path}")
         print(f"SKIP verified: {path.name}", flush=True)
+        clear_completed_transfer_state(output, path)
         return path
     partial = path.with_name(path.name + ".part")
     identity = path.with_name(path.name + ".part.json")
@@ -378,6 +404,7 @@ def download_file(session: requests.Session, item: dict, output: Path, timeout: 
             raise ValueError(f"Response is not a TIFF; preserved for inspection: {path}")
     save_json(receipt, {"source": item, "sha256": transfer.checksums(path)[1],
                         "verified_utc": datetime.now(timezone.utc).isoformat()})
+    clear_completed_transfer_state(output, path)
     return path
 
 
@@ -985,6 +1012,155 @@ def s3_listing(client, config, timeout, pages, count):
     return groups, {"scope": config["note"], "visited_pages": visited}
 
 
+ODE_DIVINER = "https://oderest.rsl.wustl.edu/livegds"
+DIVINER_RDR_SIS = ("https://pds-geosciences.wustl.edu/lro/lro-l-dlre-4-rdr-v1/"
+                   "lrodlr_1001/document/diviner_rdr_sis.pdf")
+
+
+def add_diviner_ode_arguments(parser):
+    parser.add_argument("--diviner-ode", action="store_true",
+                        help="D20 only: targeted ODE/GDS RDR CSV query, not the legacy archive pilot")
+    parser.add_argument("--diviner-bbox", nargs=4, type=float, metavar=("WEST", "SOUTH", "EAST", "NORTH"),
+                        help="Planetocentric degrees, east-positive longitudes 0..360; no meridian crossing")
+    parser.add_argument("--diviner-start", help="Inclusive observation UTC start (ISO date or timestamp)")
+    parser.add_argument("--diviner-stop", help="Inclusive observation UTC stop (ISO date means midnight)")
+    parser.add_argument("--diviner-channels", nargs="+", type=int, default=[7, 8, 9],
+                        help="Thermal channels 3..9; default 7 8 9")
+    parser.add_argument("--diviner-max-points", type=int, default=100000,
+                        help="Refuse generation above this observation count; default 100000")
+    parser.add_argument("--diviner-quality-max", nargs=3, type=int, default=[0, 0, 0],
+                        metavar=("CALIBRATION", "GEOMETRY", "MISC"),
+                        help="Explicit quality-flag upper bounds 0..255; default 0 0 0. 0 12 0 includes definitive, unreprocessed geometry; inspect flags in EDA")
+
+
+def diviner_ode_config(args, parser):
+    """Keep an explicit bounded observation query separate from legacy D20 selection."""
+    options = (args.diviner_bbox, args.diviner_start, args.diviner_stop)
+    if not args.diviner_ode:
+        if (any(value is not None for value in options) or args.diviner_channels != [7, 8, 9]
+                or args.diviner_max_points != 100000 or args.diviner_quality_max != [0, 0, 0]):
+            parser.error("Diviner query options require --diviner-ode")
+        return None
+    if (not all(value is not None for value in options) or args.selections or args.from_inventory
+            or args.datasets not in (None, ["D20"])):
+        parser.error("--diviner-ode requires bbox/start/stop and D20-only selection; do not combine with selections/from-inventory")
+    west, south, east, north = args.diviner_bbox
+    if (not all(math.isfinite(v) for v in args.diviner_bbox)
+            or not 0 <= west < east <= 360 or not -90 <= south < north <= 90
+            or east - west > .5 or north - south > .5):
+        parser.error("Use a non-crossing 0..360 longitude bbox no larger than 0.5 by 0.5 degrees; split larger areas")
+    try:
+        times = [datetime.fromisoformat(value.replace("Z", "+00:00")) for value in options[1:]]
+        times = [t.replace(tzinfo=timezone.utc) if t.tzinfo is None else t.astimezone(timezone.utc) for t in times]
+    except ValueError:
+        parser.error("Diviner start/stop must be ISO dates or timestamps")
+    if not 0 < (times[1] - times[0]).total_seconds() <= 31 * 86400:
+        parser.error("Use an increasing Diviner UTC window of at most 31 days; split longer periods")
+    if any(t.microsecond % 1000 for t in times):
+        parser.error("ODE timestamps support millisecond precision; use at most three fractional-second digits")
+    channels = sorted(set(args.diviner_channels))
+    if len(channels) != len(args.diviner_channels) or not channels or not set(channels) <= set(range(3, 10)):
+        parser.error("Choose unique thermal channels from 3..9")
+    if not 1 <= args.diviner_max_points <= 1000000:
+        parser.error("Diviner point cap must be 1..1000000")
+    if not all(0 <= value <= 255 for value in args.diviner_quality_max):
+        parser.error("Diviner quality upper bounds must be 0..255")
+    args.datasets = ["D20"]
+    params = {"query": "divinerrdr", "output": "XML", "results": "v",
+              "westernlon": west, "easternlon": east, "minlat": south, "maxlat": north,
+              # GDS expects UTC without a zone suffix, with explicit milliseconds.
+              # A trailing Z gets padded to Z000/Z999 and rejected inside a
+              # nominally successful response (observed in the saved query XML).
+              "minobtime": times[0].replace(tzinfo=None).isoformat(timespec="milliseconds"),
+              "maxobtime": times[1].replace(tzinfo=None).isoformat(timespec="milliseconds"),
+              "channel": "".join("t" if ch in channels else "f" for ch in range(1, 10)),
+              "mincalibration": 0, "maxcalibration": args.diviner_quality_max[0],
+              "mingeometry": 0, "maxgeometry": args.diviner_quality_max[1],
+              "minmisc": 0, "maxmisc": args.diviner_quality_max[2]}
+    fingerprint = hashlib.sha256(json.dumps(params, sort_keys=True).encode()).hexdigest()[:24]
+    return {"kind": "ode_diviner", "ode_params": params, "ode_fingerprint": fingerprint,
+            "ode_max_points": args.diviner_max_points,
+            "sources": ODE_DIVINER + "?" + urlencode(params),
+            "note": ("Explicit ODE/GDS dated RDR subset; not continuous ground monitoring or equipment temperature. "
+                     f"Quality maxima (calibration, geometry, misc): {args.diviner_quality_max}; "
+                     "nonzero flags require documented, application-specific review.")}
+
+
+def ode_diviner_response(client, params, timeout, evidence_path):
+    url = ODE_DIVINER + "?" + urlencode(params)
+    raw, _ = metadata(client, url, timeout)
+    evidence_path.write_bytes(raw)
+    root = ET.fromstring(raw)
+    fields = {node.tag.split("}")[-1].lower(): (node.text or "").strip() for node in root}
+    details = [(node.tag.split("}")[-1].lower(), (node.text or "").strip()) for node in root.iter()]
+    errors = [text for tag, text in details if text and (
+        tag == "error" or tag == "statusnote" and re.search(r"\b(invalid|error|failed|exception)\b", text, re.I))]
+    incomplete = [text for tag, text in details if tag == "state" and text.upper() not in {"FINISHED", "SUCCESS"}]
+    if fields.get("status", "").upper() not in {"SUCCESS", "FINISHED"} or errors or incomplete:
+        reason = "; ".join(errors or incomplete) or fields.get("statusnote") or fields.get("status")
+        raise ValueError(f"ODE Diviner query failed: {reason}; URL: {url}")
+    if not re.fullmatch(r"\d+", fields.get("count", "")):
+        raise ValueError("ODE response lacks an exact observation count; see " + str(evidence_path))
+    return root, int(fields["count"]), url
+
+
+def discover_ode_diviner(client, config, timeout, evidence_dir):
+    """Documented GDS REST: count first, then CSV only; no images or bulk archive crawl.
+
+    API reference: https://oderest.rsl.wustl.edu/GDS_REST_V2.0.pdf (section 4.7).
+    Small synchronous queries avoid background-job resubmission/polling ambiguity.
+    """
+    params = config["ode_params"]
+    _, points, count_url = ode_diviner_response(client, {**params, "results": "c"}, timeout,
+                                               evidence_dir / "D20_ode_count.xml")
+    if points == 0:
+        reason = "No observations match the explicit area/time/channel/quality selection; no filters were automatically relaxed"
+        info = {"status": "no_observations", "reason": reason, "scope": config["note"],
+                "ode_params": params, "ode_fingerprint": config["ode_fingerprint"],
+                "ode_count_url": count_url, "ode_observation_count": 0}
+        json_save(evidence_dir / "D20_ode_query.json", info)
+        LOG.warning("%s. URL: %s", reason, count_url)
+        return [], info
+    if points > config["ode_max_points"]:
+        raise ValueError(f"ODE returned {points} observations (allowed 1..{config['ode_max_points']}); change/split the explicit area/time window. URL: {count_url}")
+    root, actual, query_url = ode_diviner_response(client, params, timeout, evidence_dir / "D20_ode_results.xml")
+    if actual != points or actual > config["ode_max_points"]:
+        raise ValueError("ODE result count changed/exceeds the count-first selection; result not accepted")
+    prefix = "moon/diviner/ode_rdr/" + config["ode_fingerprint"] + "/"
+    entries, seen = [], set()
+    for node in root.iter():
+        if node.tag.split("}")[-1].lower() not in {"resultfile", "resultsfile"}:
+            continue
+        fields = {c.tag.split("}")[-1].lower(): (c.text or "").strip() for c in node}
+        url = fields.get("url")
+        if not url:
+            continue
+        parsed = urlsplit(url)
+        # Some official responses still publish HTTP links. Use HTTPS on the
+        # same named PDS/ODE host; never disable TLS or switch to another host.
+        if parsed.hostname not in {"oderest.rsl.wustl.edu", "ode.rsl.wustl.edu", "pds-geosciences.wustl.edu"}:
+            raise ValueError("Unexpected ODE result host: " + url)
+        url = safe_url(parsed._replace(scheme="https").geturl()) if parsed.scheme == "http" else safe_url(url)
+        name = unquote(urlsplit(url).path.rsplit("/", 1)[-1])
+        ext = Path(name).suffix.lower()
+        if ext not in {".csv", ".tab", ".txt", ".lbl", ".xml"}:
+            raise ValueError("Unexpected non-table/label ODE result: " + url)
+        if name.casefold() in seen:
+            raise ValueError("Duplicate ODE result filename: " + name)
+        seen.add(name.casefold())
+        entries.append({"url": url, "relative_path": prefix + name,
+                        "metadata": ext in {".lbl", ".xml", ".txt"}})
+    if not any(Path(e["relative_path"]).suffix.lower() in {".csv", ".tab"} for e in entries):
+        raise ValueError("ODE returned no CSV/ASCII science table; result not accepted")
+    entries.append({"url": DIVINER_RDR_SIS, "metadata": True,
+                    "relative_path": "moon/diviner/ode_rdr/document/diviner_rdr_sis.pdf"})
+    info = {"scope": config["note"], "ode_params": params, "ode_fingerprint": config["ode_fingerprint"],
+            "ode_count_url": count_url, "ode_query_url": query_url, "ode_observation_count": actual,
+            "limits": "Explicit quality bounds retained in ode_params; nonzero flag meanings, temperature sentinels and coverage still need EDA validation"}
+    json_save(evidence_dir / "D20_ode_query.json", info)
+    return [entries], info
+
+
 def discover(client, config, timeout, pages, count, overrides, evidence_dir):
     key, kind = config["id"], config.get("kind", "listing")
     if key in overrides:
@@ -997,6 +1173,8 @@ def discover(client, config, timeout, pages, count, overrides, evidence_dir):
         return groups[:count], {"scope": entry["scope"], "selection": "explicit user-supplied product URLs"}
     if kind in {"login", "selection"}:
         return [], {"status": "login_required" if kind == "login" else "product_selection_required", "reason": config["note"]}
+    if kind == "ode_diviner":
+        return discover_ode_diviner(client, config, timeout, evidence_dir)
     if kind == "listing":
         return listing(client, config, timeout, pages, count)
     if kind == "s3":
@@ -1227,6 +1405,8 @@ def validate_payload(path, item):
         raise ValueError("Invalid TIFF header")
     if ext == ".zip" and first[:4] not in {b"PK\x03\x04", b"PK\x05\x06"}:
         raise ValueError("Invalid ZIP header")
+    if ext == ".pdf" and not first.startswith(b"%PDF-"):
+        raise ValueError("Invalid PDF document header")
     if item.get("dataset") == "D27" and ext == ".xml":
         if path.stat().st_size > MAX_METADATA:
             raise ValueError("Unexpected ShadowCam XML label size")
@@ -1325,8 +1505,16 @@ def transfer(item, output, timeout, attempts, cookies=None):
                             elif response.status_code != 200:
                                 raise ValueError("Unexpected initial response status")
                             for field, header in (("etag", "ETag"), ("last_modified", "Last-Modified")):
+                                expected_validator = item.get(field)
+                                actual_validator = response.headers.get(header)
+                                # ODE returns W/"tag" on HEAD but "tag" on GET.
+                                # Accept only this same-opaque-tag upgrade; retain
+                                # all real change checks and never use a weak If-Range.
+                                weak_to_strong = (field == "etag" and expected_validator
+                                                  and expected_validator.startswith("W/")
+                                                  and actual_validator == expected_validator[2:])
                                 if (not (item.get("md5") or item.get("sha256")) and item.get(field)
-                                        and response.headers.get(header) != item[field]):
+                                        and actual_validator != expected_validator and not weak_to_strong):
                                     raise ValueError(f"Remote {header} changed since inventory; partial preserved")
                             if "text/html" in response.headers.get("Content-Type", "").lower():
                                 raise ValueError("Server returned a login/web page")
@@ -1582,6 +1770,28 @@ def validate_inventory(record, output, args):
     record["selected_bytes"] = sum(i["size_bytes"] for i in record["files"])
 
 
+def completed_ode_inventory(output, config, args):
+    """Reuse checked local results even after ODE's temporary result URLs expire."""
+    cache = safe_path(output, "moon/diviner/ode_rdr/" + config["ode_fingerprint"] + "/selection.json")
+    if not cache.is_file():
+        return None
+    record = json.loads(cache.read_text(encoding="utf-8"))
+    validate_inventory(record, output, args)
+    datasets = record["datasets"]
+    if (len(datasets) != 1 or datasets[0]["id"] != "D20"
+            or datasets[0].get("ode_params") != config["ode_params"]
+            or datasets[0].get("ode_fingerprint") != config["ode_fingerprint"]):
+        raise ValueError("Cached ODE selection identity differs; preserved: " + str(cache))
+    if (not record["files"] or datasets[0]["status"] != "planned" or datasets[0].get("excluded")
+            or not 0 < datasets[0]["ode_observation_count"] <= config["ode_max_points"]):
+        return None
+    complete = True
+    for item in record["files"]:
+        if not verify_existing(safe_path(output, item["relative_path"]), item, output):
+            complete = False
+    return record if complete else None
+
+
 def eda_main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--datasets", nargs="+", choices=CATALOG, help="Default: 36 Dxx datasets plus R01/R02 references")
@@ -1601,6 +1811,7 @@ def eda_main(argv=None):
     parser.add_argument("--selections", type=Path, help="JSON mapping dataset IDs to scope and explicit groups of science/label URLs")
     parser.add_argument("--cookies", type=Path, help="Optional Netscape cookie file for authorised archive access; never saved in manifests")
     parser.add_argument("--from-inventory", type=Path, help="Reuse exact inventory.json selections; no source rediscovery")
+    add_diviner_ode_arguments(parser)
     args = parser.parse_args(argv)
     for name in ("workers", "files_per_dataset", "max_file_mib", "max_dataset_mib", "max_total_mib", "pages_per_dataset", "timeout", "attempts"):
         if getattr(args, name) < 1:
@@ -1609,10 +1820,13 @@ def eda_main(argv=None):
         parser.error("Use at most 16 workers to avoid overwhelming archive servers")
     if args.connection_retries < 0:
         parser.error("Connection retries must be non-negative")
+    ode_config = diviner_ode_config(args, parser)
     selected = args.datasets or list(CATALOG)
     if len(selected) != len(set(selected)):
         parser.error("Dataset IDs must be unique")
     configs = catalog()
+    if ode_config:
+        configs["D20"] = {**configs["D20"], **ode_config}
     if args.dry_run:
         if args.from_inventory:
             if args.datasets or args.selections:
@@ -1629,6 +1843,9 @@ def eda_main(argv=None):
         for key in selected:
             cfg = configs[key]
             print(key, cfg["name"], "|", cfg.get("note") or cfg.get("root") or cfg["sources"])
+            if ode_config:
+                print("ODE query:", ODE_DIVINER + "?" + urlencode(ode_config["ode_params"]))
+                print("Observation cap:", ode_config["ode_max_points"], "| CSV + supplied labels + RDR SIS; no images")
         print(f"Offline preview: workers={args.workers}, groups/dataset={args.files_per_dataset}, total cap={args.max_total_mib} MiB. No writes/network.")
         return 0
     output = args.output.expanduser().resolve()
@@ -1654,7 +1871,16 @@ def eda_main(argv=None):
             LOG.info("Pinned inventory dataset IDs: %s", [d["id"] for d in record["datasets"]])
             json_save(run_dir / "inventory.json", record)
         else:
-            record = inventory([configs[k] for k in selected], output, run_dir, args, overrides)
+            record = completed_ode_inventory(output, ode_config, args) if ode_config else None
+            if record is None:
+                record = inventory([configs[k] for k in selected], output, run_dir, args, overrides)
+                if (ode_config and record["files"] and record["status"] == "inventory_complete"):
+                    cache = safe_path(output, "moon/diviner/ode_rdr/" + ode_config["ode_fingerprint"] + "/selection.json")
+                    json_save(cache, record)
+            else:
+                LOG.info("Reusing complete hash-verified ODE selection; no remote query or HEAD needed")
+                print("Reusing verified ODE files; no query regeneration or redownload.", flush=True)
+                json_save(run_dir / "inventory.json", record)
         print(f"Inventory: {run_dir / 'inventory.json'}\nSelected bytes: {record['selected_bytes']:,}. Pilot selections do not replace full preprocessing inputs.")
         if args.download:
             result = run_downloads(record, output, run_dir, args)
@@ -2026,13 +2252,72 @@ def core_worker(argv):
             handler.close()
 
 
+STAGE3_SOURCES = [
+    {"id": "S03", "name": "NASA-STD-3001 Volume 1 Rev C crew-health reference (2023)",
+     "sources": "https://standards.nasa.gov/node/238", "kind": "direct",
+     "group_urls": ["https://standards.nasa.gov/sites/default/files/standards/NASA/C//nasa-std-3001-vol-1-rev-c-signature.pdf"],
+     "relative_root": "reference/stage3/nasa_std_3001_v1_c",
+     "note": "Program requirement reference; not an automatically selected exposure limit or medical assessment"},
+    {"id": "S01", "name": "Life Support Baseline Values and Assumptions Rev2 (2022)",
+     "sources": "https://ntrs.nasa.gov/citations/20210024855", "kind": "direct",
+     "group_urls": ["https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf"],
+     "relative_root": "reference/stage3/bvad_rev2",
+     "note": "Reference assumptions, not selected crew/equipment capabilities or approved requirements"},
+    {"id": "S02", "name": "NASA-STD-3001 Volume 2 Rev F (2026)",
+     "sources": "https://standards.nasa.gov/standard/NASA/NASA-STD-3001_VOL_2", "kind": "direct",
+     "group_urls": ["https://standards.nasa.gov/system/files/tmp/NASA-STD-3001%20Vol%202%20Rev%20F.pdf"],
+     "relative_root": "reference/stage3/nasa_std_3001_v2_f",
+     "note": "Requirement reference; program applicability/tailoring is not assumed"},
+]
+
+
+def stage3_reference_main(argv=None):
+    """Additional Golden references; reuse threaded transfers/retries, preserve legacy catalog."""
+    parser = argparse.ArgumentParser(description="Golden Stage 3 public reference documents")
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--download", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--workers", type=int, default=2)
+    parser.add_argument("--timeout", type=int, default=120)
+    parser.add_argument("--connection-retries", type=int, default=3)
+    args = parser.parse_args(argv)
+    if not 1 <= args.workers <= 16 or args.timeout < 1 or args.connection_retries < 0:
+        parser.error("Invalid workers/timeout/retry budget")
+    if args.dry_run:
+        print(json.dumps(STAGE3_SOURCES, indent=2))
+        return 0
+    args.attempts, args.cookies = 1, None
+    for key, value in {"files_per_dataset": 2, "max_file_mib": 32, "max_dataset_mib": 32,
+                       "max_total_mib": 64, "pages_per_dataset": 1}.items():
+        setattr(args, key, value)
+    output = args.output.expanduser().resolve()
+    folder = output / "manifests/eda_datasets" / datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    folder.mkdir(parents=True, exist_ok=False)
+    handlers = start_debug_log(folder)
+    try:
+        record = inventory(STAGE3_SOURCES, output, folder, args, {})
+        json_save(folder / "inventory.json", record)
+        code = run_downloads(record, output, folder, args) if args.download else 0
+        print("Golden reference inventory:", folder / "inventory.json")
+        refresh_error_log(output)
+        return code
+    finally:
+        for handler in handlers:
+            LOG.removeHandler(handler)
+            handler.close()
+
+
 def main(argv=None):
     """Single public CLI; sequential scopes, parallel files, finite failure policy."""
     argv = list(sys.argv[1:] if argv is None else argv)
+    if "--stage3-references" in argv:
+        argv.remove("--stage3-references")
+        return stage3_reference_main(argv)
     if argv[:1] == ["--internal-core"]:
         return core_worker(argv[1:])
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--scope", choices=("all", "core", "moon-support", "research", "references"))
+    parser.add_argument("--stage3-references", action="store_true", help="Separate Golden public-reference selection; accepts --download/--dry-run, output, workers, timeout and retries")
     parser.add_argument("--datasets", nargs="+", choices=[*DATASETS, *CATALOG])
     parser.add_argument("--restore-moon-support", action="store_true", help="Alias for support-only if no datasets/scope")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
@@ -2050,7 +2335,11 @@ def main(argv=None):
     for name, default in [("files-per-dataset", 2), ("max-file-mib", 512), ("max-dataset-mib", 1024),
                           ("max-total-mib", 8192), ("pages-per-dataset", 12)]:
         parser.add_argument("--" + name, type=int, default=default)
+    add_diviner_ode_arguments(parser)
     args = parser.parse_args(argv)
+    ode_config = diviner_ode_config(args, parser)
+    if ode_config and (args.scope not in (None, "research") or args.restore_moon_support or args.moon_support_inventory):
+        parser.error("--diviner-ode is a D20-only research query; run core/Moon support separately")
     retries = args.connection_retries if args.connection_retries is not None else (
         args.attempts - 1 if args.attempts is not None else 3)
     if retries < 0 or (args.attempts is not None and args.attempts < 1):
@@ -2101,7 +2390,10 @@ def main(argv=None):
         support_inventory = args.moon_support_inventory or args.from_inventory
         if support_inventory:
             flags += ["--from-inventory", str(support_inventory)]
-        return moon_support_main(flags)
+        result = moon_support_main(flags)
+        if not args.dry_run:
+            refresh_error_log(args.output)
+        return result
     if core_ids or include_support:
         flags = list(common) + ["--attempts", "1", "--continue-on-error"]
         if core_ids:
@@ -2116,6 +2408,8 @@ def main(argv=None):
         result = core_main(flags)
         outcomes.append(result)
         if result == 130:
+            if not args.dry_run:
+                refresh_error_log(args.output)
             return 130
     if scope in {"all", "research", "references"} and (research_ids or not selected):
         flags = list(common) + ["--attempts", "1"]
@@ -2127,12 +2421,22 @@ def main(argv=None):
             flags += ["--selections", str(args.selections)]
         if args.cookies:
             flags += ["--cookies", str(args.cookies)]
+        if ode_config:
+            flags += ["--diviner-ode", "--diviner-bbox", *map(str, args.diviner_bbox),
+                      "--diviner-start", args.diviner_start, "--diviner-stop", args.diviner_stop,
+                      "--diviner-channels", *map(str, args.diviner_channels),
+                      "--diviner-quality-max", *map(str, args.diviner_quality_max),
+                      "--diviner-max-points", str(args.diviner_max_points)]
         for key in ("files_per_dataset", "max_file_mib", "max_dataset_mib", "max_total_mib", "pages_per_dataset"):
             flags += ["--" + key.replace("_", "-"), str(getattr(args, key))]
         result = eda_main(flags)
         outcomes.append(result)
         if result == 130:
+            if not args.dry_run:
+                refresh_error_log(args.output)
             return 130
+    if not args.dry_run:
+        refresh_error_log(args.output)
     return 1 if 1 in outcomes else 2 if 2 in outcomes else 0
 
 

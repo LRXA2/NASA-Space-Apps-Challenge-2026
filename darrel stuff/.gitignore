@@ -7,3 +7,8 @@ research/Lunar_Base_Conditions_Research_Backup (1).xlsx
 # Environmental datasets, partial downloads and acquisition manifests
 /data/
 
+# Reproducible Python/Jupyter caches, not source artifacts
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+

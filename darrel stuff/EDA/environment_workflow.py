@@ -5,6 +5,10 @@ Only the Run root and notebook location are adapted to Darrel's workspace.
 """
 from pathlib import Path
 import json
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from data_maintenance import atomic_text, cleanup_failed_run
 
 from notebooks.shared.processing import Run, sha256
 
@@ -35,6 +39,19 @@ class LocalRun(Run):
         self.input(Path(__file__))
         self.save()
         return self
+
+    def save(self):
+        atomic_text(self.directory / "provenance.json",
+                    json.dumps(self.record, indent=2, default=str))
+
+    def __exit__(self, exc_type, exc, traceback):
+        result = super().__exit__(exc_type, exc, traceback)
+        if exc_type is not None and self.record["stage"].startswith("analysis/"):
+            try:
+                cleanup_failed_run(self.directory, self.root / "data")
+            except (OSError, ValueError) as error:
+                print(f"Failed-run cleanup incomplete; failure evidence retained: {error}", file=sys.stderr)
+        return result
 
 
 def latest_completed_run(project_root: Path, stage: str, run_id: str | None = None) -> Path:

@@ -1,92 +1,77 @@
 # Stage 3 Environmental Research Report
 
-This report summarises **all 53 entries** in [environmental_data.csv](environmental_data.csv): **38 external dataset/catalog entries, 14 project-data requirements and one planetary baseline**. It covers the whole register, not just downloaded data or the current notebooks.
+This report covers **all 53 entries** in [environmental_data.csv](environmental_data.csv): 38 external dataset/catalog entries, 14 project-data requirements and one planetary baseline. It is not limited to locally downloaded data. The original CSV priorities and statuses are preserved.
 
-## Research Focus
+## Required Stage 3 targets - first priority
 
-Our scope is [Stage 3 — Environmental and Equipment Suitability Engine](../../outline.md#stage-3--environmental-and-equipment-suitability-engine): evaluate environmental conditions against mission requirements and equipment capabilities. Its assessment feeds [Stage 4](../../outline.md#stage-4--planetary-operational-suitability-assessment). Human safety/health comes first, followed by base operations and vehicle/robot operations.
+**Controlling objective:** [outline Stage 3 - Environmental and Equipment Suitability Engine](../../outline.md#stage-3--environmental-and-equipment-suitability-engine): evaluate whether an intended mission can operate at a selected Moon or Mars site. Our current implementation/data concern the Moon; lunar evidence is not silently applied to Mars. These required inputs/processes come before optional research additions.
 
-The CSV supplies the dataset descriptions, impacts, limitations and recorded EDA statuses. **The impact ordering below is a recommendation for our scope, not a ranking stated in the outline, a validated risk score or a change to the CSV's priorities.** It does not define a new AI model.
+| Required input / analysis | Evidence needed and current work | Remaining boundary / algorithm use |
+| --- | --- | --- |
+| Environmental conditions at site and operating period | D01-D08/D19/D20 and relevant terrain/environment records; Dar_029 input audit, Dar_030 time/season/terrain EDA, Dar_032 native support, existing notebook 13 terrain views. | Static/phase maps are available, but no dated terrain-aware illumination/contact history generator was found in the original notebooks. Retrieve/generate dated conditions for an explicit scenario before continuity/endurance checks. |
+| Mission duration and intended activities | M04/M14 project scenario; Dar_029 input contracts and Dar_031 duration/load sensitivity. | No selected mission is supplied. Reference/sensitivity axes do not define a mission or its applicability. |
+| Crew requirements | M02/M10/M11/M12 and adopted crew/consumable requirements; Dar_031 S01 BVAD/S02-S03 reference applicability and crew-day scaling. | Published rates are references, not actual stocks, recovery performance or total life-support adequacy. |
+| Equipment capabilities and limitations | M01/M03-M09/M13-M14 as relevant; Dar_031 battery/soil/shielding response domains and readiness. | Select the actual configuration and evidence for thermal response, power/storage, protection, communications and other applicable capacity-demand cases. Public observations cannot supply unknown hardware limits. |
+| Safety requirements, margins and uncertainty | Documented applicable requirements and hard/soft classification; Dar_028 pipeline and Dar_029-031 coverage/readiness. | Estimate supported margins; identify failed/uncertain requirements and limitations. **Passed / Failed / Unknown**; missing mandatory evidence is not a pass. Apply preferences only after all mandatory conditions pass. |
 
-## Priority EDA for the Stage 3 algorithm
+[Executed findings](../EDA/EDA_Results.md#14-golden-stage-3-revamp), [notebook work plan](../EDA/EDA_Notes.md), [algorithm recommendations](../purposal.md). S01-S03 (crew/standards) and R01/R02 (battery/soil) are supplemental references, not replacements for the register's project-data requirements.
 
-### How impact is judged
+<a id="priority-eda-for-the-stage-3-algorithm"></a>
 
-Higher-impact evidence can directly change whether a mission requirement is met, expose an essential protection/equipment gap, or materially change an operating margin. Supporting evidence helps interpret those decisions; indirect context is less able to answer them on its own.
+## Research priorities - original register tags
 
-**Local availability, download size and existing notebook coverage do not determine impact.** Missing equipment or life-support records may be more important than a complete environmental map. A lower position does not mean a hazard is safe to ignore. Mission duration, activities and equipment can change the ordering—for example, subsurface records matter more for buried systems, and plume records matter more for landing operations.
+The tables below follow the CSV's **P1 - P2 - P3**, not a new impact-tier ranking or algorithm weights. Categories within a priority retain register order. Local availability/download size does not reduce the importance of missing mission/equipment evidence. Mission activities determine which requirements apply; a P2/P3 hazard is not automatically safe to ignore.
 
-The numbered rows are an ordered review of related evidence packages, not numerical weights. Each dataset retains its own measurement/model limitations.
+<a id="tier-1--most-direct-impact-on-mission-feasibility-and-essential-protection"></a>
 
-### Tier 1 — Most direct impact on mission feasibility and essential protection
+### P1 - survival/protection research (34 entries)
 
-| Order / consideration | CSV entries and evidence | Why it matters to Stage 3 / EDA focus | Boundary on conclusions |
+| Category | Register entries | Stage 3 use / EDA focus | Boundary / limits |
 | --- | --- | --- | --- |
-| **1. Mission definition, limits and recovery** | **M04:** mission/equipment/protective-limit tables; **M14:** reliability, return/rescue and medical scenarios. | Establish what must be assessed before comparing sites. Review activities, duration, crew/equipment needs, reserves, recovery times and bottlenecks; test sensitivity to scenario assumptions. | These are required project records, not environmental maps. Missing limits cannot become invented thresholds; synthetic scenarios are not measured failure probabilities. |
-| **2. Protected occupancy and essential supplies** | **M02:** habitat/suit/crewed-rover atmosphere telemetry; **M10:** water, air and surface quality-monitoring records. | Assess pressure/air-quality excursions, recovery times, treatment performance and supply/monitoring limitations for occupied systems. | External lunar measurements cannot substitute for internal-system telemetry or water-quality tests. Compare against documented applicable requirements. |
-| **3. Thermal environment and hardware response** | **D01:** Diviner polar seasonal PCP; **D20:** dated Diviner RDR; **D04:** LOLA sky visibility; **M01:** component thermal/thermal-vacuum records. | Explore temperature by location, local time and phase/date; compare sky-view context and actual component response, load and cycling. This can inform thermal-control and operating-margin checks. | PCP averages are not mission extrema; RDR sampling is incomplete. Surface brightness temperature and sky-view angle are not component temperature or demonstrated cooling capacity. |
-| **4. Power continuity and shadow survival** | **D02:** solar visibility/permanent shadow; **D19:** SPICE geometry; **M07:** time-resolved illumination/thermal-power outputs. | Compare lighting/shadow context, then examine dated generation/load, dark/recharge sequences and battery/thermal margins for the stated mission. | Mean visibility does not reveal longest darkness, generated power or endurance. Geometry kernels alone do not supply terrain shadows or battery behaviour. |
-| **5. Radiation exposure and protection** | **D07:** CRaTER; **D08:** GOES solar-proton records; **D31:** REDMoon study outputs; **M06:** project radiation-transport/impact-vulnerability results. | Examine quality-filtered quiet/event contrasts, spectra, event durations/fluence and modeled protection sensitivity. Identify which radiation requirements can actually be evaluated. | Orbital/Earth-orbit detector data and published scenarios are not a crew surface-dose assessment. Keep radiation transport and impact-damage models distinct; do not transfer study thresholds as approved limits. |
-| **6. Communications continuity** | **D03:** mean Earth visibility; **M08:** communications link/relay/outage records. | Compare geographic visibility, then actual or explicitly simulated contact states, link margins, outage durations and recovery/autonomy needs. | Seeing Earth does not establish antenna coverage, relay availability or a functioning link. Mean visibility cannot provide an outage schedule. |
-| **7. Dust exposure and equipment degradation** | **D10:** LADEE LDEX dust observations; **M03:** dust-exposure/equipment-wear experiments. | Separate orbital dust occurrence from tested surface/equipment exposure. Investigate loading/duration versus wear, leakage, filtration and cooling changes. | LDEX does not measure local suit wear or cabin dust. Experimental/simulant results require stated applicability; dust impact is not determined by having an orbital dust map. |
-| **8. Terrain-related operating and equipment constraints** | **D05:** SDEM terrain/support; **D06:** LOLA terrain uncertainty/effective resolution; **M05:** geotechnical/mobility/slope-stability observations. | Relate environment to terrain and source quality; examine tested loading, slope, sinkage/slip and stability responses where available. | Keep the separate terrain-assessment contribution identifiable. Elevation/slope maps do not measure soil strength, small obstacles or certify passability; avoid counting the same terrain penalty twice. |
-| **9. Landing/launch effects on protective assets** | **M13:** lander-plume, layout and impact-protection test/model records. | For missions including landing/launch, compare particle/debris loads, visibility effects and asset response across stated layouts. | Requires lander/site-specific evidence. Natural impact ejecta cannot replace plume tests or validated simulations. Its importance rises with the operation included. |
+| Temperature & Thermal | D01, D04, D20, D21, D28, D38, M01 | Surface/phase/local-time and depth contrasts; component thermal response and operating margins. | Surface brightness temperature, historical depth profiles and component temperature are different quantities. |
+| Radiation | D07, D08, D31, M06 | Quiet/event and shielding contrasts; applicable exposure/protection margins. | Orbital detectors and published shielding cases do not establish local crew dose. |
+| Illumination & Shadows | D02, D27, M07 | Terrain/shadow context; dated generation, darkness and storage requirements. | Static maps and dark-region images are not chronological power histories. |
+| Terrain & Surface Properties | D05, D06, D15, D26, D33, M05 | Native-support/uncertainty checks; terrain-environment joins and tested mobility/foundation response. | Slope, radar texture and morphology do not certify soil capacity; avoid duplicate terrain penalties. |
+| Seismic Activity | D13, D14, D23 | Event classes, location uncertainty and waveform spectra/duration. | Sparse historical/local records do not establish south-polar recurrence or structural qualification. |
+| Resources & Sample Chemistry | D16, M09 | Spectral/material context and measured sample-release/containment response. | Remote chemistry and one impact experiment are not cabin toxicity or local resource certification. |
+| Communications & Geometry | D03, D19, M08 | Visibility/dated geometry, then contact/outage and link-margin checks. | Mean Earth visibility and sphere-horizon samples are not terrain-aware working links. |
+| Habitat & Human Health | M02, M10 | Protected-system atmosphere, supplies/quality, performance and mode-specific noise/vibration. | External maps and analog studies cannot replace internal telemetry or approved health requirements. |
+| Mission Safety & Reliability | M04, M13, M14 | Equipment/limit inventory, recovery scenarios and landing/plume/layout response. | Mission-specific configuration, applicability and validated models/tests are required. |
+| Planetary Baseline | C01 | Apply vacuum, unbreathable exterior and reduced gravity as baseline design conditions. | Not a time-varying EDA or evidence that a selected system is adequate. |
 
-**Baseline, not an EDA task — C01:** the CSV records lunar vacuum, absence of breathable exterior air and reduced gravity as planetary conditions. Apply these as background requirements for protection and equipment; do not invent atmospheric-wind or external-airflow datasets. Lack of a time-varying EDA does not make this baseline low impact.
+<a id="tier-2--substantial-but-more-dependent-on-the-activity-or-specific-evidence-gap"></a>
 
-### Tier 2 — Substantial, but more dependent on the activity or specific evidence gap
+### P2 - long-term health/reliability (12 entries)
 
-These can move into Tier 1 for a relevant mission. Their position reflects how directly the listed evidence supports our assessment, not the severity of an unmeasured hazard.
-
-| Order / consideration | CSV entries | EDA and relevance to our scope | Main limitation |
+| Category | Register entries | Stage 3 use / EDA focus | Boundary / limits |
 | --- | --- | --- | --- |
-| **10. Seismic and structural context** | **D13:** Apollo event catalog; **D14:** Apollo seismic waveforms; **D23:** Chandrayaan-3 ILSA vibration observations. | Examine event classes, timing/location uncertainty, waveform duration/spectra and local disturbances to inform structural-evidence gaps. Particularly relevant to long-lived bases. | Sparse historical stations and short campaigns do not supply south-polar site recurrence or certify structural resilience. Unknown transients are not automatically moonquakes. |
-| **11. Visual/obstacle and surface-change evidence** | **D15:** LROC NAC imagery; **D27:** ShadowCam radiance maps; **D33:** LROC new-crater catalog. | Inspect usable coverage, lighting-dependent features, shadowed terrain and before/after detections for operations needing surface inspection. | Image visibility and search effort affect detections. Neither raw crater density nor image texture gives local impact probability, soil strength or safe travel. |
-| **12. Sample-handling chemistry and containment** | **D16:** LCROSS spectra; **M09:** contained polar-sample chemistry/release tests. | Compare spectral changes and measured release/containment response under specified handling conditions. High impact when samples enter occupied systems. | One impact experiment is not a Moon-wide toxicity map or indoor-exposure measurement; direct handling tests remain necessary. |
-| **13. Crew performance and occupied-system habitability** | **D17:** LSDA investigation catalog; **M11:** approved analog sleep/workload/performance records; **M12:** acoustic/vibration measurements; **D18:** ISS Kibo microbial study. | Select relevant studies, examine workload/rest/performance, mode-specific noise/vibration and contamination patterns. | Study selection/access, consent and measurement controls matter. Analog/ISS associations are not lunar health outcomes, infection probabilities or project-system certification. |
-| **14. Plasma/charging context** | **D11:** ARTEMIS plasma/field data; **D22:** RAMBHA-LP current-voltage observations; **D25:** Kaguya PACE numerical products. | Explore quality, local time, geometry and plasma regimes; assess corrected/fitted probe parameters where documented. | These are not surface discharge rates, atmospheric wind or crew ionizing-radiation dose; equipment response needs additional modeling/test evidence. |
-| **15. Subsurface thermal design** | **D21:** ChaSTE thermal observations; **D28:** Apollo heat-flow tables. | Examine temperature versus depth/time, gradients, disturbances and heater-on/off periods for buried-service/foundation questions. | Local campaigns and historical stations cannot be transferred directly to polar conditions; active heating must not be treated as ambient temperature. |
-| **16. UV/material-exposure context** | **D09:** SORCE SOLSTICE irradiance. | Inspect supported spectral-band/time variation and uncertainty for questions about exposed optics, coatings or protection. | Irradiance at the stated reference geometry is not visor-transmitted exposure, local shadowed exposure or demonstrated material lifetime. |
+| Radiation | D09, D29 | Quiet/event and shielding contrasts; applicable exposure/protection margins. | Orbital detectors and published shielding cases do not establish local crew dose. |
+| Illumination & Shadows | D32 | Terrain/shadow context; dated generation, darkness and storage requirements. | Static maps and dark-region images are not chronological power histories. |
+| Dust | D10, M03 | Exposure/occurrence versus measured wear, filtration and cooling changes. | Orbital dust is not cabin loading or tested hardware degradation. |
+| Plasma & Magnetic Environment | D11, D22, D25 | Time/geometry/regime and field contrasts; identify charging-model needs. | Plasma observations are not discharge rates or ionizing crew dose. |
+| Habitat & Human Health | D17, D18, M11, M12 | Protected-system atmosphere, supplies/quality, performance and mode-specific noise/vibration. | External maps and analog studies cannot replace internal telemetry or approved health requirements. |
 
-### Tier 3 — Indirect context, alternatives or specialised extensions
+<a id="tier-3--indirect-context-alternatives-or-specialised-extensions"></a>
 
-Retain these in the report, but do not let them displace missing essential mission/equipment evidence. Elevate an entry when a specific question makes it decision-relevant.
+### P3 - supporting context (7 entries)
 
-| Order / consideration | CSV entries | Useful EDA / role | Why it is less direct for the current scope |
+| Category | Register entries | Stage 3 use / EDA focus | Boundary / limits |
 | --- | --- | --- | --- |
-| **17. Broad thermal comparison** | **D38:** Diviner Global Cumulative Products. | Compare coarse spatial/local-time patterns and missingness. | Global cumulative means do not resolve site-specific polar extremes or continuous exposure. |
-| **18. Alternative topography** | **D26:** Kaguya Terrain Camera DTM. | Compare overlapping elevation/slope and source support with SDEM/LOLA. | An alternative elevation source, not missing geotechnical or equipment-response evidence; harmonise datum and effective resolution. |
-| **19. Surface-property and geological context** | **D29:** LEND neutron products; **D32:** LAMP UV maps; **D36:** Diviner rock-abundance/soil-temperature maps; **D37:** USGS geological GIS. | Compare supported spatial units, shadow/thermal context and retrieval quality. | Indirect proxies or coarse/model-derived properties do not establish crew dose, recoverable resources, individual obstacles or construction suitability. |
-| **20. Mineral/resource characterisation** | **D24:** Chandrayaan-2 DFSAR; **D30:** Mini-RF; **D34:** Moon Mineralogy Mapper. | Explore calibrated radar/spectral patterns at matched support and examine geometry/processing effects. | Radar/spectral anomalies are not proof of accessible ice, safe samples, bearing strength or equipment performance. More relevant to a defined resource activity. |
-| **21. Magnetic/exosphere background** | **D12:** Lunar Prospector magnetometer; **D35:** LADEE NMS exosphere observations. | Examine field or neutral-gas variation by position, altitude, time and local solar time. | Neither supplies habitat air quality, breathable atmosphere, local discharge rates or effective radiation shielding. |
+| Terrain & Surface Properties | D24, D30, D36, D37 | Native-support/uncertainty checks; terrain-environment joins and tested mobility/foundation response. | Slope, radar texture and morphology do not certify soil capacity; avoid duplicate terrain penalties. |
+| Exosphere & Vacuum | D35 | Sparse exosphere context and relevance to contamination/operations. | Not breathable air, atmospheric wind or internal habitat pressure. |
+| Plasma & Magnetic Environment | D12 | Time/geometry/regime and field contrasts; identify charging-model needs. | Plasma observations are not discharge rates or ionizing crew dose. |
+| Resources & Sample Chemistry | D34 | Spectral/material context and measured sample-release/containment response. | Remote chemistry and one impact experiment are not cabin toxicity or local resource certification. |
 
-## What the register currently records
+## Register status versus local progress
 
-These are **CSV statuses**, not a fresh audit of local files or a claim that Darrel's copied notebooks have run.
+CSV statuses describe the recorded source/reuse review, not a live acquisition or execution audit. Use [EDA results](../EDA/EDA_Results.md) for accepted runs and [EDA notes](../EDA/EDA_Notes.md) for remaining work. Completing an environmental download does not establish a requirement pass.
 
-| Recorded EDA status | Entries |
-| --- | ---: |
-| Done — saved notebook | 2 |
-| Partial — phase summaries, mean-map EDA or processing | 4 |
-| Not started | 31 |
-| Blocked — project data missing | 14 |
-| Needs study selection / access | 1 |
-| Not applicable — planetary baseline | 1 |
-| **Total** | **53** |
+## Recommended work
 
-The two recorded completed entries are the sky-visibility and SDEM studies. Partial entries cover polar temperature, solar/shadow and Earth-visibility means, and LOLA processing. All 14 project-data entries are recorded as blocked. That makes **mission/equipment evidence a major coverage gap**, even where public environmental observations exist.
-
-A recorded completed study does not mean the associated Stage 3 requirement has passed. Nor does a public archive's existence mean its science data has been downloaded, parsed or validated here. Refer to each CSV row for source URLs, field evidence and the exact recorded status.
-
-## Recommended work arising from the impact review
-
-1. **Define one mission/equipment profile first.** Use the highest-impact packages to decide which requirements apply and which essential evidence is missing.
-2. **Plan EDA by decision impact, independently of file availability.** Request or generate documented project/test records where appropriate; do not demote them merely because they cannot be downloaded.
-3. **Reuse relevant existing analyses without narrowing the overall report to them.** The [Moon EDA work plan](../EDA/EDA_Notes.md#todo--moon-environmental-eda) records the executed studies and remaining questions. Local notebooks [05](../EDA/Moon/Terrain_And_Soil/05_lunar_terrain_environment.ipynb), [06](../EDA/Moon/Thermal/06_diviner_temperature.ipynb), [13](../EDA/Moon/Terrain_And_Soil/13_build_lunar_terrain_views.ipynb) and [25](../EDA/Moon/Environmental_Context/25_environment_native_support_eda.ipynb) support those parts, not the complete report.
-4. **Keep interpretation traceable.** Preserve units, location/time or phase support, uncertainty, provenance and observed-versus-modeled distinctions. Explore coverage and missingness before associations; do not turn correlations into equipment limits.
-5. **Report requirements as Passed, Failed or Unknown using sufficient evidence.** Missing applicable evidence remains Unknown. As stated in Stage 3, preference scores apply only after mandatory conditions are satisfied; EDA does not by itself establish a pass.
-
-This is a research synthesis and proposed impact ordering based on the CSV, prepared on **6 November 2026**. It introduces no new measurements, model architecture, thresholds, algorithm weights or completion claims. Detailed dataset findings and progress remain in the register rather than being duplicated as a second acquisition checklist.
+1. Resolve the required Stage 3 scenario/configuration and applicable requirement gaps before optional features.
+2. Reuse supported original notebook methods and their actual source datasets; [36-notebook inventory](../data/verification/source_port_review/original_notebook_dataset_inventory.csv) records dependencies and local readiness.
+3. Generate dated terrain-aware conditions only for an explicitly documented observer/window and validated terrain/geometry model; retain sampling, horizon and link-model limitations.
+4. Continue P1, then relevant P2/P3 questions with units, support, uncertainty and observed/modelled distinctions preserved. Do not infer equipment limits or scoring weights from correlations.
 
 ## Environmental EDA Dimensions
 
@@ -114,15 +99,15 @@ Frame each analysis as: **How does [environmental variable] vary with [dimension
 
 The register now includes `EDA Dimensions`, `Documented Fields`, `Derived Fields / Joins`, `Suggested EDA`, `Field Evidence` and `Field Review`. Dimensions describe feasible analyses, including the explicitly listed joins; they do not mean every field is directly supplied. Field descriptions are semantic summaries unless literal names are shown. Evidence links point to official documentation; review dates record documentation checks, not successful data ingestion. Blank mapping cells mean this pass has not reviewed those fields, not that the dataset lacks them.
 
-The 5 November 2026 field review maps 14 existing entries and adds D38 (Diviner global cumulative temperatures). Useful starting points are:
+Useful analysis directions are listed below. Refer to the EDA work plan for current local coverage rather than treating these directions as unstarted tasks:
 
 | EDA direction | Register entries | Additional work |
 | --- | --- | --- |
-| Temperature by dated observation, location and local solar time | D20: Diviner RDR | Select a small quality-filtered subset; join terrain for elevation/aspect. |
-| Polar temperature by solar phase and region | D01: Diviner PCP | Reuse notebook 25; retain phase bins and missingness. |
+| Temperature by dated observation, location and local solar time | D20: Diviner RDR | Existing dated sample is not a qualified polar mission series; select/quality-filter comparable polar coverage and join terrain before site claims. |
+| Polar temperature by solar phase and region | D01: Diviner PCP | Reuse Dar_001/002/017/020/025; retain phase bins, cohorts and missingness. |
 | Global temperature by location and local solar time | D38: Diviner GCP | Coarse cumulative context; use D01/D20 for finer polar questions. |
 | Temperature by depth | D21: ChaSTE; D28: Apollo heat flow | Calibration and sensor/deployment metadata; local historical records. |
-| Illumination, Earth visibility and sky view by location | D02-D04 | Reuse notebook 25; dated illumination/outages require terrain horizons plus D19 geometry. |
+| Illumination, Earth visibility and sky view by location | D02-D04 | Reuse Dar_002/012/017–020; dated illumination/outages still require terrain horizons plus D19 geometry. |
 | Terrain, scale and uncertainty | D05-D06 | Reuse terrain analyses; join environmental data at compatible support. |
 | Dust by time or altitude/local-time bin | D10: LADEE LDEX calibrated and separate derived tables | Choose the product; orbital geometry needs a separate join. |
 | Plasma and magnetic field by time, position and regime | D11: ARTEMIS | Subset merged data; derive altitude/regime labels explicitly. |
@@ -132,8 +117,7 @@ The 5 November 2026 field review maps 14 existing entries and adds D38 (Diviner 
 Dataset availability does not establish equipment limits or operational suitability. Existing EDA completion statuses remain separate from this documentation review. Begin with a small science-data sample and its label before planning a full download.
 
 ## Contents
-- **[environmental_data.csv](environmental_data.csv)** — Main register of datasets, access links, limitations and EDA progress. Each entry explains what can be analysed by location and time.
-- **Lunar_Base_Conditions_Research_Backup (1).xlsx** — Original research workbook retained for reference.
+- **[environmental_data.csv](environmental_data.csv)** — Source register of datasets, access links, limitations and recorded statuses; local execution progress is maintained in the EDA documents.
 
 ## Using the Register
 Rows are organised by `Environmental Group`, then priority and dataset ID. Each entry has one primary group; `Related Factors` retains its other applications. `Type` distinguishes observations, models, project-data requirements and baseline context.
@@ -146,7 +130,7 @@ Keep additional dataset findings in the same CSV rather than creating duplicate 
 
 ## Public sources and remaining evidence gaps
 
-This source review was checked on **6 November 2026**, with the R01/R02 local-execution status updated on **7 November**. It is not a new online availability audit. Public reference observations, scenario outputs we must generate, and the chosen mission/equipment configuration are different evidence types. Sources alone do not establish applicability or a requirement pass; the original CSV statuses remain unchanged.
+**Source review: 6 November 2026; local R01/R02 results: 7 November.** These dates identify the evidence snapshot, not a live availability guarantee. Public reference observations, scenario outputs we must generate, and the chosen mission/equipment configuration are different evidence types. Sources alone do not establish applicability or a requirement pass; the original CSV statuses remain unchanged.
 
 | Gap / register entry | Verified online source or generation route | What it can provide / what remains missing |
 | --- | --- | --- |
@@ -159,4 +143,6 @@ This source review was checked on **6 November 2026**, with the R01/R02 local-ex
 | M02/M09/M10/M13/M14 and remaining project-specific records | Published research may provide reference cases, but **no directly applicable project dataset was established by this source check**. | Do not interpret this as proof that no public records exist. Habitat telemetry, containment/release tests, water/air assays, plume/layout tests and rescue/reliability evidence must match the actual system/scenario. Reports describing a system are not automatically downloadable time-series data or validation of a different design. |
 | D21/D22/D23/D24 | [ISRO Chandrayaan-3 archive FAQ](https://pradan.issdc.gov.in/ch3/faq.xhtml), [Chandrayaan-2 FAQ](https://pradan.issdc.gov.in/ch2/faq.xhtml). | Documented archive routes exist and the FAQ discusses authenticated sessions. Remain **KIV pending authorised access**, as requested; no alternative source is claimed to be the same calibrated science files. |
 
-Operational modelling/consumption is maintained in [the proposal](../Brief_Overview.md#algorithm-proposal); measured local results belong in [EDA_Results.md](../EDA/EDA_Results.md).
+**Manual-source update:** D27's southern scene and D30's global CPR mosaic now have executed [Dar_026/027 findings](../EDA/EDA_Results.md#13-manual-shadowcam-and-mini-rf-incorporation). These extend local image/scattering context; they do not establish resource/ice availability, local impact probability or new equipment limits. The impact ordering above and historical CSV statuses are not silently rewritten.
+
+Operational modelling/consumption is maintained in [the proposal](../purposal.md); measured local results belong in [EDA_Results.md](../EDA/EDA_Results.md).
