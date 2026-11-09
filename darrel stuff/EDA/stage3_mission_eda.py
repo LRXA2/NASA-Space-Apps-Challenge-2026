@@ -15,8 +15,7 @@ from data_maintenance import checked_path
 from decision_eda import accepted_input
 from environment_workflow import LocalRun
 from research_p1_readers import read_pds4
-from notebooks.shared.inspection import file_hash
-from notebooks.shared.processing import MOON_CRS, MOON_GEOGRAPHIC
+from notebooks.shared.processing import MOON_CRS, MOON_GEOGRAPHIC, sha256 as file_hash
 
 CONFIG = Path(__file__).with_name("stage3_eda_config.json")
 

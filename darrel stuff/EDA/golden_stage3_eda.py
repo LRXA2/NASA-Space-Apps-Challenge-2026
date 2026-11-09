@@ -13,7 +13,7 @@ import pandas as pd
 LOCAL = Path(__file__).resolve().parents[1]
 ROOT = LOCAL.parent
 sys.path[:0] = [str(LOCAL), str(ROOT)]
-from data_maintenance import resolve_data_path, digest
+from data_maintenance import resolve_data_path
 from decision_eda import accepted_input, sampled_condition_runs
 from environment_workflow import LocalRun
 

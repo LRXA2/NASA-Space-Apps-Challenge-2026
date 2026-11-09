@@ -20,10 +20,12 @@ def missing_dates(dates):
     return pd.date_range(dates.min(), dates.max(), freq="D").difference(dates)
 
 
-def crater_day(label, expected_date):
+def crater_day(label, expected_date, *, chunk_rows=100_000):
+    if not isinstance(chunk_rows, int) or isinstance(chunk_rows, bool) or chunk_rows < 1:
+        raise ValueError("CRaTER chunk size must be a positive integer")
     fields=["TIME", "BIASCMD", "CALLOW", "CALHIGH", "GOOD", "REJECT", "TOTAL"]
     fields += [f"PROCDFLAG {i}" for i in range(1,7)]
-    frame=read_pds4(label, columns=fields)
+    frame=read_pds4(label, columns=fields, chunk_rows=chunk_rows)
     frame["timestamp"]=pd.to_datetime(frame.TIME, utc=True)
     if frame.timestamp.duplicated().any() or not frame.timestamp.is_monotonic_increasing:
         raise ValueError("Duplicate or unordered CRaTER record times")

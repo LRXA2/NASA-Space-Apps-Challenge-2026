@@ -1,60 +1,46 @@
-# Purpose
+# Moon environmental suitability
 
-Support Moon base-location selection through environmental research and an explainable assessment of whether the **intended mission and selected equipment can operate there**. Earth evidence is supporting analog/reference material, not a substitute for lunar conditions.
+**Flow:** lunar conditions -> evidence-backed rules -> candidate results.
 
-# Objective and required Stage 3 target
+Evaluate whether an intended mission could operate at a selected Moon site. This workstream uses existing lunar data first; no CNN integration or Mars work. Mission/equipment profiles are optional for the default environmental comparison. Full operational suitability still requires applicable requirements, configuration and response evidence. Missing evidence is **Unknown**, never a pass.
 
-Our controlling target is [outline Stage 3 — Environmental and Equipment Suitability Engine](../outline.md#stage-3--environmental-and-equipment-suitability-engine).
+## Start here
 
-**Inputs:** planetary measurements/model estimates; mission duration/activities; crew requirements; equipment capabilities/limitations; environmental/operational safety requirements.
-
-**Flow:** retrieve applicable site/period conditions → load equipment → define hard/soft requirements → compare capability with demand → calculate consumable/power/thermal/operational margins where parameters exist → explain failures/uncertainties → score preferences only after mandatory requirements pass.
-
-**Output:** environmental suitability evidence, equipment adequacy, operating margins, failed requirements and uncertainty indicators. Missing evidence is **Unknown**, never an automatic pass.
-
-The overall project also considers terrain and Earth analog selection, as stated in the [overview](../outline.md#1-project-overview). The active work here is Moon-focused. Original terrain CNN code remains unchanged.
-
-# Priority
-
-1. **Required Stage 3 first:** close Stage 3 evidence, configuration and response-model gaps.
-2. **Original research P1:** use supporting research where it contributes; all 34 P1 rows remain traceable.
-3. **P2/P3 additions:** follow their existing tags and a defined question. Extra data cannot substitute for missing required Stage 3 inputs.
-
-The [proposal and decision table](purposal.md) is the single place for selected/reference-only/deferred/rejected pipeline contributions and reasons. [EDA results](EDA/EDA_Results.md#14-golden-stage-3-revamp) contains the measured findings; [EDA notes](EDA/EDA_Notes.md) is the work/notebook guide.
-
-# Current state — 9 November 2026
-
-**Latest prototype milestone:** workflow Steps 4-5 completed using existing data. [Scoped rules, working prototype and verification](research/STEP_4_5_PROTOTYPE.md). Mission/equipment inputs are optional. Dar_028/default CLI retains 14 context-ranked candidates, seven exclusions and top five, adding a 27-row compiled rule register, evidence-use checks, 17 pinned source tables and all-candidate limitation cards. All nine prior candidate products are byte-identical; 63 pipeline tests passed and the notebook executed. No new physical safety cutoff, score factor or operational pass. Step 6 remains deferred. The expanded Step 3 [EDA/source findings](research/STEP_3_EXPANDED_EDA.md) remain unchanged.
-
-| Area | Completed | Still required |
-| --- | --- | --- |
-| Data audit | Dar_029: 53 research entries, core + bounded selections; zero missing/size-mismatched selected files. | D21–D24 gated; D17/D25 unselected P2; project M-inputs are not universal downloadable datasets. No whole-archive checksum claim. |
-| Required Stage 3 time/site EDA | Dar_030: local-hour/Ls coverage, held-out cyclic diagnostics, terrain-conditioned phase relationships and twelve-month sampled geometry. | Requested mission period, terrain-aware illumination/contact and validated support/response. |
-| Original notebook reuse | All 36 original notebooks reviewed; Dar_032 and existing local 13 executed for seven regions. | No dated terrain-aware history generator found; full Earth/CNN replay needs additional sources/artifacts. [Reuse/dataset table](EDA/EDA_Notes.md#original-notebook-reuse-and-datasets--re-check-8-november-2026). |
-| Crew/equipment references | Dar_031: sourced nominal load sensitivity; battery protocol, radiation scenario and soil-geometry envelopes; requirement-reference mapping. | Actual crew/equipment, applicable limits, stocks/reserves and local models. Reference data does not establish adequacy. |
-| P1 evidence | Existing Dar_001–027 plus current audit/reference follow-up. Missing M-records receive schema/readiness EDA, not invented measurements. | Resolve applicable P1 gaps before optional feature promotion. |
-| Pipeline | Default Dar_028/CLI delivers populated existing-data products: 14 ranked comparisons, seven explained exclusions, all 21 candidate statuses, 100 supported values and five thermal profiles. Start at [latest results](Pipeline_Proto/outputs/LATEST_RESULTS.md). | Full Stage 3 still needs applicable mission/equipment/requirements inputs. Operational checks now run only when explicitly requested, not in the normal product. |
-
-S02 NASA-STD-3001 V2 F and S03 V1 C PDFs are acquired. S01 BVAD Rev2 has a documented official-source table extract; full local PDF retrieval returned HTTP 403. None supplies our mission configuration.
-
-[Historical reuse verification](data/verification/source_port_review/final_verification.json): Dar_032 and existing notebook 13 executed across seven regions; Dar_028 re-executed with their pinned context tables, with 225 tests passing at that checkpoint. [Current pipeline checks](Pipeline_Proto/README.md#what-demonstrably-works) verify the real-data environmental comparison independently of missing equipment inputs. Synthetic cases remain optional software tests; the blank-profile operational top-k stays empty. Context rankings are not operational eligibility.
-
-# Folder guide
-
-| Folder | Purpose |
+| Guide | Purpose |
 | --- | --- |
-| **EDA/** | Earth/Moon notebooks, reusable analysis helpers, tests, work plan and measured results. New required Stage 3 notebooks are in `Moon/Stage3_Requirements/`. |
-| **Pipeline_Proto/** | CNN-style notebook/configuration workflow and rule-based Stage 3 models, plus its own `outputs/` and explicit `sample_data/`. Start with [README](Pipeline_Proto/README.md). |
-| **download_script/** | One downloader; bounded discovery, threaded transfers, verified skips, retries and error logs. |
-| **research/** | Original dataset register/workbook and P-tagged impact reasoning. |
-| **data/** | Existing scientific downloads, receipts, manifests, EDA outputs and historical pipeline/verification runs. |
+| [Workflow](todo_workflow.md) | Steps 1-5 and what remains deferred. |
+| [Research sources](research/Research_Notes.md) | Dataset priorities, NASA source evidence and applicability. |
+| [EDA notes](EDA/EDA_Notes.md) | Environmental categories, steps taken, findings and limitations. |
+| [Pipeline](Pipeline_Proto/README.md) | Run commands, actual outputs and verification. |
+| [Downloads](download_script/Download_Dataset_Instructions.md) | Existing-data and additive download commands. |
 
-Existing scientific inputs and EDA outputs stay in **`darrel stuff/data/`**. New pipeline outputs and test inputs stay inside **`Pipeline_Proto/`**; additive downloader data goes to **`D:\projects\NASA Dataset`**. Repository-root `data/` remains absent. Legacy manifests are preserved in `data/legacy_root_data/`. Shared `data_maintenance.py` stays here because EDA/download code uses it.
+## Algorithm proposal
 
-Active helpers/tests are needed; fourteen retired one-time builders/migrations are recoverable from the [verified archive](data/verification/workspace_cleanup_20261108/retired_one_time_scripts.zip). Unique source data and completed runs are retained.
+[Feature decisions](purposal.md) separate usable measurements, reference-only evidence and deferred inputs. Research P1/P2/P3 tags are not hard/soft requirements or scoring weights.
 
-**Verified cleanup — 8 November 2026:** removed 3,124 unused extracted `LROC-NAC-maps`/`LROC-NAC-adjust` copies (**7.65 GiB**), after matching each file byte-for-byte to its retained original SDEM ZIP member. All seven ZIPs and 203 active SDEM files remain; the downloader no longer extracts those ancillary duplicate folders. Redundant completed-transfer checkpoints and Python bytecode were also removed; receipts, resumable partials, notebooks and historical results remain. [Cleanup verification and recovery inventory](data/verification/workspace_cleanup_20261108T113813117681Z/final_verification.json).
+The verified prototype compares 21 exploratory components: 14 context-ranked, seven excluded by configured filters, top five shown. These are **not 14 operationally approved sites**. Scores cannot compensate for failed or unknown mandatory safety conditions.
 
-## Notebook organisation
+The [science-based comparison](EDA/EDA_Notes.md#final-results-and-findings) now adds candidate radiation-geometry/UV proxies, charging references and unweighted preference fronts using our EDA. It keeps the visibility score as a baseline, avoids duplicate sunlight/UV weighting, and does not rank plasma density as safety. [Open current options](Pipeline_Proto/outputs/LATEST_RESULTS.md).
 
-Names remain `Dar_0xx_descriptive.ipynb`, unique across the workstream. Use `EDA/<planet>/<category>/` only when a category has more than two notebooks; smaller groups stay under the planet. Dar_029–032 form the required Stage 3 category. Existing notebook 13 is reused, not duplicated. Dar_028 stays with the pipeline experiment, not the EDA source notebooks.
+## EDA added since the last commit
+
+Compared with **`fca88dc` (9 November 2026, 08:23 SGT)**, three new notebooks extend the earlier analysis. All three have saved executions without errors.
+
+| Notebook | What was added | Findings and limits |
+| --- | --- | --- |
+| [Dar_040: download and thermal review](EDA/Moon/Stage3_Requirements/Dar_040_download_refresh_thermal_quality.ipynb) | Checked newly downloaded inputs and expanded dated thermal checks from six products in one region to **812 across three regions**. | **Zero strict-quality rows** remain. More downloads did not establish a usable temperature envelope; query rows can overlap. |
+| [Dar_041: multi-year radiation](EDA/Moon/Stage3_Requirements/Dar_041_multiyear_radiation_quality.ipynb) | Extended CRaTER from **494 to 1,091 dates / 94.1 million records**; GOES-16 from **495 to 524 dates**; added **791 GOES-19 dates** separately. Sampled **660,000 primary records from 33 monthly files**. | Only **10.48% / 10.82%** of GOES-16/19 channel/time bins meet the strict filter. Gaps and instrument/version differences remain explicit. Counts/flux are not local crew dose; primary samples are not a full event census. |
+| [Dar_042: science-based indicators](EDA/Moon/Stage3_Requirements/Dar_042_lunar_science_indicators.ipynb) | Derived candidate sky-openness and UV exposure-opportunity proxies; added plasma/charging reference context. | Supports relative comparisons, not local radiation dose, UV intensity or surface voltage. Lower plasma density or more darkness is **not automatically safer**. |
+
+**Effect on Steps 4-5:** the download/radiation extension feeds revised evidence guards and 39 scoped tables without changing the baseline filters/weights or granting safety passes. The separate science view identifies **two non-dominated trade-off options**, not two certified safe sites. Thermal comparison is withheld because only one filter-passing candidate has a complete comparable profile.
+
+**Already in the commit:** earlier terrain, illumination, Apollo resource, seismic and impact EDA. Documentation consolidation and link/import cleanup are separate maintenance, not new scientific analysis. See [EDA Notes](EDA/EDA_Notes.md) for the category-level findings.
+
+## Files and data
+
+- `EDA/`: Earth/Moon notebooks and analysis helpers; `Pipeline_Proto/`: engine and its outputs.
+- `research/`: source register and scoped rules; `download_script/` and `download_script_addons/`: acquisition tools.
+- Scientific data and EDA runs: `darrel stuff/data/`; additive downloads: `D:\projects\NASA Dataset`.
+- Generated reports, source documents and provenance are preserved. EDA notebook conventions are consolidated in `EDA/EDA_Notes.md`; the former EDA guides/instructions are archived via `data/verification/latest_eda_notes_cleanup.txt`. Consolidated source-doc originals are recoverable via `data/verification/latest_docs_download_review.txt`.
+
+**Code cleanup:** all 24 active Python modules are retained because notebooks, commands or tests use them. Two obsolete one-off writers are archived, five unused imports removed and disposable runtime/bytecode files cleaned. Recovery and validation are indexed by `data/verification/latest_code_cleanup.txt`; scientific data, notebooks, tests and historical provenance remain intact.

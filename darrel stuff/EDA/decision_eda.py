@@ -1,6 +1,5 @@
 """Decision-facing descriptive EDA, without inventing mission/equipment limits."""
 from itertools import combinations
-from pathlib import Path
 import re
 
 import numpy as np

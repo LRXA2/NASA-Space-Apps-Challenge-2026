@@ -3,7 +3,6 @@
 Reuse the original PDS reader and lunar coordinate definitions. No downloads,
 archive extraction, missing-value imputation or suitability scoring occurs here.
 """
-from pathlib import Path
 import re
 import zipfile
 import xml.etree.ElementTree as ET

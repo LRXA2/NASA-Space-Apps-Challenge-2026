@@ -288,6 +288,58 @@
       "evaluator": "baseline_context_only",
       "limit_state": "not_adopted",
       "authority": "planetary baseline"
+    },
+    {
+      "id": "E10",
+      "title": "Temporal availability is not qualified mission exposure coverage",
+      "role": "evidence_guard",
+      "research_ids": "D07 D08 D20",
+      "source": "GOES per-platform/energy/direction support and CRaTER selected-state coverage",
+      "applicability": "New radiation and dated-thermal evidence context, not candidate operational qualification",
+      "required_inputs": "dated records; cadence; state and quality flags; requested mission window",
+      "effect": "Missing dates, invalid states and quality exclusions remain explicit; do not fill gaps or infer an unobserved event is absent",
+      "evaluator": "radiation_refresh_checks",
+      "limit_state": "not_adopted",
+      "authority": "project evidence-use contract; no physical safety limit adopted"
+    },
+    {
+      "id": "E11",
+      "title": "Preserve detector, energy, direction, platform and product version",
+      "role": "evidence_guard",
+      "research_ids": "D07 D08",
+      "source": "D07/D08 source labels and NetCDF metadata",
+      "applicability": "New radiation and dated-thermal evidence context, not candidate operational qualification",
+      "required_inputs": "platform; version; sensor; channel; energy bounds; quantity and units",
+      "effect": "Do not pool incomparable channels, directions, satellites or product versions as calibrated equivalent flux or add SEC counters to primary LET",
+      "evaluator": "radiation_refresh_checks",
+      "limit_state": "not_adopted",
+      "authority": "project evidence-use contract; no physical safety limit adopted"
+    },
+    {
+      "id": "E12",
+      "title": "Sparse sampled primary records are not an event census or dose",
+      "role": "evidence_guard",
+      "research_ids": "D07",
+      "source": "CRaTER primary PDS4 labels; deterministic distributed-block sampling plan",
+      "applicability": "New radiation and dated-thermal evidence context, not candidate operational qualification",
+      "required_inputs": "source and sampled record counts; selected dates; detector flags; silicon LET units; DQI semantics",
+      "effect": "Keep systematic-block samples and unknown DQI semantics explicit; no event rate, full-day spectrum, particle protection or crew-dose pass",
+      "evaluator": "radiation_refresh_checks",
+      "limit_state": "not_adopted",
+      "authority": "project evidence-use contract; no physical safety limit adopted"
+    },
+    {
+      "id": "E13",
+      "title": "Science-based proxy comparisons retain quantity, basis and shared-input limits",
+      "role": "evidence_guard",
+      "research_ids": "D01 D02 D04 D07 D08 D11 D31 D32",
+      "source": "research/lunar_science_models.json; NASA PGDA; Phipps et al. (2021); Stubbs et al. (2014); Rhodes and Farrell (2019)",
+      "applicability": "Separate science context indicators, shared inputs, common reference scenarios and Pareto views; not actual operational qualification",
+      "required_inputs": "source basis; supported candidate quantity; comparability; explicit preference directions; reference-model assumptions; applicable response/limits for any operational verdict",
+      "effect": "Do not turn geometry into whole-field dose, Sun visibility into UV dose, common references into site measurements, or low plasma density/darkness into universal safety; no duplicate sunlight/UV weights or imputed unknowns",
+      "evaluator": "science_comparison.products; science_comparison.compare",
+      "limit_state": "not_adopted",
+      "authority": "project science-model evidence contract and explicit exploratory preference choices, not NASA-approved scoring weights"
     }
   ]
 }
