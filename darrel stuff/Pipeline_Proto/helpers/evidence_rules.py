@@ -11,7 +11,7 @@ import pandas as pd
 from decision_eda import accepted_input
 from data_maintenance import atomic_text
 
-PIPELINE = Path(__file__).resolve().parent
+PIPELINE = Path(__file__).resolve().parents[1]
 LOCAL = PIPELINE.parent
 ROLES = {"evidence_guard", "conditional_requirement", "historical_reference", "planetary_baseline"}
 

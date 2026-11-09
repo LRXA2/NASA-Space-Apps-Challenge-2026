@@ -8,7 +8,7 @@ import pandas as pd
 from decision_eda import accepted_input
 from data_maintenance import atomic_text
 
-LOCAL = Path(__file__).resolve().parents[1]
+LOCAL = Path(__file__).resolve().parents[2]
 PREFIX = "evidence_context/science/"
 
 

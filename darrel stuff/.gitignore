@@ -1,4 +1,4 @@
-# My own gitignore file, avoid conflict with other
+# Central ignore rules for darrel stuff/; keep local rules here, not in nested files.
 
 
 # Research folder

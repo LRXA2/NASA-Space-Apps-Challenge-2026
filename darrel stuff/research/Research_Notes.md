@@ -4,6 +4,17 @@
 
 [Source register](environmental_data.csv) | [Outline coverage](outline_environment_crosswalk.csv) | [Downloads](../download_script/Download_Dataset_Instructions.md) | [Pipeline](../Pipeline_Proto/README.md)
 
+## Files in this folder
+
+| File | Purpose |
+| --- | --- |
+| [environmental_data.csv](environmental_data.csv) | Source register: datasets, fields, priorities and limitations. |
+| [outline_environment_crosswalk.csv](outline_environment_crosswalk.csv) | Moon-relevant outline factors and evidence gaps. |
+| [environment_rule_register.json](environment_rule_register.json) | Step 4 requirements, evidence guards and permitted uses. |
+| [lunar_science_models.json](lunar_science_models.json) | Science sources, proxy definitions and preference-view settings. |
+
+This is already a dedicated research folder; its file paths are kept stable. The local spreadsheet backup remains covered by [../.gitignore](../.gitignore).
+
 ## Source coverage
 
 - **Register:** 53 entries: 38 external D-sources, 14 project M-inputs and C01 planetary baseline. It records official links, fields, joins, feasible analysis dimensions and review dates. Blank fields mean unreviewed, not absent data.

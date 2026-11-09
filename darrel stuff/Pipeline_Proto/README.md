@@ -35,14 +35,16 @@ From the repository root in PowerShell:
 | `environment_engine.py` | Verified loading, assessment orchestration, comparisons and exports. |
 | `environment_experiment.json` | Pins accepted EDA outputs/configuration; source/output hashes are checked. |
 | `diagnostic_policy.json` | Existing illustrative filters/preferences, not approved operational limits. |
-| `evidence_rules.py`, `evidence_rules_manifest.json` | Scoped rule register, source tables, evidence-use checks and candidate explanations. |
-| `science_comparison.py`, `../research/lunar_science_models.json` | Source-backed indicators, unweighted preference views, scope guards and common reference cases. |
+| `helpers/evidence_rules.py`, `evidence_rules_manifest.json` | Scoped rule register, source tables, evidence-use checks and candidate explanations. |
+| `helpers/science_comparison.py`, `../research/lunar_science_models.json` | Source-backed indicators, unweighted preference views, scope guards and common reference cases. |
 | `../research/environment_rule_register.json` | Traceable classifications, applicability, required inputs and consequences. |
-| `stage3_assessment.py`, `mission_profile_template.json` | Separate opt-in capability/demand models and input contract. |
+| `helpers/stage3_assessment.py`, `mission_profile_template.json` | Separate opt-in capability/demand models and input contract. |
 | `sample_data/`, `tests/` | Fictional verification inputs and protected software contracts. |
 | `outputs/` | Generated comparison/readiness/test runs and provenance; source data is not moved here. |
 
 EDA helper paths: [shared utilities/readers](../EDA/shared/) and [Stage 3 scripts/configs](../EDA/Moon/Stage3_Requirements/). Existing import names, notebook locations and the pipeline commands above are unchanged.
+
+The pipeline's three support modules are grouped in [helpers/](helpers/). Its entry script, configs, notebook, tests and output locations remain unchanged. Workstream ignore rules are centralized in [../.gitignore](../.gitignore).
 
 The candidate input is **21 purposively selected Dar_020 components**, not validated base footprints. Qualified source/cohort/spatial support is retained. Global/orbital, historical and region-center references stay context-only.
 

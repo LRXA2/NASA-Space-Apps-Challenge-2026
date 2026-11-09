@@ -18,7 +18,7 @@ ROOT = LOCAL.parent
 PIPELINE = Path(__file__).resolve().parent
 OUTPUTS = PIPELINE / "outputs"
 SAMPLE_FIXTURE = PIPELINE / "sample_data/synthetic_10_candidates.csv"
-sys.path[:0] = [str(LOCAL / "EDA/shared"), str(LOCAL / "EDA/Moon/Stage3_Requirements"), str(LOCAL), str(ROOT)]
+sys.path[:0] = [str(PIPELINE / "helpers"), str(LOCAL / "EDA/shared"), str(LOCAL / "EDA/Moon/Stage3_Requirements"), str(LOCAL), str(ROOT)]
 from data_maintenance import atomic_text
 from decision_eda import accepted_input
 from environment_workflow import LocalRun

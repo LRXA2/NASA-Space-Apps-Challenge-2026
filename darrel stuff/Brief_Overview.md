@@ -45,8 +45,10 @@ Compared with **`fca88dc` (9 November 2026, 08:23 SGT)**, three new notebooks ex
 ## Files and data
 
 - `EDA/`: Earth/Moon notebooks and analysis helpers; `Pipeline_Proto/`: engine and its outputs.
+- `Pipeline_Proto/helpers/`: supporting evidence, science-comparison and operational-assessment modules. The main pipeline script and configs stay in place.
 - Reusable EDA helpers are in `EDA/shared/`; Stage 3 scripts/configs are in the existing `EDA/Moon/Stage3_Requirements/` folder. Notebook locations and existing import names are unchanged. See [helper locations](EDA/EDA_Notes.md#python-helper-locations).
 - `research/`: source register and scoped rules; `download_script/` and `download_script_addons/`: acquisition tools.
+- `darrel stuff/.gitignore`: the single ignore file for this workstream; no nested ignore files are needed.
 - Scientific data and EDA runs: `darrel stuff/data/`; additive downloads: `D:\projects\NASA Dataset`.
 - Generated reports, source documents and provenance are preserved. EDA notebook conventions are consolidated in `EDA/EDA_Notes.md`; the former EDA guides/instructions are archived via `data/verification/latest_eda_notes_cleanup.txt`. Consolidated source-doc originals are recoverable via `data/verification/latest_docs_download_review.txt`.
 
