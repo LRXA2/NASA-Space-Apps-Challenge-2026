@@ -2,6 +2,8 @@
 
 This report covers **all 53 entries** in [environmental_data.csv](environmental_data.csv): 38 external dataset/catalog entries, 14 project-data requirements and one planetary baseline. It is not limited to locally downloaded data. The original CSV priorities and statuses are preserved.
 
+**Current proof-of-concept scope - 9 November 2026:** use existing evidence first; mission/equipment profiles are optional for the default comparison and remain available as a separate opt-in assessment. The original P-tags below are unchanged and are not weights or mandatory/soft classifications. [Step 4 rule/evidence register](environment_rule_register.json), [Step 5 prototype and limitations](STEP_4_5_PROTOTYPE.md). Missing operational inputs still mean Unknown when that assessment is requested, never a proxy pass.
+
 ## Required Stage 3 targets - first priority
 
 **Controlling objective:** [outline Stage 3 - Environmental and Equipment Suitability Engine](../../outline.md#stage-3--environmental-and-equipment-suitability-engine): evaluate whether an intended mission can operate at a selected Moon or Mars site. Our current implementation/data concern the Moon; lunar evidence is not silently applied to Mars. These required inputs/processes come before optional research additions.

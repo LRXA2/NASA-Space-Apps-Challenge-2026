@@ -168,20 +168,27 @@ def digest(path):
 def cleanup_completed_transfer_state(data_root, path, *, apply=True):
     """Discard only redundant identity metadata, never resumable partial bytes."""
     path = checked_path(data_root, path)
-    identity = checked_path(data_root, path.with_name(path.name + ".part.json"))
     receipt = checked_path(data_root, path.with_name(path.name + ".json"))
     partial = path.with_name(path.name + ".part")
-    if not identity.is_file() or not receipt.is_file() or not path.is_file() or partial.exists():
+    if not receipt.is_file() or not path.is_file() or partial.exists():
         return []
-    item, saved = read_json(identity), read_json(receipt)
-    if (not isinstance(item, dict) or not isinstance(saved, dict)
-            or saved.get("source") != item or item.get("size_bytes") != path.stat().st_size
+    saved = read_json(receipt)
+    if (not isinstance(saved, dict)
             or not re.fullmatch(r"[0-9a-f]{64}", str(saved.get("sha256", "")))):
         return []
-    result = [{"path": str(identity), "bytes": identity.stat().st_size,
-               "reason": "redundant completed-transfer identity; final receipt retained"}]
-    if apply:
-        identity.unlink()
+    result = []
+    for suffix in (".part.json", ".eda-part.json"):
+        identity = checked_path(data_root, path.with_name(path.name + suffix))
+        if not identity.is_file():
+            continue
+        item = read_json(identity)
+        if (not isinstance(item, dict) or saved.get("source") != item
+                or item.get("size_bytes") != path.stat().st_size):
+            continue
+        result.append({"path": str(identity), "bytes": identity.stat().st_size,
+                       "reason": "redundant completed-transfer identity; final receipt retained"})
+        if apply:
+            identity.unlink()
     return result
 
 
@@ -309,10 +316,12 @@ def clean_generated(data_root, *, apply=False):
     references = referenced_inputs(root)
     for manifest in sorted((root / "processed/analysis").glob("*/*/provenance.json")):
         removed.extend(cleanup_failed_run(manifest.parent, root, apply=apply, references=references))
-    for identity in sorted(root.rglob("*.part.json")):
+    identities = sorted(set(root.rglob("*.part.json")) | set(root.rglob("*.eda-part.json")))
+    for identity in identities:
         try:
+            suffix = ".eda-part.json" if identity.name.endswith(".eda-part.json") else ".part.json"
             removed.extend(cleanup_completed_transfer_state(
-                root, identity.with_name(identity.name[:-len(".part.json")]), apply=apply))
+                root, identity.with_name(identity.name[:-len(suffix)]), apply=apply))
         except (OSError, ValueError) as error:
             warnings.append(f"Preserved {identity}: {error}")
     for run in sorted((root / "verification").glob("*")):

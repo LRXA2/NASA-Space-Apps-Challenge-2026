@@ -1,5 +1,7 @@
 # Decision-facing Moon EDA results
 
+**Current downstream handoff - 9 November 2026:** [workflow Steps 4-5](../research/STEP_4_5_PROTOTYPE.md) are complete with optional mission/equipment inputs, unchanged existing-data scores, a scoped evidence/rule register and explicit candidate limitations. Historical EDA measurements and scope statements below remain unchanged; Step 6 is deferred.
+
 **Current priority: Required Stage 3, then research P1/P2/P3. Latest continuation: 8 November 2026.** Start with the [required Stage 3 consolidation](#14-golden-stage-3-revamp). Sections 1–13 retain their original measured scope and accepted runs; their historical “no new downloads/implementation” statements do not describe the new reference acquisition and Stage 3 models. No mission profile or operating limit has been invented/adopted.
 
 The goal is to help select a Moon base location by preparing reliable environmental evidence for [Stage 3](../../outline.md#stage-3--environmental-and-equipment-suitability-engine), considered together with terrain and mission/equipment requirements. We aim to supply location-specific profiles and explainable hard/soft-rule inputs—not declare a site safe or rank missions without requirements.
@@ -580,3 +582,32 @@ Accepted runs: `analysis/stage3_native_support/20261108T085949685187Z_d0bda9` an
 Active notebooks use `Moon/Stage3_Requirements/`; future required-work outputs use `analysis/stage3_required_*` and `stage3_evidence/`. Historical data/verification paths remain unchanged. Original code outside Darrel remains read-only.
 
 **Current validation: 225 tests passed** (116 EDA/maintenance, 81 downloader, 28 pipeline), with existing tests unchanged. Dar_028 re-executed in both modes with the new pinned context tables: **21 operational Unknown candidates / 210 Unknown readiness records**, zero operational top-k, and separate unchanged proxy diagnostics. The external `prototype2/run_main.ipynb` was also checked: it launches a generic eligibility/scoring pipeline, not lunar data processing or a terrain-aware time-history generator; its unrelated input data are not transferred.
+
+
+## 16. Step 3 available-data EDA milestone - 9 November 2026
+
+[Full existing-notebook review, findings, hazard matrix and scope](../research/STEP_3_EDA_REVIEW.md). Moon only; no CNN, adopted rules, ranking or engine changes. **39 existing notebooks reviewed**, with one pre-existing blocked legacy Moon 25 port (absent original unit policy); no saved errors in Dar_001-032. Historical notebooks were not blanket rerun or modified.
+
+| Executed analysis | Measured result | Operational boundary |
+| --- | --- | --- |
+| [Dar_033](Moon/Stage3_Requirements/Dar_033_mission_resource_and_risk_eda.ipynb) | 16/18 primary Apollo 17 resource records consumed more than predicted; smallest remaining-minus-historical-redline differences: oxygen 0.00 lb, feedwater 0.05 lb, battery charge 0.82 Ah. 65/66 reconstruction rows have paired predictions. | Source-specific rounded historical quantities, not modern equipment limits or site feasibility. Ah is not Wh. |
+| [Dar_034](Moon/Stage3_Requirements/Dar_034_radiation_and_hazard_evidence_eda.ipynb) | Three dates: 259,200 selected-state CRaTER seconds; 369/22,464 strict GOES channel/time rows; no full qualified sensor/channel day; 96 modeled reference dose-duration sensitivities. | Counters/flux are not lunar crew dose. Missing supported exposure remains blank; steady-rate scaling does not bound solar events. Related catalogs and 222 crater detections do not establish local disaster probabilities. |
+| [Dar_035](Moon/Stage3_Requirements/Dar_035_dated_polar_thermal_support_eda.ipynb) | Six products, one region, channels 3/4: 95,695 observations, 59,871 inside the exact rectangle; zero strict-quality observations; 36,101 positive in-region flagged diagnostics. | All qge=12; no silent relaxation. Sparse local-hour/channel brightness is not bolometric/equipment temperature or a mission envelope. |
+
+Radiation, thermal/power loss, seismic/impact/ejecta, dust, life support, ground/mobility, communications, charging, resources and contingency risks are explicitly recorded. No numeric cutoff was invented; missing applicability/capability remains Unknown and cannot be converted into a preference pass.
+
+Accepted runs: `analysis/stage3_resources_eda/20261108T211453295966Z_b828df`, `analysis/stage3_radiation_eda/20261108T211459851919Z_a935df`, `analysis/stage3_thermal_eda/20261108T211520197662Z_f64ea4`. [Verification](../data/verification/stage3_eda_review/verification.json): **11 targeted tests passed**, three notebooks fully executed with no saved errors, 28 retained-output and 65 non-notebook consumed-input hashes verified. These are targeted software/data checks, not physical qualification or a fresh full-suite count. Frozen selections remain valid while other downloads continue. Steps 4-6 remain deferred.
+
+
+## 17. Expanded Step 3 - outline crosswalk, terrain geometry and annual radiation
+
+[Expanded findings, source review and final acquisition cutoff](../research/STEP_3_EXPANDED_EDA.md), [27-factor outline crosswalk](../research/outline_environment_crosswalk.csv). Moon only; no CNN or engine/rule changes.
+
+| Executed notebook | Findings / contribution | Boundary |
+| --- | --- | --- |
+| Dar_036 | Seven ROI-center points, 5,040 sampled horizon bearings, 80,752 Sun/Earth-center samples. Increasing range 10 to 20 km raises skyline at 348 matched bearings, up to 4.418 degrees. Joint refinement changes Leibnitz solar blocking by up to 2.36 percentage points. | Finite terrain/target-center sampling, not clear-horizon proof, solar-disk power, continuous darkness or a working communication link. Zero sampled blocking is not continuous illumination. |
+| Dar_037 | 394 consecutive GOES-16 completed days; 266,507/2,950,272 strict bins (9.03%). | Source-file coverage is not qualified exposure coverage; observed maxima are not certified events or dose. |
+| Dar_038 | 456 completed CRaTER dates: 39,356,608 records; two missing dates and four partial-record days. Extend GOES to 457 dates with explicit gaps. | Year-plus context, not a dense two-year survey; counters and flux remain separate physical quantities. |
+| Dar_039 | Late revisit adds 38 dates per instrument. Final **494 CRaTER dates / 42,639,808 records**, and **495 GOES-16 dates / 3,706,560 bins**, of which **385,750 (10.41%)** qualify. | About 16 months dense coverage meets minimum one year, not two dense years. CRaTER lacks 19-20 June 2024; GOES retains 29 missing dates before the isolated April file. |
+
+Final external cutoff: **9 November 2026, 05:55:42 Singapore time**. No new successful D20 job; polar thermal-quality limitations remain. New dates arriving after this cutoff are not silently credited. Earlier rows and 42 prior notebooks are preserved. [Targeted verification](../data/verification/stage3_expansion/verification.json) checks four new notebook executions, hashes, 25 tests, annual support/missingness and geometry/incremental-preservation contracts; not physical qualification. Full details, run IDs and primary documentation are in the expanded report. Steps 4-6 remain deferred.

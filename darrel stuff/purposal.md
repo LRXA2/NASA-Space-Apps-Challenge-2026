@@ -1,5 +1,7 @@
 # Stage 3 — Environmental Suitability Proposal
 
+**Current existing-data prototype scope (9 November 2026):** mission/equipment profiles are optional, not prerequisites for the default environmental comparison. Step 4's [scoped rule register](research/environment_rule_register.json) and the Step 5 [evidence/explanation handoff](research/STEP_4_5_PROTOTYPE.md) supplement the decisions below. Global/orbital, historical and ROI-center evidence is context only; no new score factors, equipment defaults or operational passes are inferred. Existing exploratory thresholds/weights remain explicitly distinct from sourced operational requirements.
+
 **Primary objective:** evaluate whether an intended mission can operate under the environmental conditions at a selected site, as stated in [outline Stage 3](../outline.md#stage-3--environmental-and-equipment-suitability-engine). This is the **Required Stage 3 target**, not an optional extension. Our active implementation is Moon-focused; Mars cannot use lunar evidence.
 
 **Order of work:** required Stage 3 requirements and evidence gaps → original research P1 → P2 → P3. Required Stage 3 is a workstream overlay, **not a rewrite of the research CSV's P tags**. Additional data is useful only if its location, time, quantity and decision relevance are established.

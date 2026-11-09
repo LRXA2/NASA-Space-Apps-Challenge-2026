@@ -22,7 +22,9 @@ The overall project also considers terrain and Earth analog selection, as stated
 
 The [proposal and decision table](purposal.md) is the single place for selected/reference-only/deferred/rejected pipeline contributions and reasons. [EDA results](EDA/EDA_Results.md#14-golden-stage-3-revamp) contains the measured findings; [EDA notes](EDA/EDA_Notes.md) is the work/notebook guide.
 
-# Current state — 8 November 2026
+# Current state — 9 November 2026
+
+**Latest prototype milestone:** workflow Steps 4-5 completed using existing data. [Scoped rules, working prototype and verification](research/STEP_4_5_PROTOTYPE.md). Mission/equipment inputs are optional. Dar_028/default CLI retains 14 context-ranked candidates, seven exclusions and top five, adding a 27-row compiled rule register, evidence-use checks, 17 pinned source tables and all-candidate limitation cards. All nine prior candidate products are byte-identical; 63 pipeline tests passed and the notebook executed. No new physical safety cutoff, score factor or operational pass. Step 6 remains deferred. The expanded Step 3 [EDA/source findings](research/STEP_3_EXPANDED_EDA.md) remain unchanged.
 
 | Area | Completed | Still required |
 | --- | --- | --- |
@@ -31,25 +33,27 @@ The [proposal and decision table](purposal.md) is the single place for selected/
 | Original notebook reuse | All 36 original notebooks reviewed; Dar_032 and existing local 13 executed for seven regions. | No dated terrain-aware history generator found; full Earth/CNN replay needs additional sources/artifacts. [Reuse/dataset table](EDA/EDA_Notes.md#original-notebook-reuse-and-datasets--re-check-8-november-2026). |
 | Crew/equipment references | Dar_031: sourced nominal load sensitivity; battery protocol, radiation scenario and soil-geometry envelopes; requirement-reference mapping. | Actual crew/equipment, applicable limits, stocks/reserves and local models. Reference data does not establish adequacy. |
 | P1 evidence | Existing Dar_001–027 plus current audit/reference follow-up. Missing M-records receive schema/readiness EDA, not invented measurements. | Resolve applicable P1 gaps before optional feature promotion. |
-| Pipeline | Dar_028 experiment workflow; conditional stock, storage, thermal, outage and capacity–demand models; separate diagnostic/operational results. | A complete applicable mission/equipment/requirements profile. Current operational candidates remain Unknown. |
+| Pipeline | Default Dar_028/CLI delivers populated existing-data products: 14 ranked comparisons, seven explained exclusions, all 21 candidate statuses, 100 supported values and five thermal profiles. Start at [latest results](Pipeline_Proto/outputs/LATEST_RESULTS.md). | Full Stage 3 still needs applicable mission/equipment/requirements inputs. Operational checks now run only when explicitly requested, not in the normal product. |
 
 S02 NASA-STD-3001 V2 F and S03 V1 C PDFs are acquired. S01 BVAD Rev2 has a documented official-source table extract; full local PDF retrieval returned HTTP 403. None supplies our mission configuration.
 
-[Latest reuse verification](data/verification/source_port_review/final_verification.json): Dar_032 and existing notebook 13 executed across seven regions; Dar_028 re-executed with their pinned context tables. **225 relevant tests passed** (116 EDA/maintenance, 81 downloader, 28 pipeline). Operational top-k remains empty for the blank mission profile; diagnostic proxy results are not operational eligibility. Earlier runs retain their [historical verification](data/verification/golden_stage3_final/verification.json).
+[Historical reuse verification](data/verification/source_port_review/final_verification.json): Dar_032 and existing notebook 13 executed across seven regions; Dar_028 re-executed with their pinned context tables, with 225 tests passing at that checkpoint. [Current pipeline checks](Pipeline_Proto/README.md#what-demonstrably-works) verify the real-data environmental comparison independently of missing equipment inputs. Synthetic cases remain optional software tests; the blank-profile operational top-k stays empty. Context rankings are not operational eligibility.
 
 # Folder guide
 
 | Folder | Purpose |
 | --- | --- |
 | **EDA/** | Earth/Moon notebooks, reusable analysis helpers, tests, work plan and measured results. New required Stage 3 notebooks are in `Moon/Stage3_Requirements/`. |
-| **Pipeline_Proto/** | CNN-style notebook/configuration workflow, rule-based orchestration and focused Stage 3 margin models. Start with [README](Pipeline_Proto/README.md). |
+| **Pipeline_Proto/** | CNN-style notebook/configuration workflow and rule-based Stage 3 models, plus its own `outputs/` and explicit `sample_data/`. Start with [README](Pipeline_Proto/README.md). |
 | **download_script/** | One downloader; bounded discovery, threaded transfers, verified skips, retries and error logs. |
 | **research/** | Original dataset register/workbook and P-tagged impact reasoning. |
-| **data/** | Scientific downloads, receipts, manifests, EDA/pipeline outputs and verification. |
+| **data/** | Existing scientific downloads, receipts, manifests, EDA outputs and historical pipeline/verification runs. |
 
-All data/output stays in **`darrel stuff/data/`**; repository-root `data/` remains absent. Legacy manifests are preserved in `data/legacy_root_data/`. Shared `data_maintenance.py` stays here because EDA/download code uses it.
+Existing scientific inputs and EDA outputs stay in **`darrel stuff/data/`**. New pipeline outputs and test inputs stay inside **`Pipeline_Proto/`**; additive downloader data goes to **`D:\projects\NASA Dataset`**. Repository-root `data/` remains absent. Legacy manifests are preserved in `data/legacy_root_data/`. Shared `data_maintenance.py` stays here because EDA/download code uses it.
 
-Active helpers/tests are needed; fourteen retired one-time builders/migrations are recoverable from the [verified archive](data/verification/workspace_cleanup_20261108/retired_one_time_scripts.zip). No scientific source data or completed runs were discarded.
+Active helpers/tests are needed; fourteen retired one-time builders/migrations are recoverable from the [verified archive](data/verification/workspace_cleanup_20261108/retired_one_time_scripts.zip). Unique source data and completed runs are retained.
+
+**Verified cleanup — 8 November 2026:** removed 3,124 unused extracted `LROC-NAC-maps`/`LROC-NAC-adjust` copies (**7.65 GiB**), after matching each file byte-for-byte to its retained original SDEM ZIP member. All seven ZIPs and 203 active SDEM files remain; the downloader no longer extracts those ancillary duplicate folders. Redundant completed-transfer checkpoints and Python bytecode were also removed; receipts, resumable partials, notebooks and historical results remain. [Cleanup verification and recovery inventory](data/verification/workspace_cleanup_20261108T113813117681Z/final_verification.json).
 
 ## Notebook organisation
 

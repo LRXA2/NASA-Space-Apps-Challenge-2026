@@ -57,7 +57,7 @@ No network requests, downloads, extraction or filesystem writes. It prints the s
 | --- | --- | --- |
 | `--scope all` (default) | Core collections + required Moon support, then 36 bounded research datasets and two reference datasets. Scopes run sequentially to avoid overlapping writes; files within each transfer phase run concurrently. | Existing paths below. |
 | `--scope core` | TerraClimate v1.1 for five Earth sites, 2015-2024, `tmin/tmax/ppt/ws/srad` (250 year-variable requests); all south-polar seasonal Diviner products/labels; ten south-polar illumination GeoTIFFs; required Moon support. | `earth/terraclimate/`, `earth/environment_expansion/20261030/terraclimate/`, `moon/diviner/`, `moon/illumination_2016/`. |
-| `--scope moon-support` | Original seven SDEM region archives, six selected 40 m LOLA maps, illumination labels/docs and documented unit policy. Only verified archives are extracted; CRC/path checks retained. | `moon/sdem/`, `moon/lola_product90/`, existing illumination/reference paths. |
+| `--scope moon-support` | Original seven SDEM region archives, six selected 40 m LOLA maps, illumination labels/docs and documented unit policy. Active terrain/quality files are extracted with CRC/path checks; unused ancillary `LROC-NAC-maps`/`LROC-NAC-adjust` folders stay inside the original ZIPs. | `moon/sdem/`, `moon/lola_product90/`, existing illumination/reference paths. |
 | `--scope research` | Original 36 Dxx selections plus R01/R02; bounded groups and byte limits. Not full archives or guaranteed coverage of all study regions. | Primarily `moon/eda_pilots/Dxx/`; known core products reuse existing paths. |
 | `--scope references` | Only R01 battery experiments and R02 Apollo 15 soil-mechanics tables. | `reference/battery_tests/`, `reference/apollo15_soil/`. |
 
@@ -88,7 +88,9 @@ A filename alone is not proof of completion. Reuse checks size, source identity,
 
 Research partials resume only when their saved source identity/validators and HTTP range match. Moon support retains its existing receipt/resume/CRC rules. TerraClimate is a generated subset response: an interrupted subset is safely restarted, not blindly appended. An old partial without sufficient identity evidence is retained for investigation, not silently trusted.
 
-Keep receipts, `.eda-part.json` / `.part.json` sidecars and manifests with the data. Do not copy only the `.part` file to another source/destination. Never disable TLS verification. If your environment uses a trusted custom CA, configure `REQUESTS_CA_BUNDLE` with that CA file.
+Keep final receipts and manifests with the data. Keep `.eda-part.json` / `.part.json` identity sidecars while a transfer is incomplete; the downloader removes only matching redundant checkpoints after completion, retaining the final receipt. Do not copy only the `.part` file to another source/destination. Never disable TLS verification. If your environment uses a trusted custom CA, configure `REQUESTS_CA_BUNDLE` with that CA file.
+
+The approved SDEM cleanup removed **7.65 GiB of redundant extracted ancillary files**, not the original ZIPs or active terrain/quality inputs. Future restores skip extracting those two folders; their full contents remain recoverable from the ZIPs. `*_extracted.json` distinguishes active `files` from `archive_only_files`. [Verification/recovery inventory](../data/verification/workspace_cleanup_20261108T113813117681Z/final_verification.json).
 
 ## Commands for specific work
 

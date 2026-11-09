@@ -111,6 +111,12 @@ REGIONS = (
 )
 
 
+# These ancillary image/adjustment trees duplicate members kept in each original
+# ZIP and are not inputs to the active environmental EDA/pipeline. Keep the ZIPs
+# for recovery, but do not recreate the approved redundant extracted copies.
+SDEM_ARCHIVE_ONLY_FOLDERS = frozenset({"LROC-NAC-maps", "LROC-NAC-adjust"})
+
+
 LOLA_FILES = (
     "LDEM_80S_40MPP_ADJ.TIF", "LDEM_80S_40MPP_ADJ_EFFRES.TIF",
     "LDEM_80S_40MPP_ADJ_ERR.TIF", "LDEC_80S_40MPP_ADJ.TIF",
@@ -454,7 +460,11 @@ def extract_archive(path: Path, output: Path) -> None:
     region = path.stem
     root.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(path) as archive:
-        entries = archive_members(archive, region, root)
+        all_entries = archive_members(archive, region, root)  # Validate even archive-only paths.
+        archive_only = [(e, p) for e, p in all_entries
+                        if p.relative_to(root / region).parts[0] in SDEM_ARCHIVE_ONLY_FOLDERS]
+        entries = [(e, p) for e, p in all_entries
+                   if p.relative_to(root / region).parts[0] not in SDEM_ARCHIVE_ONLY_FOLDERS]
         required = 0
         for entry, target in entries:
             if target.exists():
@@ -479,8 +489,11 @@ def extract_archive(path: Path, output: Path) -> None:
     save_json(destination(output, f"moon/sdem/manifests/{region}_extracted.json"), {
         "archive": str(path), "region": region, "status": "complete",
         "files": [{"path": str(p.relative_to(root)), "bytes": e.file_size, "crc32": e.CRC} for e, p in entries],
+        "archive_only_files": [{"path": str(p.relative_to(root)), "bytes": e.file_size, "crc32": e.CRC}
+                               for e, p in archive_only],
+        "extraction_policy": "Active terrain/quality layers extracted; ancillary LROC images/adjustments retained in original ZIP only",
     })
-    print(f"Extracted/verified {region}: {len(entries)} files", flush=True)
+    print(f"Extracted/verified {region}: {len(entries)} active files; {len(archive_only)} ancillary files retained in ZIP only", flush=True)
 
 
 def label_unit(text: str, stem: str) -> dict:
@@ -1466,6 +1479,7 @@ def transfer(item, output, timeout, attempts, cookies=None):
         if sha:
             LOG.info("Verified existing file; skipped %s", path)
             print(f"SKIP verified {item['dataset']}: {path.name}", flush=True)
+            clear_completed_transfer_state(output, path)
             return "verified_existing"
         part = path.with_name(path.name + ".part")
         state_path = path.with_name(path.name + ".eda-part.json")
@@ -1544,6 +1558,7 @@ def transfer(item, output, timeout, attempts, cookies=None):
                               "verified_utc": datetime.now(timezone.utc).isoformat(),
                               "verification": "expected checksum from publisher metadata or explicit selection" if item.get("md5") or item.get("sha256") else "TLS + exact size + local SHA256; no publisher checksum"})
                     part.rename(path)
+                    clear_completed_transfer_state(output, path)
                     LOG.info("Completed %s sha256=%s", path, sha)
                     print(f"DONE {item['dataset']}: {path.name}", flush=True)
                     return "downloaded"

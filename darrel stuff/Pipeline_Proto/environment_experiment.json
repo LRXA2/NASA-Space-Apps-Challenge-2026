@@ -1,4 +1,5 @@
 {
+  "comparison_policy": "diagnostic_policy.json",
   "sources": {
     "candidates": "processed/analysis/dar_020_candidate_environment/20261106T175311055762Z_b68ce6",
     "shadowcam": "processed/analysis/dar_026_shadowcam_manual/20261107T183427316296Z_f95fd8",
@@ -98,5 +99,6 @@
       }
     ],
     "soft_preferences": []
-  }
+  },
+  "evidence_rules_manifest": "evidence_rules_manifest.json"
 }
