@@ -10,6 +10,7 @@ import pandas as pd
 
 from decision_eda import accepted_input
 from data_maintenance import atomic_text
+import temporal_context
 
 PIPELINE = Path(__file__).resolve().parents[1]
 LOCAL = PIPELINE.parent
@@ -190,6 +191,7 @@ def evidence_use_checks(frames):
          "existing_candidate_context", "Do not credit essential supplies or load/mobility capacity"),
     ]
     rows += radiation_refresh_checks(frames)
+    rows += temporal_context.validate(frames)
     result = pd.DataFrame(rows, columns=["rule_id", "check_id", "data_use_status", "observed_basis", "unit_or_scope",
                                          "reason", "source_group", "consequence"])
     result["assessment_domain"] = "evidence_use_NOT_site_safety"
@@ -313,6 +315,10 @@ def write_explanations(run, ranking, evidence, checks, frames, science_entry=Non
         insert = lines.index("## Candidate explanations")
         lines[insert:insert] = ["## Science-based preference extension", "",
             "[Open radiation geometry, UV opportunity, plasma references and multi-objective preferences](science/SCIENCE_COMPARISON.md). The original visibility score remains a baseline; new fronts and per-factor positions are exploratory comparisons, not operational safety.", ""]
+    if "temporal/monthly_context.csv" in frames:
+        insert = lines.index("## Candidate explanations")
+        lines[insert:insert] = ["## Historical time-period comparison", "",
+            "[Monthly/quarterly radiation, UV and plasma levels and coverage](TEMPORAL_CONTEXT.md). Calendar contrasts remain historical context, not lunar seasons, candidate safety scores or future mission forecasts.", ""]
     geo_regions = set(frames["geometry/reference_observers.csv"].region)
     for item in ranking.to_dict("records"):
         cid = item["candidate_id"]
@@ -360,6 +366,9 @@ def products(run, manifest_name, candidates, evidence, policy, policy_source, ch
         "consumed_tables": len(catalog), "evidence_use_checks": len(use_checks),
         "candidate_hazard_boundaries": len(limits), "new_scored_factors": 0,
         "new_operational_passes": 0, "entry_point": "evidence_context/EVIDENCE_DECISIONS.md"}
+    temporal = temporal_context.products(run, frames)
+    if temporal is not None:
+        summary["temporal_context"] = temporal
     manifest = json.loads(local_file(manifest_name).read_text(encoding="utf-8"))
     if "science_models" in manifest:
         import science_comparison

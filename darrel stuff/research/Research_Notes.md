@@ -119,6 +119,13 @@ Frame each analysis as: **How does [variable] vary with [dimension], within [reg
 
 Calendar date, local solar time, solar phase and event-relative time are different. Cumulative phase-bin averages are not dated time series; static terrain/geology does not supply monthly change.
 
+### Implemented time-period evidence — Dar_043
+
+- **D09 UV:** original downloader packages contain the historical SOLSTICE daily FUV/MUV spectra (2003–2020), not just the candidate sunlight proxy. Only complete quality=0 spectra are integrated; missing/filled spectral bins withhold the daily band value. [Publisher products](https://lasp.colorado.edu/sorce/data/) and [user guide, section 4.3](https://docserver.gesdisc.eosdis.nasa.gov/repository/Mission/SORCE/3_Product_Documentation/Product%20Requirements%20and%20Designs/SORCE_Data_User_Guide.pdf).
+- **D11 plasma:** the add-on supplied 36 ARTEMIS THB monthly CDF files. Publisher Q-variable selection, fill/range attributes, position and measured timestamp spacing are preserved. SSE-x/radius bins are descriptive geometry choices, not physical safety thresholds or certified plasma regimes. [NASA dataset description](https://cdaweb.gsfc.nasa.gov/cgi-bin/eval2.cgi?dataset=THB_L2_MERGED&index=sp_phys); the exact local CDF metadata is exported with the EDA.
+- **D07/D08 radiation:** monthly/quarterly comparisons reuse checked daily SEC counter and platform/channel/version-separated GOES summaries. They do not convert counts/flux into dose or sparse primary samples into an event census.
+- **Step 4 E14–E16:** preserve calendar/support meaning; reject simultaneous relationships between non-overlapping histories; retain Unknown local charging/protection. Calendar quarters are not [lunar seasons](https://svs.gsfc.nasa.gov/5229), and a low historical value is not a safe mission window. [Executed analysis and findings](../EDA/EDA_Notes.md#monthly-and-quarterly-comparisons--dar_043).
+
 ## Bottom line
 
 - The outline crosswalk covers **27 Moon-relevant factors**, including unresolved evidence boundaries.

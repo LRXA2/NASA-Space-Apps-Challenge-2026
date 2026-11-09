@@ -612,6 +612,11 @@ def publish_latest_results(directory, report):
               "Historical runs are retained separately; their old readiness/empty exports are not current product outputs.", ""]
     if report.get("evidence_rules"):
         lines += [f"[New EDA, rule provenance and candidate explanations]({relative}/evidence_context/EVIDENCE_DECISIONS.md)", ""]
+        temporal = report["evidence_rules"].get("temporal_context")
+        if temporal:
+            lines += ["## Historical time-period context", "",
+                f"[Monthly and quarterly radiation, UV and plasma levels/coverage]({relative}/{temporal['entry_point']})",
+                "Historical calendar contrasts only, not lunar seasons, safety ranks or mission-window forecasts. Existing candidate scores are unchanged.", ""]
     atomic_text(OUTPUTS/"LATEST_RESULTS.md", "\n".join(lines))
 
 

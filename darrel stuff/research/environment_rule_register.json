@@ -340,6 +340,45 @@
       "evaluator": "science_comparison.products; science_comparison.compare",
       "limit_state": "not_adopted",
       "authority": "project science-model evidence contract and explicit exploratory preference choices, not NASA-approved scoring weights"
+    },
+    {
+      "id": "E14",
+      "title": "Calendar-period levels retain sampling, identity and coverage",
+      "role": "evidence_guard",
+      "research_ids": "D07 D08 D09 D11",
+      "source": "Dar_043; SOLSTICE ASCII quality definitions; ARTEMIS merged CDF variable/global metadata; stage3_temporal_config.json source URLs",
+      "applicability": "Historical calendar-period environmental context only, not candidate operational qualification",
+      "required_inputs": "UTC dates; series identity and units; quality/coverage; spacecraft position and measured cadence; applicable local mission-period response for any operational inference",
+      "effect": "Preserve UTC years/months/quarters, instrument/channel/version/mode, validity flags and full calendar denominators; no pooled raw-record quantile, zero-filled gap, lunar-season label or future safety forecast",
+      "evaluator": "temporal_context.validate",
+      "limit_state": "not_adopted",
+      "authority": "project evidence-use contract informed by publisher metadata, not adopted physical safety limits"
+    },
+    {
+      "id": "E15",
+      "title": "Non-overlapping histories cannot establish simultaneous environmental relationships",
+      "role": "evidence_guard",
+      "research_ids": "D07 D08 D09 D11",
+      "source": "Dar_043; SOLSTICE ASCII quality definitions; ARTEMIS merged CDF variable/global metadata; stage3_temporal_config.json source URLs",
+      "applicability": "Historical calendar-period environmental context only, not candidate operational qualification",
+      "required_inputs": "UTC dates; series identity and units; quality/coverage; spacecraft position and measured cadence; applicable local mission-period response for any operational inference",
+      "effect": "Historical SOLSTICE UV and recent radiation/plasma do not overlap; calendar month names cannot establish simultaneous correlation, a mission-window exposure history or a recurring seasonal safety rule",
+      "evaluator": "temporal_context.validate",
+      "limit_state": "not_adopted",
+      "authority": "project evidence-use contract informed by publisher metadata, not adopted physical safety limits"
+    },
+    {
+      "id": "E16",
+      "title": "Spacecraft plasma variability is not candidate surface charging",
+      "role": "evidence_guard",
+      "research_ids": "D07 D08 D09 D11",
+      "source": "Dar_043; SOLSTICE ASCII quality definitions; ARTEMIS merged CDF variable/global metadata; stage3_temporal_config.json source URLs",
+      "applicability": "Historical calendar-period environmental context only, not candidate operational qualification",
+      "required_inputs": "UTC dates; series identity and units; quality/coverage; spacecraft position and measured cadence; applicable local mission-period response for any operational inference",
+      "effect": "Retain measured cadence and descriptive SSE position strata; these are not certified solar-wind/magnetotail regimes, local ionisation rates, surface potential or hardware discharge response; lower density/darkness is not universally safer",
+      "evaluator": "temporal_context.validate",
+      "limit_state": "not_adopted",
+      "authority": "project evidence-use contract informed by publisher metadata, not adopted physical safety limits"
     }
   ]
 }

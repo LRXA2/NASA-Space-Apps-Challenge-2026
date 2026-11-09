@@ -4,6 +4,13 @@
 
 Evaluate whether an intended mission could operate at a selected Moon site. This workstream uses existing lunar data first; no CNN integration or Mars work. Mission/equipment profiles are optional for the default environmental comparison. Full operational suitability still requires applicable requirements, configuration and response evidence. Missing evidence is **Unknown**, never a pass.
 
+## Monthly/quarterly extension — 10 November 2026
+
+- **Step 3 executed:** [Dar_043](EDA/Moon/Stage3_Requirements/Dar_043_temporal_environment.ipynb) analyses radiation, UV and plasma by UTC year-month and calendar quarter: **101 series, 2,352 monthly rows, 856 quarterly rows and 18 plots**. UV covers 2003–2020; ARTEMIS adds 36 files / 319,946 spacecraft records from 2023–2026.
+- **Step 4:** E14–E16 preserve coverage/identity, prevent non-overlapping histories becoming simultaneous correlations, and retain Unknown local charging/protection. Calendar quarters are not lunar seasons.
+- **Step 5:** the existing engine consumes seven pinned temporal tables and adds `evidence_context/TEMPORAL_CONTEXT.md`, linked from [latest results](Pipeline_Proto/outputs/LATEST_RESULTS.md). This is historical context, not new safety thresholds, scores or forecasts.
+- **Validation:** 191 EDA and 100 pipeline tests pass. [Category findings](EDA/EDA_Notes.md#monthly-and-quarterly-comparisons--dar_043) | [Current verification](data/verification/latest_temporal_environment.txt).
+
 ## Start here
 
 | Guide | Purpose |

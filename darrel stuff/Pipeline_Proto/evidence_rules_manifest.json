@@ -139,6 +139,22 @@
       "spatial_scope": "six_LRO_CRATER_silicon_detectors_not_lunar_site_shielded_crew",
       "temporal_scope": "sparse_selected_monthly_days_2023-07_to_2026-06_not_continuous_history",
       "quantity_class": "sampled_silicon_LET_keV_per_micron_DQI_unqualified_not_event_rate_or_dose"
+    },
+    "temporal": {
+      "run": "stage3_temporal_environment/20261109T183729619637Z_3d72dc",
+      "files": [
+        "series_catalog.csv",
+        "daily_context.csv",
+        "monthly_context.csv",
+        "quarterly_context.csv",
+        "temporal_support.csv",
+        "cross_dataset_overlap.csv",
+        "plasma_file_diagnostics.csv"
+      ],
+      "basis": "observed_historical_SOLSTICE_spectra_ARTEMIS_CDF_and_previously_checked_CRATER_GOES_daily_statistics",
+      "spatial_scope": "solar_reference_and_spacecraft_position_strata_NOT_candidate_surface_or_equipment_response",
+      "temporal_scope": "SOLSTICE_2003-05_to_2020-02_ARTEMIS_2023-10_to_2026-09_CRATER_2023-07_to_2026-06_GOES16_19_separate_2023-11_to_2026-10;UTC_calendar_months_and_quarters_NOT_lunar_seasons",
+      "quantity_class": "daily_band_irradiance_or_record_statistics_with_explicit_quality_coverage_and_position;NOT_local_dose_voltage_risk_or_future_forecast"
     }
   },
   "science_models": {

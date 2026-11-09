@@ -28,6 +28,8 @@ Published REDMoon scenarios are a common what-if library, never assigned to cand
 
 ## 3. What to recommend
 
+**Time-period extension:** Dar_043 adds measured historical year-month/quarter contrasts for radiation, solar UV and spacecraft plasma. Accept these as source-separated context with valid-day/time, cadence and geometry support; do not turn within-year level orders into new safety weights, plasma preferences or future arrival-window recommendations. UV and recent plasma/radiation do not overlap. E14–E16 guard those inference boundaries, and the pipeline validates and exports the temporal tables separately from candidate scores.
+
 | Evidence | Decision | Permitted algorithm use / withheld inference |
 | --- | --- | --- |
 | Dar_020: 21 selected components and qualified static/phase features | Accept bounded context | Existing visibility/slope filters and explainable preferences. Not validated base footprints or whole-component thermal coverage. |

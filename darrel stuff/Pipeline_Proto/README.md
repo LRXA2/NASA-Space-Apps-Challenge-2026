@@ -37,6 +37,7 @@ From the repository root in PowerShell:
 | `diagnostic_policy.json` | Existing illustrative filters/preferences, not approved operational limits. |
 | `helpers/evidence_rules.py`, `evidence_rules_manifest.json` | Scoped rule register, source tables, evidence-use checks and candidate explanations. |
 | `helpers/science_comparison.py`, `../research/lunar_science_models.json` | Source-backed indicators, unweighted preference views, scope guards and common reference cases. |
+| `helpers/temporal_context.py` | Validates monthly/quarterly EDA handoffs and writes historical time-context explanations; no added ranking weights. |
 | `../research/environment_rule_register.json` | Traceable classifications, applicability, required inputs and consequences. |
 | `helpers/stage3_assessment.py`, `mission_profile_template.json` | Separate opt-in capability/demand models and input contract. |
 | `sample_data/`, `tests/` | Fictional verification inputs and protected software contracts. |
@@ -82,14 +83,26 @@ The policy filters median solar/Earth visibility each >=0.5 and slope q90 <=8 de
 
 The separate `evidence_context/` annex includes:
 
-- `rule_register.csv`: 26 scoped rule/evidence entries plus five actual policy entries (31 compiled rows).
-- `source_catalog.csv` and `sources/`: 39 pinned EDA source tables with original units, scope and hashes. The current radiation/thermal cohorts extend the earlier 23-table bundle; original pilot/baseline sources remain explicitly historical, not independent additional observations.
-- `evidence_use_checks.csv`: 11 checks about whether an inference is supported. **Evidence-use Failed is not a failed physical site.**
+- `rule_register.csv`: 29 scoped rule/evidence entries plus five actual policy entries (34 compiled rows).
+- `source_catalog.csv` and `sources/`: 46 pinned EDA source tables with original units, scope and hashes, plus six science tables (**52 context tables total**). The latest seven temporal tables extend, not replace, the earlier bundle; repeated summaries of the same observations are not independent evidence.
+- `evidence_use_checks.csv`: 14 checks about whether an inference is supported. **Evidence-use Failed is not a failed physical site.**
 - `explained_context_checks.csv`: values, operators, thresholds and signed distances. These are exploratory threshold distances, **not equipment operating margins**.
 - `candidate_inference_limits.csv`: 252 boundaries (12 hazard categories x 21 components), with operational conclusions Unknown.
 - `EVIDENCE_DECISIONS.md`: all 21 candidate cards with values, exclusions, scores and inference limits.
+- `TEMPORAL_CONTEXT.md`: historical monthly/quarterly radiation, UV and plasma contrasts, actual coverage and inference boundaries.
 
 The annex intentionally preserves source N/A and Unknown, separately from the populated default candidate CSV contract. More radiation or thermal context does not become a candidate measurement or new weight by association. The new group exports dated thermal support/flags, regional support, instrument-separated file availability, job statuses and acquisition holds; availability remains distinct from the new row-level radiation analysis.
+
+## Historical time-period extension
+
+[Dar_043](../EDA/Moon/Stage3_Requirements/Dar_043_temporal_environment.ipynb) is executed, not just a notebook template. The manifest explicitly pins its accepted full run. The pipeline consumes seven tables: series catalog, daily context, monthly context, quarterly context, temporal support, cross-dataset span overlap and plasma file/cadence diagnostics. It checks source hashes, calendar windows, series identity, daily-to-period statistics and support totals before export.
+
+- **101 series / 2,352 year-month rows / 856 quarter rows**; instruments, channels, versions, UV modes and plasma SSE-position strata remain distinct.
+- **E14:** calendar/coverage handling passes only as an evidence-use check. **E15:** using non-overlapping historical UV and recent plasma/radiation for simultaneous correlation fails. **E16:** spacecraft plasma does not resolve local charging/hardware protection, which remains Unknown.
+- Monthly/quarterly medians describe daily statistics, not pooled raw records. Partial periods, missing observations, valid days and GOES qualified seconds remain explicit. Plasma cadence is measured, not assumed from nominal metadata; its sample counts are not elapsed valid time.
+- These are UTC calendar periods, **not lunar seasons or future mission-window forecasts**. No new hard safety threshold, soft weight, local UV/dose/voltage or operational pass is invented. The existing context rankings and science fronts are unchanged.
+
+Start with `outputs/LATEST_RESULTS.md` -> **Historical time-period context**. Reproduce the EDA using `../EDA/Moon/Stage3_Requirements/stage3_temporal_eda.py` or Dar_043; the existing pipeline commands above remain unchanged. [Findings](../EDA/EDA_Notes.md#monthly-and-quarterly-comparisons--dar_043) | [Verification](../data/verification/latest_temporal_environment.txt).
 
 ## Optional operational assessment
 
@@ -101,9 +114,11 @@ The blank profile produces **21 Unknown operational states and no operational to
 
 ## Current radiation/thermal handoff
 
-[Dar_041 findings](../EDA/EDA_Notes.md#radiation) now feed the annex: 1,091 CRaTER secondary dates, 524 GOES-16 dates, 791 GOES-19 dates, bounded samples from 33 primary files and 812 checked thermal queries. E10/E11/E12 enforce temporal support, instrument identity and sample scope. The 11 evidence-use checks do not change the existing filters/weights, candidate metrics or operational eligibility. Missing thermal/primary qualification and local transported radiation dose remain explicit holds.
+[Dar_041 findings](../EDA/EDA_Notes.md#radiation) feed the annex: 1,091 CRaTER secondary dates, 524 GOES-16 dates, 791 GOES-19 dates, bounded samples from 33 primary files and 812 checked thermal queries. E10/E11/E12 enforce temporal support, instrument identity and sample scope. These checks do not change existing filters/weights, candidate metrics or operational eligibility. Missing thermal/primary qualification and local transported radiation dose remain explicit holds.
 
 ## Verification
+
+**Time-period extension, 10 November 2026:** **191 EDA + 100 pipeline tests passed**. Dar_043 executed all three code cells and Dar_028 all ten, without saved errors. Independent raw UV/CDF checks agree with the exports; all nine prior candidate CSVs are byte-identical. The default now includes 52 context tables and 14 evidence-use checks, while the blank mission profile remains 21 Unknown with no operational top-k. Existing tests, 26 original rule objects and prior source pins were preserved. [Accepted runs and checks](../data/verification/latest_temporal_environment.txt).
 
 **10 November 2026 EDA alignment check:** all **66 handoff tables** across default and optional audit/operational modes match the latest completed full EDA runs in values and structure. All 48 saved EDA notebooks have executed code cells and no saved errors, including the formerly uncredited legacy native-support notebook; this is execution evidence, not physical qualification.
 
