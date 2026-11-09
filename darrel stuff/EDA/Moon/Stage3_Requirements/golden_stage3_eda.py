@@ -10,9 +10,9 @@ import sys
 import numpy as np
 import pandas as pd
 
-LOCAL = Path(__file__).resolve().parents[1]
+LOCAL = Path(__file__).resolve().parents[3]
 ROOT = LOCAL.parent
-sys.path[:0] = [str(LOCAL), str(ROOT)]
+sys.path[:0] = [str(LOCAL / "EDA/shared"), str(LOCAL), str(ROOT)]
 from data_maintenance import resolve_data_path
 from decision_eda import accepted_input, sampled_condition_runs
 from environment_workflow import LocalRun

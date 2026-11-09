@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path[:0] = [str(ROOT), str(ROOT / "darrel stuff/EDA")]
+sys.path[:0] = [str(ROOT), str(ROOT / "darrel stuff/EDA/shared"), str(ROOT / "darrel stuff/EDA/Moon/Stage3_Requirements")]
 from decision_eda import (CONTEXT, assign_blocks, validate_observations, distinct_context, context_features,
                           thermal_features, complete_phase_table, block_coverage, sampled_condition_runs,
                           pairwise_spearman)

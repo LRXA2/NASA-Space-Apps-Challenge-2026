@@ -6,7 +6,7 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import data_maintenance as maintenance
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path[:0] = [str(Path(__file__).resolve().parents[1] / "shared"), str(Path(__file__).resolve().parents[1] / "Moon/Stage3_Requirements")]
 from manual_raster_eda import manual_selection
 
 NAMES = ["M013049982S_map_raw.tif", "M013049982S_map_raw.xml.txt",

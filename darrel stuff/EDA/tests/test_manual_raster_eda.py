@@ -8,7 +8,7 @@ import pandas as pd
 from rasterio.transform import from_origin
 import rasterio
 
-sys.path[:0] = [str(Path(__file__).resolve().parents[1]), str(Path(__file__).resolve().parents[3])]
+sys.path[:0] = [str(Path(__file__).resolve().parents[1] / "shared"), str(Path(__file__).resolve().parents[1] / "Moon/Stage3_Requirements"), str(Path(__file__).resolve().parents[3])]
 from manual_raster_eda import (SPECIAL_BITS, classify_pixels, radar_indices, radar_preview,
                                sample_radar, sample_shadow, attach_pixels, regional_summary,
                                relationship_tables, distribution, shadow_definition, radar_definition)

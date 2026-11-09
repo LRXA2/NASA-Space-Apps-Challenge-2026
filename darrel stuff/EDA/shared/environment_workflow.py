@@ -7,7 +7,7 @@ from pathlib import Path
 import json
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from data_maintenance import atomic_text, cleanup_failed_run
 
 from notebooks.shared.processing import Run, sha256

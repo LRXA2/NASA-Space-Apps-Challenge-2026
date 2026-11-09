@@ -8,7 +8,7 @@ import rasterio
 from rasterio.transform import from_origin
 from scipy.ndimage import minimum_filter
 
-sys.path[:0] = [str(Path(__file__).resolve().parents[1]), str(Path(__file__).resolve().parents[3])]
+sys.path[:0] = [str(Path(__file__).resolve().parents[1] / "shared"), str(Path(__file__).resolve().parents[1] / "Moon/Stage3_Requirements"), str(Path(__file__).resolve().parents[3])]
 from terrain_followup_eda import support_policy_checks, source_crop_check
 
 

@@ -8,9 +8,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-LOCAL = Path(__file__).resolve().parents[1]
+LOCAL = Path(__file__).resolve().parents[3]
 ROOT = LOCAL.parent
-sys.path[:0] = [str(LOCAL), str(ROOT)]
+sys.path[:0] = [str(LOCAL / "EDA/shared"), str(LOCAL), str(ROOT)]
 from data_maintenance import checked_path
 from decision_eda import accepted_input
 from environment_workflow import LocalRun

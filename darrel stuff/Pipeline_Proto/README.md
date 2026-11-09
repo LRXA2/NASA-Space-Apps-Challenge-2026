@@ -42,6 +42,8 @@ From the repository root in PowerShell:
 | `sample_data/`, `tests/` | Fictional verification inputs and protected software contracts. |
 | `outputs/` | Generated comparison/readiness/test runs and provenance; source data is not moved here. |
 
+EDA helper paths: [shared utilities/readers](../EDA/shared/) and [Stage 3 scripts/configs](../EDA/Moon/Stage3_Requirements/). Existing import names, notebook locations and the pipeline commands above are unchanged.
+
 The candidate input is **21 purposively selected Dar_020 components**, not validated base footprints. Qualified source/cohort/spatial support is retained. Global/orbital, historical and region-center references stay context-only.
 
 ## Science-based environmental preferences

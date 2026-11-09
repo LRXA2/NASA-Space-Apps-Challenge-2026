@@ -14,7 +14,7 @@ from rasterio.windows import Window
 
 from notebooks.shared.processing import MOON_GEOGRAPHIC
 from research_p1_readers import NS, pds3_number, pin_source
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from data_maintenance import resolve_data_path
 
 ISIS_SOURCE = "https://isis.astrogeology.usgs.gov/7.2.0/Object/Developer/_special_pixel_8h_source.html"

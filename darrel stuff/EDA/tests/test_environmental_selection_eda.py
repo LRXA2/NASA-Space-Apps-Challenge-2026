@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path[:0] = [str(ROOT / 'darrel stuff/EDA'), str(ROOT)]
+sys.path[:0] = [str(ROOT / "darrel stuff/EDA/shared"), str(ROOT / "darrel stuff/EDA/Moon/Stage3_Requirements"), str(ROOT)]
 from environmental_selection_eda import (lattice, components, select_component_candidates, associate_points,
     candidate_thermal_profiles, center_phase_spans, benefit_values, pareto_dominance, preference_scenarios,
     diagnostic_gate, gate_scenarios, requirement_readiness)

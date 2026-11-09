@@ -241,7 +241,7 @@ class DataMaintenanceTests(unittest.TestCase):
         self.assertTrue(all(p.exists() for p in [source, code, receipt, failed.parent / "provenance.json"]))
 
     def test_local_run_exit_keeps_complete_outputs_and_cleans_failed_intermediates(self):
-        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        sys.path[:0] = [str(Path(__file__).resolve().parents[1] / "shared"), str(Path(__file__).resolve().parents[1] / "Moon/Stage3_Requirements")]
         from environment_workflow import LocalRun
         for error in [None, ValueError("fixture failure")]:
             run = object.__new__(LocalRun)

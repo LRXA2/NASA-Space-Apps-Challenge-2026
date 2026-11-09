@@ -18,7 +18,7 @@ ROOT = LOCAL.parent
 PIPELINE = Path(__file__).resolve().parent
 OUTPUTS = PIPELINE / "outputs"
 SAMPLE_FIXTURE = PIPELINE / "sample_data/synthetic_10_candidates.csv"
-sys.path[:0] = [str(LOCAL / "EDA"), str(LOCAL), str(ROOT)]
+sys.path[:0] = [str(LOCAL / "EDA/shared"), str(LOCAL / "EDA/Moon/Stage3_Requirements"), str(LOCAL), str(ROOT)]
 from data_maintenance import atomic_text
 from decision_eda import accepted_input
 from environment_workflow import LocalRun
@@ -660,7 +660,7 @@ def main(argv=None):
         for name in ["similarity_experiment.py", "terrain_learning.py"]:
             run.input(ROOT / "notebooks/modeling/terrain_similarity" / name)
         run.input(LOCAL / "purposal.md")
-        run.input(LOCAL / "EDA/decision_eda.py")
+        run.input(LOCAL / "EDA/shared/decision_eda.py")
         run.input(ROOT / "notebooks/shared/inspection.py")
         if args.sample:
             candidates, evidence, context, static, support, profile = load_sample_fixture(run)

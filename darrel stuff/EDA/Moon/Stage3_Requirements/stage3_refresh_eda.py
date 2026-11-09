@@ -21,8 +21,8 @@ def execute(notebook, sample=False):
     suffix="_sample" if sample else ""
     with LocalRun(ROOT,"analysis/stage3_late_radiation_refresh"+suffix,config,notebook) as run:
         for p in [CONFIG,Path(__file__),ROOT/config["final_recheck"],
-                  ROOT/"darrel stuff/EDA/stage3_annual_radiation_eda.py",
-                  ROOT/"darrel stuff/EDA/stage3_expanded_eda.py",ROOT/"darrel stuff/EDA/stage3_mission_eda.py"]:
+                  ROOT/"darrel stuff/EDA/Moon/Stage3_Requirements/stage3_annual_radiation_eda.py",
+                  ROOT/"darrel stuff/EDA/Moon/Stage3_Requirements/stage3_expanded_eda.py",ROOT/"darrel stuff/EDA/Moon/Stage3_Requirements/stage3_mission_eda.py"]:
             run.input(p)
         reference=LOCAL/"data/processed/analysis"/config["annual_reference_run"]
         old=pd.read_csv(accepted_input(run,reference,"crater_daily_state_and_counter_context.csv"))

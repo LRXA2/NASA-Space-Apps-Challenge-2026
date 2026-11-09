@@ -10,7 +10,7 @@ import rasterio
 from rasterio.transform import from_origin
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path[:0] = [str(ROOT), str(ROOT / "darrel stuff/EDA")]
+sys.path[:0] = [str(ROOT), str(ROOT / "darrel stuff/EDA/shared"), str(ROOT / "darrel stuff/EDA/Moon/Stage3_Requirements")]
 from moon_p1_analysis import local_time_hours, sample_containing_pixels, temperature_summary
 from notebooks.shared.processing import MOON_CRS
 

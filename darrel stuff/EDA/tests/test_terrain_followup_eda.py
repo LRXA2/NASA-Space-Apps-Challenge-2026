@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path[:0] = [str(ROOT/'darrel stuff/EDA'), str(ROOT)]
+sys.path[:0] = [str(ROOT / "darrel stuff/EDA/shared"), str(ROOT / "darrel stuff/EDA/Moon/Stage3_Requirements"), str(ROOT)]
 from terrain_followup_eda import (terrain_source_statistics, slope_classification_comparison,
     candidate_source_support, nominal_box_overlap, documented_nominal_bin_size, conditional_rank_relationship)
 

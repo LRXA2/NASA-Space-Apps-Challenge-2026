@@ -4,7 +4,7 @@ import argparse
 import json
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path[:0] = [str(Path(__file__).resolve().parents[2] / "shared"), str(Path(__file__).resolve().parents[3]), str(Path(__file__).resolve().parents[4])]
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -289,7 +289,7 @@ def execute(kind, sample=False):
         for path in [CONFIG, Path(__file__), Path(__file__).with_name("stage3_mission_eda.py"),
                      Path(__file__).with_name("stage3_expanded_eda.py"),
                      Path(__file__).with_name("stage3_annual_radiation_eda.py"),
-                     Path(__file__).with_name("research_p1_readers.py")]:
+                     LOCAL / "EDA/shared/research_p1_readers.py"]:
             run.input(path)
         findings = processors[kind](run, config, sample)
         findings.update(sample=sample, acquisition_cutoff_utc=config["acquisition_cutoff_utc"],

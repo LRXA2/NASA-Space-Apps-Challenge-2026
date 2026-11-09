@@ -8,7 +8,7 @@ import zipfile
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path[:0] = [str(ROOT), str(ROOT / "darrel stuff/EDA")]
+sys.path[:0] = [str(ROOT), str(ROOT / "darrel stuff/EDA/shared"), str(ROOT / "darrel stuff/EDA/Moon/Stage3_Requirements")]
 from research_p1_readers import (read_pds4, pds4_image, dose_profiles, pds3_number,
                                  nsp1_wavelengths, published_crater_tables, pilot_files, INVENTORY)
 

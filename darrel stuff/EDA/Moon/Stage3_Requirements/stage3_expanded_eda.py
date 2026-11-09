@@ -327,7 +327,7 @@ def execute(kind, notebook, sample=False):
     scope = "_sample" if sample else ""
     with LocalRun(ROOT, "analysis/stage3_expanded_"+kind+scope, config, notebook) as run:
         for path in [CONFIG, Path(__file__), ROOT/config["acquisition_snapshot"],
-                     ROOT/"darrel stuff/EDA/stage3_mission_eda.py", ROOT/"outline.md"]:
+                     ROOT/"darrel stuff/EDA/Moon/Stage3_Requirements/stage3_mission_eda.py", ROOT/"outline.md"]:
             run.input(path)
         findings = {"terrain": terrain, "space_weather": space_weather}[kind](run, config, sample)
         run.path("findings.json").write_text(json.dumps(findings, indent=2, default=str), encoding="utf-8")

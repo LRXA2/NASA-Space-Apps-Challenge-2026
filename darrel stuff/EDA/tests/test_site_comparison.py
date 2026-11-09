@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path[:0] = [str(ROOT / 'darrel stuff/EDA'), str(ROOT)]
+sys.path[:0] = [str(ROOT / "darrel stuff/EDA/shared"), str(ROOT / "darrel stuff/EDA/Moon/Stage3_Requirements"), str(ROOT)]
 from site_comparison import (cohort_rows, static_profiles, thermal_profiles, joint_state,
                               joint_sweep, thermal_joint_summary, rule_input_table)
 

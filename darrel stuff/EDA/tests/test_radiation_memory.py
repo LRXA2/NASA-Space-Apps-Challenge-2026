@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path[:0] = [str(ROOT / "darrel stuff/EDA"), str(ROOT)]
+sys.path[:0] = [str(ROOT / "darrel stuff/EDA/shared"), str(ROOT / "darrel stuff/EDA/Moon/Stage3_Requirements"), str(ROOT)]
 import stage3_annual_radiation_eda as eda
 import stage3_mission_eda as mission
 

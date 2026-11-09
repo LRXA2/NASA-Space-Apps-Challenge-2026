@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path[:0] = [str(Path(__file__).resolve().parents[1] / "shared"), str(Path(__file__).resolve().parents[1] / "Moon/Stage3_Requirements")]
 from stage3_radiation_refresh import platform_summary, primary_sample, sample_record_indices
 from research_p1_readers import read_pds4
 

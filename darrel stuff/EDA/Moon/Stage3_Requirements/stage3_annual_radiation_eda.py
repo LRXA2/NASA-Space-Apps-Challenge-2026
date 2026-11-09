@@ -63,8 +63,8 @@ def execute(notebook, sample=False):
         days=[days[0], days[-1]]
     suffix="_sample" if sample else ""
     with LocalRun(ROOT, "analysis/stage3_annual_radiation"+suffix, config, notebook) as run:
-        for p in [CONFIG, Path(__file__), ROOT/"darrel stuff/EDA/stage3_expanded_eda.py",
-                  ROOT/"darrel stuff/EDA/stage3_mission_eda.py", ROOT/"outline.md",
+        for p in [CONFIG, Path(__file__), ROOT/"darrel stuff/EDA/Moon/Stage3_Requirements/stage3_expanded_eda.py",
+                  ROOT/"darrel stuff/EDA/Moon/Stage3_Requirements/stage3_mission_eda.py", ROOT/"outline.md",
                   ROOT/"darrel stuff/data/verification/stage3_expansion/annual_freeze_acquisition_snapshot.json"]:
             run.input(p)
         daily, hourly=[], []

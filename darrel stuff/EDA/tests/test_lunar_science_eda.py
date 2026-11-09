@@ -5,7 +5,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+sys.path[:0] = [str(Path(__file__).resolve().parents[1] / "shared"), str(Path(__file__).resolve().parents[1] / "Moon/Stage3_Requirements")]
 from lunar_science_eda import derive_profiles, indicator_contract, long_indicators, plasma_reference_cases
 
 

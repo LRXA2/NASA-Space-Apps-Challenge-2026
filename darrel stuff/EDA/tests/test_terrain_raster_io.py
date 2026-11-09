@@ -11,7 +11,7 @@ from rasterio.transform import from_origin
 from rasterio.warp import reproject
 
 ROOT = Path(__file__).resolve().parents[3]
-sys.path[:0] = [str(ROOT / "darrel stuff/EDA"), str(ROOT)]
+sys.path[:0] = [str(ROOT / "darrel stuff/EDA/shared"), str(ROOT / "darrel stuff/EDA/Moon/Stage3_Requirements"), str(ROOT)]
 from notebooks.shared.processing import MOON_CRS, Grid, make_grid, warp, crop_native
 from terrain_raster_io import raster_windows, image_supported_grid, crop_native_windowed
 
