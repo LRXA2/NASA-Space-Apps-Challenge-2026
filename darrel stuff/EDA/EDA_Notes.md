@@ -68,6 +68,6 @@
 
 [Source register](../research/Research_Notes.md) | [Science/model assumptions](../research/lunar_science_models.json) | [Current results](../Pipeline_Proto/outputs/LATEST_RESULTS.md)
 
-Detailed tables, figures and provenance remain in `../data/processed/analysis/` and the notebooks, especially Dar_033-042. Original notes/results/instructions are archived through `../data/verification/latest_eda_notes_cleanup.txt`. One legacy native-support notebook has an unresolved missing-unit-policy error and is not credited as executed.
+Detailed tables, figures and provenance remain in `../data/processed/analysis/` and the notebooks, especially Dar_033-042. Original notes/results/instructions are archived through `../data/verification/latest_eda_notes_cleanup.txt`.
 
 **Notebook conventions:** name new notebooks `Dar_0xx_descriptive_name.ipynb`, using the next unused number across Earth and Moon. Keep reference/ported names unchanged. Use `EDA/<planet>/<category>/` only when a category has more than two notebooks; otherwise keep notebooks directly under the planet. Store generated data, figures, manifests and execution/debug artifacts under `darrel stuff/data/`, not beside source notebooks.

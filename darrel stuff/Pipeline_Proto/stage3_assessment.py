@@ -3,7 +3,6 @@
 Applicability declarations are traceable user/model inputs, not certification.
 Only complete declared mandatory checks permit operational preference scoring.
 """
-from pathlib import Path
 import json
 from numbers import Real
 

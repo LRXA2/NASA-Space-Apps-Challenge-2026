@@ -22,14 +22,20 @@ The verified prototype compares 21 exploratory components: 14 context-ranked, se
 
 The [science-based comparison](EDA/EDA_Notes.md#final-results-and-findings) now adds candidate radiation-geometry/UV proxies, charging references and unweighted preference fronts using our EDA. It keeps the visibility score as a baseline, avoids duplicate sunlight/UV weighting, and does not rank plasma density as safety. [Open current options](Pipeline_Proto/outputs/LATEST_RESULTS.md).
 
-## EDA added since the last commit
+## Step 4-5 alignment check (10 November 2026)
+
+- **66 handoff tables**, including optional audit context, match the newly completed EDA runs in values and structure. Explicit source pins remain unchanged; no rule thresholds or scoring changes were needed.
+- Fresh runs reproduce **14 context-ranked / seven excluded candidates**, two science trade-off options and no thermal winner. A blank operational profile still gives **21 Unknowns**, not safety passes.
+- **88 pipeline tests passed**, including missing-data and gate-first behaviour. See [current results](Pipeline_Proto/outputs/LATEST_RESULTS.md) and the [alignment verification index](data/verification/latest_step45_eda_alignment.txt).
+
+## EDA extensions (9 November 2026)
 
 Compared with **`fca88dc` (9 November 2026, 08:23 SGT)**, three new notebooks extend the earlier analysis. All three have saved executions without errors.
 
 | Notebook | What was added | Findings and limits |
 | --- | --- | --- |
-| [Dar_040: download and thermal review](EDA/Moon/Stage3_Requirements/Dar_040_download_refresh_thermal_quality.ipynb) | Checked newly downloaded inputs and expanded dated thermal checks from six products in one region to **812 across three regions**. | **Zero strict-quality rows** remain. More downloads did not establish a usable temperature envelope; query rows can overlap. |
-| [Dar_041: multi-year radiation](EDA/Moon/Stage3_Requirements/Dar_041_multiyear_radiation_quality.ipynb) | Extended CRaTER from **494 to 1,091 dates / 94.1 million records**; GOES-16 from **495 to 524 dates**; added **791 GOES-19 dates** separately. Sampled **660,000 primary records from 33 monthly files**. | Only **10.48% / 10.82%** of GOES-16/19 channel/time bins meet the strict filter. Gaps and instrument/version differences remain explicit. Counts/flux are not local crew dose; primary samples are not a full event census. |
+| [Dar_040: download and thermal review](EDA/Moon/Stage3_Requirements/Dar_040_download_refresh_thermal_quality.ipynb) | Checked newly downloaded inputs and **632 dated thermal-query products across two regions**. | **Zero strict-quality rows**. More downloads did not establish a usable temperature envelope; query rows can overlap. |
+| [Dar_041: multi-year radiation](EDA/Moon/Stage3_Requirements/Dar_041_multiyear_radiation_quality.ipynb) | Extended CRaTER from **494 to 1,091 dates / 94.1 million records**; GOES-16 from **495 to 524 dates**; added **791 GOES-19 dates** separately. Sampled **660,000 primary records from 33 monthly files**. Consolidated checked thermal cohorts to **812 queries across three regions**. | Only **10.48% / 10.82%** of GOES-16/19 channel/time bins meet the strict filter. Gaps and instrument/version differences remain explicit; consolidated thermal strict rows remain zero. Counts/flux are not local crew dose; primary samples are not a full event census. |
 | [Dar_042: science-based indicators](EDA/Moon/Stage3_Requirements/Dar_042_lunar_science_indicators.ipynb) | Derived candidate sky-openness and UV exposure-opportunity proxies; added plasma/charging reference context. | Supports relative comparisons, not local radiation dose, UV intensity or surface voltage. Lower plasma density or more darkness is **not automatically safer**. |
 
 **Effect on Steps 4-5:** the download/radiation extension feeds revised evidence guards and 39 scoped tables without changing the baseline filters/weights or granting safety passes. The separate science view identifies **two non-dominated trade-off options**, not two certified safe sites. Thermal comparison is withheld because only one filter-passing candidate has a complete comparable profile.
@@ -43,4 +49,4 @@ Compared with **`fca88dc` (9 November 2026, 08:23 SGT)**, three new notebooks ex
 - Scientific data and EDA runs: `darrel stuff/data/`; additive downloads: `D:\projects\NASA Dataset`.
 - Generated reports, source documents and provenance are preserved. EDA notebook conventions are consolidated in `EDA/EDA_Notes.md`; the former EDA guides/instructions are archived via `data/verification/latest_eda_notes_cleanup.txt`. Consolidated source-doc originals are recoverable via `data/verification/latest_docs_download_review.txt`.
 
-**Code cleanup:** all 24 active Python modules are retained because notebooks, commands or tests use them. Two obsolete one-off writers are archived, five unused imports removed and disposable runtime/bytecode files cleaned. Recovery and validation are indexed by `data/verification/latest_code_cleanup.txt`; scientific data, notebooks, tests and historical provenance remain intact.
+**Earlier code cleanup:** active Python modules were retained because notebooks, commands or tests use them. Two obsolete one-off writers were archived, five unused imports removed and disposable runtime/bytecode files cleaned. Recovery and validation are indexed by `data/verification/latest_code_cleanup.txt`; scientific data, notebooks, tests and historical provenance remain intact.

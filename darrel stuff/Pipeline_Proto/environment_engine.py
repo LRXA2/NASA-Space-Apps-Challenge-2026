@@ -594,6 +594,15 @@ def publish_latest_results(directory, report):
              "Real existing EDA only; no assumed mission/equipment inputs.", "",
              f"Candidates assessed: **{report['candidates']}**. Results: **{report['environmental_comparison_statuses']}**.",
              "Score range: **0–1**; higher is preferred under the declared comparison policy, not a safety probability.", ""]
+    science = (report.get("evidence_rules") or {}).get("science_models")
+    if science:
+        lines[-2] = "The existing 0-1 visibility score is retained as a baseline, not an overall radiation/UV/plasma safety score."
+        lines += ["## Science-based environmental comparison", "",
+            f"**[Open radiation, UV, plasma context and science preference options]({relative}/{science['entry_point']})**", "",
+            "Separate unweighted views compare geometric radiation exposure, UV opportunity and optional thermal stability. Plasma/charging is included with its response Unknown, not an invented lowest-density-is-safest score.", ""]
+        for view in science["views"]:
+            lines.append(f"- `{view['view']}`: {view['compared']} comparable candidates; {view['front_one']} first-front options; {view['unknown']} missing comparable data; {view.get('insufficient_comparators',0)} with insufficient competitors.")
+        lines += ["", "First-front membership is a relative preference, not operational approval. The original context filters still apply.", "", "## Baseline visibility comparison", ""]
     if top is not None:
         lines += ["| Rank | Candidate | Environmental score |", "| ---: | --- | ---: |"]
         lines += [f"| {int(r.environmental_rank)} | {r.candidate_id} | {r.environmental_score:.5f} |"

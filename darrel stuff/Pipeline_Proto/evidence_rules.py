@@ -91,7 +91,7 @@ def load_bundle(run, manifest_name):
             if identity in frames:
                 raise ValueError("Repeated evidence source identity")
             path = accepted_input(run, folder, name)
-            frame = pd.read_csv(path)
+            frame = pd.read_csv(path, low_memory=False)
             frames[identity] = frame
             catalog.append({"source_id": identity, "run": source["run"], "rows": len(frame),
                 "path": str(path.relative_to(LOCAL)),
@@ -99,6 +99,54 @@ def load_bundle(run, manifest_name):
                 **{field: source[field] for field in scope_fields},
                 "permitted_use": "declared_context_only_not_candidate_operation"})
     return register, frames, pd.DataFrame(catalog)
+
+
+def radiation_refresh_checks(frames):
+    """Optional new cohort: validate handling, never turn coverage into safety."""
+    prefixes = ("radiation_goes/", "radiation_crater/", "radiation_primary/")
+    if not any(key.startswith(prefixes) for key in frames):
+        return []  # Older configurations retain their original behavior.
+    daily = frames["radiation_goes/goes_daily_directional_support.csv"]
+    platforms = frames["radiation_goes/goes_platform_support.csv"]
+    crater = frames["radiation_crater/crater_support_summary.csv"]
+    primary = frames["radiation_primary/primary_sample_coverage.csv"]
+    identity = daily[["platform", "version", "sensor", "channel", "date", "lower_energy_keV", "upper_energy_keV"]]
+    if (identity.isna().any().any() or daily.version.astype(str).str.strip().eq("").any()
+            or not np.isfinite(daily[["lower_energy_keV", "upper_energy_keV", "qualified_bins", "recorded_bins"]]).all().all()
+            or daily.lower_energy_keV.le(0).any() or daily.upper_energy_keV.le(daily.lower_energy_keV).any()
+            or daily.qualified_bins.lt(0).any()):
+        raise ValueError("Missing/invalid instrument identity, energy or coverage counts")
+    for key, frame in frames.items():
+        if key.startswith(prefixes) and "candidate_id" in frame:
+            raise ValueError("Orbital/sample context cannot be relabelled candidate measurements")
+    if daily.duplicated(["platform", "date", "sensor", "channel"]).any():
+        raise ValueError("Duplicate platform/day identity; versions cannot be pooled")
+    if platforms.platform.duplicated().any():
+        raise ValueError("Duplicate platform summary")
+    counts = daily.groupby("platform")[["qualified_bins", "recorded_bins"]].sum().sort_index()
+    expected = platforms.set_index("platform")[["qualified_bins", "recorded_bins"]].sort_index()
+    if not counts.equals(expected):
+        raise ValueError("Platform coverage totals disagree with measured daily rows")
+    if (not np.isfinite(primary[["sampled_records", "source_records"]]).all().all()
+            or not np.isfinite(crater[["missing_dates", "partial_record_days"]]).all().all()
+            or primary.sampled_records.le(0).any() or primary.sampled_records.gt(primary.source_records).any()
+            or len(crater) != 1 or (daily.qualified_bins > daily.recorded_bins).any()):
+        raise ValueError("Invalid sample or coverage counts")
+    gaps = int(platforms.missing_dates.sum()+crater.missing_dates.sum())
+    incomplete = gaps > 0 or (daily.qualified_bins < daily.recorded_bins).any() or crater.partial_record_days.gt(0).any()
+    return [
+        ("E10", "radiation_coverage_to_continuous_mission_history", "Failed" if incomplete else "Unknown",
+         f"{gaps} missing platform/calendar dates; qualified bins retained separately", "time/quality support",
+         "File span and incomplete quality/state coverage are not a qualified continuous mission exposure history",
+         "radiation_goes; radiation_crater", "Retain gaps/flags and withhold mission-specific exposure/protection conclusions"),
+        ("E11", "radiation_instrument_identity_preserved", "Passed", str(len(platforms)), "separate GOES platforms",
+         "Daily platform identity and summed bins agree; detector/direction/energy/version remain in source tables",
+         "radiation_goes", "Evidence-handling pass only, not hardware protection or site safety"),
+        ("E12", "primary_sample_to_full_event_census", "Failed" if primary.sampled_records.lt(primary.source_records).any() else "Unknown",
+         f"{int(primary.sampled_records.sum())}/{int(primary.source_records.sum())}", "sampled/source primary records",
+         "Sparse dates and deterministic blocks are not an event census; DQI semantics have not been adopted",
+         "radiation_primary", "Keep LET in silicon as sampled diagnostic; do not infer event rate or transported crew dose"),
+    ]
 
 
 def evidence_use_checks(frames):
@@ -141,6 +189,7 @@ def evidence_use_checks(frames):
          "No verified local extractability, stocks, bearing capacity or traction follows from these proxies",
          "existing_candidate_context", "Do not credit essential supplies or load/mobility capacity"),
     ]
+    rows += radiation_refresh_checks(frames)
     result = pd.DataFrame(rows, columns=["rule_id", "check_id", "data_use_status", "observed_basis", "unit_or_scope",
                                          "reason", "source_group", "consequence"])
     result["assessment_domain"] = "evidence_use_NOT_site_safety"
@@ -161,12 +210,15 @@ def findings_table(frames):
         add("minimum_historical_headroom::"+resource, g.historical_remaining_minus_source_redline.min(), g.unit.iloc[0],
             "historical source remaining minus redline", "Not an actual configured mission margin", "apollo/primary_resource_changes.csv")
     thermal = frames["dated_thermal/dated_thermal_support.csv"]
-    add("dated_thermal_strict_observations", int(thermal.strict_rows.sum()), "channel observations", "one regional frozen sample, channels 3/4",
+    thermal_scope = "frozen query cohort; preserve region/channel/month and query overlap limits"
+    add("dated_thermal_strict_observations", int(thermal.strict_rows.sum()), "channel query rows", thermal_scope,
         "No qualified mission temperature series inferred", "dated_thermal/dated_thermal_support.csv")
+    add("dated_thermal_query_products", len(thermal), "query products", thermal_scope,
+        "More downloaded queries cannot compensate for flags or missing equipment response", "dated_thermal/dated_thermal_support.csv")
     crater = frames["annual_radiation/refreshed_crater_daily_context.csv"]
     goes = frames["annual_radiation/refreshed_goes_daily_directional_support.csv"]
     for name, f in [("CRaTER", crater), ("GOES16", goes)]:
-        add(name+"_completed_dates", f.date.nunique(), "UTC dates", f.date.min()+" to "+f.date.max(),
+        add(name+"_completed_dates", f.date.nunique(), "UTC dates", "historical baseline cohort: "+f.date.min()+" to "+f.date.max(),
             "Date span is not usable exposure coverage or a two-year event census", "annual_radiation")
     add("CRaTER_SEC_records", int(crater.records.sum()), "SEC records", "orbital counter context",
         "Counters are not surface/shielded crew dose", "annual_radiation/refreshed_crater_daily_context.csv")
@@ -183,6 +235,28 @@ def findings_table(frames):
         "No local recurrence or structural risk probability", "events/seismic_evidence_context.csv")
     add("selected_new_crater_detections", len(frames["events/impact_evidence_context.csv"]), "selected detections", "no effort/time-normalized site rate",
         "No local impact probability or safe-site pass", "events/impact_evidence_context.csv")
+    if "radiation_goes/goes_platform_support.csv" in frames:
+        for r in frames["radiation_goes/goes_platform_support.csv"].itertuples():
+            scope = f"GOES-{r.platform}; {r.start} to {r.end}; versions {r.versions}; directions/energies separate"
+            for suffix, value, unit in [("dates", r.dates, "UTC dates"), ("missing_dates", r.missing_dates, "calendar dates"),
+                                        ("qualified_bins", r.qualified_bins, "channel/time bins"),
+                                        ("recorded_bins", r.recorded_bins, "channel/time bins")]:
+                add(f"updated_GOES{r.platform}_{suffix}", value, unit, scope,
+                    "Qualified instrument context only; missing/flagged is not zero exposure", "radiation_goes/goes_platform_support.csv")
+        r = frames["radiation_crater/crater_support_summary.csv"].iloc[0]
+        for key in ["days", "records", "supported_counter_records", "missing_dates", "invalid_counter_records"]:
+            add("updated_CRATER_"+key, r[key], "records" if "records" in key else "UTC dates",
+                str(r["start"])+" to "+str(r["end"])+"; SEC selected-state counter context",
+                "No conversion to local shielded dose or new hazard limit", "radiation_crater/crater_support_summary.csv")
+        primary = frames["radiation_primary/primary_sample_coverage.csv"]
+        add("updated_primary_sampled_records", primary.sampled_records.sum(), "sampled records",
+            "Sparse monthly dates; distributed blocks, not independent random or complete-day samples",
+            "Silicon LET diagnostics only; DQI not qualified, not an event census or crew dose", "radiation_primary/primary_sample_coverage.csv")
+        diagnostic_key = "radiation_primary/primary_sample_LET_diagnostics.csv"
+        if diagnostic_key in frames:
+            add("updated_primary_flag_selected_records", frames[diagnostic_key].diagnostic_selected_records.sum(),
+                "detector/sample combinations, not unique events", "Conservative diagnostic flag combination; not full quality qualification",
+                "Zero selected rows is a flag/applicability hold, not zero radiation; keep unsupported LET summaries missing", diagnostic_key)
     return pd.DataFrame(rows)
 
 
@@ -212,19 +286,33 @@ def explain_checks(checks):
     return result
 
 
-def write_explanations(run, ranking, evidence, checks, frames):
+def write_explanations(run, ranking, evidence, checks, frames, science_entry=None):
     lines = ["# Lunar conditions -> explained rules -> candidate comparisons", "",
         "**Mission/equipment inputs are optional.** These are existing-data context comparisons, not mission eligibility.",
         "The unchanged visibility/slope policy is exploratory. New global, historical and reference-point evidence is NOT added to scores or promoted into component measurements.", "",
         "## What the new evidence changes", "",
         "- Apollo prediction deviations/reserves motivate contingency/uncertainty handling, not modern defaults.",
-        "- Year-plus CRaTER/GOES observations show coverage and variability; counters/flux are not candidate crew dose.",
-        "- Zero strict dated thermal observations blocks using this cohort as a qualified operational thermal history.",
+        "- CRaTER/GOES observations show coverage and variability; counters/flux are not candidate crew dose.",
+        f"- {int(frames['dated_thermal/dated_thermal_support.csv'].strict_rows.sum())} strict dated thermal query rows in this cohort; observation count alone cannot establish a qualified operational history.",
         "- Finite ROI-center Sun/Earth geometry demonstrates height/range/sampling sensitivity, not continuous darkness, power endurance or a working link.",
         "- Event/resource/soil proxies do not establish local probabilities, usable stocks or mechanical capability.", "",
         "[Rule register](rule_register.csv) | [Evidence-use checks](evidence_use_checks.csv) | [Measured findings](evidence_findings.csv) | [Source catalog](source_catalog.csv)", "",
         "Evidence-use Failed means **the proposed inference is unsupported**, not that the Moon site is physically unsafe. Unknown candidate conclusions cannot be converted to operational passes by a good context score.", "",
         "## Candidate explanations", ""]
+    if "radiation_goes/goes_platform_support.csv" in frames:
+        insert = lines.index("## Candidate explanations")
+        update = ["## Updated radiation/thermal context", ""]
+        for r in frames["radiation_goes/goes_platform_support.csv"].itertuples():
+            update.append(f"- GOES-{r.platform}: {r.dates} dates, {r.qualified_bins}/{r.recorded_bins} qualified channel/time bins; {r.missing_dates} missing dates. Not crew dose.")
+        r = frames["radiation_crater/crater_support_summary.csv"].iloc[0]
+        update += [f"- CRaTER SEC: {r['days']} dates / {r['records']} records; {r['missing_dates']} missing dates. Selected-state counters, not exposure limits.",
+                   f"- Dated thermal: {len(frames['dated_thermal/dated_thermal_support.csv'])} checked queries, not a complete operational history.",
+                   "- Primary silicon LET is a distributed-block sample of sparse dates. DQI qualification remains unresolved; no event rate or operational pass.", ""]
+        lines[insert:insert] = update
+    if science_entry:
+        insert = lines.index("## Candidate explanations")
+        lines[insert:insert] = ["## Science-based preference extension", "",
+            "[Open radiation geometry, UV opportunity, plasma references and multi-objective preferences](science/SCIENCE_COMPARISON.md). The original visibility score remains a baseline; new fronts and per-factor positions are exploratory comparisons, not operational safety.", ""]
     geo_regions = set(frames["geometry/reference_observers.csv"].region)
     for item in ranking.to_dict("records"):
         cid = item["candidate_id"]
@@ -268,8 +356,16 @@ def products(run, manifest_name, candidates, evidence, policy, policy_source, ch
     # Keep the exact source columns/identities: never add candidate_id to references.
     for identity, frame in frames.items():
         tables.append(("evidence_context/sources/"+identity, "Verified source: "+identity, frame, "No source rows; gap remains explicit"))
-    write_explanations(run, ranking, evidence, checks, frames)
-    return tables, {"register_rows": len(compiled), "static_rules": len(register["rules"]),
+    summary = {"register_rows": len(compiled), "static_rules": len(register["rules"]),
         "consumed_tables": len(catalog), "evidence_use_checks": len(use_checks),
         "candidate_hazard_boundaries": len(limits), "new_scored_factors": 0,
         "new_operational_passes": 0, "entry_point": "evidence_context/EVIDENCE_DECISIONS.md"}
+    manifest = json.loads(local_file(manifest_name).read_text(encoding="utf-8"))
+    if "science_models" in manifest:
+        import science_comparison
+        added, summary["science_models"] = science_comparison.products(run,manifest["science_models"],candidates,ranking)
+        tables += added
+        summary["total_consumed_context_tables"] = len(catalog)+summary["science_models"]["consumed_tables"]
+    write_explanations(run, ranking, evidence, checks, frames,
+                       science_entry=summary.get("science_models",{}).get("entry_point"))
+    return tables, summary
