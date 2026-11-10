@@ -7,7 +7,7 @@ One guide for the existing-data downloader and additive downloads. Acquisition d
 | Tool, relative to repository root | Default destination | Purpose |
 | --- | --- | --- |
 | `darrel stuff/download_script/download_environmental.py` | `darrel stuff/data/` | Core, Moon-support, bounded research and public-reference selections. |
-| `darrel stuff/download_script_addons/download_script_addons.py` | `D:/projects/NASA Dataset` | Additional D07/D08/D11/D14/D15/D20/D26/D27 coverage without replacing existing inputs. |
+| `darrel stuff/download_script_addons/download_script_addons.py` | `D:/projects/NASA Dataset` | Existing D07/D08/D11/D14/D15/D26/D27 plus eight native-file additions below. D20 GDS requests are disabled; existing inputs are preserved. |
 
 Keep both source folders: the addon imports the shared transfer/validation utilities. Do not move sources/data or edit historical receipts just to match a document path.
 
@@ -34,7 +34,7 @@ Run from the repository root in PowerShell. `--download` authorizes transfers. W
 # Separate Stage 3 public-reference mode
 .\.venv\Scripts\python.exe "darrel stuff\download_script\download_environmental.py" --stage3-references --dry-run
 
-# Additive three-year/seven-region plan: preview, bounded sample, then chosen full run
+# Additive fixed-date/seven-region plan: preview, bounded sample, then chosen full run
 .\.venv\Scripts\python.exe "darrel stuff\download_script_addons\download_script_addons.py" --dry-run
 .\.venv\Scripts\python.exe "darrel stuff\download_script_addons\download_script_addons.py" --sample --download
 .\.venv\Scripts\python.exe "darrel stuff\download_script_addons\download_script_addons.py" --download --workers 4
@@ -42,11 +42,85 @@ Run from the repository root in PowerShell. `--download` authorizes transfers. W
 
 Use `--help` for the current CLI. Change destination with `--output PATH`; addon `--baseline-root PATH` can reference existing collections. A pinned `--from-inventory PATH` preserves exact selections, not an exemption from current limits/integrity checks. Research `inventory.json` and Moon-support `run.json` are different schemas, not interchangeable.
 
+## Appended Moon environmental sources — 10 November 2026
+
+The add-on reads published provider file listings and retrieves **native science files over HTTPS**, rather than automating browser clicks or saving NASA catalogue HTML. The existing transfer, receipt, source/hash verification, bounded retries and resume helpers are reused. The default destination remains **`D:\projects\NASA Dataset`**; no source folders or old data were moved.
+
+| Selection key | Native selection | Time / spatial scope |
+| --- | --- | --- |
+| `D09_SEE` | TIMED SEE Level 3 daily NetCDF, latest published revision per date, README and matching release notes | Requested modern dates; solar-reference daily spectra with flare removal, not local UV dose. Distinct from the old SOLSTICE D09 files. |
+| `D11_P2` | ARTEMIS P2 / THC merged CDF, latest version per monthly file | Requested modern dates; preserve field, ion and spacecraft-position identity separately from P1. |
+| `D11_ESA` | THEMIS-B ESA Level 2 daily CDF | Requested modern dates; preserve native electron/ion distributions, modes and quality metadata. No surface-voltage inference. |
+| `D20_PRP` | Diviner **south** PRP table with PDS3/PDS4 labels | Modelled annual thermal extrema/ice-stability reference, not dated D20 RDR observations. Native table is about **605 MB**; sample mode downloads labels only and explicitly defers the science payload. |
+| `D32` | South-polar LAMP cumulative 240 m maps: albedo, brightness, data quality, error and exposure | Actual historical cumulative coverage, not forced into 2023-2026. Four spectral map families use their highest common published support version; sample uses one complete long-band family. Northern/monthly maps are excluded. |
+| `D10` | LADEE LDEX calibrated current and mass tables with labels | Actual historical 2013-2014 mission; extends the existing small pilot, not a modern lunar dust history. |
+| `D29` | LEND **RSCI** neutron spectra and time/position, with labels | Requested modern dates; no CHK housekeeping or raw EDR substitution. Other alternative reductions are not implicitly included. |
+| `D35` | LADEE NMS derived species/orbit CSVs with labels | Actual historical 2013-2014 mission; extends the existing pilot, not recent lunar weather. |
+| `D28` | Apollo 15/17 HFE **clean** tables, matching XML labels and bundle documentation | All published historical clean tables, preserving flags and mission-epoch time. No duplicate split/depth versions. Sample selects one complete table per mission. |
+| `D14_PSE` | Apollo PSE MiniSEED MH1/MH2/MHZ motion, ATT timing, matching labels, Dataless SEED and StationXML response metadata | Default S12, **1973-01-01 inclusive to 1975-01-01 exclusive**; historical dates independent of modern selections. Latest listed revision per location/channel/day; missing days/channels are reported. Sample selects one available motion day plus response metadata. Existing `D14` metadata-only selection is unchanged. |
+
+**D20 is disabled in the add-on:** it is absent from defaults, explicit `--datasets D20` fails before any network request, and unfinished legacy D20 jobs cannot restart a transfer. Previously downloaded D20 files and EDA are untouched. `D20_PRP` is a separate native model product and does not use the failing GDS URL. The original downloader remains read-only and retains its legacy interfaces.
+
+**Dates:** default ongoing selections use **2023-06-01 inclusive to 2026-11-01 exclusive** (June 2023 through October 2026). This retains the previous November boundary; it does **not** silently include incomplete November observations. Override with `--start` / `--stop`. Use `--rolling-window --years 3` only to explicitly retain the earlier archive-limited rolling mode. Historical/static products keep their true scope; archive gaps remain explicit and are not fabricated into continuous coverage.
+
+```powershell
+# Full selected additions; no sample flag. Default destination is still the D drive.
+.\.venv\Scripts\python.exe "darrel stuff\download_script_addons\download_script_addons.py" --datasets D09_SEE D11_P2 D11_ESA D20_PRP D32 D10 D29 D35 --download --workers 4
+
+# Explicit date selection, if a different November endpoint is intended
+.\.venv\Scripts\python.exe "darrel stuff\download_script_addons\download_script_addons.py" --datasets D09_SEE D11_P2 D11_ESA D29 --start 2023-06-01 --stop 2026-11-01 --download
+```
+
+The additions have new deterministic plan identities; old plans, checkpoints, science files and receipts are not rewritten. Same-source baseline files are referenced only after receipt/hash verification; matching filenames alone do not qualify for reuse. Native NetCDF/CDF readability and observational-label identity are checked in addition to transfer integrity. These are acquisition checks, not scientific quality qualification or operational passes.
+
+**Original sample validation:** 62 add-on tests passed, including all 41 protected existing tests. Exactly **one** bounded live sample batch completed **15/15 jobs across eight additions**, with no source gaps. Its 26 selected files total about 184 MB including four reused baseline references; all selected file hashes match their receipts. The PRP sample contains labels only, not its large science table. The complete multi-year transfer was **not started at that verification stage**; see the later full-download check below. [Commands, receipts, source scope and verification](../data/verification/latest_download_additions.txt). LEND RSCI alone can require tens of GB over the full interval; retain the existing file/run limits and inspect disk capacity before a full run.
+
+**Manual-download reporting:** each live run writes `manifests/addons/runs/<run>/manual_downloads.json` with exact failed file URLs when known, source-discovery holds and optional access-gated references. ChaSTE, RAMBHA-LP and ILSA use authorised [Chandrayaan-3 access](https://pradan.issdc.gov.in/ch3/); optional DFSAR uses [Chandrayaan-2 access](https://pradan.issdc.gov.in/ch2/). Keep native science, labels and quality/calibration documents, preserving actual mission dates. No login bypass is attempted. A failed automatic request is an acquisition hold, not proof that the dataset is unavailable.
+
+### Automated Apollo additions
+
+No manual file selection is needed for the public Apollo archives. The add-on discovers actual published files and companion labels, reuses receipt-verified baseline files, and retains the normal transfer limits, retries and resume checkpoints. Output stays under `D:\projects\NASA Dataset\datasets\D28\` and `datasets\D14_PSE\`, with the provider's subfolders retained.
+
+```powershell
+# Bounded first check: one heat-flow table per mission, one seismic day, and documentation/response metadata.
+.\.venv\Scripts\python.exe "darrel stuff\download_script_addons\download_script_addons.py" --datasets D28 D14_PSE --sample --download --workers 2 --max-file-mib 16 --max-total-mib 32
+
+# Full selected Apollo acquisition: all clean HFE tables and S12 seismic records for 1973-1974.
+.\.venv\Scripts\python.exe "darrel stuff\download_script_addons\download_script_addons.py" --datasets D28 D14_PSE --download --workers 4
+
+# Change only the historical seismic station/window; --apollo-stop is exclusive.
+.\.venv\Scripts\python.exe "darrel stuff\download_script_addons\download_script_addons.py" --datasets D14_PSE --apollo-station s15 --apollo-start 1973-01-01 --apollo-stop 1975-01-01 --download
+```
+
+Waveforms are decoded and their network/station/location/channel headers checked against their filenames; response metadata is parsed and must contain instrument responses. These are readability/identity checks, not response correction or hazard qualification. ATT is retained for timing work and never substituted for ground-motion measurements. Both MHZ location modes are retained when published. Historical Earth-received timing, calibration/response epochs, coverage, deployment disturbances and HFE flags still require EDA before physical interpretation. Mini-RF remains the original downloader's `D30` global-mosaic selection and existing local coverage; no duplicate whole-volume radar acquisition is added here.
+
+**Apollo sample validation:** all **76 add-on tests passed** (62 existing plus 14 new, existing tests unchanged). One bounded live sample completed **5/5 jobs**, selecting **18 files / 4,617,674 bytes** including three verified baseline references. Checksums, both heat-flow tables' numeric rows, all four MiniSEED channels and the three motion channels' response availability at their sample start times were checked. ObsPy emitted a non-fatal date warning when reading the published Dataless SEED; the independent StationXML response lookups succeeded. No full historical transfer was started at that stage; see the later readback below. [Sample verification](../data/verification/latest_apollo_downloads.txt).
+
+### Full-download readback — 10 November 2026
+
+Both later full runs report completion, and their pinned files were independently checked on disk: **7,050 jobs / 17,208 selected files / 71,147,055,367 bytes** (about 71.15 GB, including referenced baseline files). No selected missing files, size mismatches or missing/mismatched source receipts were found in these two batches. **24 stratified checksum samples** across the new and older add-on sources matched; this is not a whole-collection rehash. No `.part` files were found under the external `datasets/` tree. The full PRP science table is now present, unlike its original labels-only sample.
+
+| Source | Selected files, including support | Actual acquisition scope |
+| --- | ---: | --- |
+| D09_SEE | 1,208 | 1,206 available daily products, 2023-06-01 to 2026-10-31, plus two documents; date gaps remain. |
+| D11_P2 / D11_ESA | 40 / 1,173 | P2 monthly files June 2023-September 2026; P1 ESA daily files June 2023 through 2026-10-12. |
+| D20_PRP / D32 | 3 / 40 | Full south PRP table and labels; four cumulative south LAMP map families and support. |
+| D10 / D35 | 72 / 5,430 | Historical LADEE calibrated dust / derived exosphere selections. |
+| D29 | 3,330 | 1,110 RSCI science dates, 2023-06-01 through 2026-06-14, with labels. |
+| D28 | 62 | All 30 published clean Apollo 15/17 tables, labels and documentation. |
+| D14_PSE | 5,850 | S12 files for 730 listed days in 1973-1974, plus response metadata; not proof of gap-free within-file observations. |
+
+**Not all project data is complete:** the older D07 plan still lacks three primary table/label pairs, rejected before inventory pinning by the **2,048 MiB per-file cap**: `CRAT_L2_PRI_2024305_V01.TAB` (4.18 GB), `CRAT_L2_PRI_2025090_V01.TAB` (7.41 GB), and `CRAT_L2_PRI_2025151_V01.TAB` (2.33 GB). Their combined science size is about 13.92 GB. This review did not increase limits, restart transfers or request manual downloads. Existing acquired D07 files remain present by size.
+
+D20 GDS stays explicitly disabled; its unstarted queries are not active download failures. D21-D24 remain access-gated. The original S01 BVAD PDF has a recorded inventory failure; the curated reference-rate extract remains separate. Three priority NTRS PDFs (xEMU thermal-vacuum overview, xPLSS thermal-model comparison, Apollo lunar-dust EVA effects) still have recorded HTTP 403 failures and are absent from `keep/`. The Apollo 17 postflight PDF is present there. The baseline audit also retains an older Moon-support manifest-write failure, with no selected-file absence/size mismatch identified; Earth-climate run status is outside the Moon algorithm.
+
+**Verification:** full runs `20261110T020713555001Z` and `20261110T080601929330Z`; older add-on and relocation-aware local baseline selections were also checked. [Readback counts, receipts/checksum samples, exact unresolved CRaTER entries and baseline report](../data/verification/latest_download_pdf_review.txt). Downloaded means acquired within the pinned selection, not EDA-qualified or operationally adequate. [New EDA opportunities](../EDA/EDA_Notes.md#newly-acquired-inputs-and-pdf-leads-10-november-2026).
+
 ## Selection and quality boundaries
 
-- Addon default: rolling three-year desired selection, archive-limited and capped through October 2026 (exclusive stop). Static/historical records are not forced into recent dates. Jobs are interleaved across datasets; primary CRaTER is sparse monthly, secondary is daily. Requested duration is not proof of acquired/qualified coverage.
+- Addon default: fixed June 2023 start, archive-limited and capped through October 2026 (exclusive stop); explicit rolling mode remains available. Static/historical records are not forced into recent dates. Jobs are interleaved across datasets; primary CRaTER is sparse monthly, secondary is daily. Requested duration is not proof of acquired/qualified coverage.
 - GOES platform/version/direction/energy support remains separate. Do not stitch GOES-16/19 as calibrated equivalent observations or convert flux to crew dose without transport/response evidence.
-- Diviner D20 queries are monthly/region/channel (3-9), count-first, preserving explicit calibration/miscellaneous and geometry bounds (`qca=0`, `qmi=0`, `qge` permitted 0-12). Nonzero geometry flags are **not silently qualified**. Validate labels/temperature sentinels, clip the true projected ROI and deduplicate native observation identities, not temperatures, before aggregation. Longitude envelopes can split at 0/360 degrees.
+- Previously acquired Diviner D20 query products retain their original calibration/miscellaneous and geometry bounds (`qca=0`, `qmi=0`, `qge` permitted 0-12). The add-on no longer requests D20. Nonzero geometry flags are **not silently qualified**. Existing labels/temperature sentinels, true projected ROI and native observation identities still need validation before aggregation.
 - ARTEMIS merged ion-plasma observations are not surface charging, ionization rate or crew dose. StationXML historical response epochs must match the waveform/channel; response metadata alone is not a waveform measurement.
 - ShadowCam science products are unstretched numeric COGs, not browse images. Publisher/index gaps and no-observation results remain explicit, not zero hazard.
 - D21-D24 remain KIV/login-required unless authorized access is provided. `--cookies PATH` accepts an existing Netscape cookie file; no login bypass. Keep credentials out of Git.
@@ -77,6 +151,7 @@ Start with `error_log.txt` in the selected output root. It is a manifest/presenc
 | `manifests/core/`, `moon_support/`, `eda_datasets/`, `environmental_runner/` | Existing plans, inventories, transfers, scope failures and diagnostics. Original climate manifests retain their compatibility paths. |
 | `manifests/addons/plans/`, `discovery/` | Frozen requested selections and provider discovery evidence. |
 | `manifests/addons/jobs/`, `runs/` | Exact job URLs/files/status and per-run coverage/results/debug/error logs. |
+| `manifests/addons/runs/<run>/manual_downloads.json` | Exact automatic-acquisition holds plus optional authorised-access references; not an instruction to duplicate successful downloads. |
 | `datasets/<ID>/...` | Addon science, labels, receipts and resumable partials. |
 
 For a manual retry, retain the inventory's exact URL/destination, science labels and verification metadata. Existing manually supplied D27/D30 products are registered in place under `data/moon/eda_pilots/`; `data/manifests/file_relocations.json` resolves historical paths without rewriting old manifests. A `.xml.txt` may remain valid XML without renaming.

@@ -33,6 +33,8 @@ import download_environmental as base
 DEFAULT_OUTPUT = Path(r"D:\projects\NASA Dataset")
 ORIGINAL_SHA256 = "89597c766babd4ccecd7914a5800282c91f6981abcbcde14277f7443df17fb5a"
 REQUESTED_STOP = "2026-11-01T00:00:00.000"  # Exclusive; through October 2026.
+REQUESTED_START = "2023-06-01T00:00:00.000"
+DISABLED = {"D20": "Disabled by user request: repeated GDS query failures; existing files are preserved"}
 MILLISECOND = timedelta(milliseconds=1)
 RADIUS_M = 1737400.0
 DIVINER_SAMPLE = {"bbox": [29.0, -85.6, 29.2, -85.4], "start": "2023-11-01", "stop_exclusive": "2023-11-08"}
@@ -65,6 +67,33 @@ NOTES = {
     "D26": "Bounded study-overlapping Kaguya v2 DTM tiles and detached labels; historical/static, no invented recent acquisition dates.",
     "D27": "Bounded dated ShadowCam unstretched 32-bit calibrated radiance map COGs and labels; not an illumination continuity history.",
 }
+# Appended native HTTPS sources. Research IDs remain attached to their original
+# instruments; SEE is distinct from the existing D09 SOLSTICE history.
+ADDITIONS = {
+    "D09_SEE": ("https://lasp.colorado.edu/data/timed_see/level3/",
+        "TIMED SEE daily Level 3 spectra, uncertainty and documentation; solar reference with flare removal, not local UV dose"),
+    "D11_P2": ("https://spdf.gsfc.nasa.gov/pub/data/themis/thc/l2/merged/cdf/",
+        "ARTEMIS P2/THC ion/field/position context; keep separate from THB/P1 and surface charging"),
+    "D11_ESA": ("https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/esa/",
+        "THEMIS-B ESA Level 2 electron/ion files, retaining full native modes, flags and distributions; not local surface potential"),
+    "D20_PRP": ("https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/",
+        "South-polar modelled annual thermal extrema/ice-stability reference, not dated D20 GDS queries or component response"),
+    "D32": ("https://planetarydata.jpl.nasa.gov/img/data/lro/lro_lamp/gdr/LROLAM_2001/DATA/",
+        "South-polar 240 m cumulative LAMP maps with brightness/albedo/quality/error/exposure support; not recent UV irradiance or dose"),
+    "D10": ("https://atmos.nmsu.edu/PDS/data/PDS4/LADEE/ldex_bundle/data_calibrated/",
+        "Historical LADEE LDEX calibrated current/mass products, actual 2013-2014 coverage; not cabin dust or a 2023-2026 record"),
+    "D29": ("https://pds-geosciences.wustl.edu/lro/lro-l-lend-2-edr-v1/lrolen_0xxx/data/",
+        "LEND RSCI reduced neutron spectra with time/position and labels; no raw EDR or housekeeping-only substitution, no certified water resource"),
+    "D35": ("https://atmos.nmsu.edu/PDS/data/PDS4/LADEE/nms_bundle/data_derived/",
+        "Historical LADEE NMS derived species observations, actual 2013-2014 coverage; not a breathable atmosphere or recent lunar weather"),
+    "D28": ("https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-a15_17_hfe_concatenated/",
+        "Apollo 15/17 clean heat-flow tables, flags and documentation; historical probe temperatures, not modern polar surface conditions"),
+    "D14_PSE": ("https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-apollo_pse/",
+        "Apollo MiniSEED ground-motion channels, ATT timing, labels and response epochs; historical station data, not candidate seismic certification"),
+}
+SOURCES.update({key: value[0] for key, value in ADDITIONS.items()})
+NOTES.update({key: value[1] for key, value in ADDITIONS.items()})
+DATED_SOURCES = {"D07", "D08", "D11", "D09_SEE", "D11_P2", "D11_ESA"}
 TERMINAL = {"downloaded", "verified_existing", "referenced_existing", "no_observations"}
 FAILURES = (base.requests.RequestException, OSError, ValueError, RuntimeError, ET.ParseError)
 
@@ -92,6 +121,18 @@ def resolve_window(latest_exclusive, requested_stop=REQUESTED_STOP, years=3):
     stop = min(parse_time(requested_stop), latest_exclusive)
     return {"start": wire(years_before(stop, years)), "stop_exclusive": wire(stop),
             "requested_stop_exclusive": requested_stop, "years": years}
+
+
+def selection_window(args, latest_exclusive):
+    """Fixed requested start for CLI acquisitions; retain legacy helper/rolling mode."""
+    if not getattr(args, "start", None):
+        return resolve_window(latest_exclusive, args.stop, args.years)
+    start, stop = parse_time(args.start), min(parse_time(args.stop), latest_exclusive)
+    if start >= stop:
+        raise ValueError("Archive ends before the requested start; no older dates substituted")
+    return {"start": wire(start), "stop_exclusive": wire(stop),
+            "requested_start": args.start, "requested_stop_exclusive": args.stop,
+            "strategy": "fixed_requested_start_archive_limited_stop"}
 
 
 def months(start, stop):
@@ -193,20 +234,30 @@ def date_of(url):
     name = urlsplit(url).path.rsplit("/", 1)[-1]
     if name.upper().startswith("CRAT_"):
         return datetime.strptime(re.search(r"_(\d{7})_", name)[1], "%Y%j").replace(tzinfo=timezone.utc)
-    return parse_time(re.search(r"(?:_d|merged_)(\d{8})_", name)[1][:4]+"-"+
-                      re.search(r"(?:_d|merged_)(\d{8})_", name)[1][4:6]+"-"+
-                      re.search(r"(?:_d|merged_)(\d{8})_", name)[1][6:8])
+    if name.startswith("see__L3_"):
+        return datetime.strptime(re.search(r"see__L3_(\d{7})_", name)[1], "%Y%j").replace(tzinfo=timezone.utc)
+    match = re.search(r"(?:_d|merged_|esa_)(\d{8})_", name)
+    if not match:
+        raise ValueError("Unrecognised dated science filename: "+name)
+    return datetime.strptime(match[1], "%Y%m%d").replace(tzinfo=timezone.utc)
 
 
 def dated_listing(args, key, evidence):
-    """Inspect four requested years, resolve true latest file date, then three years."""
+    """Inventory published dates and versions within the fixed or explicit rolling window."""
     stop = parse_time(args.stop)
-    years = range(stop.year-args.years-1, stop.year+1)
+    first_year = parse_time(args.start).year if getattr(args, "start", None) else stop.year-args.years-1
+    years = range(first_year, stop.year+1)
     streams = ([('secondary', SOURCES[key]+"data-der-sec/", r"CRAT_L2_SEC_(?P<date>\d{7})_V(?P<version>\d+)\.TAB"),
                 ('primary', SOURCES[key]+"data-der-pri/", r"CRAT_L2_PRI_(?P<date>\d{7})_V(?P<version>\d+)\.TAB")]
                if key == "D07" else
                [("thb", SOURCES[key], r"thb_l2_merged_(?P<date>\d{8})_v(?P<version>\d+)\.cdf")]
                if key == "D11" else
+               [("thc", SOURCES[key], r"thc_l2_merged_(?P<date>\d{8})_v(?P<version>\d+)\.cdf")]
+               if key == "D11_P2" else
+               [("thb_esa", SOURCES[key], r"thb_l2_esa_(?P<date>\d{8})_v(?P<version>\d+)\.cdf")]
+               if key == "D11_ESA" else
+               [("daily", SOURCES[key], r"see__L3_(?P<date>\d{7})_(?P<version>\d{3}_\d{2})\.ncdf")]
+               if key == "D09_SEE" else
                [(sat, SOURCES[key]+f"goes{sat}/l2/data/sgps-l2-avg5m/",
                  rf"sci_sgps-l2-avg5m_g{sat}_d(?P<date>\d{{8}})_v(?P<version>[\d-]+)\.nc") for sat in ("16", "19")])
     selected, windows, gaps, stream_files = [], {}, [], []
@@ -234,8 +285,9 @@ def dated_listing(args, key, evidence):
     if not latest_dates:
         return [], {"windows": {}, "coverage": [{"status": "no_observations", "url": SOURCES[key]}]}
     latest = max(latest_dates)
-    latest_stop = next(months(latest, latest+timedelta(days=32)))[1] if key == "D11" else latest+timedelta(days=1)
-    window = resolve_window(latest_stop, args.stop, args.years)
+    monthly_files = key in {"D11", "D11_P2"}
+    latest_stop = next(months(latest, latest+timedelta(days=32)))[1] if monthly_files else latest+timedelta(days=1)
+    window = selection_window(args, latest_stop)
     for stream, root, files in stream_files:
         if not files:
             gaps.append({"stream": stream, "status": "no_observations", "url": root})
@@ -245,7 +297,7 @@ def dated_listing(args, key, evidence):
         selected_stream = []
         for url in files:
             day = date_of(url)
-            file_stop = next(months(day, day+timedelta(days=32)))[1] if key == "D11" else day+timedelta(days=1)
+            file_stop = next(months(day, day+timedelta(days=32)))[1] if monthly_files else day+timedelta(days=1)
             if day < end and file_stop > start:
                 selected_stream.append(url)
         available_dates = [wire(date_of(u)) for u in selected_stream]
@@ -288,7 +340,7 @@ def diviner_jobs(args, evidence):
     latest = root.findtext(".//GlobalMaxUTC")
     if root.findtext("Status", "").upper() != "SUCCESS" or not latest:
         raise ValueError("Diviner global coverage response lacks a successful dated maximum")
-    window = resolve_window(parse_time(latest)+MILLISECOND, args.stop, args.years)
+    window = selection_window(args, parse_time(latest)+MILLISECOND)
     jobs = []
     for name, bounds in REGIONS.items():
         for channel in args.channels:
@@ -364,7 +416,7 @@ def imagery_listing(args, key, evidence):
                 coverage_notes.append({'status': 'provider_index_lag', 'indexed_stop_exclusive': wire(indexed_stop),
                                        'publisher_stop_exclusive': wire(archive_stop), 'url': collection_url,
                                        'reason': 'Newer publisher products lack verified spatial-query selections here; ODE pilots are partial, not full recent coverage. Do not infer no observations from an unindexed year.'})
-        period = resolve_window(archive_stop, args.stop, args.years)
+        period = selection_window(args, archive_stop)
     regions = list(REGIONS.items())[:1] if args.sample else REGIONS.items()
     # Small per-year pilots, not an attempt to download entire image archives.
     years = [None] if key == "D26" else list(range(parse_time(period["start"]).year, parse_time(period['stop_exclusive']).year+1))
@@ -425,6 +477,291 @@ def response_entries():
             for name in ("stationxml.xa.0.sxml", "stationxml.xa.0.xml")]
 
 
+def paired_entries(urls, key, pattern, root):
+    """Select actual listed science links with their published detached labels."""
+    available, entries = set(urls), []
+    for url in sorted(available):
+        name = unquote(urlsplit(url).path.rsplit('/', 1)[-1])
+        if not re.fullmatch(pattern, name, re.I):
+            continue
+        stem = url.rsplit('.', 1)[0]
+        companions = sorted(u for u in available if u.rsplit('.', 1)[0] == stem
+                            and Path(urlsplit(u).path).suffix.lower() in {'.lbl', '.xml'})
+        if not companions:
+            raise ValueError('Published science product has no companion label: '+url)
+        for target in [url, *companions]:
+            if not target.startswith(root):
+                raise ValueError('Product escapes its declared source archive')
+            entries.append({'url': target, 'relative_path': f'datasets/{key}/'+target[len(root):],
+                            'metadata': target != url})
+    return entries
+
+
+def see_documents(args, evidence):
+    """Select the published README and matching release notes, not browser exports."""
+    root = SOURCES['D09_SEE']
+    available = links(args, root, evidence)
+    readmes = [u for u in available if re.fullmatch(r'README_SEE_L3_\d{3}\.TXT', u.rsplit('/', 1)[-1], re.I)]
+    if not readmes:
+        raise ValueError('SEE Level 3 README missing from the provider listing')
+    readme = max(readmes, key=lambda u: int(re.search(r'_(\d{3})\.TXT$', u, re.I)[1]))
+    version = int(re.search(r'_(\d{3})\.TXT$', readme, re.I)[1])
+    parent = root.rsplit('level3/', 1)[0]
+    parent_links = links(args, parent, evidence)
+    notes = [u for u in parent_links if u.rsplit('/', 1)[-1].lower() == f'see_v{version}_releasenotes.txt']
+    if not notes:
+        raise ValueError('Matching SEE release notes missing from provider listing')
+    return [{'url': u, 'relative_path': 'datasets/D09_SEE/document/'+u.rsplit('/', 1)[-1],
+             'metadata': True} for u in [readme, notes[0]]]
+
+
+def polar_prp_entries(args, evidence):
+    root = SOURCES['D20_PRP']
+    entries = paired_entries(links(args, root, evidence), 'D20_PRP', r'dlre_prp_south\.tab', root)
+    if not entries:
+        raise ValueError('South-polar Diviner PRP table not published in this listing')
+    # The native table is ~605 MB. A small sample deliberately transfers labels
+    # only, not a truncated table masquerading as a complete science payload.
+    if args.sample:
+        entries = [item for item in entries if item['metadata']]
+    return entries, {'period': 'modelled annual polar reference; not a 2023-2026 observation history',
+        'spatial_scope': 'south polar model grid; inspect labels before candidate association',
+        'sample_scope': 'labels_only_large_science_table_deferred' if args.sample else 'complete_native_south_table_and_labels',
+        'science_payload_in_sample': False}
+
+
+def south_lamp_entries(args, evidence):
+    root = SOURCES['D32']
+    directories = set(links(args, root, evidence))
+    categories = {'ALBEDO', 'BRIGHTNESS', 'DATA_QUALITY', 'ERROR', 'EXPOSURE'}
+    selected, channels = [], ['long'] if args.sample else ['long', 'lya', 'off', 'on']
+    families = {channel: {} for channel in channels}
+    for category in sorted(categories):
+        url = root+category+'/'
+        if url not in directories:
+            raise ValueError('Required LAMP support directory missing: '+category)
+        available = links(args, url, evidence)
+        for channel in channels:
+            # Excludes northern, monthly and alternate-resolution products.
+            pattern = rf'LAMP_80s_240mpp_{channel}_[a-z]+_\d{{2}}\.img'
+            entries = paired_entries(available, 'D32', pattern, root)
+            if not entries:
+                raise ValueError(f'South LAMP {channel}/{category} map or support missing')
+            versions = {}
+            for item in entries:
+                version = int(re.search(r'_(\d{2})\.(?:img|lbl|xml)$', item['url'], re.I)[1])
+                versions.setdefault(version, []).append(item)
+            families[channel][category] = versions
+    common_versions = {}
+    for channel, maps in families.items():
+        common = set.intersection(*(set(versions) for versions in maps.values()))
+        if not common:
+            raise ValueError('LAMP science/support maps lack a shared product version: '+channel)
+        common_versions[channel] = max(common)
+        for versions in maps.values():
+            selected.extend(versions[common_versions[channel]])
+    return selected, {'period': 'historical cumulative maps, NOT a recent monthly UV irradiance series',
+        'spatial_scope': '80S-90S, 240 m/pixel; south maps and matched map-family support',
+        'channels': channels, 'common_versions': common_versions, 'categories': sorted(categories),
+        'sample_scope': 'one_complete_long_band_map_family' if args.sample else 'four_cumulative_band_map_families'}
+
+
+def historical_entries(args, key, evidence):
+    root = SOURCES[key]
+    children = links(args, root, evidence)
+    if key == 'D10':
+        directories = [u for u in children if u[len(root):] in {'current/', 'mass/'}]
+        expected = 2
+        pattern = r'(?:current|mass)_\d{5}_\d{5}\.tab'
+    else:
+        directories = [u for u in children if re.fullmatch(r'201[34]-\d{2}/', u[len(root):])]
+        expected = 1  # At least one historical month, never invent modern dates.
+        pattern = r'nms_[a-z]+_\d+_\d{8}_\d{6}\.csv'
+        if args.sample:
+            directories = directories[:1]
+    if len(directories) < expected:
+        raise ValueError('Historical calibrated/derived archive directories missing')
+    selected = []
+    for directory in directories:
+        entries = paired_entries(links(args, directory, evidence), key, pattern, root)
+        if not entries:
+            raise ValueError('Historical directory contains no selected labelled science files: '+directory)
+        if args.sample:
+            first = next(e for e in entries if not e['metadata'])['url'].rsplit('.', 1)[0]
+            entries = [e for e in entries if e['url'].rsplit('.', 1)[0] == first]
+        selected.extend(entries)
+    return selected, {'period': 'actual historical LADEE 2013-2014 mission, independent of requested modern dates',
+        'directories': directories, 'selection': 'calibrated current+mass groups' if key == 'D10' else 'derived species/orbit groups',
+        'warning': 'Orbital historical observations are not current candidate surface/cabin conditions'}
+
+
+def neutron_entries(args, evidence):
+    root = SOURCES['D29']
+    start = parse_time(args.start) if getattr(args, 'start', None) else years_before(parse_time(args.stop), args.years)
+    stop = parse_time(args.stop)
+    available_years = set(links(args, root, evidence))
+    selected, dates = [], []
+    for year in range(start.year, stop.year+1):
+        year_url = root+str(year)+'/'
+        if year_url not in available_years:
+            continue
+        for day_url in links(args, year_url, evidence):
+            name = day_url[len(year_url):]
+            if not re.fullmatch(r'\d{8}/', name):
+                continue
+            day = datetime.strptime(name[:-1], '%Y%m%d').replace(tzinfo=timezone.utc)
+            if not start <= day < stop:
+                continue
+            entries = paired_entries(links(args, day_url, evidence), 'D29', rf'lend_rdr_rsci_{name[:-1]}\.dat', root)
+            if not entries:
+                raise ValueError('RSCI neutron science missing; raw/housekeeping not substituted: '+day_url)
+            selected.extend(entries); dates.append(wire(day))
+            if args.sample:
+                break
+        if args.sample and dates:
+            break
+    if not selected:
+        raise ValueError('No reduced neutron-science products in the requested dates')
+    return selected, {'window': {'start': wire(start), 'stop_exclusive': wire(stop)},
+        'selected_science_dates': dates, 'selection': 'RSCI only, not CHK housekeeping, raw EDR or all alternative reductions',
+        'warning': 'File availability is not qualified continuous coverage or locally recoverable water'}
+
+
+def apollo_heat_entries(args, evidence):
+    """One native clean representation, retaining flags and actual mission dates."""
+    root, selected = SOURCES['D28'], []
+    for mission in ('a15', 'a17'):
+        directory = root+f'data/clean/{mission}/'
+        entries = paired_entries(links(args, directory, evidence), 'D28',
+                                 rf'{mission}(?:_197[567])?p[12]f[1-5]\.tab', root)
+        if not entries:
+            raise ValueError('No labelled Apollo heat-flow tables: '+directory)
+        if args.sample:
+            stem = next(e for e in entries if not e['metadata'])['url'].rsplit('.', 1)[0]
+            entries = [e for e in entries if e['url'].rsplit('.', 1)[0] == stem]
+        selected.extend(entries)
+    documents = paired_entries(links(args, root+'document/', evidence), 'D28',
+                               r'bundle_documentation\.md', root)
+    selected.extend({**e, 'metadata': True} for e in documents)
+    if not any(e['url'].endswith('/bundle_documentation.md') for e in selected):
+        raise ValueError('Apollo heat-flow interpretation documentation missing')
+    return selected, {'period': 'actual historical Apollo 15/17 dates from native labels; not modern --start/--stop',
+        'selection': 'clean tables for both missions, matching labels and bundle documentation; no duplicate split/depth representations',
+        'sample_scope': 'one complete table/label pair per mission plus documentation' if args.sample else 'all published clean tables',
+        'warning': 'Retain flags, mission-epoch time and thermometer identity; heater/disturbance effects and gaps require EDA'}
+
+
+def apollo_seismic_entries(args, evidence):
+    """Published daily MiniSEED links only; never substitute ATT or GeoCSV for motion."""
+    root, station = SOURCES['D14_PSE'], args.apollo_station
+    start, stop = parse_time(args.apollo_start), parse_time(args.apollo_stop)
+    channels = {'mh1', 'mh2', 'mhz', 'att'}
+    wave_root = root+f'data/xa/continuous_waveform/{station}/'
+    years = set(links(args, wave_root, evidence))
+    selected, dates, warnings = [], [], []
+    for year in range(start.year, (stop-timedelta(days=1)).year+1):
+        year_url = wave_root+f'{year}/'
+        requested = {wire(start+timedelta(days=i))[:10] for i in range((stop-start).days)
+                     if (start+timedelta(days=i)).year == year}
+        available = {}
+        if year_url in years:
+            for url in links(args, year_url, evidence):
+                day = url[len(year_url):]
+                if not re.fullmatch(r'\d{3}/', day):
+                    continue
+                date = datetime(year, 1, 1, tzinfo=timezone.utc)+timedelta(days=int(day[:-1])-1)
+                if date.year == year and start <= date < stop and int(day[:-1]) > 0:
+                    available[wire(date)[:10]] = url
+        missing = sorted(requested-set(available))
+        if missing:
+            warnings.append({'status': 'missing_day_directories', 'url': year_url,
+                             'reason': f'{len(missing)} requested UTC dates have no published day directory; not zero seismic activity',
+                             'dates': missing})
+        for date, directory in sorted(available.items()):
+            urls = links(args, directory, evidence)
+            doy = directory.rstrip('/').rsplit('/', 1)[-1]
+            pattern = rf'xa\.{station}\.(?P<location>\d{{2}}|)\.(?P<channel>mh1|mh2|mhz|att)\.{year}\.{doy}\.(?P<version>\d+)\.mseed'
+            latest = {}
+            for url in urls:
+                match = re.fullmatch(pattern, url.rsplit('/', 1)[-1], re.I)
+                if match:
+                    identity = (match['location'], match['channel'].lower())
+                    if identity not in latest or int(match['version']) > latest[identity][0]:
+                        latest[identity] = (int(match['version']), url)
+            found = {identity[1] for identity in latest}
+            if found != channels:
+                warnings.append({'status': 'missing_channels', 'url': directory, 'date': date,
+                                 'reason': 'Missing native channels: '+', '.join(sorted(channels-found))})
+            if not found.intersection({'mh1', 'mh2', 'mhz'}):
+                continue  # An ATT-only day is not a ground-motion acquisition.
+            chosen = {url for _, url in latest.values()}
+            selected_urls = [u for u in urls if u.rsplit('.', 1)[0]+'.mseed' in chosen]
+            entries = paired_entries(selected_urls, 'D14_PSE', pattern, root)
+            selected.extend(entries); dates.append(date)
+            if args.sample:
+                break
+        if args.sample and dates:
+            break
+    if not selected:
+        raise ValueError('No Apollo ground-motion products in the requested historical window; timing-only data not substituted')
+    metadata_url = root+'data/xa/metadata/'
+    metadata_entries = paired_entries(links(args, metadata_url, evidence), 'D14_PSE',
+                                     r'(?:dataless\.xa\.\d+\.seed|stationxml\.xa\.\d+\.sxml)', root)
+    if not any(e['url'].endswith('.seed') for e in metadata_entries) or not any(e['url'].endswith('.sxml') for e in metadata_entries):
+        raise ValueError('Apollo waveform response/epoch metadata missing')
+    selected.extend({**e, 'metadata': True} for e in metadata_entries)
+    return selected, {'window': {'start': wire(start), 'stop_exclusive': wire(stop)},
+        'station': station, 'channels': sorted(channels), 'selected_science_dates': dates,
+        'coverage_warnings': warnings, 'metadata_role': 'response and channel epochs, not ground-motion samples',
+        'selection': 'latest listed revision per location/channel/day; MiniSEED only, no duplicate GeoCSV',
+        'sample_scope': 'first available ground-motion day plus timing and response metadata' if args.sample else 'all listed days in the historical window',
+        'warning': 'Historical Earth-received times; ATT corrections, response removal, gaps and event interpretation remain EDA work; not a south-polar hazard map'}
+
+
+def validate_addition_files(files, output):
+    """Native-format readability only; no scientific quality or suitability claim."""
+    science = {Path(i['relative_path']).name for i in files if not i['metadata']}
+    for item in files:
+        path = Path(item['reference']['path']) if item.get('reference') else base.safe_path(output, item['relative_path'])
+        suffix = path.suffix.lower()
+        if suffix == '.ncdf':
+            import netCDF4
+            with netCDF4.Dataset(path) as dataset:
+                if not dataset.variables:
+                    raise ValueError('Empty native SEE NetCDF product')
+        elif suffix == '.cdf':
+            import cdflib
+            dataset = cdflib.CDF(path)
+            if not dataset.cdf_info().zVariables:
+                raise ValueError('Empty native plasma CDF product')
+        elif suffix == '.xml':
+            label = ET.parse(path).getroot()
+            names = {e.text for e in label.iter() if e.tag.rsplit('}', 1)[-1] == 'file_name'}
+            if science and label.tag.rsplit('}', 1)[-1] == 'Product_Observational' and not names.intersection(science):
+                raise ValueError('PDS4 observational label does not match selected science filenames')
+        elif suffix == '.mseed':
+            from obspy import read
+            from obspy.io.mseed import ObsPyMSEEDError
+            try:
+                traces = read(str(path), format='MSEED')
+            except (OSError, ValueError, TypeError, ObsPyMSEEDError) as error:
+                raise ValueError('Unreadable Apollo MiniSEED: '+str(path)) from error
+            parts = path.name.split('.')
+            expected = tuple(p.upper() for p in parts[:4])
+            if not traces or any(t.stats.npts < 1 or t.stats.sampling_rate <= 0
+                                 or (t.stats.network, t.stats.station, t.stats.location, t.stats.channel) != expected
+                                 for t in traces):
+                raise ValueError('Apollo MiniSEED channel/header identity mismatch: '+str(path))
+        elif suffix in {'.seed', '.sxml'}:
+            from obspy import read_inventory
+            try:
+                inventory = read_inventory(str(path), format='SEED' if suffix == '.seed' else 'STATIONXML')
+            except (OSError, ValueError, TypeError, ET.ParseError) as error:
+                raise ValueError('Unreadable Apollo response metadata: '+str(path)) from error
+            if not any(ch.response is not None for net in inventory for station in net for ch in station):
+                raise ValueError('Apollo metadata contains no instrument responses')
+
+
 def coverage_table():
     rows = []
     with (LOCAL/"research/environmental_data.csv").open(encoding="utf-8-sig", newline="") as stream:
@@ -432,16 +769,20 @@ def coverage_table():
             if not row["Priority ID"].startswith("P1"):
                 continue
             key = re.search(r"[DMC]\d{2}", row["Priority ID"])[0]
-            status = ("addon_selection" if key in SOURCES else "login_required" if key in {"D21", "D23"}
+            status = ("disabled_by_request" if key in DISABLED else "addon_selection" if key in SOURCES else "login_required" if key in {"D21", "D23"}
                       else "project_inputs_required" if key.startswith("M") else "existing_reference_only")
             rows.append({"id": key, "priority": row["Priority ID"], "name": row["Dataset"],
                          "status": status, "source": row["Source"],
-                         "note": NOTES.get(key, "No duplicate acquisition. Existing data still requires applicability/quality validation; reference presence is not a requirement pass.")})
+                         "note": DISABLED.get(key, NOTES.get(key, "No duplicate acquisition. Existing data still requires applicability/quality validation; reference presence is not a requirement pass."))})
     rows.append({"id": "D11", "priority": "Explicit plasma addition (original P2 retained)",
                  "status": "addon_selection", "source": SOURCES['D11'], "note": NOTES['D11']})
     rows.append({"id": "D22", "priority": "Explicit ionisation gap (original P2 retained)",
                  "status": "login_required", "source": "https://pradan.issdc.gov.in/ch3/",
                  "note": "RAMBHA Langmuir-probe surface plasma is distinct from orbital ARTEMIS; authorised access needed, no bypass."})
+    for key in ADDITIONS:
+        if not any(row['id'] == key for row in rows):
+            rows.append({'id': key, 'priority': 'Explicit requested addition; original research priorities unchanged',
+                         'status': 'addon_selection', 'source': SOURCES[key], 'note': NOTES[key]})
     return rows
 
 
@@ -581,8 +922,12 @@ def process_job(args, job, output, index, budget, budget_lock):
         if record.get('job') != job:
             raise ValueError("Checkpoint job identity differs; not overwritten")
         if verified_job(record, output):
+            if job['key'] in ADDITIONS:
+                validate_addition_files(record.get('files', []), output)
             status = 'no_observations' if record.get('status') == 'no_observations' else 'verified_existing'
             return {"id": job['id'], "key": job['key'], "status": status, "checkpoint": str(path)}
+        if job['key'] in DISABLED:
+            raise ValueError(DISABLED[job['key']])
         if 'files' not in record:
             if job['key'] == 'D20':
                 reused = existing_query(job, index)
@@ -635,6 +980,8 @@ def process_job(args, job, output, index, budget, budget_lock):
                     item['result'] = base.transfer_with_connection_retries(item, output, args)
                     if item['result'] not in TERMINAL:
                         raise RuntimeError(f"Transfer incomplete: {item['result']}")
+            if job['key'] in ADDITIONS:
+                validate_addition_files(files, output)
             record['status'] = 'downloaded'
             base.save_json(path, record)
         finally:
@@ -646,14 +993,18 @@ def process_job(args, job, output, index, budget, budget_lock):
 
 
 def settings(args):
-    config = {"schema": 1, "stop": args.stop, "years": args.years, "channels": args.channels,
+    config = {"schema": 2, "start": getattr(args, 'start', None), "stop": args.stop, "years": args.years, "channels": args.channels,
             "quality_max": args.quality_max, "regions": REGIONS, "datasets": sorted(args.datasets),
             "products_per_region": args.products_per_region, "primary_days_per_month": args.primary_days_per_month, "sample": args.sample,
             "diviner_sample": DIVINER_SAMPLE if args.sample else None,
             "diviner_batch_strategy": "one_channel_per_monthly_tile_v1",
-            "sources": SOURCES}
+            "sources": SOURCES, "disabled_datasets": DISABLED,
+            "addition_policy": "native_files_fixed_start_historical_static_exceptions_v1"}
     if 'D27' in args.datasets:
         config['shadowcam_coverage_policy'] = 'publisher_window_with_explicit_index_lag_v1'
+    if 'D14_PSE' in args.datasets:
+        config['apollo_seismic'] = {'station': args.apollo_station, 'start': args.apollo_start,
+                                    'stop_exclusive': args.apollo_stop, 'channels': ['mh1', 'mh2', 'mhz', 'att']}
     return config
 
 
@@ -678,8 +1029,22 @@ def build_plan(args, output):
             if key == 'D20':
                 jobs, info = diviner_jobs(args, source_dir)
             else:
-                if key in {'D07', 'D08', 'D11'}:
+                if key in DATED_SOURCES:
                     entries, info = dated_listing(args, key, source_dir)
+                    if key == 'D09_SEE':
+                        entries += see_documents(args, source_dir)
+                elif key == 'D20_PRP':
+                    entries, info = polar_prp_entries(args, source_dir)
+                elif key == 'D32':
+                    entries, info = south_lamp_entries(args, source_dir)
+                elif key in {'D10', 'D35'}:
+                    entries, info = historical_entries(args, key, source_dir)
+                elif key == 'D29':
+                    entries, info = neutron_entries(args, source_dir)
+                elif key == 'D28':
+                    entries, info = apollo_heat_entries(args, source_dir)
+                elif key == 'D14_PSE':
+                    entries, info = apollo_seismic_entries(args, source_dir)
                 elif key in {'D15', 'D26', 'D27'}:
                     entries, info = imagery_listing(args, key, source_dir)
                 else:
@@ -688,7 +1053,7 @@ def build_plan(args, output):
                 groups = {}
                 for entry in entries:
                     groups.setdefault(entry['relative_path'].rsplit('/', 1)[0], []).append(entry)
-                if key in {'D07', 'D08', 'D11'}:
+                if key in DATED_SOURCES or key in {'D10', 'D29', 'D35', 'D28'}:
                     groups = {}
                     for entry in entries:
                         stem = entry['url'].rsplit('.', 1)[0]
@@ -710,7 +1075,7 @@ def parser():
     result = argparse.ArgumentParser(description=__doc__)
     result.add_argument('--output', type=Path, default=DEFAULT_OUTPUT)
     result.add_argument('--baseline-root', type=Path, action='append', default=None)
-    result.add_argument('--datasets', nargs='+', choices=list(SOURCES), default=list(SOURCES))
+    result.add_argument('--datasets', nargs='+', choices=list(SOURCES), default=[key for key in SOURCES if key not in DISABLED])
     result.add_argument('--download', action='store_true')
     result.add_argument('--dry-run', action='store_true')
     result.add_argument('--sample', action='store_true', help='Small, explicitly incomplete provider samples')
@@ -721,7 +1086,13 @@ def parser():
     result.add_argument('--cookies', type=Path)
     result.add_argument('--ca-bundle', type=Path, help='Optional trusted PEM bundle; TLS verification stays enabled')
     result.add_argument('--stop', default=REQUESTED_STOP, help='Exclusive UTC stop, default through October 2026')
-    result.add_argument('--years', type=int, default=3)
+    window = result.add_mutually_exclusive_group()
+    window.add_argument('--start', help='Inclusive UTC start; default 2023-06-01 (applied at execution)')
+    window.add_argument('--rolling-window', action='store_true', help='Explicitly retain the original archive-limited rolling-year selection')
+    result.add_argument('--years', type=int, default=3, help='Rolling years only with --rolling-window; fixed start otherwise')
+    result.add_argument('--apollo-station', choices=['s11', 's12', 's14', 's15', 's16'], default='s12', help='Historical PSE station; separate from modern dates')
+    result.add_argument('--apollo-start', default='1973-01-01', help='Inclusive UTC day for D14_PSE only')
+    result.add_argument('--apollo-stop', default='1975-01-01', help='Exclusive UTC day for D14_PSE only; default selects 1973-1974')
     result.add_argument('--channels', type=int, nargs='+', default=list(range(3, 10)))
     result.add_argument('--quality-max', type=int, nargs=3, default=[0, 12, 0], metavar=('CAL', 'GEOM', 'MISC'))
     result.add_argument('--max-points', type=int, default=5000000)
@@ -747,9 +1118,31 @@ def interleave_sources(jobs):
     return result
 
 
+def manual_download_list(plan, results):
+    """Specific acquisition holds, not a fabricated claim that public data is absent."""
+    manual = [
+        {'key': key, 'status': 'authorised_access_required', 'url': url, 'selection': selection,
+         'reason': 'Not automated without authorised access; retain native science, labels and quality documentation'}
+        for key, url, selection in [
+            ('D21', 'https://pradan.issdc.gov.in/ch3/', 'Chandrayaan-3 ChaSTE surface/subsurface thermal records; actual 2023 mission dates'),
+            ('D22', 'https://pradan.issdc.gov.in/ch3/', 'Chandrayaan-3 RAMBHA-LP current-voltage/plasma observations; actual 2023 mission dates'),
+            ('D23', 'https://pradan.issdc.gov.in/ch3/', 'Chandrayaan-3 ILSA surface-vibration records; actual 2023 mission dates'),
+            ('D24', 'https://pradan.issdc.gov.in/ch2/', 'Optional Chandrayaan-2 DFSAR calibrated polar radar with study-overlapping geometry'),
+        ]]
+    for row in (plan or {}).get('gaps', []) + [r for r in results if r.get('status') == 'error']:
+        manual.append({'key': row['key'], 'status': row['status'], 'url': row.get('url', SOURCES[row['key']]),
+            'file_urls': row.get('file_urls', []), 'reason': row.get('error', 'Inspect the acquisition checkpoint'),
+            'selection': NOTES[row['key']]})
+    return manual
+
+
 def main(argv=None):
     command = parser()
     args = command.parse_args(argv)
+    if any(key in DISABLED for key in args.datasets):
+        command.error('D20 acquisitions are disabled. Remove D20 from --datasets; existing data is preserved. D20_PRP is a separate native model product.')
+    if args.start is None and not args.rolling_window:
+        args.start = REQUESTED_START
     args.attempts = 1  # Exactly one initial attempt plus the outer connection retry budget.
     args.channels = sorted(set(args.channels))
     if (not args.channels or min(args.channels) < 3 or max(args.channels) > 9
@@ -763,6 +1156,11 @@ def main(argv=None):
         command.error('--max-jobs must be positive')
     try:
         parse_time(args.stop)
+        if args.start is not None and parse_time(args.start) >= parse_time(args.stop):
+            raise ValueError('--start must precede the exclusive --stop')
+        apollo_start, apollo_stop = parse_time(args.apollo_start), parse_time(args.apollo_stop)
+        if apollo_start >= apollo_stop or any(t.time().isoformat() != '00:00:00' for t in [apollo_start, apollo_stop]):
+            raise ValueError('Apollo dates must be UTC midnight days, with --apollo-start before exclusive --apollo-stop')
     except ValueError as error:
         command.error(str(error))
     if args.dry_run:
@@ -824,6 +1222,9 @@ def main(argv=None):
                   "baseline_presence": baseline_presence(args.baseline_root or [LOCAL/'data'])}
         report['coverage_warnings'] = [{"key": key, **warning} for key, info in (plan or {}).get('sources', {}).items()
                                        for warning in info.get('coverage_warnings', [])]
+        report['manual_downloads'] = manual_download_list(plan, results)
+        report['disabled_sources'] = DISABLED
+        base.save_json(run/'manual_downloads.json', report['manual_downloads'])
         report['selection_complete'] = bool(plan) and args.download and not args.sample and not gaps and not unresolved and len(results) == len(plan['jobs'])
         base.save_json(run/'summary.json', report)
         text = [f"Addon run: {run}", f"Selected transfer completion: {report['selection_complete']}",
@@ -838,6 +1239,7 @@ def main(argv=None):
         text += [f"{r['id']}: baseline_unlocated; check relocated --baseline-root; not downloaded again automatically"
                  for r in report['baseline_presence'] if r['status'] == 'baseline_unlocated' and r['id'] != 'C01']
         text += [f"{r['id']}: {r['status']} | {r.get('source', '')}" for r in coverage_table() if r['status'] in {'login_required', 'project_inputs_required'}]
+        text += [f"{key}: disabled_by_request | {reason}" for key, reason in DISABLED.items()]
         if args.sample or args.max_jobs:
             text.append('Full scope NOT run: sample/job cap active. Repeat without those flags for full selected coverage.')
         base.atomic_text(run/'error_log.txt', '\n'.join(text)+'\n', logger=base.LOG)

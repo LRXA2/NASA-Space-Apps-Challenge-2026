@@ -7,6 +7,7 @@ research/Lunar_Base_Conditions_Research_Backup (1).xlsx
 # Environmental datasets, partial downloads and acquisition manifests
 /data/
 /Pipeline_Proto/outputs
+/env_pipeline/outputs/
 
 # Reproducible Python/Jupyter caches, not source artifacts
 __pycache__/
