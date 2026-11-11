@@ -6,6 +6,10 @@
 # preference.lower / upper = utility bounds, not automatically safety limits.
 # context fields cannot be used for hard gates or scoring.
 # No scientific thresholds or domain multipliers have been adopted here.
+# above_threshold means >=; below_threshold means <=; between includes both bounds.
+# Metric multiplier 1.0 means equal weighting within a domain; context weights are unused.
+# Domain multipliers are null until explicitly chosen; priority labels do not set them.
+# priority is descriptive only (Highest/High/etc.), never an automatic scoring weight.
 schema: 1
 body: Moon
 name: moon_environment_unconfigured
@@ -19,7 +23,7 @@ domains:
     include_in_score: true
     multiplier: null
     metrics:
-    - column: geometry_sky_visible_fraction_4pi
+    - column: median_visible_sky_fraction
       unit: fraction
       role: context
       evidence_family: geometry_sky_visible_fraction_4pi
@@ -27,7 +31,7 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
-    - column: context_crater_counter_median
+    - column: orbital_radiation_counter_median
       unit: counts/SEC record
       role: context
       evidence_family: context_crater_counter_median
@@ -35,7 +39,7 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
-    - column: context_crater_reported_daily_max
+    - column: orbital_radiation_counter_maximum
       unit: counts/SEC record
       role: context
       evidence_family: context_crater_reported_daily_max
@@ -43,12 +47,13 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
+
   uv:
     priority: Medium
     include_in_score: true
     multiplier: null
     metrics:
-    - column: context_see_fuv_115_180_W_m2
+    - column: median_solar_far_uv_irradiance_w_m2
       unit: W/m2
       role: context
       evidence_family: context_see_fuv_115_180_W_m2
@@ -56,12 +61,13 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
+
   solar_illumination:
     priority: High
     include_in_score: true
     multiplier: null
     metrics:
-    - column: solar_visibility_median
+    - column: median_sun_visibility_fraction
       unit: fraction
       role: score
       evidence_family: solar_visibility_median
@@ -72,13 +78,13 @@ domains:
         lower: 0.0
         upper: 1.0
       hard_gate:
-        operator: ge
+        operator: above_threshold
         threshold: null
         rationale: Set an explicitly chosen environmental screening threshold; not
           a NASA-approved limit
       minimum: 0
       maximum: 1
-    - column: geometry_psr_fraction_cells
+    - column: permanently_shadowed_cell_fraction
       unit: fraction
       role: context
       evidence_family: geometry_psr_fraction_cells
@@ -88,7 +94,7 @@ domains:
       hard_gate: null
       minimum: 0
       maximum: 1
-    - column: reference_region_2020_2021_sun_clear_fraction
+    - column: regional_reference_sun_visibility_fraction
       unit: fraction
       role: context
       evidence_family: reference_region_2020_2021_sun_clear_fraction
@@ -96,7 +102,7 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
-    - column: reference_region_2020_2021_blocked_sample_span_h
+    - column: regional_reference_longest_shadow_sample_span_hours
       unit: h
       role: context
       evidence_family: reference_region_2020_2021_blocked_sample_span_h
@@ -104,12 +110,13 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
+
   thermal:
     priority: Highest
     include_in_score: true
     multiplier: null
     metrics:
-    - column: thermal_phase_median_min_K
+    - column: lowest_phase_median_temperature_kelvin
       unit: K
       role: context
       evidence_family: thermal_phase_median_min_K
@@ -117,7 +124,7 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
-    - column: thermal_phase_median_max_K
+    - column: highest_phase_median_temperature_kelvin
       unit: K
       role: context
       evidence_family: thermal_phase_median_max_K
@@ -125,7 +132,7 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
-    - column: thermal_phase_median_span_K
+    - column: phase_median_temperature_range_kelvin
       unit: K
       role: context
       evidence_family: thermal_phase_median_span_K
@@ -133,12 +140,13 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
+
   plasma_charging:
     priority: Medium
     include_in_score: true
     multiplier: null
     metrics:
-    - column: context_p1_full_ion_density_cm3
+    - column: median_spacecraft_ion_density_per_cm3
       unit: cm^-3 (All Qs)
       role: context
       evidence_family: context_p1_full_ion_density_cm3
@@ -146,7 +154,7 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
-    - column: context_p1_full_electron_density_cm3
+    - column: median_spacecraft_electron_density_per_cm3
       unit: cm^-3 (All Qs)
       role: context
       evidence_family: context_p1_full_electron_density_cm3
@@ -154,7 +162,7 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
-    - column: context_p1_spacecraft_potential_V
+    - column: median_spacecraft_electric_potential_volts
       unit: V (All Qs)
       role: context
       evidence_family: context_p1_spacecraft_potential_V
@@ -162,12 +170,13 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
+
   dust:
     priority: Medium
     include_in_score: true
     multiplier: null
     metrics:
-    - column: reference_ldex_current_e_per_s
+    - column: historical_median_dust_detector_current_charges_per_second
       unit: Elementary_charge_per_second
       role: context
       evidence_family: reference_ldex_current_e_per_s
@@ -175,12 +184,13 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
+
   seismic:
     priority: Evidence-dependent
     include_in_score: true
     multiplier: null
     metrics:
-    - column: reference_apollo_s12_mhz_rms_counts
+    - column: historical_median_vertical_seismic_rms_counts
       unit: counts
       role: context
       evidence_family: reference_apollo_s12_mhz_rms_counts
@@ -188,12 +198,13 @@ domains:
       requires_time_window: false
       preference: null
       hard_gate: null
+
   exosphere:
     priority: Context initially
     include_in_score: true
     multiplier: null
     metrics:
-    - column: reference_nms_He_abundance_p_cc
+    - column: historical_median_orbital_helium_density_per_cm3
       unit: P/Cc
       role: context
       evidence_family: reference_nms_He_abundance_p_cc

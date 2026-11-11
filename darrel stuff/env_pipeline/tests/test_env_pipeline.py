@@ -182,7 +182,7 @@ class StandalonePipelineTests(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             with (root / "results.csv").open(newline="") as handle:
                 reader = csv.DictReader(handle); self.assertNotIn("terrain_score", reader.fieldnames)
-                self.assertEqual(float(next(reader)["final_rec_score"]), 80)
+                self.assertEqual(float(next(reader)["final_recommendation_score"]), 80)
             self.assertEqual({p.name for p in root.iterdir()}, {"env_pipeline.py", "config.yml", "sites.csv", "results.csv"})
 
     def test_default_config_has_no_external_references_or_adopted_limits(self):

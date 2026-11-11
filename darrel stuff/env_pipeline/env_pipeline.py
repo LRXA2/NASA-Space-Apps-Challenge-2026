@@ -23,6 +23,13 @@ SCORES = {
     "plasma_charging": "plasma_charging_score", "uv": "uv_score",
     "seismic": "seismic_score", "exosphere": "exosphere_score",
 }
+# Keep internal assessment keys compatible; export human-readable CSV headings.
+OUTPUT_COLUMN_NAMES = {
+    "rad_score": "radiation_score",
+    "rad_score_status": "radiation_score_status",
+    "final_rec_score": "final_recommendation_score",
+    "config_sha256": "configuration_file_hash",
+}
 
 
 def finite(value, label, *, config=False):
@@ -77,6 +84,17 @@ def load_config(path):
     config = yaml.safe_load(text)
     validate_config(config)
     return config, hashlib.sha256(content).hexdigest()
+
+
+def gate_operator(gate):
+    operator = gate.get("operator")
+    aliases = {"ge": "above_threshold", "le": "below_threshold"}
+    if not isinstance(operator, str):
+        raise ValueError("Hard operator must be above_threshold/below_threshold/between")
+    operator = aliases.get(operator, operator)
+    if operator not in {"above_threshold", "below_threshold", "between"}:
+        raise ValueError("Hard operator must be above_threshold/below_threshold/between")
+    return operator
 
 
 def validate_config(config):
@@ -147,12 +165,11 @@ def validate_config(config):
             gate = metric.get("hard_gate")
             if gate is not None:
                 keys(gate, {"operator", "threshold", "lower", "upper", "rationale"}, f"{column}.hard_gate")
-                if gate.get("operator") not in {"ge", "le", "between"}:
-                    raise ValueError(f"{column}: hard operator must be ge/le/between")
+                operator = gate_operator(gate)
                 for key in ("threshold", "lower", "upper"):
                     if gate.get(key) is not None:
                         finite(gate[key], f"{column}.hard_gate.{key}", config=True)
-                if gate["operator"] == "between" and gate.get("lower") is not None and gate.get("upper") is not None and gate["lower"] > gate["upper"]:
+                if operator == "between" and gate.get("lower") is not None and gate.get("upper") is not None and gate["lower"] > gate["upper"]:
                     raise ValueError(f"{column}: inverted hard-gate range")
 
 
@@ -218,9 +235,10 @@ def utility(value, preference):
 
 
 def hard_check(value, gate):
+    operator = gate_operator(gate)
     if value is None:
         return "Unknown", "Missing required measurement or time window"
-    if gate["operator"] == "between":
+    if operator == "between":
         low, high = gate.get("lower"), gate.get("upper")
         if low is None or high is None:
             return "Unknown", "Hard bounds not configured"
@@ -229,7 +247,7 @@ def hard_check(value, gate):
         limit = gate.get("threshold")
         if limit is None:
             return "Unknown", "Hard threshold not configured"
-        passed = value >= limit if gate["operator"] == "ge" else value <= limit
+        passed = value >= limit if operator == "above_threshold" else value <= limit
     return ("Passed" if passed else "Failed"), gate.get("rationale", "Configured environmental screening comparison")
 
 
@@ -328,9 +346,9 @@ def run(input_path, output_path, config_path, *, overwrite=False):
     columns += ["habitability_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
                 "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details"]
     stream = io.StringIO(newline="")
-    writer = csv.DictWriter(stream, fieldnames=columns, lineterminator="\n")
+    writer = csv.DictWriter(stream, fieldnames=[OUTPUT_COLUMN_NAMES.get(c, c) for c in columns], lineterminator="\n")
     writer.writeheader()
-    writer.writerows(results)
+    writer.writerows({OUTPUT_COLUMN_NAMES.get(key, key): value for key, value in row.items()} for row in results)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary = tempfile.mkstemp(prefix=output_path.name + ".", suffix=".tmp", dir=output_path.parent)
     try:
