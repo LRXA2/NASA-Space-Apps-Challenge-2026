@@ -3,12 +3,16 @@
 # NOT official NASA values, safety limits, local hazard models or operational requirements.
 # Proxy directions/bounds (including counters/current/potential) are deliberately fictional
 # test mappings. Do not interpret resulting scores as real site habitability or safety.
-# All nine domain multipliers are 1: an equal-weight test policy, not NASA priorities.
-# Hard gates are inclusive; Failed/Unknown blocks final scoring. Blank is not zero.
+# enabled: false disables an entire domain: inputs, hard gates and scoring.
+# Enabled domain multipliers are 1: an equal-weight test policy, not NASA priorities.
+# pipeline_mode: strict requires complete inputs; available_data omits blank measurements.
+# hard_gates_enabled controls each domain independently from scoring.
+# Available supplied values still face enabled hard gates; blank is never a zero or physical pass.
 # Raw metric units are retained; no counter-to-dose or spacecraft-to-surface conversion.
 schema: 1
 body: Moon
 name: assumption_NASA_values
+pipeline_mode: available_data
 comparison_group_columns: []
 metadata_columns:
 - sample_type
@@ -23,6 +27,8 @@ metadata_columns:
 - stop_utc
 domains:
   radiation:
+    enabled: true
+    hard_gates_enabled: true
     priority: Highest
     include_in_score: true
     multiplier: 1.0
@@ -63,6 +69,8 @@ domains:
       meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
         units are retained; this does not qualify mission capability or local hazard.'
   uv:
+    enabled: true
+    hard_gates_enabled: true
     priority: Medium
     include_in_score: true
     multiplier: 1.0
@@ -85,6 +93,8 @@ domains:
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
   solar_illumination:
+    enabled: true
+    hard_gates_enabled: true
     priority: High
     include_in_score: true
     multiplier: 1.0
@@ -143,6 +153,8 @@ domains:
       meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
         units are retained; this does not qualify mission capability or local hazard.'
   thermal:
+    enabled: true
+    hard_gates_enabled: true
     priority: Highest
     include_in_score: true
     multiplier: 1.0
@@ -189,6 +201,8 @@ domains:
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
   plasma_charging:
+    enabled: true
+    hard_gates_enabled: true
     priority: Medium
     include_in_score: true
     multiplier: 1.0
@@ -230,6 +244,8 @@ domains:
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
   dust:
+    enabled: true
+    hard_gates_enabled: true
     priority: Medium
     include_in_score: true
     multiplier: 1.0
@@ -255,6 +271,8 @@ domains:
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
   seismic:
+    enabled: true
+    hard_gates_enabled: true
     priority: Evidence-dependent
     include_in_score: true
     multiplier: 1.0
@@ -277,6 +295,8 @@ domains:
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
   exosphere:
+    enabled: true
+    hard_gates_enabled: true
     priority: Context initially
     include_in_score: true
     multiplier: 1.0
@@ -301,6 +321,8 @@ domains:
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
   communications_geometry:
+    enabled: true
+    hard_gates_enabled: false
     priority: High
     include_in_score: true
     multiplier: 1.0

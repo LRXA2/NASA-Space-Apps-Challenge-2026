@@ -102,7 +102,9 @@ def gate_operator(gate):
 
 
 def validate_config(config):
-    keys(config, {"schema", "body", "name", "metadata_columns", "comparison_group_columns", "domains"}, "config")
+    keys(config, {"schema", "body", "name", "pipeline_mode", "metadata_columns", "comparison_group_columns", "domains"}, "config")
+    if config.get("pipeline_mode", "strict") not in ("strict", "available_data"):
+        raise ValueError("pipeline_mode must be strict or available_data")
     if type(config.get("schema")) is not int or config["schema"] != 1 or config.get("body") != "Moon":
         raise ValueError("Expected schema: 1 and body: Moon")
     if not isinstance(config.get("name"), str) or not config["name"].strip():
@@ -110,7 +112,7 @@ def validate_config(config):
     metadata = config.get("metadata_columns", [])
     if not isinstance(metadata, list) or any(not isinstance(x, str) or not x for x in metadata) or len(metadata) != len(set(metadata)):
         raise ValueError("metadata_columns must be a unique list of column names")
-    computed = {"time_mode", "comparison_start_utc", "comparison_stop_utc", "comparison_preference_score",
+    computed = {"pipeline_mode", "time_mode", "comparison_start_utc", "comparison_stop_utc", "comparison_preference_score",
                 "final_habitability_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
                 "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details"}
     computed |= set(SCORES.values()) | {c + "_status" for c in SCORES.values()} | set(OUTPUT_COLUMN_NAMES.values())
@@ -125,7 +127,11 @@ def validate_config(config):
         raise ValueError("comparison_group_columns must be unique registered metadata columns")
     columns, scored_families = set(), set()
     for name, domain in domains.items():
-        keys(domain, {"priority", "include_in_score", "multiplier", "metrics"}, name)
+        keys(domain, {"priority", "enabled", "hard_gates_enabled", "include_in_score", "multiplier", "metrics"}, name)
+        if type(domain.get("enabled", True)) is not bool:
+            raise ValueError(f"{name}: enabled must be true or false")
+        if type(domain.get("hard_gates_enabled", True)) is not bool:
+            raise ValueError(f"{name}: hard_gates_enabled must be true or false")
         if type(domain.get("include_in_score")) is not bool:
             raise ValueError(f"{name}: include_in_score must be true or false")
         if domain.get("multiplier") is not None:
@@ -172,7 +178,7 @@ def validate_config(config):
                     if preference["direction"] == "target_range" and preference.get("preferred_lower") is not None and preference.get("preferred_upper") is not None:
                         if not low < preference["preferred_lower"] <= preference["preferred_upper"] < high:
                             raise ValueError(f"{column}: preferred plateau must lie inside outer bounds")
-                if domain["include_in_score"]:
+                if domain.get("enabled", True) and domain["include_in_score"]:
                     family = metric.get("evidence_family")
                     if not isinstance(family, str) or not family or family in scored_families:
                         raise ValueError("Scored metrics need distinct evidence_family values; shared proxies cannot be counted twice")
@@ -205,6 +211,8 @@ def time_window(start="", stop=""):
 
 def read_csv(path, config):
     metrics = {m["column"]: m for d in config["domains"].values() for m in d["metrics"]}
+    active_columns = {m["column"] for d in config["domains"].values() if d.get("enabled", True)
+                      for m in d["metrics"] if m["role"] != "gate" or d.get("hard_gates_enabled", True)}
     with Path(path).open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
         if "ID" in (reader.fieldnames or []) and "id" not in reader.fieldnames:
@@ -224,6 +232,8 @@ def read_csv(path, config):
             ids.add(row["id"])
             time_window(row.get("start_utc", ""), row.get("stop_utc", ""))
             for column, metric in metrics.items():
+                if column not in active_columns:
+                    continue
                 raw = row.get(column, "").strip()
                 if raw:
                     value = finite(raw, f"{row['id']}.{column}")
@@ -333,6 +343,7 @@ def hard_check(value, gate):
 
 def assess(rows, config, config_hash):
     validate_config(config)
+    available_data = config.get("pipeline_mode", "strict") == "available_data"
     results = []
     for row in rows:
         start, stop = time_window(row.get("start_utc", ""), row.get("stop_utc", ""))
@@ -341,6 +352,7 @@ def assess(rows, config, config_hash):
                   "time_mode": "specified_window" if start else "unspecified",
                   "comparison_start_utc": start, "comparison_stop_utc": stop,
                   "config_name": config["name"], "config_sha256": config_hash,
+                  "pipeline_mode": config.get("pipeline_mode", "strict"),
                   "final_habitability_score": "", "final_rec_score": "", "rank": "", "operational_suitability": "Not assessed"}
         result.update({c: row.get(c, "") for c in config.get("metadata_columns", [])
                        if c not in result})
@@ -354,19 +366,34 @@ def assess(rows, config, config_hash):
                 result[score_column + "_status"] = "Context_only"
                 continue
             domain = config["domains"][name]
+            if not domain.get("enabled", True):
+                result[score_column] = ""
+                result[score_column + "_status"] = "Disabled"
+                domain_details.append({"domain": name, "priority_label": domain.get("priority"),
+                                       "included_in_final_score": False, "enabled": False,
+                                       "domain_multiplier": domain.get("multiplier"), "domain_score": "",
+                                       "status": "Disabled", "domain_weight_fraction": None,
+                                       "final_score_contribution": None})
+                continue
             parts, metric_weights = [], []
             detail_start = len(details)
             selected = [m for m in domain["metrics"] if m["role"] == "score"]
             domain_complete = bool(selected)
             for metric in domain["metrics"]:
+                if metric["role"] == "gate" and not domain.get("hard_gates_enabled", True):
+                    continue
                 column = metric["column"]
                 raw = row.get(column, "").strip()
                 value = finite(raw, column) if raw else None
                 missing_time = metric.get("requires_time_window", False) and not start
                 usable = None if missing_time else value
                 item = {"domain": name, "column": column, "unit": metric["unit"], "value": value, "role": metric["role"]}
-                if metric.get("hard_gate") is not None:
+                if metric.get("hard_gate") is not None and domain.get("hard_gates_enabled", True):
                     state, reason = hard_check(usable, metric["hard_gate"])
+                    gate = metric["hard_gate"]
+                    bounds = ("lower", "upper") if gate_operator(gate) == "between" else ("threshold",)
+                    if available_data and value is None and all(gate.get(k) is not None for k in bounds):
+                        state, reason = "Skipped_missing", "Blank measurement omitted in available_data mode; not a physical pass"
                     gates.append({**item, "condition": metric["hard_gate"], "status": state, "reason": reason,
                                   "screening_margin": gate_margin(usable, metric["hard_gate"])})
                 if metric["role"] == "score":
@@ -378,40 +405,55 @@ def assess(rows, config, config_hash):
                     if domain["include_in_score"]:
                         used += 1
                         supported += usable is not None
-                    if score is None or metric.get("multiplier") is None:
+                    omit_missing = (available_data and value is None and metric.get("multiplier") is not None
+                                    and normalized_utility(0, metric.get("preference")) is not None)
+                    if omit_missing:
+                        item["reason"] = "Blank measurement omitted; available metric weights are renormalized"
+                    elif score is None or metric.get("multiplier") is None:
                         domain_complete = False
                         item["reason"] = "Missing measurement/time, preference bounds or metric multiplier"
                     else:
                         parts.append(score * metric["multiplier"])
                         metric_weights.append(metric["multiplier"])
                 details.append(item)
+            domain_omitted = available_data and domain_complete and not metric_weights
+            domain_complete = domain_complete and bool(metric_weights)
             if domain_complete:
                 result[score_column] = 100 * sum(parts) / sum(metric_weights)
                 result[score_column + "_status"] = "Scored"
             else:
                 result[score_column] = ""
-                result[score_column + "_status"] = "Context_only" if not selected else "Unknown"
+                result[score_column + "_status"] = "Skipped_missing" if domain_omitted else "Context_only" if not selected else "Unknown"
             if domain_complete:
                 for item in details[detail_start:]:
-                    if item["role"] == "score":
+                    if item["role"] == "score" and item.get("utility") is not None:
                         item["metric_weight_fraction"] = item["multiplier"] / sum(metric_weights)
                         item["domain_score_contribution"] = 100 * item["utility"] * item["metric_weight_fraction"]
             domain_details.append({"domain": name, "priority_label": domain.get("priority"),
-                                   "included_in_final_score": domain["include_in_score"],
+                                   "included_in_final_score": domain["include_in_score"] and not domain_omitted,
+                                   "hard_gates_enabled": domain.get("hard_gates_enabled", True),
                                    "domain_multiplier": domain.get("multiplier"), "domain_score": result[score_column],
                                    "status": result[score_column + "_status"],
                                    "domain_weight_fraction": None, "final_score_contribution": None})
-            if domain["include_in_score"]:
+            if domain["include_in_score"] and domain_omitted:
+                issues.append(f"{name}: blank scoring measurements omitted in available_data mode")
+            elif domain["include_in_score"]:
                 if not domain_complete or domain.get("multiplier") is None:
                     complete = False
                     issues.append(f"{name}: selected domain needs complete preferences and a domain multiplier")
                 else:
                     weighted.append(result[score_column] * domain["multiplier"])
                     weights.append(domain["multiplier"])
-        states = [g["status"] for g in gates]
+        states = [g["status"] for g in gates if g["status"] != "Skipped_missing"]
         hard = "Failed" if "Failed" in states else "Unknown" if not states or "Unknown" in states else "Passed"
+        if available_data and not gates and complete and weights:
+            hard = "Passed"
+            issues.append("No hard gates selected; preference-only available-data assessment")
         if not states:
-            issues.append("No mandatory hard gates configured; empty gate cannot establish eligibility")
+            if gates:
+                issues.append("All selected hard checks lack measurements; no evaluated gate can establish eligibility")
+            elif hard != "Passed":
+                issues.append("No mandatory hard gates configured; empty gate cannot establish eligibility")
         for gate in gates:
             if gate["status"] != "Passed":
                 issues.append(f"{gate['column']}: {gate['status']}: {gate['reason']}")
@@ -427,7 +469,7 @@ def assess(rows, config, config_hash):
         if not weights and complete:
             issues.append("No domains selected for aggregate scoring")
         result.update(hard_gate_status=hard, evidence_coverage=f"{supported}/{used}",
-                      score_scope=";".join(n for n in SCORES if n in config["domains"] and config["domains"][n]["include_in_score"]),
+                      score_scope=";".join(d["domain"] for d in domain_details if d["included_in_final_score"]),
                       reason="; ".join(issues) or "Passed configured screens with complete preferences; not operational approval",
                       hard_gate_details=json.dumps(gates, separators=(",", ":"), allow_nan=False),
                       domain_score_details=json.dumps(domain_details, separators=(",", ":"), allow_nan=False),
@@ -457,12 +499,12 @@ def run(input_path, output_path, config_path, *, overwrite=False, compact=False)
     columns = ["id", "candidate_id", "start_utc", "stop_utc", "time_mode", "comparison_start_utc", "comparison_stop_utc"]
     columns += [c for c in config.get("metadata_columns", []) if c not in columns]
     columns += [field for name in SCORES.values() for field in (name, name + "_status")]
-    columns += ["comparison_preference_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
+    columns += ["pipeline_mode", "comparison_preference_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
                 "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details", "final_habitability_score"]
     stream = io.StringIO(newline="")
     writer = csv.DictWriter(stream, fieldnames=[OUTPUT_COLUMN_NAMES.get(c, c) for c in columns], lineterminator="\n")
     if compact:
-        domains = [name for name in SCORES if name in config["domains"]]
+        domains = [name for name in SCORES if name in config["domains"] and config["domains"][name].get("enabled", True)]
         writer = csv.DictWriter(stream, fieldnames=["ID", *domains, "hard_gate_status", "final_habitability_score"], lineterminator="\n")
     writer.writeheader()
     if compact:
