@@ -8,6 +8,7 @@ research/Lunar_Base_Conditions_Research_Backup (1).xlsx
 /data/
 /Pipeline_Proto/outputs
 /env_pipeline/outputs/
+/env_pipeline/legacy/outputs/
 
 # Reproducible Python/Jupyter caches, not source artifacts
 __pycache__/

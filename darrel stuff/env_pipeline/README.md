@@ -1,203 +1,162 @@
-﻿# Moon environmental CSV pipeline
+# Standalone Moon environmental pipeline
 
-**Implemented: 11 November 2026.** Standalone environmental-only Step 5 software. The scientific scoring policy is **not yet calibrated or adopted**. The existing [Pipeline_Proto](../Pipeline_Proto/README.md) remains unchanged.
+**Runtime: `env_pipeline.py` + `config.yml` + your input CSV.** No project imports, EDA readers, manifests, evidence sidecars, downloads or extra model files. Copy the script and YAML elsewhere and it still runs.
 
-**One CSV row per site/time window -> `run_pipeline.py` -> results CSV with domain scores, hard status, final recommendation score and rank.** No CNN, equipment, crew or Earth-visibility scoring. No downloads, automatic local-data inference or hidden missing-value substitution.
+Eight categories: radiation, thermal, solar/illumination, dust, plasma/charging, UV, seismic and exosphere. No terrain or Earth-visibility score.
 
-## Run
-
-From the repository root, using the existing environment (no new dependencies):
-
-```powershell
-# Fictional six-row software demo; NOT lunar recommendations
-.\.venv\Scripts\python.exe -B "darrel stuff/env_pipeline/run_pipeline.py" `
-  --input "darrel stuff/env_pipeline/examples/sites.csv" `
-  --policy "darrel stuff/env_pipeline/examples/demo_policy.json" `
-  --output "darrel stuff/env_pipeline/outputs/my_demo/results.csv"
-
-# Your environmental CSV; default policy deliberately leaves screening Unknown
-.\.venv\Scripts\python.exe -B "darrel stuff/env_pipeline/run_pipeline.py" `
-  --input "sites.csv" `
-  --output "darrel stuff/env_pipeline/outputs/my_assessment/results.csv"
-
-# Explicit project-configured policy
-.\.venv\Scripts\python.exe -B "darrel stuff/env_pipeline/run_pipeline.py" `
-  --input "sites.csv" --policy "my_policy.json" `
-  --output "darrel stuff/env_pipeline/outputs/my_configured_run/results.csv"
-```
-
-Choose a new output path per run. Existing outputs are protected unless `--overwrite` is explicitly supplied; inputs, policy, evidence and source code cannot be overwritten even with that flag. Individual files are written atomically; the final provenance JSON marks a completed export, not an all-files transaction.
-
-## Files
+## Files and run
 
 | File | Purpose |
 | --- | --- |
-| [run_pipeline.py](run_pipeline.py) | CSV validation, evidence checks, gates, utilities, domain aggregation, ranking and audit exports. |
-| [environmental_policy.json](environmental_policy.json) | Unconfigured Moon-only metric registry and priority labels. No numerical limits, weights or normalization invented. |
-| [input_template.csv](input_template.csv) | Header-only wide CSV template; add your assessment rows. |
-| [examples/sites.csv](examples/sites.csv) | Fictional pass/fail/Unknown/missing-soft/tie/second-period cases. |
-| [examples/evidence.json](examples/evidence.json) | Fictional per-row, per-metric evidence metadata. |
-| [examples/demo_policy.json](examples/demo_policy.json) | Arbitrary two-domain test policy; not a scientific default. |
-| [tests/test_run_pipeline.py](tests/test_run_pipeline.py) | Targeted software tests. |
-| `outputs/` | Generated results and local verification; ignored through the central `darrel stuff/.gitignore`. |
+| [env_pipeline.py](env_pipeline.py) | The only active runtime script. |
+| [config.yml](config.yml) | Editable hard thresholds, preference bounds and multipliers. |
+| [inputs/sites.csv](inputs/sites.csv) | Current 21-row input; numeric values and existing dates preserved, sidecar pointer removed. |
+| [input_template.csv](input_template.csv) | Header-only input template. |
+| [outputs/results.csv](outputs/results.csv) | Current results; one row per input row. |
+| [tests/test_env_pipeline.py](tests/test_env_pipeline.py) | Standalone tests, including isolated execution outside the repository. |
+| [legacy/](legacy/README.md) | User-approved preservation of the replaced project-integrated implementation and unchanged tests; never loaded by this script. |
 
-## Input: `sites.csv`
+Python 3.10+ and PyYAML are required. All other imports are Python standard library.
 
-Rows contain **raw environmental features, not precomputed scores**. The user-facing input is a CSV; the evidence sidecar supplies metadata that cannot safely fit into a bare number.
+```powershell
+python -m pip install PyYAML==6.0.3
 
-Required columns:
+python "darrel stuff/env_pipeline/env_pipeline.py" `
+  --input "darrel stuff/env_pipeline/inputs/sites.csv" `
+  --config "darrel stuff/env_pipeline/config.yml" `
+  --output "darrel stuff/env_pipeline/outputs/results.csv"
+```
+
+From this folder the same command is simply:
+
+```powershell
+python env_pipeline.py --input inputs/sites.csv --output outputs/results.csv
+```
+
+`--config` defaults to `config.yml` beside the script. Existing outputs are protected; choose a new output path or explicitly use `--overwrite`. Inputs, YAML and script cannot be overwritten. Only the requested results CSV is created.
+
+## YAML settings
+
+The config declares all eight domains. Each domain contains its input metrics and settings:
+
+| Setting | Meaning |
+| --- | --- |
+| `include_in_score` | Include this domain in the final aggregate. Set false explicitly for a context-only comparison scope; never drop missing domains selectively per candidate. |
+| Domain `multiplier` | Relative importance of this domain in the final weighted average. |
+| Metric `multiplier` | Relative importance of this metric within its domain. Not a physical-unit conversion. |
+| `column`, `unit` | CSV field and its declared unit. Numbers must actually represent that quantity; the script does not verify the measurement source. |
+| `role: score` | May have a preference and mandatory gate. |
+| `role: context` | Retained in result details, but cannot determine hard gates or scores. |
+| `hard_gate.operator` | `ge` (>=), `le` (<=), or `between` (inclusive). |
+| `hard_gate.threshold` | Threshold for `ge`/`le`. `between` uses `lower` and `upper`. |
+| `preference.direction` | `higher`, `lower` or `target_range`. |
+| `preference.lower`, `upper` | Reference bounds mapping the metric to a 0-1 utility. Not automatically safety limits. |
+| `preferred_lower`, `preferred_upper` | Utility-1 plateau for `target_range`; utility declines to zero at the outer bounds. |
+| `requires_time_window` | If true, a missing requested UTC pair makes this metric unavailable for its configured gate/preference. Default false. |
+| `evidence_family` | Shared-input identity; selected scored families must be distinct to prevent duplicated proxy weighting. |
+| `priority` | Descriptive planning tag only; it does not silently become a numeric multiplier. |
+
+Multipliers must be positive numbers. `null` means unconfigured, not zero and not an automatic pass. Unknown keys, duplicate YAML keys, unsafe object tags, invalid bounds and non-finite numbers fail clearly.
+
+**Default config is deliberately unconfigured:** domain multipliers and the solar screening threshold are null; context measurements are not converted into local hazard scores. The current real-data run therefore has no final rankings. Configure defensible limits, utilities and included domains before expecting an aggregate. Setting a multiplier alone cannot turn orbital counters into dose or signed detector current into deposited mass.
+
+Example **fictional settings only**, showing where to edit a selected metric:
+
+```yaml
+multiplier: 3.0             # domain importance; illustrative, not adopted
+include_in_score: true
+metrics:
+  - column: solar_visibility_median
+    unit: fraction
+    role: score
+    evidence_family: sun_visibility
+    multiplier: 1.0
+    hard_gate:
+      operator: ge
+      threshold: 0.5       # arbitrary software example, not a NASA limit
+    preference:
+      direction: higher
+      lower: 0.0
+      upper: 1.0
+```
+
+## Input columns
+
+Required: `id`, a unique nonempty assessment ID. `candidate_id` is an optional label. The supplied input retains both labels and its existing dates.
 
 | Column | Meaning |
 | --- | --- |
-| `id` | Unique assessment-row ID. |
-| `candidate_id` | Site/footprint identity, also matched in the supplied evidence metadata. The same candidate may have several rows with different periods/IDs. Geometry must be established upstream; this script does not independently resolve a footprint. |
-| `start_utc`, `stop_utc` | Timezone-aware requested period, inclusive start/exclusive stop. |
-| `evidence_ref` | Path to an evidence JSON, relative to the input CSV or absolute. Blank metadata means Unknown, never Passed. An explicitly named missing file is an error. |
+| `start_utc`, `stop_utc` | Optional requested period, inclusive start/exclusive stop. Omit both columns or leave both blank; supplying only one is an error. Supplied values need timezone offsets. |
+| Measurement columns | Numeric values declared by the YAML, with units/statistics described below. Missing fields/cells remain missing, never zero-filled. |
+| Other metadata | Allowed only when named in `metadata_columns`; copied into no measurement and never treated as a file to open. |
 
-Optional measurement columns are declared by the selected policy. Missing columns and blank cells remain missing evidence. Duplicate IDs/headers, ragged CSV rows, non-finite/malformed measurements, incompatible units and unregistered columns are explicit errors.
+Without dates, `time_mode` is `unspecified`: only supplied numbers are evaluated. **The standalone script cannot infer source spans or recompute date-filtered summaries.** Different supplied periods rank separately; undated rows form a separate group. Row dates are labels supplied by the caller, not independently verified acquisition histories. Preparing comparable quantities/periods is the caller's responsibility.
 
-Default registry:
+The YAML can register different measurement columns without code changes. The following existing columns remain available in the current input; these descriptions explain their meaning, not a runtime dependency on their original producer:
 
-| Domain / priority | Input columns | Units / support |
+| Input column | Meaning and units | Scope and limitation |
 | --- | --- | --- |
-| Radiation / Highest | `rad_dose_rate_uGy_h` | Absorbed dose rate, uGy/h; exact requested window. Not crew effective dose. |
-| UV / Medium | `uv_fuv_irradiance_W_m2` | 115-180 nm irradiance, W/m2; exact window. |
-| Solar/illumination / High | `solar_visibility_median`, `longest_darkness_h` | Spatial median visibility fraction (static); longest continuous darkness in h (window). Sampled blocked spans cannot silently become continuous darkness. |
-| Terrain / High | `slope_q90_deg` | Spatial 90th-percentile slope, degrees; static. |
-| Thermal / Highest | `surface_temp_min_K`, `surface_temp_max_K` | Surface-temperature extrema, K; window, not equipment response. |
-| Plasma/charging / Medium | `surface_potential_abs_p95_V` | 95th-percentile absolute surface potential, V; window, not spacecraft potential. |
-| Dust / Medium | `dust_deposition_mg_m2_day` | Mean surface deposition, mg/m2/day; window, not detector counts/current. |
-| Seismic / Evidence-dependent | `peak_ground_accel_m_s2` | Qualified peak ground acceleration, m/s2; window. |
-| Exosphere / Context initially | `surface_He_density_cm3` | Mean surface helium number density, 1/cm3; window, not orbital density copied to the ground. |
+| `solar_visibility_median` | Spatial median of solar-visibility fractions across the candidate's supported cells; 0-1. | Static candidate map summary, not requested-window sunlight continuity. |
+| `geometry_sky_visible_fraction_4pi` | Median visible sky solid angle divided by 4*pi; dimensionless fraction. | Candidate radiation-geometry context, not transported dose or shielding efficiency. |
+| `geometry_psr_fraction_cells` | Fraction of candidate cells classified as permanently shadowed; 0-1. | Static geometry, not a chronological shadow history. |
+| `thermal_phase_median_min_K` | Minimum of the supported fixed-common phase-product medians; K. | Candidate-associated point context, not an instantaneous minimum or equipment temperature. |
+| `thermal_phase_median_max_K` | Maximum of those same phase-product medians; K. | Same comparable point cohort, not a chronological extreme over the requested dates. |
+| `thermal_phase_median_span_K` | Maximum minus minimum of those phase-product medians; K. | Not a continuous thermal-cycle amplitude. Complete profiles exist for five candidates. |
+| `reference_region_2020_2021_sun_clear_fraction` | Fraction of model samples where the Sun clears the sampled horizon; 0-1. | 2020-2021 region-center reference, height 2m/radius 20km; not a candidate-local history. |
+| `reference_region_2020_2021_blocked_sample_span_h` | Longest observed first-to-last blocked-sample span; h. | Same regional reference; cadence and endpoint censoring remain explicit. Not guaranteed uninterrupted darkness. |
+| `context_crater_counter_median` | Median of supported daily selected-state CRaTER counter medians; counts/SEC record. | LRO orbital radiation context, not dose or a calibrated event rate. |
+| `context_crater_reported_daily_max` | Largest reported supported daily maximum of that counter; counts/SEC record. | Descriptive observed extreme, not an adopted radiation hazard limit. |
+| `context_see_fuv_115_180_W_m2` | Median of complete daily-mean FUV band integrals, 115-180 nm; W/m2. | Shared 1-AU solar context, model-assisted/flare-removed; not candidate surface UV dose. |
+| `context_p1_full_ion_density_cm3` | Median of daily P1 full-ion-mode density medians; native cm^-3 descriptor. | Spacecraft observations with native quality==0 selection, not surface density. |
+| `context_p1_full_electron_density_cm3` | Median of daily P1 full-electron-mode density medians; native cm^-3 descriptor. | Kept separate from ion mode; not a local charging model. |
+| `context_p1_spacecraft_potential_V` | Median of daily P1 full-electron-mode spacecraft-potential medians; native V descriptor. | Spacecraft potential, not regolith surface voltage or discharge risk. |
+| `reference_ldex_current_e_per_s` | Median of historical daily signed, background-subtracted LDEX current medians; elementary charges/s. | Orbital 2013-2014 reference, not deposited mass, contamination or contemporary forecast. |
+| `reference_apollo_s12_mhz_rms_counts` | Median of historical Apollo S12 MHZ daily median-centred RMS values; counts. | 1973-1974 station reference, not peak ground acceleration, event rate or polar recurrence. |
+| `reference_nms_He_abundance_p_cc` | Median of historical daily LADEE NMS helium-abundance medians; native P/Cc. | Orbital 2013-2014 reference, not surface atmosphere. |
 
-These quantities are a **schema**, not a claim that our current datasets provide every field. A custom policy can register different well-defined metrics without relabeling counts as dose, orbital context as local data, or surface brightness as irradiance. Priority labels are not numeric weights and are not NASA-prescribed rankings.
+No counts-to-dose, current-to-deposition, spacecraft-to-surface potential or raw-counts-to-ground-acceleration conversion is invented. No nearest-site, region-center or global-value substitution is used to pass a candidate requirement.
 
-CSV example excerpt, **fictional**:
+## Gates and score mathematics
 
-```csv
-id,candidate_id,start_utc,stop_utc,evidence_ref,solar_visibility_median,slope_q90_deg
-A_pass,fictional_site_A_pass,2023-06-01T00:00:00Z,2023-07-01T00:00:00Z,evidence.json,0.8,2
-```
-
-### Evidence JSON
-
-One sidecar can serve all CSV rows. Its `rows` object maps assessment IDs to metric IDs. For example, this excerpt supplies one fictional static metric:
-
-```json
-{
-  "schema": 1,
-  "rows": {
-    "A_pass": {
-      "solar_visibility_median": {
-        "body": "Moon",
-        "candidate_id": "fictional_site_A_pass",
-        "scope": "candidate",
-        "basis": "synthetic",
-        "quality": "qualified",
-        "unit": "fraction",
-        "quantity": "spatial_median_sun_visibility",
-        "temporal_support": "static",
-        "support_count": 1,
-        "source": "Fictional software fixture, not observed Moon data"
-      }
-    }
-  }
-}
-```
-
-Real policies accept `basis: observed` or `modeled`; **synthetic is accepted only in `synthetic_demo` mode**. Each numeric feature needs matching quantity/units, a nonempty source, a positive integer support count, a qualifying quality declaration and this Moon candidate's association. Window-supported evidence also needs matching `start_utc` and `stop_utc`. Static features do not become chronological histories merely because the row selects dates.
-
-Global/regional/orbital evidence stays Unknown for local scoring; wrong scope is not a physical site failure. Supplied metadata is checked, **not independently scientifically certified**. Source statements alone do not validate a response model. Provenance hashes the input CSV, policy, evidence JSON, engine/helper source and generated CSVs; it does not independently reread every upstream dataset named inside a source statement.
-
-## Policy, priorities and hard gates
-
-The default `environmental_policy.json` deliberately has no mandatory limits, no utilities and no numeric weights. All domains are declared, with scoring unresolved. Thus its result is **Unknown with blank aggregate scores**, not a safe-site ranking. The registry is not a calibrated nine-domain algorithm.
-
-To configure a real comparison, explicitly select `mode: exploratory` or `environmental`, define applicable mandatory rules, and configure the selected domains. Each hard rule needs a metric, `ge`/`le` operator, limit, rationale and authority/source. A null limit remains Unknown. Declare non-scored domains with `scored: false` and no preferences consistently across every candidate; do not drop missing domains selectively.
-
-- Any mandatory Failed -> **Failed**.
-- Otherwise any mandatory Unknown, or no configured mandatory rules -> **Unknown**.
-- All selected mandatory rules Passed -> **Passed**.
-- Only Passed candidates with complete selected soft inputs receive aggregate scores/ranks.
-- Evidence-use rejection is not proof that the physical site fails.
-- Thresholds are project environmental screens, not universal operational safety limits. The largest value in a dataset does not automatically define a hazardous threshold.
-
-Radiation/thermal have the highest planning priority; illumination/terrain follow; dust/charging/UV remain important; seismic priority depends on applicable evidence; exosphere starts as context. **Any domain can carry an applicable mandatory constraint regardless of this ordering.** Weight is not hazard severity. A high-importance hazard with no local estimate remains Unknown rather than acquiring a fabricated number.
-
-## Scoring mathematics
-
-For a supported metric `x` and explicit utility bounds `L < U`:
+- Any mandatory Failed -> Failed; otherwise any mandatory Unknown -> Unknown; all configured mandatory checks Passed -> Passed.
+- No configured mandatory gates -> Unknown, not a vacuous pass.
+- Missing selected soft values, missing preference bounds or missing multipliers withhold the aggregate; no zero substitution or weight redistribution.
+- Only Passed candidates with complete selected domains receive final scores/ranks. Domain preferences may remain visible diagnostically.
 
 ```text
-higher preferred: u = clip((x - L) / (U - L), 0, 1)
-lower preferred:  u = 1 - clip((x - L) / (U - L), 0, 1)
+higher utility = clip((x - lower) / (upper - lower), 0, 1)
+lower utility  = 1 - higher utility
+
+domain_score = 100 * sum(metric_multiplier * utility) / sum(metric_multiplier)
+habitability_score = sum(domain_multiplier * domain_score) / sum(domain_multiplier)
+final_rec_score = habitability_score when eligible; otherwise blank
 ```
 
-`target_range` is also supported: utility is 1 between `preferred_lower` and `preferred_upper`, declines linearly to 0 at `lower`/`upper`, and is clipped outside. Require `lower < preferred_lower <= preferred_upper < upper`. Do not assume a monotonic plasma/exosphere benefit.
+Changing all multipliers by the same factor does not change the normalized average; change their ratios to change priorities. Weights cannot offset a mandatory failure or Unknown. A score is an environmental preference, not a safety probability or proof of human habitability.
 
-```text
-domain_score[k] = 100 * sum(metric_weight[k,j] * utility[k,j])
-                        / sum(metric_weight[k,j])
+## Output columns
 
-habitability_score = sum(domain_weight[k] * domain_score[k])
-                     / sum(domain_weight[k])
+The script creates one CSV only; explanations are embedded as JSON strings inside CSV cells rather than separate audit files.
 
-final_rec_score = habitability_score, only when mandatory gates Passed
-                  and every selected domain is complete; otherwise blank.
-```
-
-- `habitability_score` is the requested label for **environmental preference**, not demonstrated habitability or safety probability. It too is withheld when gates do not pass.
-- `final_rec_score` is the ranking-facing copy, not a second independent judgment or another average of the same inputs.
-- Domain weights and metric weights must be positive JSON numbers; unresolved domain weights may be null and withhold the aggregate. Metric preferences need bounds, direction, weight, rationale and source.
-- Missing selected soft evidence withholds the aggregate; no zero filling or weight redistribution.
-- Related proxies must share `evidence_family`. The validator rejects repeatedly scored families, including duplicated sunlight proxies. Correct family declarations and physical dependencies still require scientific review.
-- Individual supported domain preferences may be shown diagnostically even when another gate blocks the final score.
-- Rank descending score within **identical UTC periods under this policy**, breaking ties by assessment ID. Different months/years are not silently pooled into one site ranking. Input row order is preserved.
-
-Time is not a weighted domain. This scorer evaluates already prepared period features; it **does not yet compute monthly/quarterly aggregates from raw observations**. Use the existing EDA temporal summaries upstream and preserve gaps, cadence, extremes, censoring and calendar labels. Calendar seasons are not lunar climate seasons.
-
-## Outputs
-
-For `--output results.csv`, the script writes:
-
-| File | Contents |
+| Output | Meaning |
 | --- | --- |
-| `results.csv` | Every input assessment, nine domain scores/states, `habitability_score`, hard status, `final_rec_score`, rank, scope, coverage and reasons. |
-| `results_hard_gates.csv` | Each mandatory comparison, actual value, threshold/source and Passed/Failed/Unknown. |
-| `results_domain_preferences.csv` | Selected metric utilities, weights and evidence support. |
-| `results_environmental_evidence.csv` | All registered metric observations, units, scope, basis, source and support/Unknown reason. |
-| `results_provenance.json` | Completion record, mode, input/output hashes, policy snapshot and status totals. |
+| `id`, `candidate_id`, UTC fields | Input identity and optional requested dates. |
+| Eight `*_score` / `*_score_status` pairs | Domain preferences from 0-100, higher preferred under the YAML; states `Scored`, `Unknown` or `Context_only`. |
+| `habitability_score`, `final_rec_score` | Gate-qualified environmental weighted average and its ranking-facing copy; blank if blocked. |
+| `hard_gate_status` | Passed / Failed / Unknown. |
+| `rank` | Descending final score within the same date group; ties use assessment ID. Input row order is preserved. |
+| `time_mode`, comparison UTC fields | `specified_window` with canonical UTC grouping dates, otherwise `unspecified` with blank comparison dates. No source dates are invented. |
+| `score_scope`, `evidence_coverage`, `reason` | Included domains, supplied/required scoring-value count and withholding explanation. Coverage is not scientific confidence. |
+| `hard_gate_details`, `score_details` | Per-measurement values, units, configured comparisons, utilities and multipliers. Context values stay descriptive. |
+| `config_name`, `config_sha256` | Name and exact YAML hash used for this result. |
+| `operational_suitability` | Always `Not assessed`; mission/equipment qualification is outside this script. |
 
-Main domain fields: `rad_score`, `uv_score`, `solar_illumination_score`, `terrain_score`, `thermal_score`, `plasma_charging_score`, `dust_score`, `seismic_score`, `exosphere_score`. Each has a matching `_status`: `Scored`, `Unknown` or `Context_only`. Scores are 0-100, higher meaning preferred under the policy, not higher hazard. Blank is not zero. Coverage is supported/required distinct configured metrics, not a safety confidence estimate.
+Blank scores are not zero. Severe environmental failures cannot be averaged away; no radiation limit or universal charging preference is inferred from a dataset's minimum/maximum.
 
-### Executed verification
-
-The fictional demo uses only solar visibility and terrain with equal weights and an arbitrary slope gate. This is **not** the default or a nine-domain lunar scoring claim:
-
-```csv
-id,terrain_score,solar_illumination_score,habitability_score,hard_gate_status,final_rec_score,rank
-A_pass,80,80,80,Passed,80,1
-B_fail,10,90,,Failed,,
-C_unknown,,70,,Unknown,,
-D_missing_soft,70,,,Passed,,
-E_other_period,80,80,80,Passed,80,1
-F_tie,80,80,80,Passed,80,2
-```
-
-The original small run is saved under `outputs/demo/`. A separate bounded check under `outputs/existing_eda/` exported the **21 existing candidates' static solar/slope features** from two hash-verified accepted EDA tables. All 21 correctly remain Unknown/unranked under the unconfigured real policy. It did not manufacture local radiation/UV/charging or period-specific illumination. The preparation provenance records those source tables.
-
-Run local tests:
+## Validation
 
 ```powershell
-.\.venv\Scripts\python.exe -B -m unittest discover -s "darrel stuff/env_pipeline/tests" -p "test_*.py" -v
+python -m unittest discover -s "darrel stuff/env_pipeline/tests" -p "test_*.py" -v
 ```
 
-## Existing evidence and remaining scientific work
-
-- [EDA Notes](../EDA/EDA_Notes.md): eleven executed subject studies and existing-EDA checks.
-- [Research Notes](../research/Research_Notes.md): sources, applicability and inference boundaries.
-- [Workflow](../todo_workflow.md): Stage 3-4 completion and separate Step 5 work.
-- The 64 Stage 4 proposals remain **unadopted**: 15 conditional hard, 11 conditional soft and 38 evidence guards. They are not automatically active rules, numeric weights or independent observations.
-- Raw additive downloads remain at `D:\projects\NASA Dataset`; existing local data and accepted EDA remain under `darrel stuff/data/`. No datasets were moved.
-
-Next scientific step: map the supported site/time quantities, define defensible utilities and applicable limits, agree explicit weights, and check ranking sensitivity. Existing evidence does not yet support a qualified nine-domain local score for every candidate. Mission/equipment qualification remains outside this environmental-only pipeline.
+21 standalone tests pass, including executing a copy in an isolated temporary directory with only the script, YAML and CSV. The 51 prior tests remain unchanged under `legacy/tests/` and also pass after mechanical path updates in the preserved scripts. No scientific raw data or the separate `Pipeline_Proto` was changed.

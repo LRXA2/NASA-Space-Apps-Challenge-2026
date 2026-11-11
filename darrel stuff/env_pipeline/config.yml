@@ -1,0 +1,203 @@
+# Standalone CSV scorer. No project helpers, source lookups or sidecar files.
+# null = not configured, never an automatic pass or a zero substitute.
+# Domain multiplier = relative importance in the final weighted average.
+# Metric multiplier = relative importance within that domain (not a unit conversion).
+# hard_gate.threshold / lower / upper = mandatory environmental screening limits.
+# preference.lower / upper = utility bounds, not automatically safety limits.
+# context fields cannot be used for hard gates or scoring.
+# No scientific thresholds or domain multipliers have been adopted here.
+schema: 1
+body: Moon
+name: moon_environment_unconfigured
+metadata_columns:
+- candidate_id
+- start_utc
+- stop_utc
+domains:
+  radiation:
+    priority: Highest
+    include_in_score: true
+    multiplier: null
+    metrics:
+    - column: geometry_sky_visible_fraction_4pi
+      unit: fraction
+      role: context
+      evidence_family: geometry_sky_visible_fraction_4pi
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: context_crater_counter_median
+      unit: counts/SEC record
+      role: context
+      evidence_family: context_crater_counter_median
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: context_crater_reported_daily_max
+      unit: counts/SEC record
+      role: context
+      evidence_family: context_crater_reported_daily_max
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+  uv:
+    priority: Medium
+    include_in_score: true
+    multiplier: null
+    metrics:
+    - column: context_see_fuv_115_180_W_m2
+      unit: W/m2
+      role: context
+      evidence_family: context_see_fuv_115_180_W_m2
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+  solar_illumination:
+    priority: High
+    include_in_score: true
+    multiplier: null
+    metrics:
+    - column: solar_visibility_median
+      unit: fraction
+      role: score
+      evidence_family: solar_visibility_median
+      multiplier: 1.0
+      requires_time_window: false
+      preference:
+        direction: higher
+        lower: 0.0
+        upper: 1.0
+      hard_gate:
+        operator: ge
+        threshold: null
+        rationale: Set an explicitly chosen environmental screening threshold; not
+          a NASA-approved limit
+      minimum: 0
+      maximum: 1
+    - column: geometry_psr_fraction_cells
+      unit: fraction
+      role: context
+      evidence_family: geometry_psr_fraction_cells
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+      minimum: 0
+      maximum: 1
+    - column: reference_region_2020_2021_sun_clear_fraction
+      unit: fraction
+      role: context
+      evidence_family: reference_region_2020_2021_sun_clear_fraction
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: reference_region_2020_2021_blocked_sample_span_h
+      unit: h
+      role: context
+      evidence_family: reference_region_2020_2021_blocked_sample_span_h
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+  thermal:
+    priority: Highest
+    include_in_score: true
+    multiplier: null
+    metrics:
+    - column: thermal_phase_median_min_K
+      unit: K
+      role: context
+      evidence_family: thermal_phase_median_min_K
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: thermal_phase_median_max_K
+      unit: K
+      role: context
+      evidence_family: thermal_phase_median_max_K
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: thermal_phase_median_span_K
+      unit: K
+      role: context
+      evidence_family: thermal_phase_median_span_K
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+  plasma_charging:
+    priority: Medium
+    include_in_score: true
+    multiplier: null
+    metrics:
+    - column: context_p1_full_ion_density_cm3
+      unit: cm^-3 (All Qs)
+      role: context
+      evidence_family: context_p1_full_ion_density_cm3
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: context_p1_full_electron_density_cm3
+      unit: cm^-3 (All Qs)
+      role: context
+      evidence_family: context_p1_full_electron_density_cm3
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: context_p1_spacecraft_potential_V
+      unit: V (All Qs)
+      role: context
+      evidence_family: context_p1_spacecraft_potential_V
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+  dust:
+    priority: Medium
+    include_in_score: true
+    multiplier: null
+    metrics:
+    - column: reference_ldex_current_e_per_s
+      unit: Elementary_charge_per_second
+      role: context
+      evidence_family: reference_ldex_current_e_per_s
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+  seismic:
+    priority: Evidence-dependent
+    include_in_score: true
+    multiplier: null
+    metrics:
+    - column: reference_apollo_s12_mhz_rms_counts
+      unit: counts
+      role: context
+      evidence_family: reference_apollo_s12_mhz_rms_counts
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+  exosphere:
+    priority: Context initially
+    include_in_score: true
+    multiplier: null
+    metrics:
+    - column: reference_nms_He_abundance_p_cc
+      unit: P/Cc
+      role: context
+      evidence_family: reference_nms_He_abundance_p_cc
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null

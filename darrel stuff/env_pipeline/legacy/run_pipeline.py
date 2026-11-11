@@ -12,10 +12,10 @@ from pathlib import Path
 import sys
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE.parents[1]))
 from data_maintenance import atomic_text, digest as sha256
 
-DOMAIN_COLUMNS = {
+ALL_DOMAIN_COLUMNS = {
     "radiation": "rad_score",
     "uv": "uv_score",
     "solar_illumination": "solar_illumination_score",
@@ -26,13 +26,18 @@ DOMAIN_COLUMNS = {
     "seismic": "seismic_score",
     "exosphere": "exosphere_score",
 }
+# Recognise old explicit policies without leaking their terrain field into new runs.
+DOMAIN_COLUMNS = {k: v for k, v in ALL_DOMAIN_COLUMNS.items() if k != "terrain"}
+ENVIRONMENT_DOMAINS = set(DOMAIN_COLUMNS)
 IDENTITY = ["id", "candidate_id", "start_utc", "stop_utc"]
-RESULT_COLUMNS = IDENTITY + ["policy_id", "policy_mode", "score_scope"] + [
-    name for score in DOMAIN_COLUMNS.values() for name in (score, score + "_status")
+RESULT_COLUMNS = IDENTITY + ["time_mode", "comparison_start_utc", "comparison_stop_utc", "policy_id", "policy_mode", "score_scope"] + [
+    name for score in ALL_DOMAIN_COLUMNS.values() for name in (score, score + "_status")
 ] + ["habitability_score", "hard_gate_status", "final_rec_score", "rank",
      "evidence_coverage", "reason", "operational_suitability"]
 EVIDENCE_COLUMNS = IDENTITY + ["metric", "value", "unit", "quantity", "status", "reason",
-                               "scope", "basis", "source", "support_count", "evidence_ref"]
+                               "scope", "basis", "source", "support_count", "evidence_ref",
+                               "evidence_start_utc", "evidence_stop_utc", "time_relation",
+                               "valid_days", "expected_days", "source_sha256"]
 GATE_COLUMNS = ["id", "candidate_id", "rule_id", "metric", "value", "operator", "limit",
                 "status", "reason", "authority"]
 UTILITY_COLUMNS = ["id", "candidate_id", "domain", "metric", "value", "utility",
@@ -66,6 +71,20 @@ def utc(value):
     if result.tzinfo is None:
         raise ValueError("Timestamps require Z or an explicit UTC offset")
     return result.astimezone(timezone.utc)
+
+
+def optional_window(start=None, stop=None):
+    """Both omitted means no requested window; partial/invalid windows fail clearly."""
+    missing_start = start is None or isinstance(start, str) and not start.strip()
+    missing_stop = stop is None or isinstance(stop, str) and not stop.strip()
+    if missing_start != missing_stop:
+        raise ValueError("Provide both start_utc and stop_utc, or omit both")
+    if missing_start:
+        return None, None
+    start, stop = utc(start), utc(stop)
+    if stop <= start:
+        raise ValueError("Invalid assessment period: stop must be after start")
+    return start, stop
 
 
 def unique_object(pairs):
@@ -106,8 +125,10 @@ def validate_policy(policy):
             raise ValueError("Unique environmental metric columns required")
         if "earth_visibility" in key.lower() or "earth_visibility" in column.lower():
             raise ValueError("Earth visibility is outside this environmental-only pipeline")
-        if metric.get("domain") not in DOMAIN_COLUMNS:
+        if metric.get("domain") not in ALL_DOMAIN_COLUMNS:
             raise ValueError(f"Unknown environmental domain: {key}")
+        if metric.get("usage", "candidate") not in {"candidate", "context"}:
+            raise ValueError("Metric usage must be candidate or context")
         if not all(isinstance(metric.get(f), str) and metric[f].strip() for f in ("unit", "quantity", "evidence_family")):
             raise ValueError(f"Metric {key} needs units, quantity and shared-evidence family")
         if metric.get("temporal_support") not in {"static", "window"}:
@@ -122,7 +143,7 @@ def validate_policy(policy):
     domains, used_metrics, used_families = {}, set(), set()
     for domain in policy["domains"]:
         key = domain.get("id")
-        if key not in DOMAIN_COLUMNS or key in domains or type(domain.get("scored")) is not bool:
+        if key not in ALL_DOMAIN_COLUMNS or key in domains or type(domain.get("scored")) is not bool:
             raise ValueError("Unique known domains with explicit scored Boolean required")
         if not isinstance(domain.get("preferences"), list):
             raise ValueError(f"Domain {key} needs preferences list")
@@ -136,6 +157,8 @@ def validate_policy(policy):
             metric_id = pref.get("metric")
             if metric_id not in metrics or metrics[metric_id]["domain"] != key or metric_id in used_metrics:
                 raise ValueError("Preferences need unique metrics in their declared domain")
+            if metrics[metric_id].get("usage") == "context":
+                raise ValueError("Context-only measurements cannot enter preference scores")
             family = metrics[metric_id]["evidence_family"]
             if family in used_families:
                 raise ValueError(f"Repeated scored evidence family: {family}; consolidate shared proxies")
@@ -154,8 +177,8 @@ def validate_policy(policy):
             if not pref.get("reason") or not pref.get("source"):
                 raise ValueError("Every preference needs a rationale and source")
         domains[key] = domain
-    if set(domains) != set(DOMAIN_COLUMNS):
-        raise ValueError("Declare all nine domains; mark context-only domains scored=false")
+    if set(domains) not in (ENVIRONMENT_DOMAINS, set(ALL_DOMAIN_COLUMNS)):
+        raise ValueError("Declare all eight environmental domains; legacy nine-domain policies remain explicit-only")
     ids = set()
     for rule in policy["hard_rules"]:
         if not isinstance(rule.get("id"), str) or not rule["id"].strip() or rule["id"] in ids:
@@ -163,6 +186,8 @@ def validate_policy(policy):
         ids.add(rule["id"])
         if rule.get("metric") not in metrics or rule.get("operator") not in {"ge", "le"} or not rule.get("reason"):
             raise ValueError("Hard rules need a known metric, ge/le operator and reason")
+        if metrics[rule["metric"]].get("usage") == "context":
+            raise ValueError("Context-only measurements cannot determine local hard gates")
         if rule.get("limit") is not None:
             number(rule["limit"], "hard limit")
             if not rule.get("source"):
@@ -189,23 +214,24 @@ def load_rows(path, metrics):
         header = reader.fieldnames or []
         if len(set(header)) != len(header):
             raise ValueError("Duplicate CSV column names")
-        required = IDENTITY + ["evidence_ref"]
+        required = ["id", "candidate_id", "evidence_ref"]
         if not set(required) <= set(header):
             raise ValueError(f"Missing required CSV columns: {sorted(set(required) - set(header))}")
-        unexpected = set(header) - set(required) - {m["column"] for m in metrics.values()}
+        unexpected = set(header) - set(IDENTITY + ["evidence_ref"]) - {m["column"] for m in metrics.values()}
         if unexpected:
             raise ValueError(f"Unknown CSV columns (possible typo/unit mismatch): {sorted(unexpected)}")
         rows, seen = [], set()
         for row in reader:
             if None in row or any(v is None for v in row.values()):
                 raise ValueError(f"Ragged CSV row near line {reader.line_num}")
-            if any(not row[f].strip() for f in IDENTITY):
-                raise ValueError("Every row needs nonempty identity and period fields")
+            if any(not row[f].strip() for f in ("id", "candidate_id")):
+                raise ValueError("Every row needs nonempty id and candidate_id")
             if row["id"] in seen:
                 raise ValueError(f"Duplicate assessment ID: {row['id']}")
             seen.add(row["id"])
-            if utc(row["stop_utc"]) <= utc(row["start_utc"]):
-                raise ValueError(f"Invalid assessment period: {row['id']}")
+            start, _ = optional_window(row.get("start_utc"), row.get("stop_utc"))
+            for field in ("start_utc", "stop_utc"):
+                row[field] = row[field] if start is not None else ""
             rows.append(row)
     if not rows:
         raise ValueError("Input CSV contains no assessment rows")
@@ -215,10 +241,12 @@ def load_rows(path, metrics):
 def qualify(row, metric, meta, mode):
     """Metadata is an explicit supplied declaration, not independent qualification."""
     raw = row.get(metric["column"], "").strip()
-    item = {**{f: row[f] for f in IDENTITY}, "metric": metric["id"], "value": "",
+    item = {**{f: row.get(f, "") for f in IDENTITY}, "metric": metric["id"], "value": "",
             "unit": metric["unit"], "quantity": metric["quantity"], "status": "Unknown",
             "reason": "Missing measurement", "evidence_ref": row["evidence_ref"]}
     if not raw:
+        if isinstance(meta, dict) and meta.get("missing_reason"):
+            item["reason"] = meta["missing_reason"]
         return item
     value = number(raw, f"{row['id']}.{metric['column']}")
     if ("minimum" in metric and value < metric["minimum"]) or ("maximum" in metric and value > metric["maximum"]):
@@ -229,7 +257,8 @@ def qualify(row, metric, meta, mode):
         return item
     if not isinstance(meta, dict):
         raise ValueError("Per-metric metadata must be an object")
-    item.update({f: meta.get(f, "") for f in ("scope", "basis", "source", "support_count")})
+    item.update({f: meta.get(f, "") for f in ("scope", "basis", "source", "support_count",
+                 "evidence_start_utc", "evidence_stop_utc", "time_relation", "valid_days", "expected_days", "source_sha256")})
     if not meta.get("unit") or not meta.get("quantity"):
         item["reason"] = "Missing evidence unit/quantity declaration"
         return item
@@ -237,6 +266,36 @@ def qualify(row, metric, meta, mode):
         raise ValueError(f"{row['id']}.{metric['id']}: metadata unit/quantity mismatch")
     if mode != "synthetic_demo" and meta.get("basis") == "synthetic":
         raise ValueError("Synthetic evidence cannot enter a real-data policy")
+    if metric.get("usage") == "context":
+        allowed_basis = {"synthetic"} if mode == "synthetic_demo" else {"observed", "modeled"}
+        if meta.get("body") != "Moon" or meta.get("basis") not in allowed_basis:
+            item["reason"] = "Inapplicable lunar-context body/basis"
+        elif meta.get("scope") not in {"orbital", "shared_solar", "historical_station", "regional_center", "candidate_geometry", "candidate_points"}:
+            item["reason"] = "Missing recognised context scope; not local candidate evidence"
+        elif meta["scope"] in {"candidate_geometry", "candidate_points"} and meta.get("candidate_id") != row["candidate_id"]:
+            item["reason"] = "Candidate-associated context does not match this site"
+        elif meta.get("quality") != "context_only" or not meta.get("source") or number(meta.get("support_count", 0), "support_count") <= 0:
+            item["reason"] = "Missing context quality/source/support declaration"
+        elif meta.get("temporal_support") != metric["temporal_support"]:
+            item["reason"] = "Context temporal-support type mismatch"
+        elif metric["temporal_support"] == "window" and not (meta.get("evidence_start_utc") and meta.get("evidence_stop_utc")):
+            item["reason"] = "Context requires explicit actual/reference dates"
+        else:
+            relation = meta.get("time_relation")
+            if metric["temporal_support"] == "window":
+                start, stop = utc(meta["evidence_start_utc"]), utc(meta["evidence_stop_utc"])
+                if stop <= start:
+                    raise ValueError("Context evidence has an invalid period")
+                requested_start, requested_stop = optional_window(row.get("start_utc"), row.get("stop_utc"))
+                if relation == "requested_window" and requested_start is not None and (start != requested_start or stop != requested_stop):
+                    item["reason"] = "Requested-window context does not match this assessment"
+                    return item
+                if relation not in {"requested_window", "historical_reference", "source_span"}:
+                    raise ValueError("Window context needs requested_window, historical_reference or source_span relation")
+            elif relation != "static_reference":
+                raise ValueError("Static context needs static_reference relation")
+            item.update(status="Context_only", reason=meta.get("interpretation", "Context only; not a local hazard measurement or scoring input"))
+        return item
     if meta.get("basis") not in ({"synthetic"} if mode == "synthetic_demo" else {"observed", "modeled"}):
         item["reason"] = "Missing/inapplicable observed or modeled evidence basis"
     elif meta.get("body") != "Moon" or meta.get("scope") != "candidate" or meta.get("candidate_id") != row["candidate_id"]:
@@ -249,10 +308,15 @@ def qualify(row, metric, meta, mode):
         item["reason"] = "Static and window-supported quantities cannot be substituted"
     elif metric["temporal_support"] == "window" and (not meta.get("start_utc") or not meta.get("stop_utc")):
         item["reason"] = "Missing evidence period declaration"
-    elif metric["temporal_support"] == "window" and (
-        utc(meta.get("start_utc")) != utc(row["start_utc"]) or utc(meta.get("stop_utc")) != utc(row["stop_utc"])
-    ):
-        item["reason"] = "Evidence summary does not match the requested period"
+    elif metric["temporal_support"] == "window":
+        source_start, source_stop = optional_window(meta["start_utc"], meta["stop_utc"])
+        requested_start, requested_stop = optional_window(row.get("start_utc"), row.get("stop_utc"))
+        if source_start is None:
+            item["reason"] = "Missing evidence period declaration"
+        elif requested_start is not None and (source_start != requested_start or source_stop != requested_stop):
+            item["reason"] = "Evidence summary does not match the requested period"
+        else:
+            item.update(status="Supported", reason="Supplied candidate evidence passed schema/applicability checks; not independently certified")
     else:
         item.update(status="Supported", reason="Supplied candidate evidence passed schema/applicability checks; not independently certified")
     return item
@@ -277,11 +341,13 @@ def assess(rows, policy, metadata):
         p["metric"] for d in domains.values() if d["scored"] for p in d["preferences"]}
     scope = ";".join(k for k, d in domains.items() if d["scored"])
     for row in rows:
+        row = {**row, "start_utc": row.get("start_utc", ""), "stop_utc": row.get("stop_utc", "")}
+        requested_start, requested_stop = optional_window(row["start_utc"], row["stop_utc"])
         supplied = metadata.get(row["id"], {})
         if not isinstance(supplied, dict):
             raise ValueError("Assessment metadata must map metric IDs to objects")
-        if set(supplied) - set(metrics):
-            raise ValueError(f"Unknown evidence metric IDs for {row['id']}")
+        # A shared evidence sidecar may contain fields excluded by this policy.
+        # Only registered CSV features are consumed; the full sidecar is hashed.
         observed = {key: qualify(row, metric, supplied.get(key), policy["mode"]) for key, metric in metrics.items()}
         evidence.extend(observed.values())
         reasons, states = [], []
@@ -303,12 +369,29 @@ def assess(rows, policy, metadata):
         hard = "Failed" if "Failed" in states else "Unknown" if not states or "Unknown" in states else "Passed"
         if not states:
             reasons.append("Mandatory screening rules unconfigured; an empty gate cannot pass")
+        comparison_start, comparison_stop = requested_start, requested_stop
+        if requested_start is None:
+            # Nonlocal context can have different historical spans; it is never scored.
+            # Selected LOCAL window-based evidence must nevertheless be contemporaneous.
+            source_windows = {optional_window(supplied[m]["start_utc"], supplied[m]["stop_utc"])
+                              for m in required if metrics[m]["temporal_support"] == "window"
+                              and observed[m]["status"] == "Supported"}
+            if len(source_windows) > 1:
+                hard = "Failed" if hard == "Failed" else "Unknown"
+                reasons.append("Selected time-dependent evidence has different source spans; aggregate withheld, no simultaneous comparison inferred")
+            elif source_windows:
+                comparison_start, comparison_stop = next(iter(source_windows))
         result = {**{f: row[f] for f in IDENTITY}, "policy_id": policy["id"], "policy_mode": policy["mode"],
+                  "time_mode": "specified_window" if requested_start is not None else "source_spans",
+                  "comparison_start_utc": comparison_start.isoformat() if comparison_start else "",
+                  "comparison_stop_utc": comparison_stop.isoformat() if comparison_stop else "",
                   "score_scope": scope, "hard_gate_status": hard, "habitability_score": "", "final_rec_score": "",
                   "rank": "", "operational_suitability": "Not assessed",
                   "evidence_coverage": f"{sum(observed[m]['status'] == 'Supported' for m in required)}/{len(required)}"}
         weighted, weights, complete = [], [], True
-        for key, column in DOMAIN_COLUMNS.items():
+        for key, column in ALL_DOMAIN_COLUMNS.items():
+            if key not in domains:
+                continue
             domain = domains[key]
             value, status = "", "Context_only"
             if domain["scored"]:
@@ -338,10 +421,11 @@ def assess(rows, policy, metadata):
             reasons.append("No scored domains configured")
         result["reason"] = "; ".join(reasons) or "Passed declared screening with complete preferences; not operational approval"
         results.append(result)
-    # Compare identical UTC periods only; stable IDs break ties, never input order.
-    periods = {(utc(r["start_utc"]), utc(r["stop_utc"])) for r in results}
-    for start, stop in periods:
-        eligible = [r for r in results if r["final_rec_score"] != "" and utc(r["start_utc"]) == start and utc(r["stop_utc"]) == stop]
+    # Dateless static-only rows can compare together. Dated source summaries cannot
+    # silently share a rank group when their actual comparison windows differ.
+    group = lambda r: (r["time_mode"], r["comparison_start_utc"], r["comparison_stop_utc"])
+    for period in {group(r) for r in results}:
+        eligible = [r for r in results if r["final_rec_score"] != "" and group(r) == period]
         for rank, row in enumerate(sorted(eligible, key=lambda r: (-r["final_rec_score"], r["id"])), 1):
             row["rank"] = rank
     return results, gates, utilities, evidence
@@ -360,7 +444,7 @@ def run(input_path, output_path, policy_path, *, overwrite=False):
     if output_path.suffix.lower() != ".csv":
         raise ValueError("--output must name a CSV file")
     tracked = {input_path: sha256(input_path), policy_path: sha256(policy_path), Path(__file__).resolve(): sha256(__file__)}
-    helper_path = HERE.parent / "data_maintenance.py"
+    helper_path = HERE.parents[1] / "data_maintenance.py"
     tracked[helper_path] = sha256(helper_path)
     policy = read_json(policy_path)
     metrics, _ = validate_policy(policy)
@@ -380,8 +464,9 @@ def run(input_path, output_path, policy_path, *, overwrite=False):
             documents[path] = document
         metadata[row["id"]] = documents[path]["rows"].get(row["id"], {})
     results, gates, utilities, evidence = assess(rows, policy, metadata)
+    result_columns = [c for c in RESULT_COLUMNS if c not in {"terrain_score", "terrain_score_status"} or "terrain" in {d["id"] for d in policy["domains"]}]
     files = {
-        output_path: csv_text(results, RESULT_COLUMNS),
+        output_path: csv_text(results, result_columns),
         output_path.with_name(output_path.stem + "_hard_gates.csv"): csv_text(gates, GATE_COLUMNS),
         output_path.with_name(output_path.stem + "_domain_preferences.csv"): csv_text(utilities, UTILITY_COLUMNS),
         output_path.with_name(output_path.stem + "_environmental_evidence.csv"): csv_text(evidence, EVIDENCE_COLUMNS),
@@ -403,7 +488,10 @@ def run(input_path, output_path, policy_path, *, overwrite=False):
         "hard_status_counts": {s: sum(r["hard_gate_status"] == s for r in results) for s in ("Passed", "Failed", "Unknown")},
         "inputs": [{"path": str(p), "sha256": digest} for p, digest in tracked.items()],
         "outputs": [{"path": str(p), "sha256": hashlib.sha256(content.encode("utf-8")).hexdigest()} for p, content in files.items()],
-        "policy": policy, "rank_grouping": "policy plus identical UTC start/stop; score desc, assessment ID asc",
+        "policy": policy, "rank_grouping": "policy plus time mode and effective comparison UTC period; score desc, assessment ID asc",
+        "rows_without_requested_window": sum(not r["start_utc"] for r in results),
+        "unused_sidecar_metrics": {rid: sorted(set(items) - set(metrics)) for rid, items in metadata.items()
+                                   if set(items) - set(metrics)},
         "qualification": "Supplied metadata checked, not independently validated science or operational certification",
         "habitability_meaning": "Environmental preference only; final_rec_score is its gate-qualified ranking copy",
     }

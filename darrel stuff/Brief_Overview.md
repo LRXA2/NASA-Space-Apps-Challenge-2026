@@ -4,33 +4,6 @@
 
 Evaluate whether an intended mission could operate at a selected Moon site. This workstream uses existing lunar data first; no CNN integration or Mars work. Mission/equipment profiles are optional for the default environmental comparison. Full operational suitability still requires applicable requirements, configuration and response evidence. Missing evidence is **Unknown**, never a pass.
 
-**Completed Stage 3-4 scope (11 November):** eleven executed subject studies, existing-EDA cross-checks, base conclusions and a traceable unadopted hard/soft/evidence-quality proposal. Missing operational qualification remains Unknown. **Separate Step 5 software now exists in [env_pipeline](env_pipeline/README.md): CSV -> Python -> domain scores, hard status and final ranking. Its default scientific policy remains unconfigured; the existing prototype is unchanged.** [Scope and completion checklist](todo_workflow.md#comprehensive-subject-eda-and-stage-4-completed-11-november-2026).
-
-## New-data EDA executed — 11 November 2026
-
-**Subject expansion complete:** [Dar_045-055](EDA/EDA_Notes.md#expanded-subject-eda-and-time-windows---11-november-2026) cover UV, plasma, subsurface/polar thermal, dust, radiation, exosphere, neutrons/resources, seismic, terrain/illumination and operational/habitat evidence. Dated inputs retain month, quarter, four-month, half-year, year, two-year and calendar-season support (**not lunar seasons**); static products/short missions are not fabricated into histories. **132 targeted tests pass cumulatively.** [Verification](data/verification/latest_subject_eda.txt).
-
-**Stage 4 handoff:** [Dar_056 and the proposal artifacts](EDA/EDA_Notes.md#stage-4-handoff---proposed-not-integrated) contain **64 unadopted rows: 15 conditional hard, 11 conditional soft and 38 evidence guards**, covering all eleven subjects and 27 outline factors. Source/units/scope, limits and response gaps, shared evidence and Passed/Failed/Unknown semantics remain explicit. **No numerical limit, weight, mission profile or Stage 5 change was adopted.**
-
-- [Dar_044](EDA/Moon/Stage3_Requirements/Dar_044_acquired_environment.ipynb) ran successfully: **three saved code cells, 18 tables, 10 plots**. Its declared full/sampled cohorts cover ten source families and 2,986 science files, not the whole downloaded archive.
-- **New evidence:** 1,206 contemporary FUV days; mode/clock-screened plasma; all HFE tables and PRP triangles; south LAMP quality maps; sampled dust/exosphere/neutron context; two years of vertical seismic/timing diagnostics; seven PDF operational cases.
-- **Key limits:** EUV completeness is much poorer than FUV; ESA modes and LAMP bands have very different quality support. Missing clocks, all-zero neutron channels and sparse waveforms cannot become zero-risk evidence. Historical/modelled observations are not candidate hardware limits.
-- **Validation:** 43 targeted tests, independent raw-data checks and all registered output hashes passed. Existing pipeline source/configuration hashes are unchanged: new Step 3 outputs are **not automatically integrated** into Steps 4-5. [Category findings, cohorts and reproduction](EDA/EDA_Notes.md#new-download-eda--executed-dar_044-11-november-2026) | [Verification](data/verification/latest_new_environment_eda.txt).
-
-## Download and PDF review — 10 November 2026
-
-- **New full batches verified:** 17,208 selected files / about 71.15 GB, covering SEE, plasma, thermal/UV-map references, LADEE, LEND and Apollo HFE/PSE. No selected-file/size/receipt issues; 24 sampled hashes matched. This is bounded acquisition, not a full checksum audit or new EDA.
-- **Still incomplete:** three older CRaTER primary table/label pairs exceeded the 2 GiB file cap; access-gated sources and previously failed priority PDFs remain unresolved. D20 stays disabled. [Exact scope and remaining items](download_script/Download_Dataset_Instructions.md#full-download-readback--10-november-2026).
-- **PDF library:** the external index lists 142 PDFs, with 95 retained. This review checked 53 pages in 14 priority documents. Strong contributions are radiation calibration, thermal/dust deployment and duty-cycle evidence, contamination/event attribution, and conditional operating-rule structure. [Sources and page pointers](research/Research_Notes.md#expanded-pdf-library-and-environmental-impact-10-november-2026).
-- **Follow-up completed in Dar_044:** contemporary SEE now supports qualified-band, matched-date context comparisons. Existing SOLSTICE non-overlap findings remain valid for those older histories. New downloads/PDFs have **not** changed the pipeline's source pins, limits, scores or operational readiness. [Analysis and remaining limits](EDA/EDA_Notes.md#newly-acquired-inputs-and-pdf-leads-10-november-2026).
-
-## Monthly/quarterly extension — 10 November 2026
-
-- **Step 3 executed:** [Dar_043](EDA/Moon/Stage3_Requirements/Dar_043_temporal_environment.ipynb) analyses radiation, UV and plasma by UTC year-month and calendar quarter: **101 series, 2,352 monthly rows, 856 quarterly rows and 18 plots**. UV covers 2003–2020; ARTEMIS adds 36 files / 319,946 spacecraft records from 2023–2026.
-- **Step 4:** E14–E16 preserve coverage/identity, prevent non-overlapping histories becoming simultaneous correlations, and retain Unknown local charging/protection. Calendar quarters are not lunar seasons.
-- **Step 5:** the existing engine consumes seven pinned temporal tables and adds `evidence_context/TEMPORAL_CONTEXT.md`, linked from [latest results](Pipeline_Proto/outputs/LATEST_RESULTS.md). This is historical context, not new safety thresholds, scores or forecasts.
-- **Validation:** 191 EDA and 100 pipeline tests pass. [Category findings](EDA/EDA_Notes.md#monthly-and-quarterly-comparisons--dar_043) | [Current verification](data/verification/latest_temporal_environment.txt).
-
 ## Start here
 
 | Guide | Purpose |
@@ -38,10 +11,13 @@ Evaluate whether an intended mission could operate at a selected Moon site. This
 | [Workflow](todo_workflow.md) | Steps 1-5 and what remains deferred. |
 | [Research sources](research/Research_Notes.md) | Dataset priorities, NASA source evidence and applicability. |
 | [EDA notes](EDA/EDA_Notes.md) | Environmental categories, steps taken, findings and limitations. |
-| [Pipeline](Pipeline_Proto/README.md) | Run commands, actual outputs and verification. |
+| [Test Pipeline](Pipeline_Proto/README.md) | Run commands, actual outputs and verification. |
 | [Downloads](download_script/Download_Dataset_Instructions.md) | Existing-data and additive download commands. |
+| [Main Pipeline](darrel stuff/env_pipeline\README.md) | Main pipeline. Run this for the input/output for env suitably |
 
 ## Algorithm proposal
+
+**Environmental-only follow-up (11 November):** [env_pipeline](env_pipeline/README.md) is now one standalone Python script plus a YAML config, using eight categories without terrain scoring. Runtime reads only the supplied CSV and YAML, never EDA outputs or evidence sidecars. Its [current input](env_pipeline/inputs/sites.csv) preserves the 21 candidates' existing values; shared/historical quantities remain context-only by configuration. The previous integrated implementation and unchanged tests are under `env_pipeline/legacy/`. Numerical screening/weight adoption remains pending.
 
 [Feature decisions](purposal.md) separate usable measurements, reference-only evidence and deferred inputs. Research P1/P2/P3 tags are not hard/soft requirements or scoring weights.
 

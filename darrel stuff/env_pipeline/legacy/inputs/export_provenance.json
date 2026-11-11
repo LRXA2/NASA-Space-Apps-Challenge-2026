@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "body": "Moon",
+  "input_rows": 21,
+  "requested_start_utc": "2023-06-01T00:00:00+00:00",
+  "requested_stop_utc": "2023-12-01T00:00:00+00:00",
+  "sources": [
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\env_pipeline\\eda_sources.json",
+      "sha256": "76d7f3a802025cd1432f7e61a5c4ac4b16d70295c9a47a07dcfb268df39dac52"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\env_pipeline\\environmental_policy.json",
+      "sha256": "f0786d7232d73f7d4318526ff8e0662d7f86b20f004e10261e31469fc5225e34"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\env_pipeline\\export_eda_input.py",
+      "sha256": "dbfaf8f7cd5a34fdbfed520b5c6bbed5d2f0c49ece5f0ed413ddb4e62adbff0c"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\env_pipeline\\run_pipeline.py",
+      "sha256": "db82a51f30eb7f0a365d41318ce7f073e78b6f9d907d51f770c51c1dd69d4477"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\dar_020_candidate_environment\\20261106T175311055762Z_b68ce6\\provenance.json",
+      "sha256": "9658d636a2e16bee7b2ef6cfac39bb81f0418ccce83f5fc022d8625bb29d9d14"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\dar_020_candidate_environment\\20261106T175311055762Z_b68ce6\\candidate_manifest.csv",
+      "sha256": "216cae808671d5e3f3b3335dcc742355832c7d41fdbdd86a2c1f2037b48cc6cd"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\dar_020_candidate_environment\\20261106T175311055762Z_b68ce6\\candidate_static_profiles.csv",
+      "sha256": "e3bde380457885b693db5309a7613e6931bae1cd245f501ee6f060b7add9dfd6"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\lunar_science_indicators\\20261109T125300938144Z_2ab576\\provenance.json",
+      "sha256": "d48f6c852c36e862190f979c37e17819d4ef28f2c9f9c644ab95fdcca83bb3c1"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\lunar_science_indicators\\20261109T125300938144Z_2ab576\\candidate_science_profiles.csv",
+      "sha256": "0dc19abbc1533201c86f8f8eb7c3671af6d5429b2a128c678fb0551f829e477a"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_terrain_time\\20261110T210226961886Z_f00b81\\provenance.json",
+      "sha256": "24e6a2068180702e3b856b62d332026254df979ac37577cb2bfa4c52dc824324"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_terrain_time\\20261110T210226961886Z_f00b81\\geometry_periods.csv",
+      "sha256": "0cf24e164444c1aa5fe5fd6bda8467ca391642e84a33232e10196023b63ac287"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_radiation_time\\20261110T174314830488Z_b5df1a\\provenance.json",
+      "sha256": "dcdc2eb805e6f080a7b0153567a8cbcecc86aa6a5db37edb245684388e85d4a7"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_radiation_time\\20261110T174314830488Z_b5df1a\\daily_context.csv",
+      "sha256": "98669a6126071795156c76be03b5618cb480dba29e40b6edc30e726cfa5c09cb"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_radiation_time\\20261110T174314830488Z_b5df1a\\series_catalog.csv",
+      "sha256": "53b6062a2d03eb0fc2a1b8bd58d3ad020a79f39588fe4e69c1d7d86059298add"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_uv\\20261110T171338818645Z_f97fcb\\provenance.json",
+      "sha256": "2aad9cad64d127e60bb69ebd04b3b9ef1e5310b11453ed4d394da180b6198bdc"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_uv\\20261110T171338818645Z_f97fcb\\band_daily_context.csv",
+      "sha256": "093bee223760ab1818655e4503860e61544644a31df41d2c3cd7ab65dc483cbc"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_plasma\\20261110T172843740060Z_464803\\provenance.json",
+      "sha256": "090a562c5f26f1b2816c8fbb1c15d417b52c17f070c93f42ae33056a9a81b5d5"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_plasma\\20261110T172843740060Z_464803\\esa_daily_context.csv",
+      "sha256": "2017268c08d387766cd16bc8447990fb8acbbafafc63e201241043173b589201"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_plasma\\20261110T172843740060Z_464803\\esa_series_catalog.csv",
+      "sha256": "310a7d746451532a3e24e70cfbc40998b065dc8dfa97a08ee892045d592d826e"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_dust\\20261110T173821043184Z_4dd78e\\provenance.json",
+      "sha256": "fd3851807acd49eb8a3124d333855416c224dc8c18c8988ab4d887e02d559646"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_dust\\20261110T173821043184Z_4dd78e\\current_daily_context.csv",
+      "sha256": "a61857bc61e03cd56885e54d9bb39e9feb19ae86b78ba5fffb8cb01b090d09ad"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_seismic\\20261110T183033924956Z_ba610a\\provenance.json",
+      "sha256": "c86d2ed2f7e378b5fcf9d2291f597f5d020e3eda9bc6c52650e60ea4b71928f1"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_seismic\\20261110T183033924956Z_ba610a\\daily_context.csv",
+      "sha256": "5179587c2767ccb49a818e640401d9f5010d44c4fe6309445eaa8155f8d3aaf7"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_exosphere\\20261110T180950163652Z_95254f\\provenance.json",
+      "sha256": "aceba2e5ed357b0b8984cffe789aa93808f79067610979673ed7f5131fd9429a"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\data\\processed\\analysis\\subject_exosphere\\20261110T180950163652Z_95254f\\daily_context.csv",
+      "sha256": "f3b4fa70c6971e65a5d282522a1970a7674e5929242ad4bd311912c78fbd1650"
+    }
+  ],
+  "scope": "Accepted EDA only; native quantities preserved; shared/historical/point/region context cannot be scored as local conditions",
+  "populated_by_column": {
+    "solar_visibility_median": 21,
+    "geometry_sky_visible_fraction_4pi": 21,
+    "geometry_psr_fraction_cells": 21,
+    "thermal_phase_median_min_K": 5,
+    "thermal_phase_median_max_K": 5,
+    "thermal_phase_median_span_K": 5,
+    "reference_region_2020_2021_sun_clear_fraction": 21,
+    "reference_region_2020_2021_blocked_sample_span_h": 21,
+    "context_crater_counter_median": 21,
+    "context_crater_reported_daily_max": 21,
+    "context_see_fuv_115_180_W_m2": 21,
+    "context_p1_full_ion_density_cm3": 21,
+    "context_p1_full_electron_density_cm3": 21,
+    "context_p1_spacecraft_potential_V": 21,
+    "reference_ldex_current_e_per_s": 21,
+    "reference_apollo_s12_mhz_rms_counts": 21,
+    "reference_nms_He_abundance_p_cc": 21
+  },
+  "outputs": [
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\env_pipeline\\inputs\\sites.csv",
+      "sha256": "2d65a9789ab158eb7a50c31a2052e63a113a53184165b8962ddcd1dc91b4a63a"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\env_pipeline\\inputs\\evidence.json",
+      "sha256": "47b6ba6d361e36ac08308fa0c163fd2a5aa3ce9d1e60d7633410481141ad2965"
+    },
+    {
+      "path": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\darrel stuff\\env_pipeline\\inputs\\column_guide.csv",
+      "sha256": "66720cbf9a7556642a9697ccc05ed5571434ff979673ed3d31bba987c5a7ddf6"
+    }
+  ]
+}

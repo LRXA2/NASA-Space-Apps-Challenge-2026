@@ -1,0 +1,7 @@
+id,candidate_id,start_utc,stop_utc,evidence_ref,rad_dose_rate_uGy_h,uv_fuv_irradiance_W_m2,solar_visibility_median,longest_darkness_h,slope_q90_deg,surface_temp_min_K,surface_temp_max_K,surface_potential_abs_p95_V,dust_deposition_mg_m2_day,peak_ground_accel_m_s2,surface_He_density_cm3
+A_pass,fictional_site_A_pass,2023-06-01T00:00:00Z,2023-07-01T00:00:00Z,evidence.json,,,0.8,,2,,,,,,
+B_fail,fictional_site_B_fail,2023-06-01T00:00:00Z,2023-07-01T00:00:00Z,evidence.json,,,0.9,,9,,,,,,
+C_unknown,fictional_site_C_unknown,2023-06-01T00:00:00Z,2023-07-01T00:00:00Z,evidence.json,,,0.7,,,,,,,,
+D_missing_soft,fictional_site_D_missing_soft,2023-06-01T00:00:00Z,2023-07-01T00:00:00Z,evidence.json,,,,,3,,,,,,
+E_other_period,fictional_site_E_other_period,2023-07-01T00:00:00Z,2023-08-01T00:00:00Z,evidence.json,,,0.8,,2,,,,,,
+F_tie,fictional_site_F_tie,2023-06-01T00:00:00Z,2023-07-01T00:00:00Z,evidence.json,,,0.8,,2,,,,,,

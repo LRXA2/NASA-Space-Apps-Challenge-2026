@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "rows": {
+    "A_pass": {
+      "solar_visibility_median": {
+        "body": "Moon",
+        "candidate_id": "fictional_A_pass",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "scope": "candidate",
+        "source": "Fictional software fixture, not lunar observations",
+        "unit": "fraction",
+        "quantity": "spatial_median_sun_visibility",
+        "temporal_support": "static",
+        "support_count": 1,
+        "start_utc": "2023-06-01T00:00:00Z",
+        "stop_utc": "2023-07-01T00:00:00Z"
+      },
+      "demo_uv_W_m2": {
+        "body": "Moon",
+        "candidate_id": "fictional_A_pass",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "scope": "candidate",
+        "source": "Fictional software fixture, not lunar observations",
+        "unit": "W/m2",
+        "quantity": "fictional_local_band_irradiance",
+        "temporal_support": "window",
+        "support_count": 1,
+        "start_utc": "2023-06-01T00:00:00Z",
+        "stop_utc": "2023-07-01T00:00:00Z"
+      }
+    },
+    "B_fail": {
+      "solar_visibility_median": {
+        "body": "Moon",
+        "candidate_id": "fictional_B_fail",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "scope": "candidate",
+        "source": "Fictional software fixture, not lunar observations",
+        "unit": "fraction",
+        "quantity": "spatial_median_sun_visibility",
+        "temporal_support": "static",
+        "support_count": 1,
+        "start_utc": "2023-06-01T00:00:00Z",
+        "stop_utc": "2023-07-01T00:00:00Z"
+      },
+      "demo_uv_W_m2": {
+        "body": "Moon",
+        "candidate_id": "fictional_B_fail",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "scope": "candidate",
+        "source": "Fictional software fixture, not lunar observations",
+        "unit": "W/m2",
+        "quantity": "fictional_local_band_irradiance",
+        "temporal_support": "window",
+        "support_count": 1,
+        "start_utc": "2023-06-01T00:00:00Z",
+        "stop_utc": "2023-07-01T00:00:00Z"
+      }
+    },
+    "C_unknown": {
+      "solar_visibility_median": {
+        "body": "Moon",
+        "candidate_id": "fictional_C_unknown",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "scope": "candidate",
+        "source": "Fictional software fixture, not lunar observations",
+        "unit": "fraction",
+        "quantity": "spatial_median_sun_visibility",
+        "temporal_support": "static",
+        "support_count": 1,
+        "start_utc": "2023-06-01T00:00:00Z",
+        "stop_utc": "2023-07-01T00:00:00Z"
+      },
+      "demo_uv_W_m2": {
+        "body": "Moon",
+        "candidate_id": "fictional_C_unknown",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "scope": "candidate",
+        "source": "Fictional software fixture, not lunar observations",
+        "unit": "W/m2",
+        "quantity": "fictional_local_band_irradiance",
+        "temporal_support": "window",
+        "support_count": 1,
+        "start_utc": "2023-06-01T00:00:00Z",
+        "stop_utc": "2023-07-01T00:00:00Z"
+      }
+    },
+    "D_missing_soft": {
+      "solar_visibility_median": {
+        "body": "Moon",
+        "candidate_id": "fictional_D_missing_soft",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "scope": "candidate",
+        "source": "Fictional software fixture, not lunar observations",
+        "unit": "fraction",
+        "quantity": "spatial_median_sun_visibility",
+        "temporal_support": "static",
+        "support_count": 1,
+        "start_utc": "2023-06-01T00:00:00Z",
+        "stop_utc": "2023-07-01T00:00:00Z"
+      },
+      "demo_uv_W_m2": {
+        "body": "Moon",
+        "candidate_id": "fictional_D_missing_soft",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "scope": "candidate",
+        "source": "Fictional software fixture, not lunar observations",
+        "unit": "W/m2",
+        "quantity": "fictional_local_band_irradiance",
+        "temporal_support": "window",
+        "support_count": 1,
+        "start_utc": "2023-06-01T00:00:00Z",
+        "stop_utc": "2023-07-01T00:00:00Z"
+      }
+    }
+  }
+}
