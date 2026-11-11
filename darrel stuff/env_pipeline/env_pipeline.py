@@ -1,4 +1,7 @@
-"""Standalone Moon environmental CSV scorer. Runtime inputs: CSV and YAML only."""
+"""Standalone Moon CSV scorer. assumption_NASA_values is a fictional test policy,
+not official NASA values or a qualified operational habitability assessment.
+Runtime inputs: one CSV and YAML configuration only.
+"""
 from __future__ import annotations
 
 import argparse
@@ -22,6 +25,7 @@ SCORES = {
     "solar_illumination": "solar_illumination_score", "dust": "dust_score",
     "plasma_charging": "plasma_charging_score", "uv": "uv_score",
     "seismic": "seismic_score", "exosphere": "exosphere_score",
+    "communications_geometry": "communications_geometry_score",
 }
 # Keep internal assessment keys compatible; export human-readable CSV headings.
 OUTPUT_COLUMN_NAMES = {
@@ -98,7 +102,7 @@ def gate_operator(gate):
 
 
 def validate_config(config):
-    keys(config, {"schema", "body", "name", "metadata_columns", "domains"}, "config")
+    keys(config, {"schema", "body", "name", "metadata_columns", "comparison_group_columns", "domains"}, "config")
     if type(config.get("schema")) is not int or config["schema"] != 1 or config.get("body") != "Moon":
         raise ValueError("Expected schema: 1 and body: Moon")
     if not isinstance(config.get("name"), str) or not config["name"].strip():
@@ -106,9 +110,19 @@ def validate_config(config):
     metadata = config.get("metadata_columns", [])
     if not isinstance(metadata, list) or any(not isinstance(x, str) or not x for x in metadata) or len(metadata) != len(set(metadata)):
         raise ValueError("metadata_columns must be a unique list of column names")
+    computed = {"time_mode", "comparison_start_utc", "comparison_stop_utc", "comparison_preference_score",
+                "final_habitability_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
+                "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details"}
+    computed |= set(SCORES.values()) | {c + "_status" for c in SCORES.values()} | set(OUTPUT_COLUMN_NAMES.values())
+    if set(metadata) & computed:
+        raise ValueError("metadata_columns cannot shadow computed output columns")
     domains = config.get("domains")
-    if not isinstance(domains, dict) or set(domains) != set(SCORES):
-        raise ValueError("Declare exactly the eight environmental domains; terrain is not supported")
+    required = set(SCORES) - {"communications_geometry"}
+    if not isinstance(domains, dict) or not required <= set(domains) <= set(SCORES):
+        raise ValueError("Declare the eight environmental domains plus optional communications_geometry; terrain is not supported")
+    groups = config.get("comparison_group_columns", [])
+    if not isinstance(groups, list) or any(not isinstance(c, str) or c not in metadata for c in groups) or len(groups) != len(set(groups)):
+        raise ValueError("comparison_group_columns must be unique registered metadata columns")
     columns, scored_families = set(), set()
     for name, domain in domains.items():
         keys(domain, {"priority", "include_in_score", "multiplier", "metrics"}, name)
@@ -125,12 +139,12 @@ def validate_config(config):
             if not isinstance(column, str) or not column or column in columns or column in set(metadata) | {"id", "candidate_id", "start_utc", "stop_utc"}:
                 raise ValueError("Metric columns must be unique and separate from ID/time/metadata columns")
             columns.add(column)
-            if "earth_visibility" in column.lower():
-                raise ValueError("Earth visibility is not an environmental scoring metric")
             if not isinstance(metric.get("unit"), str) or not metric["unit"].strip():
                 raise ValueError(f"{column}: an explicit unit is required")
-            if metric.get("role") not in {"score", "context"}:
-                raise ValueError(f"{column}: role must be score or context")
+            if metric.get("role") not in {"score", "context", "gate"}:
+                raise ValueError(f"{column}: role must be score, context or gate")
+            if metric["role"] == "gate" and (metric.get("preference") is not None or metric.get("hard_gate") is None):
+                raise ValueError(f"{column}: gate-only metrics need a hard_gate and cannot have a preference")
             if type(metric.get("requires_time_window", False)) is not bool:
                 raise ValueError(f"{column}: requires_time_window must be Boolean")
             for bound in ("minimum", "maximum"):
@@ -144,7 +158,8 @@ def validate_config(config):
                 positive(metric["multiplier"], f"{column}.multiplier")
             preference = metric.get("preference")
             if preference is not None:
-                keys(preference, {"direction", "lower", "upper", "preferred_lower", "preferred_upper"}, f"{column}.preference")
+                keys(preference, {"direction", "lower", "upper", "preferred_lower", "preferred_upper", "curve"}, f"{column}.preference")
+                validate_curve(preference.get("curve"))
                 if preference.get("direction") not in {"higher", "lower", "target_range"}:
                     raise ValueError(f"{column}: preference needs higher/lower/target_range direction")
                 for key in ("lower", "upper", "preferred_lower", "preferred_upper"):
@@ -192,6 +207,8 @@ def read_csv(path, config):
     metrics = {m["column"]: m for d in config["domains"].values() for m in d["metrics"]}
     with Path(path).open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
+        if "ID" in (reader.fieldnames or []) and "id" not in reader.fieldnames:
+            reader.fieldnames = ["id" if name == "ID" else name for name in reader.fieldnames]
         headers = reader.fieldnames or []
         allowed = set(metrics) | set(config.get("metadata_columns", [])) | {"id", "candidate_id", "start_utc", "stop_utc"}
         if "id" not in headers or len(headers) != len(set(headers)):
@@ -218,7 +235,7 @@ def read_csv(path, config):
     return rows
 
 
-def utility(value, preference):
+def normalized_utility(value, preference):
     if preference is None or preference.get("lower") is None or preference.get("upper") is None:
         return None
     low, high = preference["lower"], preference["upper"]
@@ -232,6 +249,69 @@ def utility(value, preference):
         if preference["direction"] == "lower":
             result = 1 - result
     return max(0.0, min(1.0, result))
+
+
+def validate_curve(curve):
+    if curve is None:
+        return
+    keys(curve, {"type", "strength", "exponent", "steepness", "midpoint"}, "preference.curve")
+    kind = curve.get("type")
+    required = {"linear": set(), "logarithmic": {"strength"}, "power": {"exponent"}, "logistic": {"steepness", "midpoint"}}
+    if not isinstance(kind, str) or kind not in required:
+        raise ValueError("Curve type must be linear/logarithmic/power/logistic")
+    if set(curve) != required[kind] | {"type"}:
+        raise ValueError(f"{kind} curve requires exactly these parameters: {sorted(required[kind])}")
+    for key in required[kind]:
+        if key == "midpoint":
+            midpoint = finite(curve[key], "curve.midpoint", config=True)
+            if not 0 < midpoint < 1:
+                raise ValueError("Logistic midpoint must lie strictly between 0 and 1")
+        else:
+            positive(curve[key], f"curve.{key}")
+    if kind == "logistic":
+        shape_utility(.5, curve)  # Reject numerically degenerate settings before reading input.
+
+
+def shape_utility(value, curve):
+    """Shape normalized preference, never raw measurements or mandatory limits."""
+    if curve is None or curve["type"] == "linear":
+        return value
+    kind = curve["type"]
+    if kind == "logarithmic":
+        result = math.log1p(curve["strength"] * value) / math.log1p(curve["strength"])
+    elif kind == "power":
+        result = value ** curve["exponent"]
+    else:
+        def sigmoid(x):
+            if x >= 0:
+                return 1 / (1 + math.exp(-x))
+            exponential = math.exp(x)
+            return exponential / (1 + exponential)
+        k, midpoint = curve["steepness"], curve["midpoint"]
+        low, high = sigmoid(-k * midpoint), sigmoid(k * (1 - midpoint))
+        if high - low <= 1e-12:
+            raise ValueError("Logistic curve is numerically degenerate; choose a larger steepness")
+        result = (sigmoid(k * (value - midpoint)) - low) / (high - low)
+    return max(0.0, min(1.0, result))
+
+
+def utility(value, preference):
+    normalized = normalized_utility(value, preference)
+    return None if normalized is None else shape_utility(normalized, preference.get("curve"))
+
+
+def gate_margin(value, gate):
+    """Signed screening-boundary distance in the metric's own units, not hardware reserve."""
+    if value is None:
+        return None
+    operator = gate_operator(gate)
+    if operator == "between":
+        low, high = gate.get("lower"), gate.get("upper")
+        return None if low is None or high is None else min(value - low, high - value)
+    threshold = gate.get("threshold")
+    if threshold is None:
+        return None
+    return value - threshold if operator == "above_threshold" else threshold - value
 
 
 def hard_check(value, gate):
@@ -261,13 +341,21 @@ def assess(rows, config, config_hash):
                   "time_mode": "specified_window" if start else "unspecified",
                   "comparison_start_utc": start, "comparison_stop_utc": stop,
                   "config_name": config["name"], "config_sha256": config_hash,
-                  "habitability_score": "", "final_rec_score": "", "rank": "", "operational_suitability": "Not assessed"}
-        gates, details, issues, weighted, weights = [], [], [], [], []
+                  "final_habitability_score": "", "final_rec_score": "", "rank": "", "operational_suitability": "Not assessed"}
+        result.update({c: row.get(c, "") for c in config.get("metadata_columns", [])
+                       if c not in result})
+        result["comparison_preference_score"] = ""
+        gates, details, domain_details, issues, weighted, weights = [], [], [], [], [], []
         complete = True
         used = supported = 0
         for name, score_column in SCORES.items():
+            if name not in config["domains"]:  # Backward-compatible eight-domain YAML.
+                result[score_column] = ""
+                result[score_column + "_status"] = "Context_only"
+                continue
             domain = config["domains"][name]
             parts, metric_weights = [], []
+            detail_start = len(details)
             selected = [m for m in domain["metrics"] if m["role"] == "score"]
             domain_complete = bool(selected)
             for metric in domain["metrics"]:
@@ -279,10 +367,14 @@ def assess(rows, config, config_hash):
                 item = {"domain": name, "column": column, "unit": metric["unit"], "value": value, "role": metric["role"]}
                 if metric.get("hard_gate") is not None:
                     state, reason = hard_check(usable, metric["hard_gate"])
-                    gates.append({**item, "condition": metric["hard_gate"], "status": state, "reason": reason})
+                    gates.append({**item, "condition": metric["hard_gate"], "status": state, "reason": reason,
+                                  "screening_margin": gate_margin(usable, metric["hard_gate"])})
                 if metric["role"] == "score":
                     score = utility(usable, metric.get("preference")) if usable is not None else None
-                    item.update(utility=score, multiplier=metric.get("multiplier"))
+                    item.update(utility=score, multiplier=metric.get("multiplier"),
+                                base_utility=normalized_utility(usable, metric.get("preference")) if usable is not None else None,
+                                curve=(metric.get("preference") or {}).get("curve") or {"type": "linear"},
+                                metric_weight_fraction=None, domain_score_contribution=None)
                     if domain["include_in_score"]:
                         used += 1
                         supported += usable is not None
@@ -299,6 +391,16 @@ def assess(rows, config, config_hash):
             else:
                 result[score_column] = ""
                 result[score_column + "_status"] = "Context_only" if not selected else "Unknown"
+            if domain_complete:
+                for item in details[detail_start:]:
+                    if item["role"] == "score":
+                        item["metric_weight_fraction"] = item["multiplier"] / sum(metric_weights)
+                        item["domain_score_contribution"] = 100 * item["utility"] * item["metric_weight_fraction"]
+            domain_details.append({"domain": name, "priority_label": domain.get("priority"),
+                                   "included_in_final_score": domain["include_in_score"],
+                                   "domain_multiplier": domain.get("multiplier"), "domain_score": result[score_column],
+                                   "status": result[score_column + "_status"],
+                                   "domain_weight_fraction": None, "final_score_contribution": None})
             if domain["include_in_score"]:
                 if not domain_complete or domain.get("multiplier") is None:
                     complete = False
@@ -313,17 +415,28 @@ def assess(rows, config, config_hash):
         for gate in gates:
             if gate["status"] != "Passed":
                 issues.append(f"{gate['column']}: {gate['status']}: {gate['reason']}")
+        if complete and weights:
+            # Diagnostic only: never ranked or substituted for gate-qualified results.
+            result["comparison_preference_score"] = sum(weighted) / sum(weights)
         if hard == "Passed" and complete and weights:
-            result["habitability_score"] = result["final_rec_score"] = sum(weighted) / sum(weights)
+            result["final_habitability_score"] = result["final_rec_score"] = result["comparison_preference_score"]
+            for item in domain_details:
+                if item["included_in_final_score"]:
+                    item["domain_weight_fraction"] = item["domain_multiplier"] / sum(weights)
+                    item["final_score_contribution"] = item["domain_score"] * item["domain_weight_fraction"]
         if not weights and complete:
             issues.append("No domains selected for aggregate scoring")
         result.update(hard_gate_status=hard, evidence_coverage=f"{supported}/{used}",
-                      score_scope=";".join(n for n in SCORES if config["domains"][n]["include_in_score"]),
+                      score_scope=";".join(n for n in SCORES if n in config["domains"] and config["domains"][n]["include_in_score"]),
                       reason="; ".join(issues) or "Passed configured screens with complete preferences; not operational approval",
                       hard_gate_details=json.dumps(gates, separators=(",", ":"), allow_nan=False),
+                      domain_score_details=json.dumps(domain_details, separators=(",", ":"), allow_nan=False),
                       score_details=json.dumps(details, separators=(",", ":"), allow_nan=False))
+        if config["name"] == "assumption_NASA_values":
+            result["reason"] = "assumption_NASA_values: project assumptions for software testing, not official NASA limits; " + result["reason"]
         results.append(result)
-    group = lambda r: (r["time_mode"], r["comparison_start_utc"], r["comparison_stop_utc"])
+    group = lambda r: (r["time_mode"], r["comparison_start_utc"], r["comparison_stop_utc"],
+                       *(r[c] for c in config.get("comparison_group_columns", [])))
     for period in {group(r) for r in results}:
         candidates = [r for r in results if group(r) == period and r["final_rec_score"] != ""]
         for rank, item in enumerate(sorted(candidates, key=lambda r: (-r["final_rec_score"], r["id"])), 1):
@@ -331,7 +444,7 @@ def assess(rows, config, config_hash):
     return results
 
 
-def run(input_path, output_path, config_path, *, overwrite=False):
+def run(input_path, output_path, config_path, *, overwrite=False, compact=False):
     input_path, output_path, config_path = (Path(p).resolve() for p in (input_path, output_path, config_path))
     if output_path in {input_path, config_path, Path(__file__).resolve()}:
         raise ValueError("Output cannot overwrite the input, configuration or script")
@@ -342,13 +455,25 @@ def run(input_path, output_path, config_path, *, overwrite=False):
     config, digest = load_config(config_path)
     results = assess(read_csv(input_path, config), config, digest)
     columns = ["id", "candidate_id", "start_utc", "stop_utc", "time_mode", "comparison_start_utc", "comparison_stop_utc"]
+    columns += [c for c in config.get("metadata_columns", []) if c not in columns]
     columns += [field for name in SCORES.values() for field in (name, name + "_status")]
-    columns += ["habitability_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
-                "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details"]
+    columns += ["comparison_preference_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
+                "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details", "final_habitability_score"]
     stream = io.StringIO(newline="")
     writer = csv.DictWriter(stream, fieldnames=[OUTPUT_COLUMN_NAMES.get(c, c) for c in columns], lineterminator="\n")
+    if compact:
+        domains = [name for name in SCORES if name in config["domains"]]
+        writer = csv.DictWriter(stream, fieldnames=["ID", *domains, "hard_gate_status", "final_habitability_score"], lineterminator="\n")
     writer.writeheader()
-    writer.writerows({OUTPUT_COLUMN_NAMES.get(key, key): value for key, value in row.items()} for row in results)
+    if compact:
+        display_score = lambda value: round(value, 2) if value != "" else ""
+        writer.writerows({"ID": row["id"],
+                          **{name: display_score(row[SCORES[name]]) for name in domains},
+                          "hard_gate_status": row["hard_gate_status"],
+                          "final_habitability_score": display_score(row["final_habitability_score"])}
+                         for row in results)
+    else:
+        writer.writerows({OUTPUT_COLUMN_NAMES.get(key, key): value for key, value in row.items()} for row in results)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary = tempfile.mkstemp(prefix=output_path.name + ".", suffix=".tmp", dir=output_path.parent)
     try:
@@ -362,13 +487,18 @@ def run(input_path, output_path, config_path, *, overwrite=False):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", required=True, type=Path)
+    parser.add_argument("--input", type=Path, default=Path(__file__).parent / "inputs/sites.csv",
+                        help="One measurement CSV (default: inputs/sites.csv)")
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--config", type=Path, default=Path(__file__).with_name("config.yml"))
     parser.add_argument("--overwrite", action="store_true")
+    export = parser.add_mutually_exclusive_group()
+    export.add_argument("--compact", dest="compact", action="store_true", help="Simple output (default): ID, domains, gate status and habitability score")
+    export.add_argument("--detailed", dest="compact", action="store_false", help="Export full audit, contribution and ranking details")
+    parser.set_defaults(compact=True)
     args = parser.parse_args(argv)
     try:
-        rows = run(args.input, args.output, args.config, overwrite=args.overwrite)
+        rows = run(args.input, args.output, args.config, overwrite=args.overwrite, compact=args.compact)
     except (ValueError, OSError, csv.Error, yaml.YAMLError) as exc:
         parser.exit(2, f"Environmental pipeline error: {exc}\n")
     print(json.dumps({"rows": len(rows), "ranked": sum(r["rank"] != "" for r in rows),

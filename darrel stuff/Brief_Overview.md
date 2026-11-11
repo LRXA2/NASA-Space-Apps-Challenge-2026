@@ -13,7 +13,7 @@ Evaluate whether an intended mission could operate at a selected Moon site. This
 | [EDA notes](EDA/EDA_Notes.md) | Environmental categories, steps taken, findings and limitations. |
 | [Test Pipeline](Pipeline_Proto/README.md) | Run commands, actual outputs and verification. |
 | [Downloads](download_script/Download_Dataset_Instructions.md) | Existing-data and additive download commands. |
-| [Main Pipeline](darrel stuff/env_pipeline\README.md) | Main pipeline. Run this for the input/output for env suitably |
+| [Main Pipeline](env_pipeline/README.md) | Main pipeline. Run this for the input/output for env suitably |
 
 ## Algorithm proposal
 

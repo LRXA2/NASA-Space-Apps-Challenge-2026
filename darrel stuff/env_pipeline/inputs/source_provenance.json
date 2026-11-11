@@ -1,0 +1,265 @@
+{
+  "schema": 1,
+  "sample": false,
+  "source_rule": "Never read or reuse old sites.csv or its results",
+  "preparation_script_sha256": "8407a9efe26c9230330114767f4e6c58035e21ee2de452d7a465a6531d77cf99",
+  "bounds_source": "darrel stuff\\EDA\\Moon\\Stage3_Requirements\\stage3_acquired_config.json",
+  "bounds_source_sha256": "860e1c94f7d2adede2d052b54d705374249d68169776be1fb80dbd38de33e13a",
+  "sources": [
+    {
+      "key": "sun",
+      "path": "darrel stuff\\data\\moon\\illumination_2016\\geotiff\\south\\solar_illumination\\AVGVISIB_85S_060M_201608.TIF",
+      "sha256": "ccf67d4f39e0a970c111196da7d6551ffcf50d075470b93067fb3904c0b05806",
+      "url": "https://pgda.gsfc.nasa.gov/data/MoonIllumination/AVGVISIB_85S_060M_201608.TIF"
+    },
+    {
+      "key": "earth",
+      "path": "darrel stuff\\data\\moon\\illumination_2016\\geotiff\\south\\earth_visibility\\AVGVISIB_85S_060M_201608_EARTH.TIF",
+      "sha256": "d71dc5adfff653e0e924e0a4cbf03795b996caa30b4ace3d5843a70a5ab2f3d2",
+      "url": "https://pgda.gsfc.nasa.gov/data/MoonIllumination/AVGVISIB_85S_060M_201608_EARTH.TIF"
+    },
+    {
+      "key": "shadow",
+      "path": "darrel stuff\\data\\moon\\illumination_2016\\geotiff\\south\\permanent_shadow\\LPSR_85S_060M_201608.TIF",
+      "sha256": "e9544c081dd4e36f079e92bc3a376d0913857a61a4a53c209175c081762de43c",
+      "url": "https://pgda.gsfc.nasa.gov/data/MoonIllumination/LPSR_85S_060M_201608.TIF"
+    },
+    {
+      "key": "sky",
+      "path": "darrel stuff\\data\\moon\\illumination_2016\\geotiff\\south\\sky_visibility\\SKYV_65S_240M.TIF",
+      "sha256": "fbe7c9a0b5036ae61c6aee44b89b96a27ede4ecb93d415e2aa9b8adc2f956061",
+      "url": "https://pgda.gsfc.nasa.gov/data/MoonIllumination/SKYV_65S_240M.TIF"
+    },
+    {
+      "key": "footprint:A3CLR22_10_Leibnitz_Beta_Plateau",
+      "path": "darrel stuff\\data\\moon\\sdem\\regions\\A3CLR22_10_Leibnitz_Beta_Plateau\\A310_GLDELEV_005.tif",
+      "sha256": "55352520c0277a902a89fbd003f83956b238e4d0b4529494eaec1b5a51b1a4b1"
+    },
+    {
+      "key": "footprint:A3CLR22_11_Malapert_Massif",
+      "path": "darrel stuff\\data\\moon\\sdem\\regions\\A3CLR22_11_Malapert_Massif\\A311_GLDELEV_005.tif",
+      "sha256": "e71f946674a6dc4dcd910f37cee9c0ff42c0f5493900be81259e0acb8dea68d4"
+    },
+    {
+      "key": "footprint:A3CLR22_12_deGerlache_Kocher_Massif",
+      "path": "darrel stuff\\data\\moon\\sdem\\regions\\A3CLR22_12_deGerlache_Kocher_Massif\\A312_GLDELEV_005.tif",
+      "sha256": "f6a47cdaf083fae80400ee3ae13ed135ba5c1e6186a981205c075731bd6bc73b"
+    },
+    {
+      "key": "footprint:A3CLR22_2_Haworth",
+      "path": "darrel stuff\\data\\moon\\sdem\\regions\\A3CLR22_2_Haworth\\A302_GLDELEV_005.tif",
+      "sha256": "7126ae857336f2781b7e72caa07a7162e63b8e3ab50ebcd9ee30390b3d6f4d94"
+    },
+    {
+      "key": "footprint:A3CLR22_3_Faustini_Rim_A",
+      "path": "darrel stuff\\data\\moon\\sdem\\regions\\A3CLR22_3_Faustini_Rim_A\\A303_GLDELEV_005.tif",
+      "sha256": "f719b69d3e48ed41145c51e5110a56c1ee1e06ac75e21807120c46ef7ec5d33b"
+    },
+    {
+      "key": "footprint:A3CLR22_4_deGerlache_Rim_2",
+      "path": "darrel stuff\\data\\moon\\sdem\\regions\\A3CLR22_4_deGerlache_Rim_2\\A304_GLDELEV_005.tif",
+      "sha256": "d30f9ca8a1e9755a5a199b9d94872e336a06b54213f58c13f7400bad65868171"
+    },
+    {
+      "key": "footprint:A3CLR22_5_Connecting_Ridge_Extension",
+      "path": "darrel stuff\\data\\moon\\sdem\\regions\\A3CLR22_5_Connecting_Ridge_Extension\\A305_GLDELEV_005.tif",
+      "sha256": "b40378d7e11c6998b77ac4840f16623b092b30531e59555a8b117c05742c7c63"
+    }
+  ],
+  "support": [
+    {
+      "id": "nasa_001",
+      "joint_60m_pixels": 71289,
+      "footprint_60m_centres": 71289,
+      "native_240m_sky_pixels": 4422
+    },
+    {
+      "id": "nasa_002",
+      "joint_60m_pixels": 122500,
+      "footprint_60m_centres": 122500,
+      "native_240m_sky_pixels": 7744
+    },
+    {
+      "id": "nasa_003",
+      "joint_60m_pixels": 111556,
+      "footprint_60m_centres": 111556,
+      "native_240m_sky_pixels": 6889
+    },
+    {
+      "id": "nasa_004",
+      "joint_60m_pixels": 247009,
+      "footprint_60m_centres": 247009,
+      "native_240m_sky_pixels": 15376
+    },
+    {
+      "id": "nasa_005",
+      "joint_60m_pixels": 111222,
+      "footprint_60m_centres": 111222,
+      "native_240m_sky_pixels": 6972
+    },
+    {
+      "id": "nasa_006",
+      "joint_60m_pixels": 110889,
+      "footprint_60m_centres": 110889,
+      "native_240m_sky_pixels": 6972
+    },
+    {
+      "id": "nasa_007",
+      "joint_60m_pixels": 110889,
+      "footprint_60m_centres": 110889,
+      "native_240m_sky_pixels": 6889
+    },
+    {
+      "id": "synthetic_001",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_002",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_003",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_004",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_005",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_006",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_007",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_008",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_009",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_010",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_011",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_012",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    },
+    {
+      "id": "synthetic_013",
+      "joint_60m_pixels": 400,
+      "footprint_60m_centres": 400,
+      "native_240m_sky_pixels": 25
+    }
+  ],
+  "selection": "13 disjoint 1.2km patches: regional round-robin, max min(sun median, Earth median), then equal mean, then bounds; access-only proposals",
+  "missing_policy": "No global/orbital/history-to-site substitution. Unsupported quantities and dates left blank.",
+  "csv_sha256": "cfe8e86fa7afa8b176593f0b215da4b97fc0f98fdcb2c8f4769f0e4d8230b08f",
+  "evidence_review": {
+    "reviewed_sources": [
+      {
+        "stage": "dar_020_candidate_environment",
+        "run": "20261109T142736412889Z_04ccd0",
+        "findings_sha256": "c64e441f9de074edf5275d36f2a7e1cac2464d00ee5f1ef1f85f007ee6e5efcf",
+        "conclusion": [
+          "Examples are selected by diagnostic component size, not overall suitability",
+          "Point association does not prove full thermal-footprint containment",
+          "Phase-average spans are not mission extrema or heating rates"
+        ]
+      },
+      {
+        "stage": "dar_021_preference_influence",
+        "run": "20261109T142749542712Z_8afae4",
+        "findings_sha256": "55bdb67800e470b6d9c26ae4b38114329bb1133e19c2f514e5a6c5977355a629",
+        "conclusion": [
+          "Weights and transformations are predeclared diagnostics, not adopted preferences",
+          "Top-five sets include rank ties; frequency is not a probability of being best",
+          "Pools and spatial grains stay separate",
+          "No operational ranking while mandatory requirements remain unresolved"
+        ]
+      },
+      {
+        "stage": "dar_022_rule_influence",
+        "run": "20261109T142752187951Z_6b8993",
+        "findings_sha256": "7855f26b75c8bd5b226e720800d1da009f2acf0fcbd5ed64a4a7ea61df458ba3",
+        "conclusion": [
+          "DiagnosticMet/DiagnosticNotMet are not operational Passed/Failed",
+          "A known proxy violation establishes DiagnosticNotMet even when another proxy is missing; otherwise incomplete inputs remain Unknown",
+          "Block medians and slope q90 are not full-footprint guarantees",
+          "No real mission requirements or preference weights adopted"
+        ]
+      },
+      {
+        "stage": "subject_terrain_time",
+        "run": "20261110T210226961886Z_f00b81",
+        "findings_sha256": "20d447b64af725f5d69065258070c29e02192f107b9cd80119488d271ce5e90f",
+        "conclusion": "Two historical model years show sampled blocking persistence as well as mean visibility. Existing terrain/image support remains consistent, but reference-point geometry cannot establish component power, working links, buildable soil or qualified continuous darkness."
+      },
+      {
+        "stage": "subject_polar_thermal",
+        "run": "20261110T233730894536Z_e98b6f",
+        "findings_sha256": "5f9d82c6e71c2100f6b41c8af6f400b6fd3773be753fb01f76e0a914c44c487b",
+        "conclusion": "Spatial/model thermal tails, mesh support and ice-stability context are available. Unlike depth/statistics, unvalidated footprints and absent chronological response prevent component thermal or resource-operability conclusions."
+      },
+      {
+        "stage": "subject_radiation_time",
+        "run": "20261110T233725005604Z_72515a",
+        "findings_sha256": "2f08a9082a0071b76d444c21eb52642a2a9d0c8a66174f71b39c4b037274ff79",
+        "conclusion": "Calendar support and observed upper tails reveal what averages hide. Orbital counters, Earth-orbit space-weather flux and solar associations cannot certify local shielded exposure, event recurrence or a safe arrival season."
+      },
+      {
+        "stage": "subject_plasma",
+        "run": "20261110T231619494574Z_f61cb6",
+        "findings_sha256": "d5c9562655a71bda0a5512888ce5e6524c17f212d08b8bbb06bb1d2d43f9541f",
+        "conclusion": "Full native ESA coverage improves mode-specific plasma/spacecraft-potential and quality/cadence context. It does not establish surface voltage, discharge/ESD risk, a monotonic safe-density ranking or a mission-operable site."
+      },
+      {
+        "source": "D:\\projects\\NASA Dataset\\datasets\\D20_PRP\\dlre_prp_south.lbl",
+        "sha256": "6bb8d7fbdb6450608a163ffbc1871739e0e23e2dcd153b22424cc18456e364c7",
+        "conclusion": "Native START_TIME/STOP_TIME are N/A, agreeing with Dar050. Do not fill candidate-window thermal profiles with static annual PRP quantities."
+      }
+    ],
+    "crosscheck": {
+      "terrain_reference_vs_candidate_rows": 14,
+      "all_reference_substitutions_rejected": true,
+      "terrain_table_sha256": "16f6e0015950ef5909fb2932d7c13e1512d9cee4d1837a8f09206c51bd91bd52"
+    },
+    "policy": "Dar020 support/cohort limits + Dar021 normalization sensitivity + Dar022 gate-first Unknown semantics + Dar054 temporal/footprint limits + Dar050/native PRP time applicability + Dar049/046 nonlocal hazard limitations. No single EDA source sets safety thresholds."
+  }
+}
