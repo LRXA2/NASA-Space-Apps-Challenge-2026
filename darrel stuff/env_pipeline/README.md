@@ -166,7 +166,7 @@ These references have the quantity and instrument limitations described above. O
 
 There is no separate domain-score input CSV. Domain scores are calculated by the pipeline; do not enter scores in place of physical measurements.
 
-[input_template.csv](input_template.csv) has exactly the same input headers as `inputs/sites.csv`, with three clearly fictional examples: `dummy_example_pass`, `dummy_example_fail` and `dummy_example_unknown`. The failure supplies 155.99 h in a 192 h window; the Unknown example supplies sunlight duration but omits both dates. `start_utc` and `stop_utc` are retained because the adaptive sunlight gate requires them.
+[input_template.csv](sample_input.csv) has exactly the same input headers as `inputs/sites.csv`, with three clearly fictional examples: `dummy_example_pass`, `dummy_example_fail` and `dummy_example_unknown`. The failure supplies 155.99 h in a 192 h window; the Unknown example supplies sunlight duration but omits both dates. `start_utc` and `stop_utc` are retained because the adaptive sunlight gate requires them.
 
 ## Where and how to obtain the input values
 
