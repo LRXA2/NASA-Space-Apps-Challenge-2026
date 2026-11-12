@@ -204,7 +204,7 @@ def build(root: Path, config_path: Path) -> Path:
     with Run(root, 'terrain_operability_eda', config, notebook) as run:
         run.input(config_path)
         run.input(Path(__file__))
-        run.input(Path(__file__).with_name('route_labels.py'))
+        run.input(root / 'operational_cnn/labels/route_labels.py')
         all_records: list[dict[str, Any]] = []
         all_origins: list[dict[str, Any]] = []
         for region in sorted(REGIONS):
