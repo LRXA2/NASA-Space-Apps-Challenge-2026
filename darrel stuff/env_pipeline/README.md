@@ -4,15 +4,41 @@
 
 ## One input CSV
 
-Open and edit **[inputs/sites.csv](inputs/sites.csv)**. This is the single main pipeline input: 30 rows containing `id`, optional UTC window columns and the original measurement columns, including `median_visible_sky_fraction` and `median_earth_visibility_fraction`.
+Open and edit **[inputs/sites.csv](inputs/sites.csv)**. This is the single main pipeline input: 77 rows (**17 NASA-labelled, 30 synthetic and 30 dummy**) containing `id`, optional UTC window columns and the original measurement columns, including `median_visible_sky_fraction` and `median_earth_visibility_fraction`.
 
-Most measurement cells are populated, with four intentional blanks **only in dummy rows**. NASA-labelled and synthetic scenarios use equally sized 1.2 km patches, the same statistics and the same fictional 2030-01-01 to 2030-01-09 requested window. These are controlled software fixtures, not verified NASA site assessments; static maps are not filtered to that future window. NASA labels identify a declared 2022 region, not a NASA-selected exact patch or approval of the assumed conditions.
+Most measurement cells are populated, with four intentional blanks **only in dummy rows**. All rows use the same fictional 2030-01-01 to 2030-01-09 requested window. The original seven NASA-labelled baselines and all synthetic scenarios use equally sized 1.2 km patches and the same map statistics. The ten additional NASA-labelled scenarios have assumed values, including geometry, without a measured footprint. These are controlled software fixtures, not verified NASA site assessments; static maps are not filtered to that future window. NASA labels identify a declared region, not a NASA-selected exact patch or approval of the assumed conditions.
+
+NASA-labelled IDs cover the combined names in the [2022 announcement](https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-landing-next-americans-on-moon/) and [2024 announcement](https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/). Shared names appear once. This is a dated declaration-name inventory, not a claim that all entries remain selected today or that differently named regions have disjoint geographical boundaries.
+
+| ID | Declared region name | Announcement |
+| --- | --- | --- |
+| `nasa_001` | Leibnitz Beta Plateau | 2022 |
+| `nasa_002` | Malapert Massif | 2022, 2024 |
+| `nasa_003` | de Gerlache-Kocher Massif | 2022 |
+| `nasa_004` | Haworth | 2022, 2024 |
+| `nasa_005` | Faustini Rim A | 2022 |
+| `nasa_006` | de Gerlache Rim 2 | 2022, 2024 |
+| `nasa_007` | Connecting Ridge Extension | 2022 |
+| `nasa_008` | Peak Near Shackleton | 2022 |
+| `nasa_009` | Connecting Ridge | 2022 |
+| `nasa_010` | de Gerlache Rim 1 | 2022 |
+| `nasa_011` | Nobile Rim 1 | 2022, 2024 |
+| `nasa_012` | Nobile Rim 2 | 2022, 2024 |
+| `nasa_013` | Amundsen Rim | 2022 |
+| `nasa_014` | Peak near Cabeus B | 2024 |
+| `nasa_015` | Mons Mouton Plateau | 2024 |
+| `nasa_016` | Mons Mouton | 2024 |
+| `nasa_017` | Slater Plain | 2024 |
+
+Synthetic IDs `001`-`007`, `008`-`014`, `015`-`021` and `022`-`028` are respectively east, west, north and south neighbours of baselines `nasa_001`-`nasa_007`; `029`-`030` are northeast neighbours of the first two. Offsets are 1,200 m on each applicable projected axis. Baseline lower-left coordinates are region-rectangle centres rounded down to the 1,200 m grid, using `region_bounds_m` in `EDA/Moon/Stage3_Requirements/stage3_acquired_config.json`. Each synthetic row shares its baseline's nongeometry test assumptions. These are EDA-informed project proposals, not evidence that NASA will use them; the scorer does not verify slope, landing access or resource suitability.
+
+Additional NASA scenarios and randomized dummy values use Python `random.Random(20261112)`. NASA scenario ranges are assumed test ranges, not source measurements. Dummy ranges are broader to exercise both sides of configured gates while keeping fractions in 0-1, temperature span equal to high minus low, and sunlight duration within the 192-hour window. Dummy `001`-`010` retain controlled gate/boundary/toggle cases alongside randomized fields; blanks are Sun visibility (`005`), link margin (`006`), UV (`007`) and seismic (`008`). No generated values were tuned to improve NASA scores.
 
 There is no separate domain-score input CSV. Domain scores are calculated by the pipeline; do not enter scores in place of physical measurements.
 
 ## Where and how to obtain the input values
 
-**These are offline preparation instructions, not runtime dependencies.** The current `inputs/sites.csv` is a software fixture: its four map-geometry columns for NASA-labelled/synthetic patches were extracted from native LOLA products, while other values are test assumptions. To prepare real measurements for another site/period, obtain the source products below and calculate the declared quantities before supplying the CSV. Do not treat invented fixture values as source observations. The script itself never downloads data, opens these products or follows the links.
+**These are offline preparation instructions, not runtime dependencies.** The current `inputs/sites.csv` is a software fixture: its four map-geometry columns for `nasa_001`-`nasa_007` and all synthetic patches were extracted from native LOLA products, while their other values are test assumptions. All values for `nasa_008`-`nasa_017` and dummy rows are assumptions/randomized test inputs, apart from the explicitly blank dummy cells. To prepare real measurements for another site/period, obtain the source products below and calculate the declared quantities before supplying the CSV. Do not treat invented fixture values as source observations. The script itself never downloads data, opens these products or follows the links.
 
 ### Labels and dates you supply yourself
 
@@ -78,20 +104,31 @@ python "darrel stuff/env_pipeline/env_pipeline.py" --output "darrel stuff/env_pi
 
 ## Simple output
 
-The command-line default writes only enabled domain columns. With all nine domains enabled, it writes **12 columns**:
+The command-line default writes only enabled domain columns. With all nine domains enabled, it writes **13 columns**:
 
 ```text
 ID, radiation, thermal, solar_illumination, dust, plasma_charging,
 uv, seismic, exosphere, communications_geometry,
-hard_gate_status, final_habitability_score
+hard_gate_status, Fail Reason, final_habitability_score
 ```
 
 `final_habitability_score` is always the final column. Domain and habitability scores
 are on 0-100 and displayed to two decimal places (internal calculations retain
-full precision). Gate status explains failed/unknown eligibility. A final score
+full precision). `Fail Reason` lists blocking gates with actual values, required
+YAML limits and units, or explains missing required evidence/configuration. It is
+blank when a final score is available; omitted measurements in available-data mode
+are not themselves failures. Detailed export includes the same column alongside
+the existing audit reasons. A final score
 remains blank when an evaluated mandatory gate fails/is unknown or configuration
 is incomplete. In available-data mode, blank measurements are omitted rather than
 zero-filled; see the mode/toggles below.
+
+With the current equal weights, the final score is the mean of the included,
+available domain scores, not a sum or an extra hard-gate penalty. It uses unrounded
+domain scores, so averaging the displayed two-decimal values can differ slightly.
+Priority labels do not change weights; `multiplier` does. Turning off a domain's
+hard gates does not remove its score: communications still contributes while
+`enabled: true` and `include_in_score: true`, even when `hard_gates_enabled: false`.
 
 For full audit details, explicitly request `--detailed`:
 
@@ -210,7 +247,7 @@ Missing mode/toggle settings preserve compatibility: `strict`, `enabled: true`
 and `hard_gates_enabled: true`. Input columns do not need to change when toggling.
 The same settings work for every domain. Detailed output records the mode, skipped
 checks, actual score scope, coverage and normalized contributions. Simple output
-keeps only ID, enabled domain scores, gate status and the final score.
+keeps only ID, enabled domain scores, gate status, `Fail Reason` and the final score.
 
 **Available-data scores may use different factors across rows.** Inspect the
 scope/coverage in `--detailed` before treating them as like-for-like site comparisons.
@@ -241,7 +278,7 @@ Every bound, direction, plateau and gate above is an **assumption for exercising
 - Higher/lower/target-range preferences normalize measurements; optional utility curves act after normalization.
 - Domain scores are weighted metric utilities on 0-100. Final scoring requires mode-selected available domains and enabled gate eligibility.
 - `comparison_preference_score` is diagnostic, not an operational approval or replacement for the final score.
-- Simple output shows diagnostic domain scores, gate status and the gate-qualified habitability score.
+- Simple output shows diagnostic domain scores, gate status, `Fail Reason` and the gate-qualified habitability score.
 
 The script remains standalone: Python 3.10+, PyYAML, the selected YAML and one input CSV. It does not read source datasets, preparation scripts, notebooks or provenance sidecars at runtime.
 

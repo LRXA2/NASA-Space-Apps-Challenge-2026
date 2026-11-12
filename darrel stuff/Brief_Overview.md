@@ -17,7 +17,7 @@ Evaluate whether an intended mission could operate at a selected Moon site. This
 
 ## Algorithm proposal
 
-**Environmental-only pipeline:** [env_pipeline](env_pipeline/README.md) is one standalone Python script plus `config.yml`, using nine domain definitions without terrain scoring. Runtime reads only the supplied CSV and YAML, never EDA outputs or evidence sidecars. Its [current input](env_pipeline/inputs/sites.csv) is a 30-row measurement-level test fixture. `assumption_NASA_values` supplies project-assumed thresholds and weights, not official NASA limits. `available_data` mode and independent domain/scoring/gate toggles control participation. Earlier implementations are preserved under `env_pipeline/legacy_1/` and `env_pipeline/legacy_2/`.
+**Environmental-only pipeline:** [env_pipeline](env_pipeline/README.md) is one standalone Python script plus `config.yml`, using nine domain definitions without terrain scoring. Runtime reads only the supplied CSV and YAML, never EDA outputs or evidence sidecars. Its [current input](env_pipeline/inputs/sites.csv) is a 77-row measurement-level test fixture. `assumption_NASA_values` supplies project-assumed thresholds and weights, not official NASA limits. `available_data` mode and independent domain/scoring/gate toggles control participation. Earlier implementations are preserved under `env_pipeline/legacy_1/` and `env_pipeline/legacy_2/`.
 
 [Feature decisions](purposal.md) separate usable measurements, reference-only evidence and deferred inputs. Research P1/P2/P3 tags are not hard/soft requirements or scoring weights.
 

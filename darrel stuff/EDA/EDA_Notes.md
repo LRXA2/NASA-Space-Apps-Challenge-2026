@@ -6,7 +6,7 @@
 
 ## Scope and coverage
 
-- Moon-focused research EDA across seven study regions and 21 exploratory candidate components. These are not the separate 30-row software fixture or its newly defined 1.2 km patches. Earth experiments are supporting references only.
+- Moon-focused research EDA across seven study regions and 21 exploratory candidate components. These are not the separate 77-row software fixture or its newly defined 1.2 km patches. Earth experiments are supporting references only.
 - Quality flags, missing dates, spatial support and observation cohorts are checked before comparison. Missing evidence stays **Unknown**, not zero risk.
 - **Expanded Stage 3-4 complete within declared evidence scopes:** Dar_044 remains the initial screen; Dar_045-055 are the eleven executed subject studies and Dar_056 is the unadopted requirement synthesis. Full/sampled/experimental coverage and unresolved qualification remain explicit. The separate [Stage 5 pipeline](../env_pipeline/README.md) now uses `assumption_NASA_values`, available-data/strict modes and independent toggles; those test choices do not update or validate these EDA findings. [Scope/checklist](../todo_workflow.md#comprehensive-subject-eda-and-stage-4).
 
@@ -116,7 +116,7 @@ Run again from the repository root: `.venv/Scripts/python.exe "darrel stuff/EDA/
 ## Dust, resources and imagery
 
 - **Steps taken:** reviewed dust/chemistry evidence coverage and environmental image/radar context.
-- **Research-candidate image coverage:** ShadowCam covers 3/21 examples and Mini-RF 19/21; this does not describe the separate 30-row pipeline fixture. Darkness, radar backscatter and spectral indicators do not prove recoverable ice, soil strength or safety. Candidate-specific dust contamination and equipment degradation remain unqualified.
+- **Research-candidate image coverage:** ShadowCam covers 3/21 examples and Mini-RF 19/21; this does not describe the separate 77-row pipeline fixture. Darkness, radar backscatter and spectral indicators do not prove recoverable ice, soil strength or safety. Candidate-specific dust contamination and equipment degradation remain unqualified.
 - **Dar_044 dust:** processed all 36 LDEX current/mass tables, including **677,271 current records on 166 recorded dates**. Current/background remain separate; mass summaries retain quality and saturation classes rather than inventing a science-good event class or surface dust loading. **Expanded Dar_048 findings:** 441,166 mass-catalog entries include **9,041 numerically supported entries below their reported native threshold**; numerical support does not silently reclassify them as qualified impacts.
 - **Dar_044 LAMP:** sampled all four southern map families at fixed stride 4, joining quality=0, positive exposure and SNR>=3. Supported fractions of the sampled south-polar domain are **46.51% long, 98.77% Lyman-alpha, 3.79% off-band and 28.82% on-band**. `ERROR` is SNR, not an error bar. White/masked pixels are not proof of darkness or zero UV; brightness/albedo are not local irradiance.
 - **Dar_044 neutrons/resources:** read complete records on **74 preselected LEND dates**, first/last available date per month. SETN and CSETN2 each have all-zero supported spectra on **52 selected dates**; channel activity/background/response remain unqualified, so these zeros do not establish absence of neutrons or safe radiation. Raw spectra and PRP model ice-stability depths do not establish recoverable ice.

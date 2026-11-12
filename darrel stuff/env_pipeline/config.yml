@@ -26,6 +26,7 @@ metadata_columns:
 - start_utc
 - stop_utc
 domains:
+
   radiation:
     enabled: true
     hard_gates_enabled: true
@@ -48,9 +49,13 @@ domains:
       multiplier: 1.0
       requires_time_window: false
       preference:
+      # Scoring calibration only: observed daily-reference p05/p95, n=1091.
+      # Source: data/processed/analysis/subject_radiation_time/20261110T233725005604Z_72515a/daily_context.csv
+      # Series: RAD_CRATER_SEC_selected_state; quantiles use linear interpolation.
+      # Reference scale, NOT safety limits. Existing lower-is-better test assumption retained.
         direction: lower
-        lower: 0
-        upper: 100
+        lower: 24.0
+        upper: 104.5
       hard_gate: null
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
@@ -68,6 +73,7 @@ domains:
         threshold: 7500
       meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
         units are retained; this does not qualify mission capability or local hazard.'
+
   uv:
     enabled: true
     hard_gates_enabled: true
@@ -82,9 +88,13 @@ domains:
       multiplier: 1.0
       requires_time_window: false
       preference:
+      # Scoring calibration only: observed daily-reference p05/p95, n=1206.
+      # Source: data/processed/analysis/subject_uv/20261110T231614701627Z_e1ffa3/band_daily_context.csv
+      # Series: SEE_v012_FUV_115_180; quantiles use linear interpolation.
+      # Reference scale, NOT safety limits. Existing lower-is-better test assumption retained.
         direction: lower
-        lower: 0
-        upper: 0.06
+        lower: 0.021529459636
+        upper: 0.02663851401
       hard_gate:
         operator: below_threshold
         rationale: 'assumption_NASA_values: project-assumed software-test threshold,
@@ -92,6 +102,7 @@ domains:
         threshold: 0.055
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
+
   solar_illumination:
     enabled: true
     hard_gates_enabled: true
@@ -152,6 +163,7 @@ domains:
         threshold: 156
       meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
         units are retained; this does not qualify mission capability or local hazard.'
+
   thermal:
     enabled: true
     hard_gates_enabled: true
@@ -200,6 +212,7 @@ domains:
       hard_gate: null
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
+
   plasma_charging:
     enabled: true
     hard_gates_enabled: true
@@ -243,6 +256,7 @@ domains:
         upper: 10
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
+
   dust:
     enabled: true
     hard_gates_enabled: true
@@ -270,6 +284,7 @@ domains:
         upper: 55000
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
+
   seismic:
     enabled: true
     hard_gates_enabled: true
@@ -284,9 +299,13 @@ domains:
       multiplier: 1.0
       requires_time_window: false
       preference:
+      # Scoring calibration only: observed daily-reference p05/p95, n=731.
+      # Source: data/processed/analysis/subject_seismic/20261110T183033924956Z_ba610a/daily_context.csv
+      # Series: PSE_XA_S12_00_MHZ_raw_daily_RMS, PSE_XA_S12_01_MHZ_raw_daily_RMS; quantiles use linear interpolation.
+      # Reference scale, NOT safety limits. Existing lower-is-better test assumption retained.
         direction: lower
-        lower: 0
-        upper: 20
+        lower: 0.347193913546
+        upper: 24.850591805123
       hard_gate:
         operator: below_threshold
         rationale: 'assumption_NASA_values: project-assumed software-test threshold,
@@ -294,6 +313,7 @@ domains:
         threshold: 15
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
+
   exosphere:
     enabled: true
     hard_gates_enabled: true
@@ -320,6 +340,7 @@ domains:
         threshold: 16000
       meaning: 'assumption_NASA_values: fictional software-test preference, not an
         established environmental response or NASA safety criterion.'
+        
   communications_geometry:
     enabled: true
     hard_gates_enabled: false

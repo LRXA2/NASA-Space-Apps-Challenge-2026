@@ -33,6 +33,7 @@ OUTPUT_COLUMN_NAMES = {
     "rad_score_status": "radiation_score_status",
     "final_rec_score": "final_recommendation_score",
     "config_sha256": "configuration_file_hash",
+    "fail_reason": "Fail Reason",
 }
 
 
@@ -114,7 +115,7 @@ def validate_config(config):
         raise ValueError("metadata_columns must be a unique list of column names")
     computed = {"pipeline_mode", "time_mode", "comparison_start_utc", "comparison_stop_utc", "comparison_preference_score",
                 "final_habitability_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
-                "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details"}
+                "reason", "fail_reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details"}
     computed |= set(SCORES.values()) | {c + "_status" for c in SCORES.values()} | set(OUTPUT_COLUMN_NAMES.values())
     if set(metadata) & computed:
         raise ValueError("metadata_columns cannot shadow computed output columns")
@@ -341,6 +342,21 @@ def hard_check(value, gate):
     return ("Passed" if passed else "Failed"), gate.get("rationale", "Configured environmental screening comparison")
 
 
+def gate_failure_reason(gate):
+    """Explain an evaluated blocking check using its actual value and YAML limit."""
+    label = f"{gate['domain']}: {gate['column']}"
+    if gate["status"] == "Unknown":
+        return f"{label}: {gate['reason']}"
+    condition = gate["condition"]
+    operator = gate_operator(condition)
+    if operator == "between":
+        required = f"between {condition['lower']} and {condition['upper']}"
+    else:
+        symbol = ">=" if operator == "above_threshold" else "<="
+        required = f"{symbol} {condition['threshold']}"
+    return f"{label} = {gate['value']} {gate['unit']}; required {required} {gate['unit']}"
+
+
 def assess(rows, config, config_hash):
     validate_config(config)
     available_data = config.get("pipeline_mode", "strict") == "available_data"
@@ -468,7 +484,16 @@ def assess(rows, config, config_hash):
                     item["final_score_contribution"] = item["domain_score"] * item["domain_weight_fraction"]
         if not weights and complete:
             issues.append("No domains selected for aggregate scoring")
+        failures = []
+        if result["final_habitability_score"] == "":
+            failures = [gate_failure_reason(g) for g in gates if g["status"] in {"Failed", "Unknown"}]
+            failures.extend(issue for issue in issues if "selected domain needs" in issue)
+            if hard == "Unknown" and not states:
+                failures.append("No hard gates evaluated; eligibility is unknown")
+            if not weights:
+                failures.append("No scoring domains with usable data and configured weights")
         result.update(hard_gate_status=hard, evidence_coverage=f"{supported}/{used}",
+                      fail_reason=" | ".join(failures),
                       score_scope=";".join(d["domain"] for d in domain_details if d["included_in_final_score"]),
                       reason="; ".join(issues) or "Passed configured screens with complete preferences; not operational approval",
                       hard_gate_details=json.dumps(gates, separators=(",", ":"), allow_nan=False),
@@ -500,18 +525,19 @@ def run(input_path, output_path, config_path, *, overwrite=False, compact=False)
     columns += [c for c in config.get("metadata_columns", []) if c not in columns]
     columns += [field for name in SCORES.values() for field in (name, name + "_status")]
     columns += ["pipeline_mode", "comparison_preference_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
-                "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details", "final_habitability_score"]
+                "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details", "fail_reason", "final_habitability_score"]
     stream = io.StringIO(newline="")
     writer = csv.DictWriter(stream, fieldnames=[OUTPUT_COLUMN_NAMES.get(c, c) for c in columns], lineterminator="\n")
     if compact:
         domains = [name for name in SCORES if name in config["domains"] and config["domains"][name].get("enabled", True)]
-        writer = csv.DictWriter(stream, fieldnames=["ID", *domains, "hard_gate_status", "final_habitability_score"], lineterminator="\n")
+        writer = csv.DictWriter(stream, fieldnames=["ID", *domains, "hard_gate_status", "Fail Reason", "final_habitability_score"], lineterminator="\n")
     writer.writeheader()
     if compact:
         display_score = lambda value: round(value, 2) if value != "" else ""
         writer.writerows({"ID": row["id"],
                           **{name: display_score(row[SCORES[name]]) for name in domains},
                           "hard_gate_status": row["hard_gate_status"],
+                          "Fail Reason": row["fail_reason"],
                           "final_habitability_score": display_score(row["final_habitability_score"])}
                          for row in results)
     else:
