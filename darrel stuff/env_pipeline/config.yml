@@ -4,7 +4,7 @@
 # Proxy directions/bounds (including counters/current/potential) are deliberately fictional
 # test mappings. Do not interpret resulting scores as real site habitability or safety.
 # enabled: false disables an entire domain: inputs, hard gates and scoring.
-# Domain multipliers total 100: project priorities for a crewed, solar-powered habitat.
+# Domain multipliers total 90: project priorities for a crewed, solar-powered habitat.
 # These are NOT NASA-approved weights; available-data scoring renormalizes present domains.
 # pipeline_mode: strict requires complete inputs; available_data omits blank measurements.
 # hard_gates_enabled controls each domain independently from scoring.
@@ -175,7 +175,7 @@ domains:
     hard_gates_enabled: true
     priority: Highest
     include_in_score: true
-    multiplier: 20.0
+    multiplier: 10.0
     metrics:
     - column: lowest_phase_median_temperature_kelvin
       unit: K
