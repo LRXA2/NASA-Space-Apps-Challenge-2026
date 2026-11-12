@@ -155,7 +155,7 @@ def train(root: Path, config_path: Path) -> Path:
     notebook = '../operational_cnn/notebooks/38_operability_cnn_experiment.ipynb'
     with Run(root, 'terrain_operability_model', config, notebook) as run:
         run.record['torch'] = {'version': torch.__version__, 'device': 'cpu'}
-        for path in (config_path, Path(__file__), Path(__file__).with_name('operability_cnn.py'),
+        for path in (config_path, Path(__file__), root / 'operational_cnn/model/operability_cnn.py',
                      dataset / 'provenance.json', dataset / 'patches.csv'):
             run.input(path)
         split_frame = patches[['patch_id', 'region', 'spatial_group', 'label_class']].copy()
