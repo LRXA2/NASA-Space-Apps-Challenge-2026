@@ -1,16 +1,16 @@
 # Moon Research Notes
 
-**Purpose:** identify the evidence available for our Moon environmental assessment, what it can support and what remains unresolved. Measured findings belong in [EDA Notes](../EDA/EDA_Notes.md); algorithm choices belong in [Feature decisions](../purposal.md).
+**Purpose:** identify the evidence available for our Moon environmental assessment, what it can support and what remains unresolved. Analysis methods belong in [EDA Notes](../EDA/EDA_Notes.md); algorithm choices belong in [Feature decisions](../purposal.md).
 
-**11 November Stage 3-4 completion:** [Dar_045-055 are executed](../EDA/EDA_Notes.md#expanded-subject-eda-and-time-windows---11-november-2026) across all eleven subjects; Dar_056 compiles the source/field/outline and requirement proposal. Dated inputs include month, quarter, four-month term, half-year, year, two-year and calendar-season labels; these are not lunar seasons. PRP explicitly lacks an applicable chronology. Full/sparse/experimental scope and unresolved source/operational qualification remain explicit. Stage 5 is deferred.
+**Stage 3-4 scope:** [Dar_045-055](../EDA/EDA_Notes.md#expanded-subject-eda-and-time-windows---11-november-2026) cover the subject studies; Dar_056 defines the source/field/outline and requirement proposal. Dated analyses use month, quarter, four-month term, half-year, year, two-year and calendar-season labels; these are not lunar seasons. Static PRP does not supply a chronology. Full/sparse/experimental scope and unresolved qualification must remain explicit. The separate [Stage 5 pipeline](../env_pipeline/README.md) uses `assumption_NASA_values`, not adopted NASA limits.
 
-**New source-quality leads:** PRP includes physically unsupported negative ice-depth values beyond the label's invalid constant; these remain Unknown, not no ice. NMS includes noncanonical `Seconds=60` entries: original arithmetic-clock replay and the new conservative clock hold are analysed separately from orbit sampling. LEND's acquired XML lists `SCALT` unit `8`; it is not silently interpreted as kilometres. These are evidence-use/applicability holds, not new operational limits or site failures.
+**Source-quality checks:** review native invalid constants and physical-domain validity for PRP depth, component-clock handling for NMS, and declared units for LEND before using values. Keep clock policy separate from orbital sampling and do not infer a missing unit. These are evidence-use/applicability checks, not operational limits or site failures.
 
-**Stage 4 boundary:** subject runs retain `stage4_*_proposals.csv`; [the compiled handoff](../EDA/EDA_Notes.md#stage-4-handoff---proposed-not-integrated) adds **64 reviewed proposal rows**, source/units/scope, adoption gaps and Passed/Failed/Unknown semantics. Existing H_/B_/R_ requirements supplement preliminary evidence references without replacing active behaviour. Missing local response, applicable limits and capability remain **Unknown**; no numeric limit, preference weight or mission/equipment profile is invented. Consolidate shared requirements/evidence during later adoption rather than treating rows as independent risk weights. `environment_rule_register.json` and the current pipeline are unchanged.
+**Stage 4 boundary:** subject proposals retain source/units/scope, adoption gaps and Passed/Failed/Unknown semantics. Existing H_/B_/R_ requirements supplement research references, not the active YAML test policy. Missing local response, applicable limits and capability require qualification; no mission/equipment profile or NASA safety weight is inferred. Consolidate shared evidence during adoption rather than treating proposal rows as independent risks. The standalone scorer reads only its CSV and YAML, not `environment_rule_register.json`.
 
-**Operational source inference:** the 18 page-linked cases and historical duration/rate decomposition support calibration, coupled essential services, contingency return, maintenance/duty-cycle and condition-specific decisions. This is our inference from NASA-era sources, not NASA's recovered base-selection algorithm. The complete 95-file library received an index/header/hash audit; only 23 declared pages in ten documents were freshly extracted for those cases, with 14 library review holds retained. Historical normal/moving-traverse communication provisions and flight/trainer battery capacities are not flattened into universal limits/defaults.
+**Operational source use:** retain source/page context for calibration, coupled essential services, contingency return, maintenance/duty cycle and condition-specific decisions. These are project interpretation topics, not a recovered NASA base-selection algorithm. Document index/header/hash checks separately from page review and retain extraction holds. Historical normal/moving-traverse communications provisions and flight/trainer battery capacities are not universal modern defaults.
 
-[Source register](environmental_data.csv) | [Outline coverage](outline_environment_crosswalk.csv) | [Downloads](../download_script/Download_Dataset_Instructions.md) | [Pipeline](../Pipeline_Proto/README.md)
+[Source register](environmental_data.csv) | [Outline coverage](outline_environment_crosswalk.csv) | [Downloads](../download_script/Download_Dataset_Instructions.md) | [Pipeline](../env_pipeline/README.md)
 
 ## Files in this folder
 
@@ -27,7 +27,7 @@ This is already a dedicated research folder; its file paths are kept stable. The
 
 - **Register:** 53 entries: 38 external D-sources, 14 project M-inputs and C01 planetary baseline. It records official links, fields, joins, feasible analysis dimensions and review dates. Blank fields mean unreviewed, not absent data.
 - **Core collection:** Diviner polar phase, LOLA/SDEM terrain and visibility products; Earth analog/climate collections are reference-only. Use D01-D06 lunar applicability first. New small pilots do not replace established core data.
-- **Bounded Dar_029 snapshot:** 32 public D-source selections present; D21-D24 access-gated; D17/D25 unselected; 14 M-inputs absent; C01 available. Zero selected missing/size-mismatched files is not a whole-archive checksum claim.
+- **Bounded Dar_029 audit:** record selected public sources, access-gated products, project-supplied inputs and baseline references separately. Check the frozen manifest rather than inferring whole-archive completeness from a bounded selection.
 
 Availability comes from frozen manifests and receipts, not a live tracker. Register statuses are historical, not a current download audit. D21-D24 remain pending authorised archive access; no bypass or substitute science files are assumed.
 
@@ -67,7 +67,7 @@ These are **research priorities, not hard/soft gates, algorithm weights or a new
 
 ### Earlier curated extraction
 
-The extraction batch screened **11 supplied PDFs / 2,903 pages**: 2,295 pages had at least 80 extracted characters; 608 did not. This is text screening, not full manual review. Image-only material includes the 221-page integrated LRV handbook and 176-page press kit. Missing priority PDFs are not assumed available.
+Screen supplied PDFs for extractable text, page images and review holds. Text screening is not full manual review; image-only handbooks/press kits require their own extraction approach. Missing priority PDFs are not assumed available.
 
 **File identity corrections:** `AP7_Prelaunch Mission Operation Report.pdf` is Apollo **17**, not Apollo 7. The file labelled full LRV handbook transcripts contains only a 30-page segment.
 
@@ -75,10 +75,10 @@ The curated extraction retains source/page images, context, holds and provenance
 
 | Extract | Scope |
 | --- | --- |
-| Context records | 26 mission/equipment records. |
-| EVA percentage remaining | 66 records: 11 Apollo 14-17 EVA tables x two crew x three resources; 65 paired predictions. One missing power prediction stays missing. |
-| Primary Apollo 17 suit records | 18 visually checked records: three EVAs x two crew x oxygen/feedwater/battery. |
-| LM totals | Eight oxygen/water totals; vehicle and suit resources remain separate. |
+| Context records | Mission/equipment identity, configuration and source-page context. |
+| EVA percentage remaining | Paired predictions and recorded resource fractions; retain missing predictions and original crew/resource distinctions. |
+| Primary Apollo 17 suit records | EVA/crew/resource tables with visual source-page verification. |
+| LM totals | Oxygen/water balances; vehicle and suit resources remain separate. |
 
 ### Source evidence and limits
 
@@ -94,31 +94,31 @@ Page numbers below are PDF pages, with printed references in parentheses where a
 | Same, p.50 (3-15, item 3-64) | Rover 125 F for EVAs 1/2 and 140 F for EVA 3, with management/traverse responses. Temperature alone did not mandate abandoning the rover. |
 | Apollo 17 postflight p.144 (9-6, Table 9-II) | Primary suit data; pp.137-138 and 144-145 support LM balances. |
 
-**Interpretation rules:** retain lb/Ah; Ah is not Wh. Preserve the printed predicted descent-water total of 48.1 lb and its discrepancy with the displayed tank sum of 48.2 lb. Initial-minus-consumed balances do not validate a new mission. Reconstructions and primary reports are related evidence, not independent experiments. Further OCR/dense-table extraction is deferred.
+**Interpretation rules:** retain lb/Ah; Ah is not Wh. Preserve printed totals, rounding and any discrepancy with displayed component sums rather than silently correcting them. Initial-minus-consumed balances do not validate a new mission. Reconstructions and primary reports are related evidence, not independent experiments. Further OCR/dense-table extraction requires explicit scope.
 
 ### Expanded PDF library and environmental impact (10 November 2026)
 
-The external [PDF relevance index](file:///D:/projects/NASA%20Dataset/PDF_Relevance_Index.md) and [journal review](file:///D:/projects/NASA%20Dataset/Apollo_Journal_PDF_Review.md) classify **142 PDFs: 95 keep, 47 discard**. All 95 files in `D:\projects\NASA Dataset\keep` have PDF headers. This follow-up independently checked **53 selected pages across 14 retained PDFs**, not every page in the library. The index retains 14 review holds: 13 extraction holds and the incomplete two-page `as10-day5-pt19.pdf` export. Pointers below are one-based PDF pages, including covers; extracted text is not numerical/image verification.
+The external [PDF relevance index](file:///D:/projects/NASA%20Dataset/PDF_Relevance_Index.md) and [journal review](file:///D:/projects/NASA%20Dataset/Apollo_Journal_PDF_Review.md) describe the library under `keep/` and `discard/`. Check PDF identity, page coverage and extraction holds before using a source. Pointers below are one-based PDF pages, including covers; extracted text is not numerical/image verification.
 
-| Category / source in `keep/` | Checked evidence | Impact on Steps 3-5 |
+| Category / source in `keep/` | Evidence topic | Impact on Steps 3-5 |
 | --- | --- | --- |
-| Radiation — `a08-biomed_eval.pdf`, pp.74-81 | Instrument calibration and postflight cross-checks explain misleading low-dose readings and anomalous calculated doses. | Step 3: separate instruments, dose quantities, calibration and actual exposure intervals. Step 4: measurement validity is required before a radiation decision; a zero reading is not proof of zero exposure. Not a polar dose map or current limit. |
-| Thermal/dust — `A16_MissionReport.pdf`, pp.28-31; Apollo 17 postflight report, pp.37, 40-41 | Apollo 16 sensor thermal-control/shroud/dust problems and failed heat-flow cable; Apollo 17 instrument outgassing and thermally restricted operations. | Step 3: distinguish instrument temperature, ambient/subsurface temperature and operational gaps. Step 4: deployment, maintenance and duty-cycle dependencies matter. Failed deployment supplies failure evidence, not temperature measurements. |
-| Exosphere — Apollo 17 postflight report, pp.40-41 | Outgassing, residual peaks and background interference complicate atmospheric-composition observations. | Step 3: preserve contamination/background and instrument-state metadata when using LADEE or historical surface references; do not equate a detected signal with an uncontaminated environmental concentration. |
-| Seismic — `A16_MissionReport.pdf`, pp.28-30 | The report distinguishes crew/rover signals, deliberate active-source experiments and other seismic observations. | Step 3: cross-reference Apollo waveforms with event/operations records before estimating natural-event rates. Surface activity is not automatically a moonquake, and Apollo stations do not supply candidate-specific south-polar recurrence. |
-| Terrain/illumination — `as08-analysis_photography_visual_obs.pdf`, pp.6-7, 26; `a08lunar_landmark_locations-8-10-11-12.pdf`, pp.3, 11-12; `as10-day4-pt13.pdf`, pp.3, 7-9 | Historical mapping/calibration methods and crew observations show lighting-dependent visibility and geolocation limitations. | Step 3: retain geometry, resolution and coordinate uncertainty. Qualitative orbital viewing is not a dated surface-irradiance or uninterrupted-darkness history; no new slope/visibility cutoff follows. |
-| Conditional decisions — `a10-mission-rules-19690415.pdf`, pp.276-278; `a17_final-flight-mission-rules_19720068065.pdf`, pp.33, 49-53, 234 | Historical confirmed-measurement/event requirements and configuration-specific reserves, thermal responses and operating conditions. | Step 4: use the rule structure, source provenance and conditional responses; do not adopt historical dose/temperature values as modern limits. Step 5 remains unchanged until applicability is established. |
-| Equipment/habitat — LM handbook p.369; EVA assessment pp.47, 62, 65; LRV fragment pp.8-10; `as10-day6-pt25.pdf`, p.47 | ECS dependencies, dust/resource lessons and a journal account of fuel-cell cooling failure. | Optional equipment extension only. Journal editorial diagnosis needs primary-report corroboration; Apollo 7 Earth-orbit hardware lessons are not local lunar environment measurements. |
+| Radiation - `a08-biomed_eval.pdf`, pp.74-81 | Instrument calibration, dose quantities and postflight cross-check methodology. | Step 3: separate instruments, calibration and actual exposure intervals. Step 4: require measurement validity before an operational radiation decision. Not a polar dose map or current limit. |
+| Thermal/dust - `A16_MissionReport.pdf`, pp.28-31; Apollo 17 postflight report, pp.37, 40-41 | Sensor thermal control, deployment, dust, outgassing and instrument operating conditions. | Step 3: distinguish instrument, ambient and subsurface temperatures and operational gaps. Step 4: preserve deployment, maintenance and duty-cycle dependencies. |
+| Exosphere - Apollo 17 postflight report, pp.40-41 | Outgassing, background and instrument-state interpretation. | Step 3: retain contamination/background metadata when using LADEE or historical surface references; a detected signal is not automatically an uncontaminated environmental concentration. |
+| Seismic - `A16_MissionReport.pdf`, pp.28-30 | Crew/rover attribution, deliberate active sources and other seismic observations. | Step 3: cross-reference waveforms with operations records before estimating natural-event rates. Apollo stations do not supply candidate-specific south-polar recurrence. |
+| Terrain/illumination - `as08-analysis_photography_visual_obs.pdf`, pp.6-7, 26; `a08lunar_landmark_locations-8-10-11-12.pdf`, pp.3, 11-12; `as10-day4-pt13.pdf`, pp.3, 7-9 | Mapping/calibration methodology, lighting-dependent visibility and geolocation context. | Step 3: retain geometry, resolution and coordinate uncertainty. Qualitative orbital viewing is not a dated surface-irradiance or uninterrupted-darkness history; no slope/visibility cutoff follows. |
+| Conditional decisions - `a10-mission-rules-19690415.pdf`, pp.276-278; `a17_final-flight-mission-rules_19720068065.pdf`, pp.33, 49-53, 234 | Historical confirmation requirements, configuration-specific reserves, thermal responses and operating conditions. | Step 4: preserve rule structure, provenance and applicability; do not adopt historical values as modern limits. The active test policy remains separately declared in YAML. |
+| Equipment/habitat - LM handbook p.369; EVA assessment pp.47, 62, 65; LRV fragment pp.8-10; `as10-day6-pt25.pdf`, p.47 | ECS dependencies, dust/resource context and cooling-system interpretation. | Optional equipment extension only. Journal editorial diagnosis needs primary-report corroboration; Earth-orbit hardware references are not local lunar environment measurements. |
 
-**What changes now:** stronger source-backed EDA questions and evidence-quality/conditional-rule references. **What does not change:** no new numeric limits, source pins, candidate scores or safety passes were implemented by this document review. The earlier curated tables remain the quantitative handoff; the larger PDF library is not automatically an accepted pipeline input. Source PDFs are now under `keep/` or `discard/`; retain the external move logs when resolving historical root-level paths rather than rewriting old extraction provenance. [Review and download-check evidence](../data/verification/latest_download_pdf_review.txt).
+**Document use:** frame source-backed EDA questions and evidence-quality/conditional-rule proposals without automatically changing YAML limits or declaring operational safety. The PDF library is not a runtime pipeline input. Sources remain under `keep/` or `discard/`; use move logs to resolve historical root-level paths without rewriting extraction provenance.
 
-**11 November EDA follow-up:** [Dar_044](../EDA/Moon/Stage3_Requirements/Dar_044_acquired_environment.ipynb) executed the declared new-data cohorts and seven source/page-linked qualitative cases. It adds contemporary SEE overlap, explicit ESA virtual-Q/clock handling, historical HFE/PSE support, PRP regional model context, southern LAMP SNR/exposure screening, and bounded LADEE/LEND analysis. All ten source families are represented, but the larger ESA/NMS/LEND collections and LAMP pixels are deliberately sampled. [Methods, measured results and remaining uncertainty](../EDA/EDA_Notes.md#new-download-eda--executed-dar_044-11-november-2026). This is Step 3 evidence, not a new adopted radiation/thermal/charging limit or an automatic change to the current engine.
+**EDA source handoff:** [Dar_044](../EDA/Moon/Stage3_Requirements/Dar_044_acquired_environment.ipynb) defines initial environmental/PDF screening with SEE overlap checks, ESA virtual-Q/clock handling, historical HFE/PSE support, PRP model context and LAMP/LADEE/LEND quality handling. Retain each cohort definition rather than treating a selected sample as a full archive. [Methods and scope](../EDA/EDA_Notes.md#new-download-eda--executed-dar_044-11-november-2026). This does not automatically adopt a radiation/thermal/charging requirement.
 
 ## Supporting references and model routes
 
 | Source | Useful for | Boundary |
 | --- | --- | --- |
-| S01 BVAD Rev2 (2022) | Curated official nominal-rate extract. | Full PDF returned HTTP 403 at recorded acquisition; rates are not actual mission loads. |
+| S01 BVAD Rev2 (2022) | Official nominal-rate reference route. | Respect archive access requirements; nominal rates are not actual mission loads. |
 | S02 NASA-STD-3001 V2 F; S03 V1 C | Acquired requirements-reference PDFs. | Applicable requirements/limits need explicit adoption. |
 | R01 NASA PCoE battery aging | Laboratory cycling/impedance histories. | Protocol-specific, not lunar-vacuum or selected-hardware qualification. |
 | R02 Apollo 15 soil mechanics | PDS4 six-test numeric history. | Local, geometry-dependent reference, not polar capacity. |
@@ -148,12 +148,12 @@ Calendar date, local solar time, solar phase and event-relative time are differe
 ### Implemented time-period evidence — Dar_043
 
 - **D09 UV:** original downloader packages contain the historical SOLSTICE daily FUV/MUV spectra (2003–2020), not just the candidate sunlight proxy. Only complete quality=0 spectra are integrated; missing/filled spectral bins withhold the daily band value. [Publisher products](https://lasp.colorado.edu/sorce/data/) and [user guide, section 4.3](https://docserver.gesdisc.eosdis.nasa.gov/repository/Mission/SORCE/3_Product_Documentation/Product%20Requirements%20and%20Designs/SORCE_Data_User_Guide.pdf).
-- **D11 plasma:** the add-on supplied 36 ARTEMIS THB monthly CDF files. Publisher Q-variable selection, fill/range attributes, position and measured timestamp spacing are preserved. SSE-x/radius bins are descriptive geometry choices, not physical safety thresholds or certified plasma regimes. [NASA dataset description](https://cdaweb.gsfc.nasa.gov/cgi-bin/eval2.cgi?dataset=THB_L2_MERGED&index=sp_phys); the exact local CDF metadata is exported with the EDA.
+- **D11 plasma:** use ARTEMIS THB monthly CDF files with native Q-variable selection, fill/range attributes, position and measured timestamp spacing. SSE-x/radius bins are descriptive geometry choices, not safety thresholds or certified plasma regimes. [NASA dataset description](https://cdaweb.gsfc.nasa.gov/cgi-bin/eval2.cgi?dataset=THB_L2_MERGED&index=sp_phys); preserve the exact local CDF metadata with preparation notes.
 - **D07/D08 radiation:** monthly/quarterly comparisons reuse checked daily SEC counter and platform/channel/version-separated GOES summaries. They do not convert counts/flux into dose or sparse primary samples into an event census.
-- **Step 4 E14–E16:** preserve calendar/support meaning; reject simultaneous relationships between non-overlapping histories; retain Unknown local charging/protection. Calendar quarters are not [lunar seasons](https://svs.gsfc.nasa.gov/5229), and a low historical value is not a safe mission window. [Executed analysis and findings](../EDA/EDA_Notes.md#monthly-and-quarterly-comparisons--dar_043).
+- **Step 4 E14-E16:** preserve calendar/support meaning; reject simultaneous relationships between non-overlapping histories; retain Unknown local charging/protection. Calendar quarters are not [lunar seasons](https://svs.gsfc.nasa.gov/5229), and a low historical value is not a safe mission window. [Analysis methods](../EDA/EDA_Notes.md#monthly-and-quarterly-comparisons--dar_043).
 
 ## Bottom line
 
-- The outline crosswalk covers **27 Moon-relevant factors**, including unresolved evidence boundaries.
+- The outline crosswalk groups Moon-relevant factors and their unresolved evidence boundaries.
 - Existing sources support environmental comparisons and historical/reference lessons, not automatic operational approval.
 - Mission/equipment inputs remain optional for the demo. Actual suitability still needs applicable configuration, requirements, limits and response evidence; missing mandatory evidence stays **Unknown**.

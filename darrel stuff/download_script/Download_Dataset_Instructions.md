@@ -1,6 +1,6 @@
 # Environmental data downloads
 
-One guide for the existing-data downloader and additive downloads. Acquisition does not perform EDA, set equipment limits or establish suitability. See [source priorities](../research/Research_Notes.md) and [accepted findings](../EDA/EDA_Notes.md#scope-and-coverage).
+One guide for the existing-data downloader and additive downloads. Acquisition does not perform EDA, set equipment limits or establish suitability. See [source priorities](../research/Research_Notes.md) and [analysis scope](../EDA/EDA_Notes.md#scope-and-coverage).
 
 ## Choose the tool and destination
 
@@ -73,7 +73,7 @@ The add-on reads published provider file listings and retrieves **native science
 
 The additions have new deterministic plan identities; old plans, checkpoints, science files and receipts are not rewritten. Same-source baseline files are referenced only after receipt/hash verification; matching filenames alone do not qualify for reuse. Native NetCDF/CDF readability and observational-label identity are checked in addition to transfer integrity. These are acquisition checks, not scientific quality qualification or operational passes.
 
-**Original sample validation:** 62 add-on tests passed, including all 41 protected existing tests. Exactly **one** bounded live sample batch completed **15/15 jobs across eight additions**, with no source gaps. Its 26 selected files total about 184 MB including four reused baseline references; all selected file hashes match their receipts. The PRP sample contains labels only, not its large science table. The complete multi-year transfer was **not started at that verification stage**; see the later full-download check below. [Commands, receipts, source scope and verification](../data/verification/latest_download_additions.txt). LEND RSCI alone can require tens of GB over the full interval; retain the existing file/run limits and inspect disk capacity before a full run.
+**Sample validation:** use one bounded selection before a full transfer, inspect source gaps and receipt/hash identity, and distinguish reused baseline references from new files. The PRP sample contains labels only; its large science table needs an explicit full selection. Retain file/run limits and check disk capacity before scaling.
 
 **Manual-download reporting:** each live run writes `manifests/addons/runs/<run>/manual_downloads.json` with exact failed file URLs when known, source-discovery holds and optional access-gated references. ChaSTE, RAMBHA-LP and ILSA use authorised [Chandrayaan-3 access](https://pradan.issdc.gov.in/ch3/); optional DFSAR uses [Chandrayaan-2 access](https://pradan.issdc.gov.in/ch2/). Keep native science, labels and quality/calibration documents, preserving actual mission dates. No login bypass is attempted. A failed automatic request is an acquisition hold, not proof that the dataset is unavailable.
 
@@ -94,27 +94,27 @@ No manual file selection is needed for the public Apollo archives. The add-on di
 
 Waveforms are decoded and their network/station/location/channel headers checked against their filenames; response metadata is parsed and must contain instrument responses. These are readability/identity checks, not response correction or hazard qualification. ATT is retained for timing work and never substituted for ground-motion measurements. Both MHZ location modes are retained when published. Historical Earth-received timing, calibration/response epochs, coverage, deployment disturbances and HFE flags still require EDA before physical interpretation. Mini-RF remains the original downloader's `D30` global-mosaic selection and existing local coverage; no duplicate whole-volume radar acquisition is added here.
 
-**Apollo sample validation:** all **76 add-on tests passed** (62 existing plus 14 new, existing tests unchanged). One bounded live sample completed **5/5 jobs**, selecting **18 files / 4,617,674 bytes** including three verified baseline references. Checksums, both heat-flow tables' numeric rows, all four MiniSEED channels and the three motion channels' response availability at their sample start times were checked. ObsPy emitted a non-fatal date warning when reading the published Dataless SEED; the independent StationXML response lookups succeeded. No full historical transfer was started at that stage; see the later readback below. [Sample verification](../data/verification/latest_apollo_downloads.txt).
+**Apollo sample validation:** check heat-flow numeric rows, MiniSEED channel identity and the matching motion-channel response metadata on a bounded sample. Review Dataless SEED/StationXML date handling explicitly; response availability alone does not qualify physical ground motion. Keep sample and full historical selections separate.
 
-### Full-download readback — 10 November 2026
+### Full-download readback
 
-Both later full runs report completion, and their pinned files were independently checked on disk: **7,050 jobs / 17,208 selected files / 71,147,055,367 bytes** (about 71.15 GB, including referenced baseline files). No selected missing files, size mismatches or missing/mismatched source receipts were found in these two batches. **24 stratified checksum samples** across the new and older add-on sources matched; this is not a whole-collection rehash. No `.part` files were found under the external `datasets/` tree. The full PRP science table is now present, unlike its original labels-only sample.
+Read back each pinned full selection against its on-disk files, expected sizes and source receipts. Use explicit stratified checksum samples or a declared full rehash, and record which was performed. Inspect partial files separately. A labels-only PRP sample must not be reported as the full science payload.
 
-| Source | Selected files, including support | Actual acquisition scope |
-| --- | ---: | --- |
-| D09_SEE | 1,208 | 1,206 available daily products, 2023-06-01 to 2026-10-31, plus two documents; date gaps remain. |
-| D11_P2 / D11_ESA | 40 / 1,173 | P2 monthly files June 2023-September 2026; P1 ESA daily files June 2023 through 2026-10-12. |
-| D20_PRP / D32 | 3 / 40 | Full south PRP table and labels; four cumulative south LAMP map families and support. |
-| D10 / D35 | 72 / 5,430 | Historical LADEE calibrated dust / derived exosphere selections. |
-| D29 | 3,330 | 1,110 RSCI science dates, 2023-06-01 through 2026-06-14, with labels. |
-| D28 | 62 | All 30 published clean Apollo 15/17 tables, labels and documentation. |
-| D14_PSE | 5,850 | S12 files for 730 listed days in 1973-1974, plus response metadata; not proof of gap-free within-file observations. |
+| Source | Selected product types | Acquisition scope |
+| --- | --- | --- |
+| D09_SEE | Daily spectra and supporting documents | Requested modern dates; retain archive gaps and published revisions. |
+| D11_P2 / D11_ESA | Monthly merged P2 / daily ESA CDFs | Keep spacecraft, native mode, version and actual time support separate. |
+| D20_PRP / D32 | South PRP table/labels and LAMP map/support families | Static/model and cumulative historical scope, not a recent time series. |
+| D10 / D35 | LADEE calibrated dust / derived exosphere products and labels | Historical mission dates and native instrument/species identity. |
+| D29 | RSCI science tables and companion labels | Requested science dates; preserve instrument-state and archive support. |
+| D28 | Clean HFE tables, labels and documentation | Historical Apollo 15/17 scope with native flags and sensor identity. |
+| D14_PSE | S12 waveforms and response/timing metadata | Historical 1973-1974 selection; filenames do not prove gap-free within-file observations. |
 
-**Not all project data is complete:** the older D07 plan still lacks three primary table/label pairs, rejected before inventory pinning by the **2,048 MiB per-file cap**: `CRAT_L2_PRI_2024305_V01.TAB` (4.18 GB), `CRAT_L2_PRI_2025090_V01.TAB` (7.41 GB), and `CRAT_L2_PRI_2025151_V01.TAB` (2.33 GB). Their combined science size is about 13.92 GB. This review did not increase limits, restart transfers or request manual downloads. Existing acquired D07 files remain present by size.
+**Completeness boundary:** compare the exact pinned selection rather than assuming the entire project archive is complete. Oversized CRaTER primary table/label pairs must remain explicit limit holds; do not silently raise the per-file cap or substitute secondary products. Existing acquisition files must retain their source identity.
 
-D20 GDS stays explicitly disabled; its unstarted queries are not active download failures. D21-D24 remain access-gated. The original S01 BVAD PDF has a recorded inventory failure; the curated reference-rate extract remains separate. Three priority NTRS PDFs (xEMU thermal-vacuum overview, xPLSS thermal-model comparison, Apollo lunar-dust EVA effects) still have recorded HTTP 403 failures and are absent from `keep/`. The Apollo 17 postflight PDF is present there. The baseline audit also retains an older Moon-support manifest-write failure, with no selected-file absence/size mismatch identified; Earth-climate run status is outside the Moon algorithm.
+D20 GDS stays explicitly disabled; unstarted legacy queries are not active transfers. D21-D24 require authorised access. Keep reference-rate extracts separate from their original PDFs and preserve access/manifest holds rather than inferring availability. Resolve Apollo and other PDF paths through `keep/` or `discard/` and relocation records; Earth-climate scope is separate from the Moon algorithm.
 
-**Verification:** full runs `20261110T020713555001Z` and `20261110T080601929330Z`; older add-on and relocation-aware local baseline selections were also checked. [Readback counts, receipts/checksum samples, exact unresolved CRaTER entries and baseline report](../data/verification/latest_download_pdf_review.txt). Downloaded means acquired within the pinned selection, not EDA-qualified or operationally adequate. [New EDA opportunities](../EDA/EDA_Notes.md#newly-acquired-inputs-and-pdf-leads-10-november-2026).
+**Verification:** retain pinned run IDs, selected files, receipt/checksum scope and unresolved limits in acquisition manifests. Downloaded means acquired within the selection, not EDA-qualified or operationally adequate. [EDA preparation scope](../EDA/EDA_Notes.md#newly-acquired-inputs-and-pdf-leads-10-november-2026).
 
 ## Selection and quality boundaries
 

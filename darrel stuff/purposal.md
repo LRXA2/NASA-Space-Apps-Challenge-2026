@@ -1,8 +1,8 @@
 # Environmental feature decisions
 
-**Objective:** evaluate mission operation at a selected Moon site. For the current demonstration, use existing environmental data without requiring a fictional mission/equipment configuration. Full operational adequacy is separate and opt-in.
+**Objective:** evaluate mission operation at a selected Moon site. For the current demonstration, use the standalone measurement-level test fixture and explicitly assumed scoring policy without requiring a mission/equipment configuration. Full operational adequacy requires separate qualification.
 
-The filename is retained because the engine records this document as an input. [Sources](research/Research_Notes.md), [measured findings](EDA/EDA_Notes.md) and [run instructions](Pipeline_Proto/README.md) hold the supporting detail.
+The filename is retained as a project guide, not a runtime input. [Sources](research/Research_Notes.md), [analysis methods](EDA/EDA_Notes.md) and [run instructions](env_pipeline/README.md) hold the supporting detail.
 
 ## 1. Decision contract
 
@@ -14,25 +14,25 @@ The filename is retained because the engine records this document as an input. [
 
 ## 2. Gate and preference separation
 
-The default policy is an illustrative context comparison: solar and Earth median visibility each >=0.5; slope q90 <=8 degrees; solar/Earth weights both 1. These are not NASA safety limits. Retain support and exclusions rather than inventing measurements or silently renormalizing missing scores.
+The default `assumption_NASA_values` policy defines nine domains with equal test weights in `config.yml`; no terrain score is included. `pipeline_mode: available_data` uses supplied measurements and explicitly renormalizes available weights; `strict` withholds incomplete final assessments. `enabled`, `include_in_score` and `hard_gates_enabled` independently control each domain. Comms currently contributes where supplied, with its hard gate off. These are project assumptions, not NASA safety limits.
 
-Optional operational assessment uses a declared mission, hardware and complete applicable requirement inventory. Known mandatory failure dominates Unknown; every mandatory condition must pass before operational preferences are scored. Expected synthetic outcomes are test labels, never rule inputs.
+Operational assessment requires a declared mission, hardware and applicable requirement inventory. Known active hard-gate failure dominates Unknown; an evaluated Failed/Unknown blocks final scoring. Blank measurements can be explicitly omitted in available-data mode, but skipping them is not an operational pass. Expected synthetic outcomes are test labels, never rule inputs.
 
 ## Science-backed preference extension
 
 [Dar_042](EDA/Moon/Stage3_Requirements/Dar_042_lunar_science_indicators.ipynb) reuses the EDA for terrain sky openness, direct-Sun/UV opportunity and fixed-common thermal profiles. The [model contract](research/lunar_science_models.json) records source citations, assumptions and explicit comparison directions. This is a hybrid: infer lower/higher preference only for comparable quantities with a defensible direction, not arbitrary minima/maxima across times, instruments or plasma variables.
 
-The existing sunlight/Earth weighted score remains a power/access-oriented baseline. A separate **unweighted Pareto view** prefers lower geometric primary-radiation sky openness, lower UV opportunity and higher Earth visibility after the live context filters. Sunlight/UV are one underlying input, so they are not opposing independent weights in one score. A second view adds lower phase-temperature span only where complete cohorts exist; fewer than two complete eligible candidates produces no preference winner.
+The archived prototype uses a sunlight/Earth visibility baseline and a separate **unweighted Pareto view** for geometric primary-radiation sky openness, UV opportunity and Earth visibility. Sunlight/UV share an underlying input and should not receive duplicate independent weights. Thermal preference comparison requires complete comparable cohorts. These research views do not replace the active standalone YAML test mappings.
 
 Published REDMoon scenarios are a common what-if library, never assigned to candidate doses or multiplied by sky openness. Plasma regimes and illumination/PSR context are included, but density/voltage/safety is not inferred monotonically. All applicable radiation/UV/plasma operational requirements remain Unknown without their response and adopted limits. Research references are not NASA-endorsed scoring weights.
 
 ## 3. What to recommend
 
-**Time-period extension:** Dar_043 adds measured historical year-month/quarter contrasts for radiation, solar UV and spacecraft plasma. Accept these as source-separated context with valid-day/time, cadence and geometry support; do not turn within-year level orders into new safety weights, plasma preferences or future arrival-window recommendations. UV and recent plasma/radiation do not overlap. E14–E16 guard those inference boundaries, and the pipeline validates and exports the temporal tables separately from candidate scores.
+**Time-period extension:** Dar_043 defines source-separated historical year-month/quarter comparisons for radiation, solar UV and spacecraft plasma, retaining valid-day/time, cadence and geometry support. Do not turn historical level orders into safety weights or arrival-window recommendations. Match observation periods before correlations. E14-E16 document those evidence boundaries; temporal handoff preparation is separate from the active CSV-only scorer.
 
 | Evidence | Decision | Permitted algorithm use / withheld inference |
 | --- | --- | --- |
-| Dar_020: 21 selected components and qualified static/phase features | Accept bounded context | Existing visibility/slope filters and explainable preferences. Not validated base footprints or whole-component thermal coverage. |
+| Dar_020: candidate static/phase feature definitions | Accept bounded context | Preserve visibility/terrain support and explainable preferences in the archived research comparison. They are not validated base footprints or whole-component thermal coverage. |
 | Dar_012/013/024: missingness, fixed/available cohorts, scale | Accept support; reject full-coverage inference | Preserve source/cohort/counts. No reward merely for having data. |
 | Dar_023/025/030: terrain-conditioned thermal comparisons | Accept diagnostics | No universal thermal correction or correlation-derived weight. |
 | Dar_032 and reused terrain notebook 13 | Accept separate strict/context support | Do not silently replace existing features; missing elevation is not a permanently shadowed region. |
@@ -49,6 +49,6 @@ Published REDMoon scenarios are a common what-if library, never assigned to cand
 
 ## 4. Rule traceability
 
-[environment_rule_register.json](research/environment_rule_register.json) records the scoped rule families, applicability and consequences. [The pipeline guide](Pipeline_Proto/README.md#evidence-and-explanations) explains the separate evidence annex. Failed evidence-use checks mean an inference is unsupported, not that the physical site has failed a safety requirement.
+[environment_rule_register.json](research/environment_rule_register.json) records the research rule families, applicability and consequences. [The pipeline guide](env_pipeline/README.md) explains the active assumption policy, modes and toggles; the [archived prototype guide](env_pipeline/legacy_1/README.md) describes its separate evidence annex. The active script does not read the research register or this document. Failed evidence-use checks reject an unsupported inference, not necessarily the physical site.
 
 New downloads must pass source/schema/quality/support review before becoming evidence. More files alone never justify a new score factor, physical threshold or operational pass.

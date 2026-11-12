@@ -2,11 +2,13 @@
 
 **Purpose:** understand lunar conditions and compare candidate sites using observations, modelled indicators and reference studies. This is environmental evidence, not proof that a mission can operate safely.
 
+**Reviewed 12 November 2026:** findings below describe scientific EDA, not the standalone pipeline's assumed test fixture. Dar_044 screening/subset results are retained as earlier baselines; the Dar_045-055 subject studies and Dar_056 handoff provide the expanded coverage. Exact completed-run sources are listed under Evidence and notebook conventions.
+
 ## Scope and coverage
 
-- Moon-focused analysis across seven study regions and 21 exploratory candidate components. Earth experiments are supporting references only.
+- Moon-focused research EDA across seven study regions and 21 exploratory candidate components. These are not the separate 30-row software fixture or its newly defined 1.2 km patches. Earth experiments are supporting references only.
 - Quality flags, missing dates, spatial support and observation cohorts are checked before comparison. Missing evidence stays **Unknown**, not zero risk.
-- **Expanded Stage 3-4 complete within declared evidence scopes:** Dar_044 remains the initial screen; Dar_045-055 are the eleven executed subject studies and Dar_056 is the unadopted requirement synthesis. Full/sampled/experimental coverage and unresolved qualification remain explicit. Stage 5 revamp is separate. [Scope/checklist](../todo_workflow.md#comprehensive-subject-eda-and-stage-4-completed-11-november-2026).
+- **Expanded Stage 3-4 complete within declared evidence scopes:** Dar_044 remains the initial screen; Dar_045-055 are the eleven executed subject studies and Dar_056 is the unadopted requirement synthesis. Full/sampled/experimental coverage and unresolved qualification remain explicit. The separate [Stage 5 pipeline](../env_pipeline/README.md) now uses `assumption_NASA_values`, available-data/strict modes and independent toggles; those test choices do not update or validate these EDA findings. [Scope/checklist](../todo_workflow.md#comprehensive-subject-eda-and-stage-4).
 
 ## Expanded subject EDA and time windows - 11 November 2026
 
@@ -42,9 +44,9 @@ All **eleven subject notebooks (Dar_045-055)** and **Stage 4 synthesis Dar_056**
 
 **Time finding:** SEE's same-June-October FUV median decreases from **0.02607 W/m2 (2023)** to **0.02196 W/m2 (2026)**, with 153/151/151/151 valid dates across 2023-2026. This is a historical comparison, not demonstrated repeating seasonality or a safe-month forecast. Mode, epoch, coverage and quantity matter more than a simple lowest-value ranking.
 
-**Validation:** **132 targeted tests pass cumulatively**; representative samples precede full execution. Accepted subject/synthesis outputs and saved execution are checked in [subject verification](../data/verification/latest_subject_eda.txt). A post-run PRP helper fix affects only the unused zero-quantile edge case; all **256 published p05/p50/p95/p99 intervals** were rechecked unchanged, with its executed source version retained. Failed/sampled runs are not counted as accepted full results.
+**Validation record:** representative samples, source/artifact hashes, native decoding, crosschecks and saved execution are documented in [subject verification](../data/verification/latest_subject_eda.txt). The subject notebooks Dar_045-055 and synthesis Dar_056 have saved execution for every code cell without saved error outputs. This is recorded execution evidence, not a fresh rerun or a claim about the current pipeline test suite. The PRP zero-quantile helper correction is separate from its published p05/p50/p95/p99 intervals; retain the executed source version. Failed/sampled runs are not accepted full results.
 
-The subject JSON is the frozen initial scope plan, not a live completion tracker; its original planning labels do not override completed provenance or saved execution. A final D-drive arrival check found no newer plans/dataset files or partial downloads after the work cutoff; the library still contains 95 retained PDFs. This is not an extra whole-archive checksum claim.
+The subject JSON is the frozen initial scope plan, not a live completion tracker; its original planning/remaining-work labels do not override completed provenance or saved execution. Recorded acquisition/library audits apply only to their stated cutoff and selected files, not a current live inventory or an extra whole-archive checksum claim.
 
 ### Stage 4 handoff - proposed, not integrated
 
@@ -55,40 +57,40 @@ The subject JSON is the frozen initial scope plan, not a live completion tracker
 - **Hard Failed/Unknown cannot be offset by preferences.** Inapplicable requirements are not selected or counted as Passed; evidence-use failure is not automatically site failure. Missing soft values are not zero-filled. Mission/equipment profiles remain optional.
 - Proposal rows are not independent risk weights or 64 independent mission requirements. During later adoption, consolidate the same underlying requirement/quantity and preserve source dependencies; Sun/UV/photoemission proxies and related Apollo accounts must not be double-counted.
 - Missing local demand, response, applicable capability/limit and adoption authority remain **Unknown**. Sparse primary radiation, bounded response windows, finite model horizons, short historical missions and unreadable/unreviewed PDF material remain declared limits—not invented operational evidence.
-- **No numerical limit/weight is adopted.** The active register, engine, source pins, scoring and Stage 5 outputs are unchanged. A separate Stage 5 revamp/adoption and mission-specific engineering validation are future work, not unfinished Stage 3-4 deliverables.
+- **No scientific limit/weight is adopted by these EDA studies.** Their research proposals and frozen source pins are separate from the active standalone `assumption_NASA_values` software-test policy. Scientific adoption and mission-specific engineering validation remain necessary; test scores and skipped blank inputs are not operational qualification.
 
 ## Radiation
 
 - **Steps taken:** checked CRaTER instrument states, GOES quality flags, dates and separate detector/energy/platform/version groups; reviewed shielding scenarios and derived a terrain sky-openness indicator.
-- **Findings:** CRaTER covers **1,091 dates / 94.1 million records** with five missing dates. GOES-16/19 cover **524/791 dates**, but only **10.48%/10.82%** of channel/time bins meet the strict filter. Primary data uses 660,000 sampled records from 33 sparse monthly files, not a complete event census.
+- **Expanded findings (Dar_049):** **79 separate series / 35,281 daily rows**, spanning 2023-07-01 to 2026-10-31 across the declared instruments/cohorts, retain calendar support and daily upper tails. The CRaTER/FUV descriptive level correlation **0.464** becomes **-0.001** for consecutive-day differences; pooled levels are not a stable causal/dose model. **Earlier Dar_041 coverage:** CRaTER 1,091 dates / 94.1 million records, GOES-16/19 524/791 dates and strict channel/time support of 10.48%/10.82%; the 660,000-record primary sample is not a complete event census.
 - **Inference:** sky openness supports relative geometric comparisons. Orbital counts and the 96 published reference scenarios are **not candidate crew doses**; more shielding is not universally safer.
 - **Dar_044 extension:** joined contemporaneous SEE FUV with the accepted CRaTER daily counter summaries on **1,050 valid UTC dates**. Descriptive Spearman correlation is **0.464**, not a dose relationship, causal result or site-safety rule; calibration, sampling and common time trends remain relevant.
 
 ## UV
 
 - **Steps taken:** retained the candidate sunlight/UV-opportunity proxy; parsed downloaded SOLSTICE FUV/MUV daily spectra, accepting only complete 1-nm bands with quality=0 and finite nonnegative irradiance/uncertainty.
-- **Findings:** the **2003-05-14 to 2020-02-25** solar-reference record contains **5,700 FUV / 5,760 MUV valid daily band integrals**. This is time-varying solar irradiance, not terrain-adjusted intensity or biological dose at our 21 candidates. The earlier northern LAMP pilot lacked south-polar coverage; Dar_044 reviews separate south-polar products below.
+- **Earlier SOLSTICE-reference findings:** the **2003-05-14 to 2020-02-25** solar-reference record contains **5,700 FUV / 5,760 MUV valid daily band integrals**. This is time-varying solar irradiance, not terrain-adjusted intensity or biological dose at our 21 candidates. The earlier northern LAMP pilot lacked south-polar coverage; Dar_044 reviews separate south-polar products below.
 - **Inference:** lower opportunity can be a stated preference, but sunlight and UV share the same input and must not be counted twice as independent weights.
-- **Dar_044 steps/results:** integrated **1,206 SEE daily spectra (June 2023-October 2026)**, retaining model-filled-bin/flare-removal and uncertainty context. Complete positive-bin screening supports **1,206 FUV days (115-180 nm), but only 139 EUV days (27-115 nm)**. Other EUV bands/dates were not substituted; unresolved zero bins are not zero exposure. SEE and historical SOLSTICE were not stitched as a calibrated single instrument.
+- **Dar_044 steps/results:** integrated **1,206 SEE daily spectra (June 2023-October 2026)**, retaining model-filled-bin/flare-removal and uncertainty context. Complete positive-bin screening supports **1,206 FUV days (115-180 nm), but only 139 EUV days (27-115 nm)**. Other EUV bands/dates were not substituted; unresolved zero bins are not zero exposure. SEE and historical SOLSTICE were not stitched as a calibrated single instrument. **Dar_045 expands the spectral/map review:** all 1,206 SEE spectra and native pixels of 20 LAMP maps; supported days are 727 for XUV, 139 for EUV and 1,206 for each of 50-115 nm, FUV and 180-190 nm. The supported FUV median is **0.0242102 W/m2** across its declared daily cohort, not a candidate-local dose.
 
 ## Plasma and charging
 
-- **Steps taken:** retained three published charging regimes; read **36 ARTEMIS THB CDF files / 319,946 records**, masking publisher fill/out-of-range values and preserving spacecraft SSE-x/radius strata and measured cadence.
-- **Findings:** observations span **2023-10-01 to 2026-09-29**. File-level median timestamp spacings range from **137.571 to 550.738 seconds**, unlike the nominal 96/384-second metadata description. Record counts therefore do not establish elapsed valid-time coverage. **Lower plasma density or more darkness is not automatically safer.**
+- **Steps taken:** retained published charging regimes and separate P1/P2 merged context; expanded native ESA analysis to **all 1,173 files / 53,860,929 mode-records** in Dar_046. Native species/modes, quality, clocks/cadence and geometry remain explicit. The earlier THB merged baseline has its own 36-file / 319,946-record cohort, not extra independent ESA observations.
+- **Earlier merged-baseline findings:** observations span **2023-10-01 to 2026-09-29**. File-level median timestamp spacings range from **137.571 to 550.738 seconds**, unlike the nominal 96/384-second metadata description. Record counts therefore do not establish elapsed valid-time coverage. **Lower plasma density or more darkness is not automatically safer.**
 - **Limit:** these are spacecraft plasma/field observations, not candidate surface-potential measurements. Geometry strata are not certified plasma regimes; local voltage and discharge risk remain Unknown.
-- **Dar_044 steps/results:** read all **40 P2 merged files**, retaining position strata, plus **82 preselected ESA day files** (first/last available date per month, six modes separate). ESA Q fields are virtual: explicit native quality=0 screening was required. The reduced-electron mode has only **4.33% zero-quality-flag records before further screening**; 231 ambiguous/missing mode-clock records were withheld and 5,482 file-boundary context records excluded from nominal-day bins. FUV/P2 density has **1,095 paired valid dates, correlation 0.135**: weak descriptive association, not a surface-charging response.
+- **Earlier Dar_044 subset:** read all **40 P2 merged files**, retaining position strata, plus **82 preselected ESA day files** (first/last available date per month, six modes separate). ESA Q fields are virtual: explicit native quality=0 screening was required. The reduced-electron mode has only **4.33% zero-quality-flag records before further screening**; 231 ambiguous/missing mode-clock records were withheld and 5,482 file-boundary context records excluded from nominal-day bins. FUV/P2 density has **1,095 paired valid dates, correlation 0.135**: weak descriptive association, not a surface-charging response. **Expanded Dar_046 findings:** reduced-electron quality=0 records are **4.24%** before further screening, versus the earlier subset's 4.33%. Full-mode ion/electron daily association is **0.955**, reduced-mode **0.222**; neither is surface voltage or a safe-density rule. All 1,374 shared earlier day/series rows retain their support within floating-point tolerance.
 
 ## Temperature and heat
 
 - **Steps taken:** compared Diviner temperature by location, local time and solar phase; checked fixed observation cohorts, terrain relationships and dated-product quality.
-- **Findings:** **812 dated query products** across three regions yield **zero strict-quality rows**. Existing phase products provide five complete candidate thermal profiles, but only one passes the current context filters.
+- **Dated Diviner findings (Dar_040/041):** **812 dated query products** across three regions yield **zero strict-quality rows**. Existing phase products provide five complete candidate thermal profiles, but only one passes the current context filters.
 - **Inference:** cohort choice changes temperature summaries; no universal terrain correction was established. Phase averages are not instantaneous extremes or equipment temperatures. One supported candidate alone cannot establish a thermal preference winner.
-- **Dar_044 steps/results:** read all **30 Apollo HFE tables / 520,977 records**, retaining flags and sensor identity; 131 undated records remain in diagnostics, not invented calendar dates. Processed all **2.88 million south-PRP model triangles** in chunks. The seven **bounding-box maxima** of modelled surface temperature are **305.95-342.08 K**; triangle-centre inclusion is not candidate-footprint validation. Annual mean at 2 cm and maximum at the surface are different quantities, not a thermal-cycle amplitude. These model/reference inputs do not qualify the rejected dated Diviner rows or supply equipment temperatures.
+- **Dar_044 steps/results:** read all **30 Apollo HFE tables / 520,977 records**, retaining flags and sensor identity; 131 undated records remain in diagnostics, not invented calendar dates. Processed all **2.88 million south-PRP model triangles** in chunks. The seven **bounding-box maxima** of modelled surface temperature are **305.95-342.08 K**; triangle-centre inclusion is not candidate-footprint validation. Annual mean at 2 cm and maximum at the surface are different quantities, not a thermal-cycle amplitude. These model/reference inputs do not qualify the rejected dated Diviner rows or supply equipment temperatures. **Expanded Dar_047/050 findings:** all 30 HFE tables / 520,977 records retain depth/deployment/clock identity; Apollo 15 probe 1 has a 1972 matched-day p95-p05 span of **5.67 K at 35 cm versus 0.160 K at 139 cm**. Native PRP weighting and boundary checks remain spatial model statistics, not a chronological equipment envelope.
 
 ## Sunlight, shadow and communications
 
-- **Steps taken:** compared solar/Earth visibility and modelled terrain horizons for seven regional reference points in two 30-day windows; varied observer height, horizon radius and sampling.
-- **Findings:** geometry changes with those assumptions. Zero sampled solar blocking does not guarantee continuous sunlight; average Earth visibility does not establish a working radio link.
+- **Steps taken:** compared solar/Earth visibility and modelled horizons for seven regional reference points; Dar_054 extends the earlier short windows to **2020-2021**, with **982,464 samples / 56 scenario-target tracks** and cadence sensitivity. Observer height, horizon radius and sampling remain explicit.
+- **Findings (Dar_054):** at 2 m height / 20 km horizon radius, the Leibnitz/Malapert reference points have similar sampled Sun-clear fractions (**0.214/0.233**) but longest observed blocked-sample spans of **2,819/691 h**. Mean visibility alone misses persistence. These are point/configuration model histories, not the research candidates or current test patches; zero sampled blocking is not guaranteed continuous sunlight, and Earth visibility is not a working RF link.
 - **Limit:** power endurance and communications margins still require applicable time histories and response models.
 
 ## Monthly and quarterly comparisons — Dar_043
@@ -108,22 +110,22 @@ Run again from the repository root: `.venv/Scripts/python.exe "darrel stuff/EDA/
 ## Seismic activity and impacts
 
 - **Steps taken:** reviewed related Apollo seismic catalogs and selected new-crater detections, including event independence and observation coverage.
-- **Findings:** the 58/59 catalog entries are related, not 117 independent events. The 222 selected crater detections do not establish local mission-window impact probabilities.
-- **Dar_044 steps/results:** decoded **731 MHZ files / 415.5 million raw vertical samples** and **730 ATT timing files** across 1973-1974. About **2.04%** of each channel family's sample values use the missing code. Response metadata is available at both ends of all MHZ traces, but no response removal or event detection was performed. Clock gaps, raw-count variation and crew/active-source signals are not moonquake rates or candidate ground acceleration.
+- **Catalog findings:** the 58/59 catalog entries are related, not 117 independent events. The 222 selected crater detections do not establish local mission-window impact probabilities.
+- **Dar_044 steps/results:** decoded **731 MHZ files / 415.5 million raw vertical samples** and **730 ATT timing files** across 1973-1974. About **2.04%** of each channel family's sample values use the missing code. Response metadata is available at both ends of all MHZ traces, but no response removal or event detection was performed. Clock gaps, raw-count variation and crew/active-source signals are not moonquake rates or candidate ground acceleration. **Expanded Dar_053 findings:** **2,193 three-axis motion files / 1,246,454,631 native samples**, with **1,220,986,653 valid native samples**, preserve MH1/MH2/MHZ and mode. The **300** bounded inverse-response experiments are not qualified event peaks or polar structural demand; all 731 earlier vertical traces replay without changed support.
 
 ## Dust, resources and imagery
 
 - **Steps taken:** reviewed dust/chemistry evidence coverage and environmental image/radar context.
-- **Findings:** ShadowCam covers 3/21 examples and Mini-RF 19/21. Darkness, radar backscatter and spectral indicators do not prove recoverable ice, soil strength or safety. Candidate-specific dust contamination and equipment degradation remain unqualified.
-- **Dar_044 dust:** processed all 36 LDEX current/mass tables, including **677,271 current records on 166 recorded dates**. Current/background remain separate; mass summaries retain quality and saturation classes rather than inventing a science-good event class or surface dust loading.
+- **Research-candidate image coverage:** ShadowCam covers 3/21 examples and Mini-RF 19/21; this does not describe the separate 30-row pipeline fixture. Darkness, radar backscatter and spectral indicators do not prove recoverable ice, soil strength or safety. Candidate-specific dust contamination and equipment degradation remain unqualified.
+- **Dar_044 dust:** processed all 36 LDEX current/mass tables, including **677,271 current records on 166 recorded dates**. Current/background remain separate; mass summaries retain quality and saturation classes rather than inventing a science-good event class or surface dust loading. **Expanded Dar_048 findings:** 441,166 mass-catalog entries include **9,041 numerically supported entries below their reported native threshold**; numerical support does not silently reclassify them as qualified impacts.
 - **Dar_044 LAMP:** sampled all four southern map families at fixed stride 4, joining quality=0, positive exposure and SNR>=3. Supported fractions of the sampled south-polar domain are **46.51% long, 98.77% Lyman-alpha, 3.79% off-band and 28.82% on-band**. `ERROR` is SNR, not an error bar. White/masked pixels are not proof of darkness or zero UV; brightness/albedo are not local irradiance.
 - **Dar_044 neutrons/resources:** read complete records on **74 preselected LEND dates**, first/last available date per month. SETN and CSETN2 each have all-zero supported spectra on **52 selected dates**; channel activity/background/response remain unqualified, so these zeros do not establish absence of neutrons or safe radiation. Raw spectra and PRP model ice-stability depths do not establish recoverable ice.
 
 ## Exosphere
 
-- **Steps taken:** analysed 36 preselected NMS orbit/species files, keeping native abundance, reported uncertainty and spacecraft sampling context.
-- **Findings:** **10,869 records**, covering 12 sampled dates each for Ar/He/Ne; sampled spacecraft altitudes span **1.88-145.01 km**. Species, orbit selection and historical 2013-2014 dates remain separate.
-- **Limit:** this is a sparse orbital cohort, not a surface concentration, modern atmosphere or life-support assessment. Apollo outgassing/background cases reinforce the need for contamination checks.
+- **Steps taken:** Dar_051 expands the earlier 36-file screen to **all 2,715 selected NMS orbit/species files**, retaining abundance, uncertainty, geometry and historical clock policy separately.
+- **Expanded findings (Dar_051):** **592,721 records / 876 daily rows**, covering 2013-11-21 to 2014-04-17; **33** noncanonical/missing-clock records are held explicitly. Added orbit coverage changes matched-date medians, so clock-policy and orbit-selection effects are analysed separately. **Earlier Dar_044 subset:** 10,869 records on 12 sampled dates per species, with sampled altitude 1.88-145.01 km. Its sparse support is not the full selected cohort.
+- **Limit:** full selected orbit coverage is still historical spacecraft sampling, not a surface concentration, modern atmosphere or life-support assessment. Apollo outgassing/background cases reinforce the need for contamination checks.
 
 ## Equipment and past missions
 
@@ -132,7 +134,10 @@ Run again from the repository root: `.venv/Scripts/python.exe "darrel stuff/EDA/
 - **Dar_044 PDF cases:** coded seven source/page-linked cases covering calibration, deployment/dust, outgassing and duty cycle, signal attribution, illumination, conditional decisions and equipment cooling. They guide analysis and later rule applicability; historical redlines and secondary journal diagnoses were not adopted as modern requirements.
 
 <a id="newly-acquired-inputs-and-pdf-leads-10-november-2026"></a>
+<a id="new-download-eda-dar_044"></a>
 ## New-download EDA ? executed Dar_044 (11 November 2026)
+
+**Earlier screening baseline:** the subset counts and checks in this section belong to Dar_044. The expanded subject studies above supersede its coverage for ESA, NMS, LEND, native LAMP and three-axis seismic interpretation; do not label a screening subset as the latest full cohort.
 
 [Dar_044 notebook](Moon/Stage3_Requirements/Dar_044_acquired_environment.ipynb) has **three saved executed code cells, no notebook errors**, and produces **18 tables / 10 plots**. It analysed **2,986 science files across ten source families**, generating 70 series, 45,465 daily rows, 2,469 monthly rows and 874 quarterly rows. This is the declared cohort, **not every downloaded file or an event census**.
 
@@ -140,22 +145,40 @@ Run again from the repository root: `.venv/Scripts/python.exe "darrel stuff/EDA/
 - **Bounded collections:** 82 ESA days; 36 NMS orbit/species files; 74 LEND days, selected by calendar filenames before values were read. LAMP uses stride 4 in 20 maps with aligned support. PSE covers two years of MHZ/ATT, not all three motion axes.
 - **Method:** validate receipts/hashes and labels; screen quality, fill values and clock ambiguity; preserve body, depth, units, modes, gaps and provenance; aggregate UTC months/quarters without filling missing periods. SEE daily band maxima are maxima of daily means, not subdaily flare peaks.
 - **Results:** see the environmental categories above. Contemporary FUV now supports matched-date context comparisons; it does not identify a safest month or prove surface dose/charging. No repeatable lunar-season claim or forecast is made.
-- **Checks:** **43 targeted tests passed**; independent raw FUV integrals, binary spectral-group decoding and monthly medians matched. All 30 registered output hashes were verified; existing pipeline source/configuration hashes are unchanged. [Execution, cohorts and verification](../data/verification/latest_new_environment_eda.txt).
-- **Handoff:** these are new Step 3 outputs only. Existing Step 4-5 source pins, adopted conditions, scores and operational statuses were **not changed**. Equipment response, local exposure, physical hazard rates and applicable limits remain unresolved; missing mandatory evidence stays Unknown.
+- **Recorded screening checks:** independent raw FUV integrals, binary group decoding, aggregation and registered output hashes are documented with the Dar_044 execution record. These are the earlier screening checks, not a statement that the current standalone scorer is unchanged or its test suite passes. [Execution, cohorts and verification](../data/verification/latest_new_environment_eda.txt).
+- **Handoff:** these are recorded Step 3 research outputs. They did not themselves adopt operational requirements; the separate standalone test policy is configured independently. Equipment response, local exposure, physical hazard rates and applicable limits remain unresolved; missing mandatory evidence stays Unknown.
 
 Reproduce with `.venv/Scripts/python.exe "darrel stuff/EDA/Moon/Stage3_Requirements/stage3_acquired_eda.py"` or the notebook. Use `--sample` only for bounded checks. [Source/PDF applicability](../research/Research_Notes.md#expanded-pdf-library-and-environmental-impact-10-november-2026).
 
+<a id="final-comparison-scope"></a>
 ## Final results and findings
 
 - The EDA supports **relative environmental comparisons**, not an absolute safest-site claim.
-- All eleven subject studies and the Stage 4 synthesis are complete within their recorded scopes. Dated inputs retain month/quarter/four-month/half-year/year/two-year/calendar-season support; static products and short historical missions are not fabricated into histories. No safe-arrival month or absolute safest-site claim follows.
-- Current illustrative filters retain **14 candidates and exclude seven**. The science view finds **two non-dominated trade-off options** using radiation geometry, UV opportunity and Earth visibility; the original visibility score remains a baseline.
+- All eleven subject studies and the Stage 4 synthesis have completed artifacts within their recorded scopes. Dated inputs retain month/quarter/four-month/half-year/year/two-year/calendar-season support; static products and short historical missions are not fabricated into histories. No safe-arrival month or absolute safest-site claim follows.
+- The **archived research prototype's** illustrative filters retain **14 candidates and exclude seven**; these are not outcomes of the current software-test fixture. The science view finds **two non-dominated trade-off options** using radiation geometry, UV opportunity and Earth visibility; the original visibility score remains a baseline.
 - Thermal comparison is withheld because only one filter-passing candidate has a complete comparable profile. Plasma is not forced into a lowest-is-safest ranking.
 - Mission/equipment inputs remain optional for the demo. Operational suitability stays Unknown without applicable requirements, response evidence and limits; preference benefits cannot compensate for mandatory safety failures.
 
 ## Evidence and notebook conventions
 
-[Source register](../research/Research_Notes.md) | [Science/model assumptions](../research/lunar_science_models.json) | [Current results](../Pipeline_Proto/outputs/LATEST_RESULTS.md)
+[Source register](../research/Research_Notes.md) | [Science/model assumptions](../research/lunar_science_models.json) | [Active pipeline guide](../env_pipeline/README.md) | [Archived research comparison](../env_pipeline/legacy_1/README.md)
+
+**Completed-run sources reviewed on 12 November 2026:** latest non-sample completed subject artifacts currently on disk. The synthesis remains its own frozen, pinned handoff; reviewing a newer individual subject run does not silently change that handoff or a pipeline rule.
+
+| Notebook | Recorded analysis source |
+| --- | --- |
+| Dar_045 | [`subject_uv/20261110T231614701627Z_e1ffa3`](../data/processed/analysis/subject_uv/20261110T231614701627Z_e1ffa3/findings.json) |
+| Dar_046 | [`subject_plasma/20261110T231619494574Z_f61cb6`](../data/processed/analysis/subject_plasma/20261110T231619494574Z_f61cb6/findings.json) |
+| Dar_047 | [`subject_hfe/20261110T231624967300Z_04aff6`](../data/processed/analysis/subject_hfe/20261110T231624967300Z_04aff6/findings.json) |
+| Dar_048 | [`subject_dust/20261110T231630522312Z_a8ddbb`](../data/processed/analysis/subject_dust/20261110T231630522312Z_a8ddbb/findings.json) |
+| Dar_049 | [`subject_radiation_time/20261110T233725005604Z_72515a`](../data/processed/analysis/subject_radiation_time/20261110T233725005604Z_72515a/findings.json) |
+| Dar_050 | [`subject_polar_thermal/20261110T233730894536Z_e98b6f`](../data/processed/analysis/subject_polar_thermal/20261110T233730894536Z_e98b6f/findings.json) |
+| Dar_051 | [`subject_exosphere/20261110T233735590232Z_dffb7c`](../data/processed/analysis/subject_exosphere/20261110T233735590232Z_dffb7c/findings.json) |
+| Dar_052 | [`subject_neutrons/20261110T180136708725Z_23f6a8`](../data/processed/analysis/subject_neutrons/20261110T180136708725Z_23f6a8/findings.json) |
+| Dar_053 | [`subject_seismic/20261110T183033924956Z_ba610a`](../data/processed/analysis/subject_seismic/20261110T183033924956Z_ba610a/findings.json) |
+| Dar_054 | [`subject_terrain_time/20261110T210226961886Z_f00b81`](../data/processed/analysis/subject_terrain_time/20261110T210226961886Z_f00b81/findings.json) |
+| Dar_055 | [`subject_operations/20261110T211407977377Z_3abbf8`](../data/processed/analysis/subject_operations/20261110T211407977377Z_3abbf8/findings.json) |
+| Dar_056 | [`stage4_environment_proposal/20261110T212854527708Z_fa4445`](../data/processed/analysis/stage4_environment_proposal/20261110T212854527708Z_fa4445/findings.json) |
 
 Detailed tables, figures and provenance remain in `../data/processed/analysis/` and the accepted notebooks, especially Dar_033-056. Original notes/results/instructions are archived through `../data/verification/latest_eda_notes_cleanup.txt`.
 

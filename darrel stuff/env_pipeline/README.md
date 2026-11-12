@@ -10,6 +10,62 @@ Most measurement cells are populated, with four intentional blanks **only in dum
 
 There is no separate domain-score input CSV. Domain scores are calculated by the pipeline; do not enter scores in place of physical measurements.
 
+## Where and how to obtain the input values
+
+**These are offline preparation instructions, not runtime dependencies.** The current `inputs/sites.csv` is a software fixture: its four map-geometry columns for NASA-labelled/synthetic patches were extracted from native LOLA products, while other values are test assumptions. To prepare real measurements for another site/period, obtain the source products below and calculate the declared quantities before supplying the CSV. Do not treat invented fixture values as source observations. The script itself never downloads data, opens these products or follows the links.
+
+### Labels and dates you supply yourself
+
+- `id`: assign any unique assessment label, such as `site_001`.
+- `candidate_id`: optional metadata supported by the config, not a required column in the current input. It is a label, not a coordinate lookup performed by the script. Document the actual footprint/point separately.
+- `start_utc`, `stop_utc`: optionally enter the requested analysis window. Use both, with a timezone, or omit both. These fields do not filter raw observations inside this script; prepare the measurements for the intended window yourself.
+- Keep the original source, product/version, coordinates, quality filters, valid-day coverage and actual observation dates in your preparation notes. A numeric CSV cell alone does not establish local applicability.
+
+### Source and preparation guide
+
+| Input field(s) | Where to obtain the source | How to calculate the CSV value |
+| --- | --- | --- |
+| `median_sun_visibility_fraction` | [NASA LOLA polar illumination maps](https://pgda.gsfc.nasa.gov/products/69), average solar-illumination products. | Apply label scaling/fill masks, select the documented candidate cells and take their median. Supply a fraction, e.g. `0.52`, not `52`. This remains a long-period map summary. |
+| `median_earth_visibility_fraction` | [NASA LOLA polar Earth-visibility maps](https://pgda.gsfc.nasa.gov/products/69), alongside the solar products. Local files: `darrel stuff/data/moon/illumination_2016/geotiff/south/earth_visibility/`. | Mask native fills before applying the paired label's scale/offset. Select the same documented footprint/support as the Sun/shadow summary and take the median Earth-disc visibility fraction, 0-1. Partial-disc visibility does not prove DSN/relay contact or a working RF link. |
+| `window_continuous_sunlight_hours` | A candidate-local, time-resolved illumination calculation using a documented terrain/horizon model and [NAIF/SPICE ephemerides](https://naif.jpl.nasa.gov/naif/data.html), for the requested UTC window. This is a derived quantity, not a static-map lookup. | Under a documented visibility criterion, calculate the uninterrupted supported sunlight duration in the candidate window, in hours. Preserve cadence, gaps and boundary censoring. A sampled clear run alone does not prove continuous sunlight between samples; leave this field blank if continuity cannot be established. Do not multiply map-average visibility by window duration or substitute a regional reference. A valid supplied duration cannot exceed its requested window. |
+| `window_minimum_link_margin_db` | A mission-specific, qualified RF link-budget calculation using the actual spacecraft/surface antenna, DSN or relay configuration, geometry, losses, noise, data rate and required receiver performance. It is not supplied by an Earth-visibility raster. | Evaluate available-minus-required link margin at the supported times/configurations across the requested candidate window; supply the qualified minimum in dB. Preserve outages and inadequate geometry/support; do not summarize only successful contacts to hide loss of service. Leave blank without the required engineering inputs. This field is ignored when the domain's hard gates are disabled. |
+| `median_visible_sky_fraction` | The same [LOLA sky-visibility products](https://pgda.gsfc.nasa.gov/products/69). | Select the candidate's supported sky-solid-angle pixels, take the median in steradians, then divide by `4*pi`. Do not substitute a radiation dose or divide by `2*pi`. |
+| `permanently_shadowed_cell_fraction` | The same [LOLA permanent-shadow products](https://pgda.gsfc.nasa.gov/products/69). | Count candidate cells classified as permanent shadow and divide by the supported candidate-cell count. Keep the grid, mask and footprint consistent. |
+| `lowest_phase_median_temperature_kelvin`, `highest_phase_median_temperature_kelvin`, `phase_median_temperature_range_kelvin` | [LRO Diviner derived temperature products](https://pds-geosciences.wustl.edu/missions/lro/diviner.htm) and their labels, using the same documented phase-product cohort. | For candidate-associated points, calculate a median for each selected phase product. Only with the complete common cohort: take the lowest median, highest median and their difference. Do not replace these with raw instantaneous temperature minima/maxima. If the cohort is incomplete, leave the three values blank. A profile from a different EDA footprint/cohort does not automatically apply to the current 1.2 km patches. Current thermal test values are assumptions. |
+| `regional_reference_sun_visibility_fraction`, `regional_reference_longest_shadow_sample_span_hours` | A regional horizon/illumination calculation using a documented lunar elevation model, Sun ephemerides and [NASA NAIF/SPICE kernels](https://naif.jpl.nasa.gov/naif/data.html). These are calculated values, not a ready-made pair of downloadable measurements. | To reproduce the earlier EDA reference, use the same region center, 2020-2021 period, 2 m height, 20 km horizon radius and hourly sampling. Clear fraction = clear samples / recorded samples. For each blocked run, measure first-to-last sampled time and keep the longest span. Preserve gaps/censoring; it is not guaranteed continuous darkness. These remain regional reference values, not candidate-local measurements. |
+| `orbital_radiation_counter_median`, `orbital_radiation_counter_maximum` | [LRO CRaTER archive](https://pds-ppi.igpp.ucla.edu/data/lro-crater/), secondary science (`SEC`) tables with their labels. | For the current project's selected-state cohort, retain `BIASCMD=1`, `CALLOW=0`, `CALHIGH=0`, all six `PROCDFLAG=1`, and finite nonnegative `GOOD`/`REJECT`/`TOTAL` counters. Compute each UTC day's `GOOD` median and maximum. The first CSV value is the median of valid daily medians; the second is the maximum of valid daily maxima. This cohort is a project selection, not complete instrument qualification. Preserve counts per SEC record; no dose conversion is implied. |
+| `median_solar_far_uv_irradiance_w_m2` | [TIMED SEE Level 3 daily spectra](https://lasp.colorado.edu/see/data/daily-averages/level-3/), NetCDF products and README. | Use the complete supported 115-180 nm band. Integrate the daily spectral irradiance across the band using wavelength-bin widths, then take the median of valid daily band integrals. Result: W/m2. Retain model-assisted/flare-removed/1-AU scope; this is not a local surface UV reading. |
+| `median_spacecraft_ion_density_per_cm3`, `median_spacecraft_electron_density_per_cm3`, `median_spacecraft_electric_potential_volts` | [THEMIS/ARTEMIS data access](https://themis.ssl.berkeley.edu/data_products/index.php?nlist=2&ntype=2_tha-2_thb-2_thc-2_thd-2_the): select `thb` / ESA L2 (ARTEMIS P1), not an arbitrary Earth-orbit plasma product. | Use `thb_peif_density`, `thb_peef_density` and `thb_peef_sc_pot`, respectively. Apply native fill/valid-range, unique-clock and quality==0 selection. Keep full-ion and full-electron modes separate. Compute daily record medians, then the median of valid daily medians. Preserve native density/potential units; spacecraft potential is not surface charging voltage. |
+| `historical_median_dust_detector_current_charges_per_second` | [LADEE LDEX calibrated data](https://sbnarchive.psi.edu/pds4/ldex/ladee_ldex_20240411/data_calibrated/), `current/` tables plus paired XML labels. Existing local copies are under `D:\projects\NASA Dataset\datasets\D10\` and the earlier `darrel stuff/data/moon/eda_pilots/D10/` baseline. | Read native `CURRENT`, apply clock/fill handling, retain signed background-subtracted values, take daily medians and then the median across valid days. Unit: elementary charges/s. Do not insert impact-catalog counts or mass-deposition estimates into this field. |
+| `historical_median_vertical_seismic_rms_counts` | [Apollo PSE archive](https://pds-geosciences.wustl.edu/missions/apollo/apollo_pse.htm): MiniSEED or equivalent GeoCSV with metadata, selecting station S12, location/mode `00`, channel `MHZ`. | Reproduce the project's daily median-centred RMS count statistic: for valid samples `x`, RMS = `sqrt(mean((x - median(x))^2))`, with the same trace/gap handling. Then take the median of supported daily RMS values. This is a project-defined count statistic, not a NASA ground-motion safety limit, event rate or acceleration measurement. |
+| `historical_median_orbital_helium_density_per_cm3` | [LADEE NMS archive and calibrated collections](https://pds.nasa.gov/ds-view/pds/viewBundle.jsp?identifier=urn:nasa:pds:ladee_nms&version=2.0), helium abundance tables and labels. | Use `He_ABUNDANCE`; retain valid, unambiguous clocks and supported abundance values. Calculate daily medians, then their median. Native `P/Cc` means particles per cubic centimetre; no numerical unit conversion was made by renaming the header. Preserve orbital altitude/local-solar-time and uncertainty context; do not treat it as surface atmosphere. |
+
+For all daily summaries, use equal weight per valid day, not an average pooled across unequal record counts. Missing days are not zero. Do not combine different instruments, versions, species or modes under one measurement name.
+
+The earlier regional model reference covers 2020-2021, dust/helium references cover 2013-2014, and the seismic reference covers 1973-1974. These do **not** become 2030 observations because the test CSV carries 2030 requested dates. Static product label acquisition dates are not a candidate-window chronology either. The active assumption policy uses fictional scoring mappings; it does not qualify these references as local hazard measurements. Source summaries, quality masks and aggregation steps are preparation choices; changing them requires documenting the new meaning, not silently retaining an incompatible header.
+
+### Local data and EDA cross-checks
+
+Paths below are relative to the repository root unless they start with `D:/`.
+Use the original labels/README and quality flags along with the numeric files.
+
+| Source family | Existing local source location | Relevant EDA cross-checks |
+| --- | --- | --- |
+| Sun/Earth/sky visibility and permanent shadow | `darrel stuff/data/moon/illumination_2016/`; documented region extents under `darrel stuff/data/moon/sdem/` | Dar020 candidate support, Dar021 preference sensitivity and Dar054 reference-point/time/footprint limits |
+| Phase thermal | `darrel stuff/data/moon/diviner/`; additional model/reference files under `D:/projects/NASA Dataset/datasets/D20_PRP/` and `D28/` | Earlier Diviner phase/cohort analyses; Dar047 depth-specific historical thermal and Dar050 static polar model are different quantities, not replacements for missing phase profiles |
+| Radiation | `D:/projects/NASA Dataset/datasets/D07/`, with earlier local support under `darrel stuff/data/moon/eda_pilots/` | Dar041, Dar043 and Dar049: instrument/cohort/time support and nonlocal dose limitations |
+| Solar UV | `D:/projects/NASA Dataset/datasets/D09_SEE/` | Dar044 and Dar045: complete spectral-band support, quality and time coverage |
+| Plasma / spacecraft potential | `D:/projects/NASA Dataset/datasets/D11_ESA/`; separate P2 context in `D11_P2/` | Dar044 and Dar046: full/reduced modes, clocks and native quality selection must not be pooled |
+| Historical dust | `D:/projects/NASA Dataset/datasets/D10/` | Dar044 and Dar048: signed current, uncertainty and mass-threshold distinctions |
+| Historical seismic | `D:/projects/NASA Dataset/datasets/D14_PSE/` | Dar044 and Dar053: S12 channel/mode, gap handling and raw-count/response distinctions |
+| Historical exosphere | `D:/projects/NASA Dataset/datasets/D35/` | Dar044 and Dar051: species, uncertainty, orbital sampling and clock handling |
+
+See [EDA notes](../EDA/EDA_Notes.md) and [research/source notes](../research/Research_Notes.md) for the accepted scopes. Cross-checking studies does not make different footprints, instruments, epochs or statistics interchangeable. Preserve original file/version, coordinates, masks, supported counts, actual dates and aggregation choices in preparation notes. The standalone scorer cannot verify that provenance from a numeric cell.
+
+### Where do thresholds and multipliers come from?
+
+They are **configuration decisions, not another downloadable measurement**. Use a justified applicable screening requirement for a hard threshold, documented utility reference bounds for a preference, and explicit project priorities for multipliers. An observed maximum is not automatically a safety limit. Validate sensitivity to multiplier choices; do not label project weights as NASA weights. The current `assumption_NASA_values` thresholds, preference directions/bounds and equal weights are explicitly project assumptions for testing, not sourced or adopted NASA safety requirements. Change them in `config.yml`; do not infer them from the fixture min/max.
+
 ## Run
 
 From the repository root:
@@ -27,10 +83,10 @@ The command-line default writes only enabled domain columns. With all nine domai
 ```text
 ID, radiation, thermal, solar_illumination, dust, plasma_charging,
 uv, seismic, exosphere, communications_geometry,
-hard_gate_status, habitability_score
+hard_gate_status, final_habitability_score
 ```
 
-`habitability_score` is always the final column. Domain and habitability scores
+`final_habitability_score` is always the final column. Domain and habitability scores
 are on 0-100 and displayed to two decimal places (internal calculations retain
 full precision). Gate status explains failed/unknown eligibility. A final score
 remains blank when an evaluated mandatory gate fails/is unknown or configuration
@@ -105,7 +161,7 @@ With equal domain weights, the aggregate averages the domains actually included
 for that row. Available-data mode explicitly renormalizes around missing
 measurements; strict mode withholds the aggregate instead. The detailed output
 records the actual per-row `score_scope`, coverage and normalized contributions.
-`habitability_score` and `final_recommendation_score` receive the same eligible value.
+`final_habitability_score` and `final_recommendation_score` receive the same eligible value.
 Final ranks sort scores descending; equal scores use assessment ID as the tie-break.
 Undated assessments form a separate group from dated ones, and input row order is
 preserved in the output. `--compact` changes only the exported columns to ID plus
