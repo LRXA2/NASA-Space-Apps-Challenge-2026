@@ -4,7 +4,8 @@
 # Proxy directions/bounds (including counters/current/potential) are deliberately fictional
 # test mappings. Do not interpret resulting scores as real site habitability or safety.
 # enabled: false disables an entire domain: inputs, hard gates and scoring.
-# Enabled domain multipliers are 1: an equal-weight test policy, not NASA priorities.
+# Domain multipliers total 100: project priorities for a crewed, solar-powered habitat.
+# These are NOT NASA-approved weights; available-data scoring renormalizes present domains.
 # pipeline_mode: strict requires complete inputs; available_data omits blank measurements.
 # hard_gates_enabled controls each domain independently from scoring.
 # Available supplied values still face enabled hard gates; blank is never a zero or physical pass.
@@ -32,7 +33,7 @@ domains:
     hard_gates_enabled: true
     priority: Highest
     include_in_score: true
-    multiplier: 1.0
+    multiplier: 20.0
     metrics:
     - column: median_visible_sky_fraction
       unit: fraction
@@ -79,7 +80,7 @@ domains:
     hard_gates_enabled: true
     priority: Medium
     include_in_score: true
-    multiplier: 1.0
+    multiplier: 5.0
     metrics:
     - column: median_solar_far_uv_irradiance_w_m2
       unit: W/m2
@@ -88,13 +89,15 @@ domains:
       multiplier: 1.0
       requires_time_window: false
       preference:
-      # Scoring calibration only: observed daily-reference p05/p95, n=1206.
-      # Source: data/processed/analysis/subject_uv/20261110T231614701627Z_e1ffa3/band_daily_context.csv
-      # Series: SEE_v012_FUV_115_180; quantiles use linear interpolation.
-      # Reference scale, NOT safety limits. Existing lower-is-better test assumption retained.
+        # Linear test preference: 100 at zero, 0 at the existing 0.055 screening ceiling.
+        # The hard gate is unchanged. This is policy consistency, NOT a NASA dose model.
+        # Dar045: 1206 complete FUV daily integrals span 0.020213861647..0.037397321672 W/m2.
+        # Its narrow p05/p95 band is descriptive, not a worst-case suitability envelope.
+        # Source: data/processed/analysis/subject_uv/20261110T231614701627Z_e1ffa3/band_daily_context.csv
+        # No input-CSV min/max, NASA-label fitting, or sample-dependent scaling.
         direction: lower
-        lower: 0.021529459636
-        upper: 0.02663851401
+        lower: 0
+        upper: 0.055
       hard_gate:
         operator: below_threshold
         rationale: 'assumption_NASA_values: project-assumed software-test threshold,
@@ -108,7 +111,7 @@ domains:
     hard_gates_enabled: true
     priority: High
     include_in_score: true
-    multiplier: 1.0
+    multiplier: 20.0
     metrics:
     - column: median_sun_visibility_fraction
       unit: fraction
@@ -161,15 +164,18 @@ domains:
         rationale: 'assumption_NASA_values: project-assumed software-test threshold,
           NOT an official NASA safety or operational limit.'
         threshold: 156
+        # Short visits require daylight throughout their own window, not 156 hours.
+        cap_to_window_duration: true
       meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
         units are retained; this does not qualify mission capability or local hazard.'
 
   thermal:
+    # Scoring review: Dar047/050/PT-S01: no qualified component-response calibration; retain the existing test span scale.
     enabled: true
     hard_gates_enabled: true
     priority: Highest
     include_in_score: true
-    multiplier: 1.0
+    multiplier: 20.0
     metrics:
     - column: lowest_phase_median_temperature_kelvin
       unit: K
@@ -196,7 +202,10 @@ domains:
         operator: below_threshold
         rationale: 'assumption_NASA_values: project-assumed software-test threshold,
           NOT an official NASA safety or operational limit.'
-        threshold: 300
+        # Project surface-phase-model calibration, applied to every site.
+        # NASA thermal overview gives roughly 390 K equatorial lunar noon;
+        # this is NOT a component operating limit or NASA-certified safety bound.
+        threshold: 390
       meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
         units are retained; this does not qualify mission capability or local hazard.'
     - column: phase_median_temperature_range_kelvin
@@ -214,11 +223,12 @@ domains:
         established environmental response or NASA safety criterion.'
 
   plasma_charging:
+    # Scoring review: Dar046/PL-S01: no justified ideal surface-voltage band; retain the existing test plateau, not narrow it for appearance.
     enabled: true
     hard_gates_enabled: true
     priority: Medium
     include_in_score: true
-    multiplier: 1.0
+    multiplier: 5.0
     metrics:
     - column: median_spacecraft_ion_density_per_cm3
       unit: cm^-3 (All Qs)
@@ -258,11 +268,12 @@ domains:
         established environmental response or NASA safety criterion.'
 
   dust:
+    # Scoring review: Dar048/DU-S01: signed detector current is not local deposition burden; retain the existing explicit test assumption.
     enabled: true
     hard_gates_enabled: true
     priority: Medium
     include_in_score: true
-    multiplier: 1.0
+    multiplier: 10.0
     metrics:
     - column: historical_median_dust_detector_current_charges_per_second
       unit: Elementary_charge_per_second
@@ -287,10 +298,13 @@ domains:
 
   seismic:
     enabled: true
-    hard_gates_enabled: true
+    # Evidence guard SE-H01: raw native RMS is not qualified structural demand.
+    # No adopted site/equipment tolerance supports a universal 15-count cutoff.
+    # Disabled for ALL rows, not an Apollo exemption. Diagnostic scoring remains.
+    hard_gates_enabled: false
     priority: Evidence-dependent
     include_in_score: true
-    multiplier: 1.0
+    multiplier: 3.0
     metrics:
     - column: historical_median_vertical_seismic_rms_counts
       unit: counts
@@ -315,11 +329,12 @@ domains:
         established environmental response or NASA safety criterion.'
 
   exosphere:
+    # Scoring review: Dar051/EX-S01: no justified ideal local helium band; retain the existing test plateau, not an atmospheric-suitability claim.
     enabled: true
     hard_gates_enabled: true
     priority: Context initially
     include_in_score: true
-    multiplier: 1.0
+    multiplier: 2.0
     metrics:
     - column: historical_median_orbital_helium_density_per_cm3
       unit: P/Cc
@@ -346,7 +361,7 @@ domains:
     hard_gates_enabled: false
     priority: High
     include_in_score: true
-    multiplier: 1.0
+    multiplier: 15.0
     metrics:
     - column: median_earth_visibility_fraction
       unit: fraction

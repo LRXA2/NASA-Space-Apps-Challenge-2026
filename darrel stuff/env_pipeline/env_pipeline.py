@@ -186,8 +186,12 @@ def validate_config(config):
                     scored_families.add(family)
             gate = metric.get("hard_gate")
             if gate is not None:
-                keys(gate, {"operator", "threshold", "lower", "upper", "rationale"}, f"{column}.hard_gate")
+                keys(gate, {"operator", "threshold", "lower", "upper", "rationale", "cap_to_window_duration"}, f"{column}.hard_gate")
                 operator = gate_operator(gate)
+                if type(gate.get("cap_to_window_duration", False)) is not bool:
+                    raise ValueError(f"{column}: cap_to_window_duration must be Boolean")
+                if gate.get("cap_to_window_duration", False) and (operator != "above_threshold" or metric["unit"] != "h" or not metric.get("requires_time_window", False)):
+                    raise ValueError(f"{column}: window-capped gates require an hourly duration, above_threshold and requires_time_window")
                 for key in ("threshold", "lower", "upper"):
                     if gate.get(key) is not None:
                         finite(gate[key], f"{column}.hard_gate.{key}", config=True)
@@ -405,13 +409,20 @@ def assess(rows, config, config_hash):
                 usable = None if missing_time else value
                 item = {"domain": name, "column": column, "unit": metric["unit"], "value": value, "role": metric["role"]}
                 if metric.get("hard_gate") is not None and domain.get("hard_gates_enabled", True):
-                    state, reason = hard_check(usable, metric["hard_gate"])
                     gate = metric["hard_gate"]
+                    window_hours = None
+                    if gate.get("cap_to_window_duration", False) and start and gate.get("threshold") is not None:
+                        window_hours = (datetime.fromisoformat(stop) - datetime.fromisoformat(start)).total_seconds() / 3600
+                        if usable is not None and usable > window_hours + 1e-9:
+                            raise ValueError(f"{row['id']}.{column}: duration exceeds the requested {window_hours} h window")
+                        gate = {**gate, "threshold": min(gate["threshold"], window_hours)}
+                    state, reason = hard_check(usable, gate)
                     bounds = ("lower", "upper") if gate_operator(gate) == "between" else ("threshold",)
                     if available_data and value is None and all(gate.get(k) is not None for k in bounds):
                         state, reason = "Skipped_missing", "Blank measurement omitted in available_data mode; not a physical pass"
-                    gates.append({**item, "condition": metric["hard_gate"], "status": state, "reason": reason,
-                                  "screening_margin": gate_margin(usable, metric["hard_gate"])})
+                    gates.append({**item, "condition": gate, "status": state, "reason": reason,
+                                  **({"configured_threshold": metric["hard_gate"]["threshold"], "window_duration_hours": window_hours} if window_hours is not None else {}),
+                                  "screening_margin": gate_margin(usable, gate)})
                 if metric["role"] == "score":
                     score = utility(usable, metric.get("preference")) if usable is not None else None
                     item.update(utility=score, multiplier=metric.get("multiplier"),
