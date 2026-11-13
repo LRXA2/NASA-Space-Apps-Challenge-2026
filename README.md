@@ -45,6 +45,17 @@ It writes `moon_tiles.csv` (one row per tile, its bounds, each source's patch ID
 
 It writes `moon_sites.csv` and `summary_by_region.csv` to `data/processed/moon_sites/<run>/`. It joins existing outputs only and adds no new score.
 
+## Run the whole Moon pipeline
+
+[integration/run_all.py](integration/run_all.py) chains every stage with one config, [run_all.json](integration/run_all.json): shared tile IDs, the environment scorer, the per-tile site table, and Earth matches for every tile against all five Earth sites. It needs processed runs only (the walkability inference run and the similarity model, dataset and orientation runs pinned in the similarity config), not raw downloads.
+
+```powershell
+.\.venv\Scripts\python.exe -m integration.run_all                    # all seven regions, about a minute
+.\.venv\Scripts\python.exe -m integration.run_all --region Haworth   # quick check on one region
+```
+
+Each stage still writes its own run. The combined folder `data/processed/moon_pipeline/<run>/` holds what the app export reads: `moon_tiles.csv`, `moon_sites.csv`, `earth_matches.csv` (top `top_k_per_site` matches per tile and Earth site, with `overall_rank` across sites), `environment.csv`, `summary_by_region.csv` and `summary.json` (counts, best-matching Earth sites, stage runs and model versions). Every tile is matched; nothing is shortlisted or combined into a single score. Use `--no-environment` to skip the scorer, and `--top-k` to change matches per site. Set `RUN_PIPELINE_SMOKE=1` to include the real Haworth run in the integration tests.
+
 ## File paths
 
 Paths below are relative to the repository root. See [notebooks/README.md](notebooks/README.md) for links to every numbered notebook.
@@ -56,7 +67,9 @@ DOWNLOAD_CHECKLIST.md                Acquisition and readiness checklist
 .gitignore                           Files excluded from Git
 integration/
   moon_sites.py                      Per-tile terrain table with optional environment join
-  tests/                             Join and tile-ID checks
+  run_all.py                         One command for the whole Moon pipeline
+  run_all.json                       Pinned runs and settings for run_all.py
+  tests/                             Join, tile-ID and pipeline runner checks
 download scripts/
   README.md                          Download commands and source details
   download_*.py                      Dataset downloaders
