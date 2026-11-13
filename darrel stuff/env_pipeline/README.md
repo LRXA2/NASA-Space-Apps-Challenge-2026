@@ -1,12 +1,12 @@
 # Moon environmental pipeline
 
-**Single active configuration: `config.yml` (`assumption_NASA_values`).** This file controls thresholds, preferences, domain weights and toggles.
+**Single active configuration: `config.yml` (`south_pole_environment_comparison`).** One input CSV produces separate Operations and Survival-conditions scores. The YAML controls reference ranges, flow weights and independent assessment toggles.
 
 ## One input CSV
 
 Open and edit **[inputs/sites.csv](inputs/sites.csv)**. This is the single main pipeline input: 83 rows (**17 Artemis-region-labelled, 6 fully populated Apollo-labelled baseline scenarios, 30 synthetic and 30 dummy**) containing `id`, optional UTC window columns and the original measurement columns, including `median_visible_sky_fraction` and `median_earth_visibility_fraction`.
 
-Most measurement cells are populated in the original 77 fixtures, including four intentional dummy blanks. The six Apollo-labelled baseline rows are fully populated, using the measured references, conditional models and explicit test assumptions documented below. The 77 non-Apollo fixtures use fictional eight-day requested windows spread across 2027-2040; synthetic neighbours share their EDA baseline windows; Apollo rows instead use historical landing-to-ascent UTC windows. The original seven EDA-labelled baselines and all synthetic scenarios use equally sized 1.2 km patches and the same map statistics. The ten additional EDA-labelled scenarios have assumed values, including geometry, without a measured footprint. These are controlled software fixtures, not verified NASA site assessments; static maps are not filtered to that future window. NASA labels identify a declared region, not a NASA-selected exact patch or approval of the assumed conditions.
+Most measurement cells are populated in the original 77 fixtures, including four intentional dummy blanks. The six Apollo-labelled baseline rows are fully populated, using the measured references, conditional models and explicit test assumptions documented below. The 77 non-Apollo fixtures use fictional eight-day requested windows spread across 2000-2026; synthetic neighbours share their EDA baseline windows; Apollo rows instead use historical landing-to-ascent UTC windows. Non-Apollo windows are test scenario dates, not the observation dates of their borrowed or randomized measurements; changing those dates does not reconstruct historical site conditions. The original seven EDA-labelled baselines and all synthetic scenarios use equally sized 1.2 km patches and the same map statistics. The ten additional EDA-labelled scenarios have assumed values, including geometry, without a measured footprint. These are controlled software fixtures, not verified NASA site assessments; static maps are not filtered to that future window. NASA labels identify a declared region, not a NASA-selected exact patch or approval of the assumed conditions.
 
 EDA-labelled IDs reference the combined names in the [2022 announcement](https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-landing-next-americans-on-moon/) and [2024 announcement](https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/). Shared names appear once. This is a dated declaration-name inventory, not a claim that all entries remain selected today or that differently named regions have disjoint geographical boundaries.
 
@@ -32,7 +32,7 @@ EDA-labelled IDs reference the combined names in the [2022 announcement](https:/
 
 Synthetic IDs `001`-`007`, `008`-`014`, `015`-`021` and `022`-`028` are respectively east, west, north and south neighbours of baselines `eda_001`-`eda_007`; `029`-`030` are northeast neighbours of the first two. Offsets are 1,200 m on each applicable projected axis. Baseline lower-left coordinates are region-rectangle centres rounded down to the 1,200 m grid, using `region_bounds_m` in `EDA/Moon/Stage3_Requirements/stage3_acquired_config.json`. Each synthetic row shares its baseline's nongeometry test assumptions. These are EDA-informed project proposals, not evidence that NASA will use them; the scorer does not verify slope, landing access or resource suitability.
 
-Additional NASA scenarios and randomized dummy values use Python `random.Random(20261112)`. NASA scenario ranges are assumed test ranges, not source measurements. Dummy ranges are broader to exercise both sides of configured gates while keeping fractions in 0-1, temperature span equal to high minus low, and sunlight duration within the 192-hour window. Dummy `001`-`010` retain controlled gate/boundary/toggle cases alongside randomized fields; blanks are Sun visibility (`005`), link margin (`006`), UV (`007`) and seismic (`008`). No generated values were tuned to improve NASA scores.
+Additional NASA scenarios and randomized dummy values use Python `random.Random(20261112)`. NASA scenario ranges are assumed test ranges, not source measurements. Dummy ranges are broader to exercise preference boundaries and optional gate configurations while keeping fractions in 0-1, temperature span equal to high minus low, and sunlight duration within the 192-hour window. Dummy `001`-`010` retain controlled gate/boundary/toggle cases alongside randomized fields; blanks are Sun visibility (`005`), link margin (`006`), UV (`007`) and seismic (`008`). No generated values were tuned to improve NASA scores.
 
 Apollo rows identify the six [historical NASA landing sites](https://nssdc.gsfc.nasa.gov/planetary/lunar/apolloland.html): Apollo 11 (Mare Tranquillitatis), 12 (Oceanus Procellarum), 14 (Fra Mauro), 15 (Hadley-Apennine), 16 (Descartes Highlands) and 17 (Taurus-Littrow). The existing `apollo_<mission>_<site>_assumed` IDs identify baseline scenarios mixing sourced dates, measured historical/modern references, conditional geometry/thermal models and an explicit nominal RF assumption. The estimates below are not NASA measurements. Missing values are not zero-filled. Apollo 13 did not land and has no site row.
 
@@ -52,7 +52,7 @@ Landing sources: [NASA landing table](https://www.nasa.gov/wp-content/uploads/st
 | `historical_median_vertical_seismic_rms_counts` | **Source-local native PSE references at Apollo 11, 12, 14, 15 and 16.** Apollo 12 retains its 654-day S12/location-00/MHZ median `2.62109086492859` counts, 1973-01-01 through 1974-10-16, from [Dar053](../data/processed/analysis/subject_seismic/20261110T183033924956Z_ba610a/daily_context.csv). Apollo 11/14/15/16 use their own station's three post-ascent archive days as documented below, not copied S12 values. Apollo 17 still has the explicitly borrowed S12 reference: the PSE archive has no S17 station and a different seismic instrument is not silently substituted. These epochs/cohorts differ; no response/gain normalization, quiet-event selection or physical ground-motion conversion is claimed. |
 | Sun/Earth/sky visibility and permanent-shadow fraction | **Conditional mission-window model, not mapped measurements:** use a uniform flat, unobstructed reference patch at the [NASA landing coordinates](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_18-27_LM_Lunar_Landing.htm). Apollo `median_sun_visibility_fraction = 1` describes the landing-to-ascent window, not a full lunar cycle. Sun and Earth full-disc elevations remain above the assumed horizon in the JPL geometry described below; Earth visibility remains `1`. Sky fraction remains `2*pi/(4*pi) = 0.5`; permanent-shadow fraction remains `0`. Relief, rocks, hardware and pixel distributions are not reconstructed; these are not native LOLA raster summaries. |
 | Regional reference Sun fraction and longest shadow span | **Idealized proxy, not Dar054 history:** Sun fraction `0.5`; nominal half-cycle shadow span `29.5 * 24 / 2 = 354 h`. The rounded 29.5-day phase cycle is a generic reference, not a computed maximum over 2020-2021 or a real terrain-shadow record. |
-| `window_continuous_sunlight_hours` | **Conditional flat-horizon estimate:** [NASA HLS-PAP-039, section 3.6](https://ntrs.nasa.gov/api/citations/20230014980/downloads/HLS-PAP-039%20HLS%20White%20Paper%20Non-Design.pdf) gives morning landings, ascent before noon and positive geometric solar elevations across the crew stays. With the explicitly assumed unobstructed local horizon, estimate the daylit run *inside the supplied window* as `(stop_utc - start_utc)/3600`. This is censored at both mission boundaries and is not the site's maximum attainable sunlight run, not a measured power-supply duration and not proof against local terrain/hardware occlusion. Values range from approximately 21.6 to 75.0 h. With `cap_to_window_duration: true`, the sunlight requirement is the smaller of the configured 156 h and this requested window duration; no dates or measurements are extended to force a pass. |
+| `window_continuous_sunlight_hours` | **Conditional flat-horizon estimate:** [NASA HLS-PAP-039, section 3.6](https://ntrs.nasa.gov/api/citations/20230014980/downloads/HLS-PAP-039%20HLS%20White%20Paper%20Non-Design.pdf) gives morning landings, ascent before noon and positive geometric solar elevations across the crew stays. With the explicitly assumed unobstructed local horizon, estimate the daylit run *inside the supplied window* as `(stop_utc - start_utc)/3600`. This is censored at both mission boundaries and is not the site's maximum attainable sunlight run, not a measured power-supply duration and not proof against local terrain/hardware occlusion. Values range from approximately 21.6 to 75.0 h. The active comparison retains this as context and has no universal sunlight-duration gate; no dates or measurements are extended to improve an assessment. |
 | Three phase-median thermal columns | **Mission-window thermal MODEL cohort, not observed Diviner phases:** use 17 equally spaced instants including landing and ascent. Each instant represents the spatial median of the same uniform flat reference patch. With JPL Sun elevation `e_k` and local albedo `A` from [NASA HLS-PAP-039 Rev A, table 3.6-1](https://ntrs.nasa.gov/api/citations/20230014980/downloads/HLS-PAP-039%20HLS%20White%20Paper%20Non-Design.pdf), calculate `T_k = [104^4 + (390^4 - 104^4) * (1-A) * max(0,sin(e_k))]^(1/4)` K (convert degrees to radians). Supply minimum/maximum/difference across these 17 modeled spatial medians. **Model assumptions:** the existing 390 K dark-equatorial upper anchor, 104 K floor and approximate optical-albedo-as-solar-reflectance treatment are retained. NASA generic temperature endpoints do not validate this response law. No conduction, thermal inertia, emissivity calibration, self-heating, real footprint or propagated uncertainty is included. Apollo uses a mission-window cohort; this is not a measured temperature history or a component operating limit. |
 | Radiation counters, spacecraft potential, LDEX current and NMS orbital helium | **Shared measured reference proxies**, not reconstructed Apollo conditions. No defensible mission/site-specific replacement was established for these instrument-specific quantities. Their repeated values are intentional reference assumptions and must not be counted as six independent historical observations. |
 | FUV irradiance | Use each mission's **NRLSSI2 historical reconstruction** from [LASP LISIRD](https://lasp.colorado.edu/lisird/data/nrl2_files/). Integrate all 65 complete 1-nm bins centred 115.5-179.5 nm, then take the median of the supported UTC daily band integrals whose dates overlap landing through ascent. Results are modeled daily 1-AU references, not Apollo instrument measurements or subdaily/local surface dose. Whole UTC days include portions outside the precise crew window. They are not cross-calibrated here against the modern SEE fixture cohort. |
@@ -61,7 +61,7 @@ Landing sources: [NASA landing table](https://www.nasa.gov/wp-content/uploads/st
 
 Earth-clearance geometry uses [JPL Horizons](https://ssd-api.jpl.nasa.gov/doc/horizons.html) airless apparent target-centre elevation and angular diameter at the actual landing coordinates and historical UTC windows. Full-disc clearance is `elevation_deg - angular_diameter_arcsec / 7200`. It supports only the stated unobstructed-horizon mission-window model, not local terrain clearance, actual DSN contact or an RF margin.
 
-These are **fully populated baseline scenarios, not a fully measured Apollo dataset**. Numeric completeness does not establish historical accuracy. The approximate map geometry, modern reference epochs and modeled mission-window thermal cohort are not like-for-like measured support. They permit all nine diagnostic domain scores to run, subject to the configured gates. The upper ground-temperature gate is a globally applied 390 K project surface-model envelope, consistent with the generic equatorial noon anchor. Historical NASA site selection is a positive calibration reference for intended operations, not a proof that these proxy rows are measured historical truth. This project envelope is not a component qualification limit or NASA-certified safety threshold, and there is no ID-based Apollo exemption.
+These are **fully populated baseline scenarios, not a fully measured Apollo dataset**. Numeric completeness does not establish historical accuracy. The approximate map geometry, modern reference epochs and modeled mission-window thermal cohort are not like-for-like measured support. They supply the retained environmental proxies for the two comparison scores. The 390 K value is a surface-model anchor, not an active temperature gate. Historical NASA site selection is a positive calibration reference for intended operations, not a proof that these proxy rows are measured historical truth. This project envelope is not a component qualification limit or NASA-certified safety threshold, and there is no ID-based Apollo exemption.
 
 
 Apollo mission-window geometry and thermal preparation:
@@ -103,7 +103,7 @@ Station-specific seismic source and preparation: [NASA PDS Apollo PSE archive](h
 | S15 | 1971-08-04, 1971-08-05, 1971-08-06 | 17.178313181 | 570816/572432; 558343/572432; 562639/572432 |
 | S16 | 1972-04-26, 1972-04-27, 1972-04-28 | 20.6313294233 | 570907/572436; 571340/572440; 571361/572436 |
 
-These small native-count samples are not directly comparable calibrated hazard levels. Instrument response, heating, archive clock support, telemetry gaps and ADC-endpoint samples can affect the statistic. StationXML assigns the same nominal peaked-mode sensitivity to the selected location-00/MHZ channels (3,579,160,000 counts per metre); this is NOT evidence that their nominal gains differ. Equal nominal response does not make these short raw-count samples a qualified structural demand or provide an adopted 15-count site-failure limit. In particular, S11's middle sample has substantial gaps. Preserve these limitations rather than treating a high count RMS as proof of an unsuitable site. The stored 15-count threshold is retained for configuration compatibility, but `seismic.hard_gates_enabled: false` disables that unsupported hard gate for **every row**. No source value is reduced and no Apollo ID is exempted. The nine domain definitions and their test-score aggregation are retained; raw-count scores are descriptive test proxies, not calibrated structural-risk rankings. Apollo 12 retains its broader, different historical cohort, so this is not a controlled cross-station experiment. The config's legacy S12 evidence-family label is a software grouping identifier, not sufficient row-level station provenance; use the actual station/source references here.
+These small native-count samples are not directly comparable calibrated hazard levels. Instrument response, heating, archive clock support, telemetry gaps and ADC-endpoint samples can affect the statistic. StationXML assigns the same nominal peaked-mode sensitivity to the selected location-00/MHZ channels (3,579,160,000 counts per metre); this is NOT evidence that their nominal gains differ. Equal nominal response does not make these short raw-count samples a qualified structural demand or provide an adopted 15-count site-failure limit. In particular, S11's middle sample has substantial gaps. Preserve these limitations rather than treating a high count RMS as proof of an unsuitable site. The active comparison has no 15-count hard gate or seismic score. Seismic inputs remain context only for **every row**. No source value is reduced and no Apollo ID is exempted. Apollo 12 retains its broader, different historical cohort, so this is not a controlled cross-station experiment. The config's legacy S12 evidence-family label is a software grouping identifier, not sufficient row-level station provenance; use the actual station/source references here.
 
 Native source receipts (relative to the PDS `continuous_waveform/` URL above; no external baseline file is loaded by the scorer):
 
@@ -154,7 +154,7 @@ Source-response SHA256 receipts (historical files may later be revised):
 
 Earth and Sun visibility are 1 in all six conditional flat-horizon mission-window cases; the regional long-cycle reference Sun fraction remains 0.5. Repeats follow the geometry rather than invented site differences. Shared radiation/dust/helium/voltage and the remaining Apollo 17 borrowed seismic reference are still unresolved limitations, **not independent site validation**. Different NASA landing sites do not imply every global reference or every clipped/plateau score must differ. The output layout does not carry per-cell provenance; consult this section before interpreting an Apollo row as measured ground truth.
 
-The [approximately 29.5-day phase cycle](https://science.nasa.gov/moon/moon-phases/) supports the regional 354 h half-cycle only as an idealized reference; it must not be described as a measured longest shadow run. The mission dates remain in use by the capped sunlight gate and are intentionally retained.
+The [approximately 29.5-day phase cycle](https://science.nasa.gov/moon/moon-phases/) supports the regional 354 h half-cycle only as an idealized reference; it must not be described as a measured longest shadow run. Mission dates retain the temporal support of the scenario and are required if a window-dependent gate is explicitly configured; they are intentionally retained.
 
 Local primary-report sources under `D:/projects/NASA Dataset/keep/` (physical PDF page numbers, not printed section-page numbers):
 
@@ -166,7 +166,7 @@ These references have the quantity and instrument limitations described above. O
 
 There is no separate domain-score input CSV. Domain scores are calculated by the pipeline; do not enter scores in place of physical measurements.
 
-[input_template.csv](sample_input.csv) has exactly the same input headers as `inputs/sites.csv`, with three clearly fictional examples: `dummy_example_pass`, `dummy_example_fail` and `dummy_example_unknown`. The failure supplies 155.99 h in a 192 h window; the Unknown example supplies sunlight duration but omits both dates. `start_utc` and `stop_utc` are retained because the adaptive sunlight gate requires them.
+[sample_input.csv](sample_input.csv) has the same input headers and scenario categories as `inputs/sites.csv`. It contains EDA-labelled, synthetic, dummy and Apollo control examples, not an independent measured-site catalogue. `start_utc` and `stop_utc` retain scenario support and enable optional window-dependent gates; neither is a basis for inferring missing environmental measurements.
 
 ## Where and how to obtain the input values
 
@@ -228,7 +228,22 @@ See [EDA notes](../EDA/EDA_Notes.md) and [research/source notes](../research/Res
 
 ### Where do thresholds and multipliers come from?
 
-They are **configuration decisions, not another downloadable measurement**. Use a justified applicable screening requirement for a hard threshold, documented utility reference bounds for a preference, and explicit project priorities for multipliers. An observed maximum is not automatically a safety limit. Validate sensitivity to multiplier choices; do not label project weights as NASA weights. The current `assumption_NASA_values` thresholds, preference directions/bounds and domain weights are explicitly project assumptions for testing, not sourced or adopted NASA safety requirements. Change them in `config.yml`; do not infer them from the fixture min/max.
+
+The deployment target is **NASA's planned south-polar lunar-base operations**, not the Soviet Luna missions. Base gates on applicable mission/crew/equipment requirements; use Apollo as historical reference under its own duration and hardware assumptions. Derive project weights from the intended deployment priorities, not from Apollo success or arbitrary fitting. Planned infrastructure is not an established operating-base baseline. Do not loosen long-duration requirements simply to make Apollo controls pass.
+
+| Configuration element | Basis |
+| --- | --- |
+| Hard gates | Applicable crew, equipment and mission requirements for the intended south-polar deployment; match units, duration and system assumptions. |
+| Scoring thresholds | Documented operating/survival ranges, or clearly labelled project assumptions. Observed Apollo ranges are not automatically preferred or safe. |
+| Weights | Deployment priorities: duration, power/storage, communications, protection and activities. The two scoring flows are Operations and Survival, not crewed/uncrewed profiles. Do not describe project percentages as NASA-approved weights. |
+| Apollo references | Historical measurements and operational lessons under Apollo-specific mission windows and hardware assumptions, not universal base acceptance limits. |
+| NASA south-polar base plans | Deployment objectives and relevant engineering scenarios. Distinguish plans, adopted requirements and demonstrated capabilities. |
+
+Define the deployment scenario before choosing limits or weights. Uncrewed hardware also needs survival limits. Do not substitute orbital radiation counters for crew dose, ground temperature for component temperature, or sunlight fraction for battery endurance. Unsupported requirements remain unresolved or explicit assumptions, not certified gates. The Operations/Survival split uses the comparison-only configuration below; its weights are project assumptions, not NASA deployment approval.
+
+Sources: [NASA Moon Base overview](https://www.nasa.gov/moon-base-frequently-asked-questions/), [NASA human-spaceflight standards](https://www.nasa.gov/ochmo/human-spaceflight-and-aviation-standards/), and [NASA uncrewed surface-operations study](https://ntrs.nasa.gov/citations/20220004927). These support the context and requirement families, not the pipeline's numerical weights.
+
+They are **configuration decisions, not another downloadable measurement**. Use a justified applicable screening requirement for a hard threshold, documented utility reference bounds for a preference, and explicit project priorities for multipliers. An observed maximum is not automatically a safety limit. Validate sensitivity to multiplier choices; do not label project weights as NASA weights. The active numerical policy combines sourced reference scales with explicitly assumed preference directions and flow weights; unsupported mission hard gates are disabled, not replaced by assumed NASA limits. Change them in `config.yml`; do not infer them from the fixture min/max.
 
 ## Run
 
@@ -238,219 +253,151 @@ From the repository root:
 python "darrel stuff/env_pipeline/env_pipeline.py" --output "darrel stuff/env_pipeline/outputs/results.csv" --overwrite
 ```
 
-`inputs/sites.csv` is selected by default. The optional `--input` flag selects one replacement CSV, not additional input files. `config.yml` is configuration, not a second site-input CSV. Existing output files are protected; add `--overwrite` only when you want to replace the selected output.
+`inputs/sites.csv` remains the single default input. `--input` selects one replacement CSV. No input values, headers, IDs or dates are changed by scoring. Every row runs through both Operations and Survival. Each flow has one weight map in `assessments.<flow>.weights`; there is no crewed/uncrewed selector or `--profile` option. Both scores remain experimental comparisons, not qualified crew/equipment survival assessments.
+
+`--detailed` adds each assessment's measurement utilities, omitted inputs, domain contributions, gate details and configuration hash in JSON cells. `--compact` is the default. Output files are protected unless `--overwrite` is supplied. The script needs Python 3.10+ and PyYAML; it does not import the EDA or legacy files at runtime.
 
 ## Simple output
 
-The command-line default writes only enabled domain columns. With all ten domains enabled, it writes **14 columns**:
+One row per input site, in one CSV:
 
 ```text
-ID, radiation, thermal, solar_illumination, dust, plasma_charging,
-uv, seismic, exosphere, communications_geometry, soil_score,
-hard_gate_status, Fail Reason, final_habitability_score
+ID,
+operations_solar_illumination_score, operations_dust_score,
+operations_communications_geometry_score, operations_soil_score,
+survival_radiation_score, survival_thermal_score,
+survival_plasma_charging_score, survival_uv_score,
+operations_status, survival_status,
+operations_fail_reason, survival_fail_reason,
+operations_score, survival_score
 ```
 
-`final_habitability_score` is always the final column. Domain and habitability scores
-are on 0-100 and displayed to two decimal places (internal calculations retain
-full precision). `Fail Reason` lists blocking gates with actual values, required
-YAML limits and units, or explains missing required evidence/configuration. It is
-blank when a final score is available; omitted measurements in available-data mode
-are not themselves failures. Detailed export includes the same column alongside
-the existing audit reasons. A final score
-remains blank when an evaluated mandatory gate fails/is unknown or configuration
-is incomplete. In available-data mode, blank measurements are omitted rather than
-zero-filled; see the mode/toggles below.
+Domain columns follow the scorer's domain order within each assessment. Both total scores are 0-100; higher means more favourable under the stated comparison policy. There is **no combined habitability score**. Prefixes keep separate rules unambiguous if a domain is allocated to both assessments. Displayed scores use two decimals; calculation uses unrounded values.
 
-The final score is the weighted mean of the included,
-available domain scores, not a sum or an extra hard-gate penalty. It uses unrounded
-domain scores, so weighting the displayed two-decimal values can differ slightly.
-Priority labels do not change weights; `multiplier` does. Turning off a domain's
-hard gates does not remove its score: communications still contributes while
-`enabled: true` and `include_in_score: true`, even when `hard_gates_enabled: false`.
+Each status is **Pass, Fail or Unknown**:
 
-For full audit details, explicitly request `--detailed`:
+- **Pass:** the configured comparison can be scored and any enabled, evaluated gates pass. With the default gate-free policy this means calculable comparison, **not safe deployment**.
+- **Fail:** an enabled gate has a known failure. That assessment's total is blank; the other assessment is unaffected.
+- **Unknown:** missing required evidence/configuration or no usable scoring data prevents the assessment. Domain diagnostics can still be shown.
 
-```powershell
-python "darrel stuff/env_pipeline/env_pipeline.py" --output "darrel stuff/env_pipeline/outputs/results.csv" --detailed --overwrite
-```
-
-This still writes only the selected output CSV; it does not generate a duplicate.
-`--compact` remains accepted as an explicit synonym for the simple default.
-The Python `run()` API keeps its existing detailed default for compatibility;
-pass `compact=True` to request the simple export directly.
+The scores are environmental comparisons, not operational approval. Coverage is omitted from the simple output. Optional detailed output retains the supplied/selected score-metric count; it is not a confidence percentage. A low preference score is not an automatic gate failure, and a good Operations result cannot override a Survival gate.
 
 ## Pipeline flow (matching the code)
 
-```text
-config.yml + inputs/sites.csv
-              |
-              v
-Validate configuration and input rows
-              |
-              v
-For each site, evaluate measurements:
-  - Hard gates: Passed / Failed / Unknown
-  - Soft preferences: normalized utilities, 0-1
-  - Context-only values: retained, not scored
-              |
-              v
-Calculate enabled diagnostic domain scores, 0-100
-              |
-              v
-Calculate comparison_preference_score from the mode-selected available domains
-              |
-              v
-Check final eligibility:
-  - Any mandatory failure -> no final score/rank
-  - Any evaluated unknown gate or unconfigured selected score/weight -> no final score/rank
-  - Enabled evaluated gates pass and mode-selected scoring is complete -> final score
-              |
-              v
-Rank eligible sites within the same requested UTC window
-              |
-              v
-Write one results CSV (full or --compact)
-```
+1. Read the one YAML, reject duplicate/unknown keys, and validate its shared input registry, flow weights and independent assessment rules.
+2. Read one CSV; validate IDs, paired UTC dates, registered headers, finite numbers and configured physical data bounds. Blank is not zero.
+3. Compose the two flows, Operations and Survival, independently from shared metric definitions, each flow's weights and per-assessment overrides.
+4. Allocate domains using each flow's own weight map. Unallocated domains cannot contribute scores or gates to that assessment.
+5. Normalize scoring measurements to 0-1 with the configured preference and optional curve. Form each domain score as a weighted mean times 100.
+6. Apply each assessment's enabled gates independently. Known failure dominates Unknown; missing-data mode determines how blanks are handled.
+7. Form each eligible total: `sum(domain_score * domain_weight) / sum(included_domain_weights)`.
+8. Export the two scores and separate statuses/reasons in one row; coverage is available only in detailed output. There is no cross-score averaging or NASA-label/Apollo-ID exemption.
 
-| Code entry point | Responsibility |
-| --- | --- |
-| `main()` | Select the single input, config, output path and export options. |
-| `run()` | Load config/input, call the evaluator and write the results CSV. |
-| `load_config()` / `validate_config()` | Validate settings and hash the YAML used. |
-| `read_csv()` | Validate IDs, numeric inputs, declared physical bounds and optional UTC pairs. |
-| `assess()` | Evaluate each site, calculate domain/aggregate scores, qualify final scores and assign ranks. |
-| `hard_check()` / `gate_margin()` | Evaluate inclusive mandatory comparisons and signed distances from their limits. |
-| `utility()` | Normalize the soft preference and apply its configured utility curve. |
+Schema 1 is supported for archived single-score configurations. `legacy_3` preserves the previous engine and policy; it is not read by the active pipeline. The active schema is 2.
 
-Hard gates and preferences are evaluated inside the same per-site/domain loop.
-**Gate-first eligibility** means a failed/unknown gate blocks the final recommendation;
-it does not prevent diagnostic domain scores from being calculated.
+## Domain allocation and weights
 
-```text
-domain_score = 100 * sum(metric_weight * utility) / sum(metric_weights)
-comparison_preference_score = sum(domain_weight * domain_score) / sum(domain_weights)
-final_recommendation_score = comparison_preference_score only when eligible
-```
+| Domain | Operations weight | Survival weight |
+| --- | ---: | ---: |
+| Solar illumination | 40% | - |
+| Communications geometry | 35% | - |
+| Dust reference | 15% | - |
+| Soil reference | 10% | - |
+| Radiation proxy | - | 40% |
+| Thermal variation | - | 35% |
+| Plasma-charging proxy | - | 15% |
+| UV proxy | - | 10% |
+| **Total** | **100%** | **100%** |
 
-The aggregate uses the configured relative weights of domains actually included
-for that row. Available-data mode explicitly renormalizes around missing
-measurements; strict mode withholds the aggregate instead. The detailed output
-records the actual per-row `score_scope`, coverage and normalized contributions.
-`final_habitability_score` and `final_recommendation_score` receive the same eligible value.
-Final ranks sort scores descending; equal scores use assessment ID as the tie-break.
-Undated assessments form a separate group from dated ones, and input row order is
-preserved in the output. `--compact` changes only the exported columns to ID plus
-domain scores, gate status and the final habitability score, not the calculations or gate decisions.
+Seismic and exosphere remain context only and contribute to neither total. A dash means unallocated, not a zero-valued measurement. Both flows process every input row; no input or hidden setting labels it crewed or uncrewed.
 
-## Pipeline mode and independent domain toggles
+Operations weights emphasize solar-power opportunities and direct-Earth visibility, with smaller experimental dust/soil-reference contributions. Survival weights emphasize radiation and thermal conditions, with charging and UV contributions. These are **project priorities**, not NASA-issued percentages or demonstrated equipment/crew survival limits. Each flow totals 100, but only relative multipliers matter. Available-data mode renormalizes the weights when contributions are missing or disabled.
 
-Current settings in `config.yml`:
+Edit the two independent maps in the single `config.yml`:
 
 ```yaml
-pipeline_mode: available_data  # strict | available_data
-
-domains:
-  communications_geometry:
-    enabled: true
-    include_in_score: true
-    hard_gates_enabled: false
+assessments:
+  operations:
+    weights:
+      solar_illumination: 40
+      communications_geometry: 35
+      dust: 15
+      soil: 10
+  survival:
+    weights:
+      radiation: 40
+      thermal: 35
+      plasma_charging: 15
+      uv: 10
 ```
 
-| Setting | Meaning |
-| --- | --- |
-| `enabled: false` | Disable the entire domain: no measurement evaluation, scores, weights or gates. Its simple-output column is omitted. |
-| `include_in_score: false` | Exclude the domain from the aggregate, while leaving its enabled hard gates active. Diagnostic scores may still be shown. |
-| `hard_gates_enabled: false` | Turn off only this domain's hard checks. Supplied scoring inputs still contribute when included. Gate-only measurements are ignored. |
-| `pipeline_mode: strict` | A missing selected measurement blocks its domain/final score; missing required gate evidence is Unknown. |
-| `pipeline_mode: available_data` | Omit blank measurements and renormalize metric/domain weights per row. Missing-only domains stay blank, but do not block otherwise supported final scoring. |
+Retain each flow's `domain_overrides` and `metric_overrides` when editing. Omitting a domain from a flow's weight map removes its score and gates there. Shared metric definitions live under `domains`. Overlap is supported but not enabled by default; allocate a domain to both maps and use `assessments.<flow>.metric_overrides` for genuinely different rules. Do not duplicate a proxy merely to increase its influence.
 
-**Comms is currently enabled for scoring, with its hard gate off.** If two rows
-have Earth-visibility data, comms contributes to those two. If a third has no
-Earth-visibility data, its comms score stays blank and the aggregate uses its
-other available domains. Missing/negative link-margin values do not block any
-row while comms hard gates are off. Re-enable `hard_gates_enabled` to apply them.
+## Reference ranges and input roles
 
-In available-data mode, a missing measurement for an otherwise configured active
-gate is recorded as `Skipped_missing`, not as a physical pass. Supplied values
-are still checked against all enabled YAML hard gates. A known failure still
-blocks the final score. Unconfigured limits/weights/preferences and missing
-required dates for **supplied** measurements are not excused by this mode.
+Numbers below are **scoring scales or data-validity bounds**, not certified mission operating/survival limits. Reference scales use actual source EDA, never the sample CSV distribution. Source paths, series, counts and SHA256 pins for the orbital references are recorded as comments in `config.yml`; the numbers are frozen at runtime.
 
-If every selected gate lacks data, eligibility stays Unknown. If all hard gates
-are intentionally toggled off, available-data mode permits a preference-only
-score when at least one complete included domain is available. A row with no
-scoring data never receives an invented zero or final rank.
+| Input field(s) | Operations use | Survival use | Numeric basis / interpretation |
+| --- | --- | --- | --- |
+| `median_sun_visibility_fraction` | Higher preference | Not included | 0-1 maps to 0-100; the direction favours solar-power opportunity, not actual generated energy. |
+| `median_earth_visibility_fraction` | Higher preference | Not included | 0-1 maps to 0-100; geometry is not an RF link or relay assessment. |
+| `historical_median_dust_detector_current_charges_per_second` | Continuous reference resemblance | Not included | 100 only at the observed median, 38,230 elementary charges/s. Declines linearly to zero at p05=14,332.5 and p95=100,711.25; values beyond these anchors remain zero. Dar_048 LDEX_CURRENT, 166 daily medians. These anchors describe reference distance, not harmful-current limits. Signed current is not local deposition, abrasion or maintenance demand; preferring resemblance to the median is an experimental project assumption. |
+| `soil_mean_grain_size_um` | Reference-band resemblance | Not included | 100 at 53.01-91.5975 um; zero at 14.4225 and 130.185. |
+| `soil_maturity_is_feo` | Reference-band resemblance | Not included | 100 at 42.6225-72.47 Is/FeO; zero at 12.775 and 102.3175. |
+| `soil_agglutinates_percent` | Reference-band resemblance | Not included | 100 at 35.351-40.058%; zero at 30.644 and 44.765%. Preserve source modal basis. |
+| `soil_feo_wt_percent` | Reference-band resemblance | Not included | 100 at 6.4375-15.71 wt%; zero at -2.835 and 24.9825. Negative scoring anchors are extrapolated coordinates, not valid chemical measurements; input must be 0-100 wt%. |
+| `orbital_radiation_counter_median` | Not included | Lower proxy preference | 24-104.5 counts/SEC maps to 100-0. Dar_049 selected-state CRaTER daily medians, n=1,091, p05/p95. Not crew dose or electronics radiation tolerance. |
+| `phase_median_temperature_range_kelvin` | Not included | Lower variation preference | 0-300 K span maps to 100-0. Retained project comparison scale, not a fitted hardware limit. NASA/Diviner's roughly 400 K equatorial day versus below 100 K night illustrates the contrast; it does not define a south-polar safe interval. |
+| `median_spacecraft_electric_potential_volts` | Not included | Zero-centred proxy preference | 100 at 0 V; declines linearly to zero at +/-32.918969440460 V. Scale is Dar_046 p95(abs(daily median)), selected ESA_v01_thb_peif_sc_pot series, n=1,140. Choosing zero as preferred is a project assumption, not an arcing threshold or surface-voltage inference. |
+| `median_solar_far_uv_irradiance_w_m2` | Not included | Lower proxy preference | 0.021529459636-0.026638514010 W/m2 maps to 100-0. Dar_045 SEE_v012_FUV_115_180 daily band integrals, n=1,206, p05/p95. Not surface dose or a material/crew exposure limit. |
+| `lowest_phase_median_temperature_kelvin`, `highest_phase_median_temperature_kelvin` | Context | Context | Nonnegative K. No universal 40/390 K gate: surface temperature is not component temperature. |
+| `orbital_radiation_counter_maximum` | Context | Context | Nonnegative native counts. No universal 7,500-count gate. |
+| `median_spacecraft_ion_density_per_cm3`, `median_spacecraft_electron_density_per_cm3` | Context | Context | Nonnegative native density; no universal preferred/safe density interval. |
+| `median_visible_sky_fraction`, `permanently_shadowed_cell_fraction`, `regional_reference_sun_visibility_fraction` | Context | Context | Fractions 0-1. Sky openness is not radiation dose; shadow fraction is not energy autonomy. |
+| `regional_reference_longest_shadow_sample_span_hours`, `window_continuous_sunlight_hours` | Context | Context | Nonnegative hours. Regional sampled shadow and mission-window sunlight are different quantities; neither is a battery requirement. No universal 156-hour sunlight gate. |
+| `window_minimum_link_margin_db` | Context unless an applicable gate is configured | Context | Signed dB. Zero is the zero-margin boundary by definition, not a universal required engineering reserve. No default gate. |
+| `historical_median_vertical_seismic_rms_counts` | Context only | Context only | Nonnegative native counts, not response-qualified candidate-site structural demand. |
+| `historical_median_orbital_helium_density_per_cm3` | Context only | Context only | Nonnegative native density; no demonstrated habitability or survival threshold. |
 
-Missing mode/toggle settings preserve compatibility: `strict`, `enabled: true`
-and `hard_gates_enabled: true`. Input columns do not need to change when toggling.
-The same settings work for every domain. Detailed output records the mode, skipped
-checks, actual score scope, coverage and normalized contributions. Simple output
-keeps only ID, enabled domain scores, gate status, `Fail Reason` and the final score.
+Dust has no flat 100-point interval. A zero dust score means outside the selected central reference interval, not a failed physical safety requirement; negative background-subtracted values must not be reinterpreted as negative dust burden. Shared Apollo inputs equal to the reference median still legitimately receive the same 100-point resemblance score. No input, weight, gate or other domain rule is changed by this definition.
 
-**Available-data scores may use different factors across rows.** Inspect the
-scope/coverage in `--detailed` before treating them as like-for-like site comparisons.
-This is an explicit test/comparison policy, not evidence of operational safety.
+All four soil metrics have multiplier 1; a complete soil score is their arithmetic mean. Their preferred bands are p05/p95 of rounded Apollo mission means from Dar_057. Scores fall to zero one band-width outside, with physical percentage validation retained. This is reference resemblance, not mechanical stability. Apollo mission means are historical-reference controls; missing Apollo 11/12/15 agglutinates retain the declared cross-mission estimate. Randomized EDA/synthetic/dummy inputs remain scenarios, not observations. Differences in mission window, method, epoch and support prevent interpreting these totals as like-for-like deployment certification.
 
-## Scoring behavior
+## Evidence supporting the configuration
 
-The ten domains are radiation, thermal, solar illumination, dust, plasma/charging, UV, seismic, exosphere, communications geometry and experimental soil.
+- [NASA LOLA polar illumination products](https://pgda.gsfc.nasa.gov/products/69) supply long-period Sun/Earth geometry, and warn that shorter periods and radio-link geometry require further analysis. They do not prescribe visibility pass percentages.
+- [NASA Lunar Surface Data Book, section 6.3 and Appendix E](https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf) discusses approximately 150 hours of darkness for particular south-polar cases. That is a scenario demand, not a universal capability requirement or permission to equate regional sampled shadows to battery autonomy.
+- [NASA's published VIPER operations description](https://science.nasa.gov/mission/viper/lunar-operations/) describes a 50-hour continuous-darkness limit for that rover concept. It must not be transplanted to every base or Apollo scenario.
+- [NASA NESC lunar environment study, section 7.4](https://ntrs.nasa.gov/api/citations/20220017053/downloads/20220017053.pdf) describes surface conditions from roughly 18 K to above 400 K and thermal-control challenges. These environmental conditions are not system operating/survival limits. [Diviner thermal observations](https://www.diviner.ucla.edu/science) provide equatorial reference context for the retained span scale.
+- [NASA/PDS LDEX documentation](https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/LADEE/ldex.html) identifies an orbital impact-ionization/current measurement, not a direct surface-wear criterion.
+- [NASA cis-lunar charging study](https://ntrs.nasa.gov/api/citations/20200001582/downloads/20200001582.pdf) distinguishes spacecraft and lunar-surface potentials. This prevents interpreting the current input as surface discharge risk.
+- [NASA crew-health standards](https://www.nasa.gov/ochmo/human-spaceflight-and-aviation-standards/) and [radiation guidance](https://srag.jsc.nasa.gov/SpaceRadiation/FAQ/FAQ.cfm) address applicable crew requirements and dose quantities. Raw instrument counters are not interchangeable with those quantities; these scores do not model crew protection or life support.
 
-The solar gate uses an opt-in `cap_to_window_duration: true`: effective threshold = `min(configured threshold, (stop_utc - start_utc) in hours)`. Thus a short visit must have modeled continuous sunlight for its entire requested window; a window of 156 h or longer still requires 156 h. This is an explicit project policy for comparing different mission durations, not a newly sourced universal NASA rule. Missing dates remain Unknown for a supplied duration; missing limits are not defaulted. A supplied sunlight duration beyond the window is rejected. Detailed gate audit records both configured and effective thresholds.
+Where a compatible threshold cannot be established, it is explicitly absent. No source here supplies this project's weight percentages. These references support the measurement meanings, reference environments and limitations, not every assumed scoring direction.
 
-Apollo source selection prioritizes relevant measured references, then traceable derivations, then explicitly conditional models/test assumptions?not the highest numerical result.
+## Pipeline mode and independent assessment toggles
 
-**Evidence-first baseline acceptance policy:** NASA's historical site selection is a positive-case reference for each mission's intended operations. It is not a measurement of every CSV quantity, a guarantee of a score of 100, or proof that a proxy feature vector is historical ground truth. Genuine equal/close observations and declared shared backgrounds are preserved. No random jitter, arbitrary site multipliers, quiet-day cherry-picking or Apollo-ID-based gate exemption is permitted. Selected sites are not a ground-truth negative label for other sites NASA did not select.
+- `pipeline_mode: available_data`: omit blank scoring measurements and renormalize remaining metric/domain weights. Supplied measurements still face any enabled applicable gate. A missing gate measurement is skipped under the inherited available-data policy, not a physical pass.
+- `pipeline_mode: strict`: require all selected score metrics; a missing one withholds only its assessment's total. Missing enabled gate evidence remains Unknown. A complete gate-free comparison can still be scored.
+- `domains.<domain>.enabled: false`: disable the domain by default in both assessments. An explicit per-assessment `domain_overrides.<domain>.enabled` can override that shared default for its assessment; enabled inputs still undergo physical validation.
+- `include_in_score: false`: omit its contribution, without automatically disabling its gates. `hard_gates_enabled: false`: disable gates without disabling scores. Each flow's weights control allocation, not source measurements.
+- All unsupported hard gates are **off by default**, with no hidden fallback gates. Pass therefore refers to comparison-policy evaluation, not readiness for crew or hardware survival.
 
-| Evidence family | Independent source / derivation | What it does not establish |
-| --- | --- | --- |
-| Mission dates/site identity | NASA flight summaries and event timelines, cross-checked against the later HLS compilation | A second NASA page quoting the same flight record is corroboration, not an independent measurement. |
-| FUV | LASP NRLSSI2 reconstruction, complete 115-180 nm daily bins for the individual mission dates | Model estimates, not Apollo UV measurements or protected dose. Shared model biases remain. |
-| Upstream plasma context | NASA OMNI hourly spacecraft records; actual per-mission support is tabulated above | Near-Earth coverage is not local lunar plasma. Derived electron values are not independent electron observations. Apollo 15 remains a declared borrowed reference. |
-| Geometry/thermal | NASA landing coordinates, source-reported local albedo and conditional flat-horizon/phase models | A common model is not six independent direct observations. Thermal/solar/model-derived quantities can share evidence dependencies. |
-| Seismic | PDS station-specific native waveform products for S11/S14/S15/S16, plus the existing S12 archive statistic | Different epochs, short samples and raw counts do not supply response-qualified structural demand. Apollo 17 still has a borrowed reference. |
-| Other shared reference quantities | Declared CRaTER, LDEX, LADEE and spacecraft-potential references | Repeating a reference in six rows does not produce six independent historic site measurements. |
+For a genuinely applicable Operations link-margin check, the supported structure is:
 
-Gate applicability is reviewed separately from data completeness. The raw seismic cutoff is disabled globally because [Dar053 SE-H01](../data/processed/analysis/subject_seismic/20261110T183033924956Z_ba610a/stage4_seismic_proposals.csv) requires qualified local demand, response and applicable structural tolerance. [PDS archive documentation](https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-apollo_pse/readme.txt) and [StationXML](https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-apollo_pse/data/xa/metadata/) describe source modes/timing/response; the archive supplies no adopted universal 15-count failure threshold. The stored gate can be re-enabled explicitly, but is not qualified merely by doing so. Other existing test thresholds are retained, not newly validated as NASA requirements.
+```yaml
+assessments:
+  operations:
+    domain_overrides:
+      communications_geometry:
+        hard_gates_enabled: true
+    metric_overrides:
+      window_minimum_link_margin_db:
+        role: gate
+        hard_gate:
+          operator: above_threshold
+          threshold: 0.0
+          rationale: Adopt only if this zero-margin criterion applies to the declared link budget.
+```
 
-This is a **traceable evidence/proxy baseline for software calibration**, not six complete measured nine-domain Apollo datasets. Testing the same reference/model assumptions that generated these rows is a consistency check, not independent predictive validation. The remaining shared references, nominal RF assumption and conditional model limitations are deliberately visible rather than concealed by manufactured diversity.
- All Apollo input cells are populated for a nine-domain **proxy/test baseline**. The field-level provenance above distinguishes actual dates/site reference data from borrowed references and assumptions. This is not nine-domain historical validation or proof that the sites meet the configured requirements.
-
-The active `config.yml` policy is **`assumption_NASA_values`**: project assumptions for testing NASA-site scenarios, **not official NASA values or safety limits**. All ten domain definitions retain complete preference bounds and the project domain weights listed below; all ten are currently enabled, with comms, seismic and soil hard gates disabled. The original nine domains each use one score-bearing metric; soil uses four equally weighted, potentially related descriptors as an explicit experimental exception. Other fields are either gate-only or context-only. These fictional mappings must not be used to interpret orbital/reference quantities as local hazard, dose, surface charging or real habitability.
-
-| Domain | Relative weight |
-| --- | ---: |
-| Radiation | 20 |
-| Thermal | 10 |
-| Solar illumination | 20 |
-| Communications geometry | 15 |
-| Dust | 10 |
-| Plasma / charging | 5 |
-| UV | 5 |
-| Seismic | 3 |
-| Exosphere | 2 |
-| Soil (experimental) | 10 |
-
-Weights are project priorities, not NASA-approved percentages. The aggregate divides by the sum of included weights; they need not total 100. Available-data mode renormalizes around omitted measurements. Change domain-level `multiplier` values in `config.yml`; metric multipliers control weighting within each domain.
-
-| Domain | Test soft preference (utility bounds) | Assumed hard gate |
-| --- | --- | --- |
-| Radiation | Lower orbital counter median, 24-104.5 counts/SEC record (reference scale) | Counter maximum <=7500 counts/SEC record |
-| Thermal | Lower phase-median temperature span, 0-300 K | Lowest phase median >=40 K; highest <=390 K (project surface-model envelope, not component safety) |
-| Solar illumination | Higher median Sun visibility, 0-1 | Continuous sunlight >= min(156 h, requested window duration), with `cap_to_window_duration: true` |
-| Dust | Signed detector current: outer bounds -1000 to 60000 charges/s; preferred plateau 0-10000 | Current between -1000 and 55000 charges/s |
-| Plasma / charging | Spacecraft potential: outer bounds -20 to 15 V; preferred plateau -5 to 5 | Potential between -15 and 10 V |
-| UV | Lower FUV irradiance, 0-0.055 W/m2 (project-policy scale) | Irradiance <=0.055 W/m2 |
-| Seismic | Lower historical raw RMS, 0.347193913546-24.850591805123 counts (descriptive test scale) | Hard gate disabled globally; stored 15-count cutoff is not an adopted structural criterion |
-| Exosphere | Helium abundance: outer bounds 0-20000 P/Cc; preferred plateau 1000-10000 | Abundance <=16000 P/Cc |
-| Communications geometry | Higher median Earth visibility, 0-1 | Candidate-window minimum link margin >=0 dB |
-
-Every bound, direction, plateau and gate above is an **assumption for exercising software**, not a NASA-certified environmental response. Equality passes. The sunlight gate requires the supplied UTC pair. The link gate also requires it when that gate is enabled. Final score is the weighted average of the mode-selected included domain scores after enabled gate eligibility is met; otherwise it stays blank. Domain diagnostics can still be shown when final eligibility is blocked.
-
-- Known active-gate failure dominates Unknown. Failed or evaluated Unknown checks prevent final scores/ranks; `Skipped_missing` is not counted as a pass.
-- Missing values are never zero-filled. Available-data mode explicitly omits them and renormalizes weights; strict mode does not.
-- Higher/lower/target-range preferences normalize measurements; optional utility curves act after normalization.
-- Domain scores are weighted metric utilities on 0-100. Final scoring requires mode-selected available domains and enabled gate eligibility.
-- `comparison_preference_score` is diagnostic, not an operational approval or replacement for the final score.
-- Simple output shows diagnostic domain scores, gate status, `Fail Reason` and the gate-qualified habitability score.
-
-The script remains standalone: Python 3.10+, PyYAML, the selected YAML and one input CSV. It does not read source datasets, preparation scripts, notebooks or provenance sidecars at runtime.
+This is a configuration example, **not an adopted default mission requirement**. Retain the other assessment and settings when editing. Qualified programs may require a positive reserve instead. Overlapping domains can similarly override `preference` independently; units, source identity and input meaning cannot be silently changed. Numeric preferences and gate limits are separate: never use a good Operations score to compensate for a failed Survival condition.

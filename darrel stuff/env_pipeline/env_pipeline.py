@@ -1,11 +1,12 @@
-"""Standalone Moon CSV scorer. assumption_NASA_values is a fictional test policy,
-not official NASA values or a qualified operational habitability assessment.
-Runtime inputs: one CSV and YAML configuration only.
+"""Standalone Moon Operations/Survival environmental comparison scorer.
+One CSV and one YAML; comparison scores are not qualified mission survival.
+Schema 1 remains supported for archived single-score configurations.
 """
 from __future__ import annotations
 
 import argparse
 import csv
+from copy import deepcopy
 from datetime import datetime, timezone
 import hashlib
 import io
@@ -36,6 +37,7 @@ OUTPUT_COLUMN_NAMES = {
     "config_sha256": "configuration_file_hash",
     "fail_reason": "Fail Reason",
 }
+ASSESSMENTS = ("operations", "survival")
 
 
 def finite(value, label, *, config=False):
@@ -104,6 +106,9 @@ def gate_operator(gate):
 
 
 def validate_config(config):
+    if isinstance(config, dict) and config.get("schema") == 2:
+        validate_dual_config(config)
+        return
     keys(config, {"schema", "body", "name", "pipeline_mode", "metadata_columns", "comparison_group_columns", "domains"}, "config")
     if config.get("pipeline_mode", "strict") not in ("strict", "available_data"):
         raise ValueError("pipeline_mode must be strict or available_data")
@@ -219,6 +224,16 @@ def read_csv(path, config):
     metrics = {m["column"]: m for d in config["domains"].values() for m in d["metrics"]}
     active_columns = {m["column"] for d in config["domains"].values() if d.get("enabled", True)
                       for m in d["metrics"] if m["role"] != "gate" or d.get("hard_gates_enabled", True)}
+    if config.get("schema") == 2:
+        effective = [assessment_config(config, a) for a in ASSESSMENTS]
+        active_columns = {m["column"] for rules in effective for d in rules["domains"].values()
+                          if d.get("enabled", True) for m in d["metrics"]
+                          if m["role"] != "gate" or d.get("hard_gates_enabled", True)}
+        allocated = set().union(*(config["assessments"][a]["weights"] for a in ASSESSMENTS))
+        # Unallocated measurements remain context. Explicitly disabled allocated
+        # domains stay disabled, but an assessment-specific re-enable is validated.
+        active_columns |= {m["column"] for name, d in config["domains"].items()
+                           if name not in allocated and d.get("enabled", True) for m in d["metrics"]}
     with Path(path).open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
         if "ID" in (reader.fieldnames or []) and "id" not in reader.fieldnames:
@@ -362,7 +377,7 @@ def gate_failure_reason(gate):
     return f"{label} = {gate['value']} {gate['unit']}; required {required} {gate['unit']}"
 
 
-def assess(rows, config, config_hash):
+def _assess_single(rows, config, config_hash):
     validate_config(config)
     available_data = config.get("pipeline_mode", "strict") == "available_data"
     results = []
@@ -523,6 +538,112 @@ def assess(rows, config, config_hash):
     return results
 
 
+def assessment_config(config, assessment):
+    """Compose independent schema-1 rules from shared inputs; never mutate YAML."""
+    settings = config["assessments"][assessment]
+    weights = settings["weights"]
+    result = deepcopy({key: config[key] for key in (
+        "body", "name", "pipeline_mode", "domains", "metadata_columns",
+        "comparison_group_columns") if key in config})
+    result.update(schema=1, name=f"{config['name']}:{assessment}")
+    for name, domain in result["domains"].items():
+        # Allocation comes from this flow's weight map. Unallocated domains
+        # remain accepted input context but cannot score or gate this assessment.
+        if name not in weights:
+            domain.update(enabled=False, include_in_score=False, hard_gates_enabled=False)
+            continue
+        domain["multiplier"] = weights[name]
+        domain.update(settings.get("domain_overrides", {}).get(name, {}))
+        for metric in domain["metrics"]:
+            metric.update(deepcopy(settings.get("metric_overrides", {}).get(metric["column"], {})))
+    return result
+
+
+def validate_dual_config(config):
+    keys(config, {"schema", "body", "name", "pipeline_mode", "metadata_columns",
+                  "comparison_group_columns", "domains", "assessments"}, "dual config")
+    if type(config.get("schema")) is not int or config.get("body") != "Moon":
+        raise ValueError("Expected schema: 2 and body: Moon")
+    # Validate the shared measurement registry with the existing schema contract.
+    base = {key: value for key, value in config.items() if key != "assessments"}
+    validate_config({**base, "schema": 1})
+    assessments = config.get("assessments")
+    if not isinstance(assessments, dict) or set(assessments) != set(ASSESSMENTS):
+        raise ValueError("Declare exactly operations and survival assessments")
+    domains = config["domains"]
+    owners = {metric["column"]: name for name, domain in domains.items() for metric in domain["metrics"]}
+    for name, settings in assessments.items():
+        keys(settings, {"weights", "domain_overrides", "metric_overrides"}, name)
+        weights = settings.get("weights")
+        if not isinstance(weights, dict) or not weights or set(weights) - set(domains):
+            raise ValueError(f"{name}: nonempty weights must name declared domains")
+        for domain, weight in weights.items():
+            positive(weight, f"{name}.weights.{domain}")
+        overrides = settings.get("domain_overrides", {})
+        if not isinstance(overrides, dict) or set(overrides) - set(weights):
+            raise ValueError(f"{name}: domain overrides must be allocated in this flow")
+        for domain, override in overrides.items():
+            keys(override, {"enabled", "hard_gates_enabled", "include_in_score", "priority"},
+                 f"{name}.{domain}")
+        overrides = settings.get("metric_overrides", {})
+        if not isinstance(overrides, dict) or set(overrides) - set(owners):
+            raise ValueError(f"{name}: metric overrides must name registered input columns")
+        for column, override in overrides.items():
+            if owners[column] not in weights:
+                raise ValueError(f"{name}.{column}: override would be unused")
+            keys(override, {"role", "preference", "hard_gate", "multiplier", "meaning"},
+                 f"{name}.{column}")
+        validate_config(assessment_config(config, name))
+    if set(config.get("metadata_columns", [])) & set(dual_columns(config, compact=False)):
+        raise ValueError("metadata_columns cannot shadow dual output fields")
+
+
+def assess(rows, config, config_hash):
+    if config.get("schema") != 2:
+        return _assess_single(rows, config, config_hash)
+    validate_config(config)
+    results = [{"id": row["id"]} for row in rows]
+    for name in ASSESSMENTS:
+        rules = assessment_config(config, name)
+        records = _assess_single(rows, rules, config_hash)
+        selected_gates = any(d.get("enabled", True) and d.get("hard_gates_enabled", True)
+                             and any(m.get("hard_gate") is not None for m in d["metrics"])
+                             for d in rules["domains"].values())
+        for result, record in zip(results, records):
+            score = record["final_habitability_score"]
+            state = record["hard_gate_status"]
+            # In either missing-data mode, a complete preference-only assessment
+            # can pass its configured comparison policy without claiming safety.
+            if not selected_gates and record["comparison_preference_score"] != "":
+                score, state = record["comparison_preference_score"], "Passed"
+            status = {"Passed": "Pass", "Failed": "Fail", "Unknown": "Unknown"}[state]
+            if score == "" and status == "Pass":
+                status = "Unknown"
+            result.update({f"{name}_score": score, f"{name}_status": status,
+                           f"{name}_fail_reason": record["fail_reason"] if score == "" else "",
+                           f"{name}_coverage": record["evidence_coverage"],
+                           f"{name}_details": record})
+            for domain, column in SCORES.items():
+                result[f"{name}_{domain}_score"] = record[column]
+    return results
+
+
+def dual_columns(config, *, compact):
+    columns = ["ID"]
+    for assessment in ASSESSMENTS:
+        rules = assessment_config(config, assessment)
+        columns += [f"{assessment}_{domain}_score" for domain in SCORES
+                    if domain in rules["domains"] and rules["domains"][domain].get("enabled", True)
+                    and rules["domains"][domain]["include_in_score"]]
+    columns += [f"{a}_{field}" for field in ("status", "fail_reason") for a in ASSESSMENTS]
+    if not compact:
+        columns += [f"{a}_coverage" for a in ASSESSMENTS]
+    columns += ["operations_score", "survival_score"]
+    if not compact:
+        columns += [f"{a}_details" for a in ASSESSMENTS]
+    return columns
+
+
 def run(input_path, output_path, config_path, *, overwrite=False, compact=False):
     input_path, output_path, config_path = (Path(p).resolve() for p in (input_path, output_path, config_path))
     if output_path in {input_path, config_path, Path(__file__).resolve()}:
@@ -540,11 +661,24 @@ def run(input_path, output_path, config_path, *, overwrite=False, compact=False)
                 "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details", "fail_reason", "final_habitability_score"]
     stream = io.StringIO(newline="")
     writer = csv.DictWriter(stream, fieldnames=[OUTPUT_COLUMN_NAMES.get(c, c) for c in columns], lineterminator="\n")
-    if compact:
+    dual = config.get("schema") == 2
+    if dual:
+        columns = dual_columns(config, compact=compact)
+        writer = csv.DictWriter(stream, fieldnames=columns, lineterminator="\n")
+    elif compact:
         domains = [name for name in SCORES if name in config["domains"] and config["domains"][name].get("enabled", True)]
         writer = csv.DictWriter(stream, fieldnames=["ID", *("soil_score" if name == "soil" else name for name in domains), "hard_gate_status", "Fail Reason", "final_habitability_score"], lineterminator="\n")
     writer.writeheader()
-    if compact:
+    if dual:
+        def display(value):
+            if isinstance(value, float):
+                return round(value, 2)
+            if isinstance(value, dict):
+                return json.dumps(value, separators=(",", ":"), allow_nan=False)
+            return value
+        writer.writerows({key: display(row["id"] if key == "ID" else row[key]) for key in columns}
+                         for row in results)
+    elif compact:
         display_score = lambda value: round(value, 2) if value != "" else ""
         writer.writerows({"ID": row["id"],
                           **{("soil_score" if name == "soil" else name): display_score(row[SCORES[name]]) for name in domains},
@@ -573,7 +707,7 @@ def main(argv=None):
     parser.add_argument("--config", type=Path, default=Path(__file__).with_name("config.yml"))
     parser.add_argument("--overwrite", action="store_true")
     export = parser.add_mutually_exclusive_group()
-    export.add_argument("--compact", dest="compact", action="store_true", help="Simple output (default): ID, domains, gate status and habitability score")
+    export.add_argument("--compact", dest="compact", action="store_true", help="Simple output (default): domain scores, separate statuses and Operations/Survival scores")
     export.add_argument("--detailed", dest="compact", action="store_false", help="Export full audit, contribution and ranking details")
     parser.set_defaults(compact=True)
     args = parser.parse_args(argv)
@@ -581,9 +715,15 @@ def main(argv=None):
         rows = run(args.input, args.output, args.config, overwrite=args.overwrite, compact=args.compact)
     except (ValueError, OSError, csv.Error, yaml.YAMLError) as exc:
         parser.exit(2, f"Environmental pipeline error: {exc}\n")
-    print(json.dumps({"rows": len(rows), "ranked": sum(r["rank"] != "" for r in rows),
-                      "hard_statuses": {s: sum(r["hard_gate_status"] == s for r in rows) for s in ("Passed", "Failed", "Unknown")},
-                      "output": str(args.output.resolve())}, indent=2))
+    summary = {"rows": len(rows), "output": str(args.output.resolve())}
+    if rows and "operations_score" in rows[0]:
+        summary["statuses"] = {a: {s: sum(r[f"{a}_status"] == s for r in rows)
+                                    for s in ("Pass", "Fail", "Unknown")} for a in ASSESSMENTS}
+    else:
+        summary.update(ranked=sum(r["rank"] != "" for r in rows),
+                       hard_statuses={s: sum(r["hard_gate_status"] == s for r in rows)
+                                      for s in ("Passed", "Failed", "Unknown")})
+    print(json.dumps(summary, indent=2))
 
 
 if __name__ == "__main__":

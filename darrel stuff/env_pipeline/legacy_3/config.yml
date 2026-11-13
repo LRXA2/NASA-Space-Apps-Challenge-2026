@@ -1,0 +1,470 @@
+# assumption_NASA_values
+# PROJECT ASSUMPTIONS FOR SOFTWARE TESTING NASA-SITE SCENARIOS ONLY.
+# NOT official NASA values, safety limits, local hazard models or operational requirements.
+# Proxy directions/bounds (including counters/current/potential) are deliberately fictional
+# test mappings. Do not interpret resulting scores as real site habitability or safety.
+# enabled: false disables an entire domain: inputs, hard gates and scoring.
+# Domain multipliers total 100 (including experimental soil weight 10): project priorities for a crewed, solar-powered habitat.
+# These are NOT NASA-approved weights; available-data scoring renormalizes present domains.
+# pipeline_mode: strict requires complete inputs; available_data omits blank measurements.
+# hard_gates_enabled controls each domain independently from scoring.
+# Available supplied values still face enabled hard gates; blank is never a zero or physical pass.
+# Raw metric units are retained; no counter-to-dose or spacecraft-to-surface conversion.
+schema: 1
+body: Moon
+name: assumption_NASA_values
+pipeline_mode: available_data
+comparison_group_columns: []
+metadata_columns:
+- sample_type
+- comparison_scale
+- region
+- declaration_year
+- declaration_source
+- footprint_bounds_m
+- evidence_note
+- candidate_id
+- start_utc
+- stop_utc
+domains:
+
+  radiation:
+    enabled: true
+    hard_gates_enabled: true
+    priority: Highest
+    include_in_score: true
+    multiplier: 20.0
+    metrics:
+    - column: median_visible_sky_fraction
+      unit: fraction
+      role: context
+      evidence_family: geometry_sky_visible_fraction_4pi
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: orbital_radiation_counter_median
+      unit: counts/SEC record
+      role: score
+      evidence_family: context_crater_counter_median
+      multiplier: 1.0
+      requires_time_window: false
+      preference:
+      # Scoring calibration only: observed daily-reference p05/p95, n=1091.
+      # Source: data/processed/analysis/subject_radiation_time/20261110T233725005604Z_72515a/daily_context.csv
+      # Series: RAD_CRATER_SEC_selected_state; quantiles use linear interpolation.
+      # Reference scale, NOT safety limits. Existing lower-is-better test assumption retained.
+        direction: lower
+        lower: 24.0
+        upper: 104.5
+      hard_gate: null
+      meaning: 'assumption_NASA_values: fictional software-test preference, not an
+        established environmental response or NASA safety criterion.'
+    - column: orbital_radiation_counter_maximum
+      unit: counts/SEC record
+      role: gate
+      evidence_family: context_crater_reported_daily_max
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate:
+        operator: below_threshold
+        rationale: 'assumption_NASA_values: project-assumed software-test threshold,
+          NOT an official NASA safety or operational limit.'
+        threshold: 7500
+      meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
+        units are retained; this does not qualify mission capability or local hazard.'
+
+  uv:
+    enabled: true
+    hard_gates_enabled: true
+    priority: Medium
+    include_in_score: true
+    multiplier: 5.0
+    metrics:
+    - column: median_solar_far_uv_irradiance_w_m2
+      unit: W/m2
+      role: score
+      evidence_family: context_see_fuv_115_180_W_m2
+      multiplier: 1.0
+      requires_time_window: false
+      preference:
+        # Linear test preference: 100 at zero, 0 at the existing 0.055 screening ceiling.
+        # The hard gate is unchanged. This is policy consistency, NOT a NASA dose model.
+        # Dar045: 1206 complete FUV daily integrals span 0.020213861647..0.037397321672 W/m2.
+        # Its narrow p05/p95 band is descriptive, not a worst-case suitability envelope.
+        # Source: data/processed/analysis/subject_uv/20261110T231614701627Z_e1ffa3/band_daily_context.csv
+        # No input-CSV min/max, NASA-label fitting, or sample-dependent scaling.
+        direction: lower
+        lower: 0
+        upper: 0.055
+      hard_gate:
+        operator: below_threshold
+        rationale: 'assumption_NASA_values: project-assumed software-test threshold,
+          NOT an official NASA safety or operational limit.'
+        threshold: 0.055
+      meaning: 'assumption_NASA_values: fictional software-test preference, not an
+        established environmental response or NASA safety criterion.'
+
+  solar_illumination:
+    enabled: true
+    hard_gates_enabled: true
+    priority: High
+    include_in_score: true
+    multiplier: 20.0
+    metrics:
+    - column: median_sun_visibility_fraction
+      unit: fraction
+      role: score
+      evidence_family: solar_visibility_median
+      multiplier: 1.0
+      requires_time_window: false
+      preference:
+        direction: higher
+        lower: 0
+        upper: 1
+      hard_gate: null
+      minimum: 0
+      maximum: 1
+      meaning: 'assumption_NASA_values: fictional software-test preference, not an
+        established environmental response or NASA safety criterion.'
+    - column: permanently_shadowed_cell_fraction
+      unit: fraction
+      role: context
+      evidence_family: geometry_psr_fraction_cells
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+      minimum: 0
+      maximum: 1
+    - column: regional_reference_sun_visibility_fraction
+      unit: fraction
+      role: context
+      evidence_family: reference_region_2020_2021_sun_clear_fraction
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: regional_reference_longest_shadow_sample_span_hours
+      unit: h
+      role: context
+      evidence_family: reference_region_2020_2021_blocked_sample_span_h
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: window_continuous_sunlight_hours
+      unit: h
+      role: gate
+      requires_time_window: true
+      minimum: 0
+      hard_gate:
+        operator: above_threshold
+        rationale: 'assumption_NASA_values: project-assumed software-test threshold,
+          NOT an official NASA safety or operational limit.'
+        threshold: 156
+        # Short visits require daylight throughout their own window, not 156 hours.
+        cap_to_window_duration: true
+      meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
+        units are retained; this does not qualify mission capability or local hazard.'
+
+  thermal:
+    # Scoring review: Dar047/050/PT-S01: no qualified component-response calibration; retain the existing test span scale.
+    enabled: true
+    hard_gates_enabled: true
+    priority: Highest
+    include_in_score: true
+    multiplier: 10.0
+    metrics:
+    - column: lowest_phase_median_temperature_kelvin
+      unit: K
+      role: gate
+      evidence_family: thermal_phase_median_min_K
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate:
+        operator: above_threshold
+        rationale: 'assumption_NASA_values: project-assumed software-test threshold,
+          NOT an official NASA safety or operational limit.'
+        threshold: 40
+      meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
+        units are retained; this does not qualify mission capability or local hazard.'
+    - column: highest_phase_median_temperature_kelvin
+      unit: K
+      role: gate
+      evidence_family: thermal_phase_median_max_K
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate:
+        operator: below_threshold
+        rationale: 'assumption_NASA_values: project-assumed software-test threshold,
+          NOT an official NASA safety or operational limit.'
+        # Project surface-phase-model calibration, applied to every site.
+        # NASA thermal overview gives roughly 390 K equatorial lunar noon;
+        # this is NOT a component operating limit or NASA-certified safety bound.
+        threshold: 390
+      meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
+        units are retained; this does not qualify mission capability or local hazard.'
+    - column: phase_median_temperature_range_kelvin
+      unit: K
+      role: score
+      evidence_family: thermal_phase_median_span_K
+      multiplier: 1.0
+      requires_time_window: false
+      preference:
+        direction: lower
+        lower: 0
+        upper: 300
+      hard_gate: null
+      meaning: 'assumption_NASA_values: fictional software-test preference, not an
+        established environmental response or NASA safety criterion.'
+
+  plasma_charging:
+    # Scoring review: Dar046/PL-S01: no justified ideal surface-voltage band; retain the existing test plateau, not narrow it for appearance.
+    enabled: true
+    hard_gates_enabled: true
+    priority: Medium
+    include_in_score: true
+    multiplier: 5.0
+    metrics:
+    - column: median_spacecraft_ion_density_per_cm3
+      unit: cm^-3 (All Qs)
+      role: context
+      evidence_family: context_p1_full_ion_density_cm3
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: median_spacecraft_electron_density_per_cm3
+      unit: cm^-3 (All Qs)
+      role: context
+      evidence_family: context_p1_full_electron_density_cm3
+      multiplier: 1.0
+      requires_time_window: false
+      preference: null
+      hard_gate: null
+    - column: median_spacecraft_electric_potential_volts
+      unit: V (All Qs)
+      role: score
+      evidence_family: context_p1_spacecraft_potential_V
+      multiplier: 1.0
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: -20
+        upper: 15
+        preferred_lower: -5
+        preferred_upper: 5
+      hard_gate:
+        operator: between
+        rationale: 'assumption_NASA_values: project-assumed software-test threshold,
+          NOT an official NASA safety or operational limit.'
+        lower: -15
+        upper: 10
+      meaning: 'assumption_NASA_values: fictional software-test preference, not an
+        established environmental response or NASA safety criterion.'
+
+  dust:
+    # Scoring review: Dar048/DU-S01: signed detector current is not local deposition burden; retain the existing explicit test assumption.
+    enabled: true
+    hard_gates_enabled: true
+    priority: Medium
+    include_in_score: true
+    multiplier: 10.0
+    metrics:
+    - column: historical_median_dust_detector_current_charges_per_second
+      unit: Elementary_charge_per_second
+      role: score
+      evidence_family: reference_ldex_current_e_per_s
+      multiplier: 1.0
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: -1000
+        upper: 60000
+        preferred_lower: 0
+        preferred_upper: 10000
+      hard_gate:
+        operator: between
+        rationale: 'assumption_NASA_values: project-assumed software-test threshold,
+          NOT an official NASA safety or operational limit.'
+        lower: -1000
+        upper: 55000
+      meaning: 'assumption_NASA_values: fictional software-test preference, not an
+        established environmental response or NASA safety criterion.'
+
+  seismic:
+    enabled: true
+    # Evidence guard SE-H01: raw native RMS is not qualified structural demand.
+    # No adopted site/equipment tolerance supports a universal 15-count cutoff.
+    # Disabled for ALL rows, not an Apollo exemption. Diagnostic scoring remains.
+    hard_gates_enabled: false
+    priority: Evidence-dependent
+    include_in_score: true
+    multiplier: 3.0
+    metrics:
+    - column: historical_median_vertical_seismic_rms_counts
+      unit: counts
+      role: score
+      evidence_family: reference_apollo_s12_mhz_rms_counts
+      multiplier: 1.0
+      requires_time_window: false
+      preference:
+      # Scoring calibration only: observed daily-reference p05/p95, n=731.
+      # Source: data/processed/analysis/subject_seismic/20261110T183033924956Z_ba610a/daily_context.csv
+      # Series: PSE_XA_S12_00_MHZ_raw_daily_RMS, PSE_XA_S12_01_MHZ_raw_daily_RMS; quantiles use linear interpolation.
+      # Reference scale, NOT safety limits. Existing lower-is-better test assumption retained.
+        direction: lower
+        lower: 0.347193913546
+        upper: 24.850591805123
+      hard_gate:
+        operator: below_threshold
+        rationale: 'assumption_NASA_values: project-assumed software-test threshold,
+          NOT an official NASA safety or operational limit.'
+        threshold: 15
+      meaning: 'assumption_NASA_values: fictional software-test preference, not an
+        established environmental response or NASA safety criterion.'
+
+  exosphere:
+    # Scoring review: Dar051/EX-S01: no justified ideal local helium band; retain the existing test plateau, not an atmospheric-suitability claim.
+    enabled: true
+    hard_gates_enabled: true
+    priority: Context initially
+    include_in_score: true
+    multiplier: 2.0
+    metrics:
+    - column: historical_median_orbital_helium_density_per_cm3
+      unit: P/Cc
+      role: score
+      evidence_family: reference_nms_He_abundance_p_cc
+      multiplier: 1.0
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: 0
+        upper: 20000
+        preferred_lower: 1000
+        preferred_upper: 10000
+      hard_gate:
+        operator: below_threshold
+        rationale: 'assumption_NASA_values: project-assumed software-test threshold,
+          NOT an official NASA safety or operational limit.'
+        threshold: 16000
+      meaning: 'assumption_NASA_values: fictional software-test preference, not an
+        established environmental response or NASA safety criterion.'
+        
+  communications_geometry:
+    enabled: true
+    hard_gates_enabled: false
+    priority: High
+    include_in_score: true
+    multiplier: 15.0
+    metrics:
+    - column: median_earth_visibility_fraction
+      unit: fraction
+      role: score
+      evidence_family: earth_disc_visibility
+      multiplier: 1.0
+      requires_time_window: false
+      minimum: 0
+      maximum: 1
+      preference:
+        direction: higher
+        lower: 0
+        upper: 1
+      hard_gate: null
+      meaning: 'assumption_NASA_values: fictional software-test preference, not an
+        established environmental response or NASA safety criterion.'
+    - column: window_minimum_link_margin_db
+      unit: dB
+      role: gate
+      requires_time_window: true
+      hard_gate:
+        operator: above_threshold
+        rationale: 'assumption_NASA_values: project-assumed software-test threshold,
+          NOT an official NASA safety or operational limit.'
+        threshold: 0
+      meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
+        units are retained; this does not qualify mission capability or local hazard.'
+
+# Soil source: Dar_057 soil_samples.csv, extracted Handbook of Lunar Soils JSC 19069.
+# SHA256: 8506f2db4b782a05393ca327073d709a7c6e0e158212aa67a9879668f606030d
+
+  soil:
+    # Experimental Apollo-reference resemblance, not measured operational suitability.
+    # Equal weights for four requested categories; correlated proxies are not independent.
+    enabled: true
+    hard_gates_enabled: false
+    priority: Experimental
+    include_in_score: true
+    multiplier: 10.0
+    metrics:
+    # Grain size: p05/p95 of rounded observed mission means, n=6 missions.
+    - column: soil_mean_grain_size_um
+      unit: 'um'
+      role: score
+      evidence_family: apollo_soil_mz_um
+      multiplier: 1.0
+      minimum: 0
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: 14.42250000
+        upper: 130.18500000
+        preferred_lower: 53.01000000
+        preferred_upper: 91.59750000
+      hard_gate: null
+      meaning: 'Experimental Apollo-reference score; rounded mission aggregates are placeholders, not site measurements or NASA requirements.'
+    # Maturity: p05/p95 of rounded observed mission means, n=6 missions.
+    - column: soil_maturity_is_feo
+      unit: 'Is/FeO index'
+      role: score
+      evidence_family: apollo_soil_is_feo
+      multiplier: 1.0
+      minimum: 0
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: 12.77500000
+        upper: 102.31750000
+        preferred_lower: 42.62250000
+        preferred_upper: 72.47000000
+      hard_gate: null
+      meaning: 'Experimental Apollo-reference score; rounded mission aggregates are placeholders, not site measurements or NASA requirements.'
+    # Agglutinate content: p05/p95 of rounded observed mission means, n=3 missions.
+    - column: soil_agglutinates_percent
+      unit: 'percent (source modal basis)'
+      role: score
+      evidence_family: apollo_soil_agglutinates_percent
+      multiplier: 1.0
+      minimum: 0
+      maximum: 100
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: 30.64400000
+        upper: 44.76500000
+        preferred_lower: 35.35100000
+        preferred_upper: 40.05800000
+      hard_gate: null
+      meaning: 'Experimental Apollo-reference score; rounded mission aggregates are placeholders, not site measurements or NASA requirements.'
+    # Chemical composition (FeO proxy): p05/p95 of rounded observed mission means, n=6 missions.
+    - column: soil_feo_wt_percent
+      unit: 'wt%'
+      role: score
+      evidence_family: apollo_soil_feo
+      multiplier: 1.0
+      minimum: 0
+      maximum: 100
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: -2.83500000
+        upper: 24.98250000
+        preferred_lower: 6.43750000
+        preferred_upper: 15.71000000
+      hard_gate: null
+      meaning: 'Experimental Apollo-reference score; rounded mission aggregates are placeholders, not site measurements or NASA requirements.'
