@@ -34,6 +34,10 @@ class RunAllTests(unittest.TestCase):
         self.assertEqual(load_config(DEFAULT_CONFIG, regions=['Haworth'], top_k_per_site=5).regions, ('Haworth',))
         with self.assertRaisesRegex(ValueError, 'positive integer'):
             PipelineConfig(terrain_run='x', top_k_per_site=0)
+        self.assertEqual(config.environment_scope, 'tile')
+        self.assertEqual(load_config(DEFAULT_CONFIG, environment_scope='region').environment_scope, 'region')
+        with self.assertRaisesRegex(ValueError, 'environment_scope'):
+            PipelineConfig(terrain_run='x', environment_scope='site')
         with self.assertRaisesRegex(ValueError, 'needs environment_input'):
             PipelineConfig(terrain_run='x', environment_config='config.yml')
 

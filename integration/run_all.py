@@ -10,6 +10,8 @@ script records them and copies the files the app export reads into one
 - `moon_sites.csv`: terrain classes plus region-level environment scores
 - `earth_matches.csv`: top-k Earth patches per tile for every Earth site
 - `environment.csv`: the environment scorer's compact output, when configured
+- `environment_sites.csv` and `tile_support.csv`: the per-tile scorer input and
+  which tiles had their map columns measured (`environment_scope` = "tile")
 - `summary.json`: per-region counts, best-matching Earth sites and stage runs
 
 Every tile is matched; nothing is shortlisted or combined into one score.
@@ -28,6 +30,7 @@ from pathlib import Path
 import pandas as pd
 
 from integration import moon_sites
+from integration.tile_environment import build_tile_sites, map_paths
 from notebooks.modeling.terrain_similarity.pipeline.artifacts import ArtifactConfig
 from notebooks.modeling.terrain_similarity.pipeline.main import run_tile_matching
 from notebooks.shared import moon_tiles
@@ -35,8 +38,10 @@ from notebooks.shared.processing import Run
 
 DEFAULT_CONFIG = Path(__file__).with_name('run_all.json')
 ENVIRONMENT_SCORER = 'env_algo_task/env_pipeline/env_pipeline.py'
-CAVEAT = ('Terrain classes are Earth-trained proxies; environment scores are region-level and use the '
-          "scorer's test fixture values; cosine is not a percentage or validated suitability.")
+CAVEAT = ('Terrain classes are Earth-trained proxies. Environment scores use per-tile LOLA Sun, Earth, shadow '
+          "and sky values where measured; every other environment input is the region baseline's test "
+          'fixture value. Cosine is not a percentage or validated suitability.')
+SCOPES = ('tile', 'region')
 
 
 @dataclass(frozen=True)
@@ -45,12 +50,15 @@ class PipelineConfig:
     similarity_config: str = 'notebooks/modeling/terrain_similarity/pipeline/config.json'
     environment_input: str | None = None
     environment_config: str | None = None
+    environment_scope: str = 'tile'
     top_k_per_site: int = 3
     regions: tuple[str, ...] | None = None
 
     def __post_init__(self):
         if type(self.top_k_per_site) is not int or self.top_k_per_site < 1:
             raise ValueError('top_k_per_site must be a positive integer')
+        if self.environment_scope not in SCOPES:
+            raise ValueError(f'environment_scope must be one of {SCOPES}')
         if self.environment_config and not self.environment_input:
             raise ValueError('environment_config needs environment_input')
 
@@ -77,11 +85,14 @@ def select_regions(available: list[str], wanted: tuple[str, ...] | None) -> list
     return sorted(set(chosen))
 
 
-def score_environment(root: Path, config: PipelineConfig, output: Path) -> Path | None:
-    """Run the environment scorer's compact export into `output`, if configured."""
+def score_environment(root: Path, config: PipelineConfig, output: Path, sites: Path | None = None) -> Path | None:
+    """Run the environment scorer's compact export into `output`, if configured.
+
+    `sites` replaces the configured input, e.g. with per-tile rows.
+    """
     if config.environment_input is None:
         return None
-    command = [sys.executable, str(root / ENVIRONMENT_SCORER), '--input', str(root / config.environment_input),
+    command = [sys.executable, str(root / ENVIRONMENT_SCORER), '--input', str(sites or root / config.environment_input),
                '--output', str(output), '--compact', '--overwrite']
     if config.environment_config:
         command += ['--config', str(root / config.environment_config)]
@@ -110,7 +121,14 @@ def run_all(root: Path, config: PipelineConfig) -> Path:
     with Run(root, 'moon_pipeline', settings, '../integration/run_all.py') as run:
         stages: dict[str, Path] = {}
         stages['moon_tiles'] = moon_tiles.build(root, Path(similarity.dataset_run), {'walkability': Path(config.terrain_run)})
-        environment = score_environment(root, config, run.path('environment.csv'))
+        sites_input = None
+        if config.environment_input is not None and config.environment_scope == 'tile':
+            covered = pd.read_csv(stages['moon_tiles'] / 'moon_tiles.csv')
+            sites_input = build_tile_sites(root, covered[covered['in_walkability']],
+                                           root / config.environment_input, run.path('environment_sites.csv'))
+            for path in map_paths(root).values():
+                run.input(path)
+        environment = score_environment(root, config, run.path('environment.csv'), sites_input)
         stages['moon_sites'] = moon_sites.build(
             root, Path(config.terrain_run), None if environment is None else environment.relative_to(root))
 
@@ -134,7 +152,7 @@ def run_all(root: Path, config: PipelineConfig) -> Path:
             'tiles_matched': len(tile_ids),
             'tiles_without_similarity_patch': int(len(sites) - len(tile_ids)),
             'environment_assessed_tiles': int(sites['env_assessed'].sum()),
-            'environment_scope': 'region' if environment is not None else None,
+            'environment_scope': config.environment_scope if environment is not None else None,
             'earth_sites': sorted(matches['earth_region'].unique()),
             'top_k_per_site': config.top_k_per_site,
             'similarity_model': asdict(similarity),
@@ -153,8 +171,11 @@ def main() -> None:
     parser.add_argument('--region', action='append', help='Limit to a region, e.g. Haworth (repeatable)')
     parser.add_argument('--top-k', type=int, dest='top_k_per_site', help='Earth matches kept per site')
     parser.add_argument('--no-environment', action='store_true', help='Skip the environment scorer')
+    parser.add_argument('--environment-scope', choices=SCOPES,
+                        help='Score each tile from the illumination maps, or join region baselines')
     args = parser.parse_args()
-    config = load_config(args.config, regions=args.region, top_k_per_site=args.top_k_per_site)
+    config = load_config(args.config, regions=args.region, top_k_per_site=args.top_k_per_site,
+                         environment_scope=args.environment_scope)
     if args.no_environment:
         config = PipelineConfig(**{**asdict(config), 'environment_input': None, 'environment_config': None})
     print(json.dumps({'run': str(run_all(args.root, config))}))

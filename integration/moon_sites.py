@@ -4,10 +4,12 @@ Reads an operability or walkability `predictions.csv`, keys it by the shared
 `tile_id` from `notebooks.shared.moon_tiles`, and keeps the rover class, the
 human-terrain class (when present), crossing directions and slope figures.
 Operations and survival scores from the environment pipeline's compact output
-join by region: its baselines `eda_001`-`eda_007` each summarise one of the
-seven terrain regions, so every tile in a region carries that region's scores
-(`env_scope` = "region"). Other environment rows (further NASA names,
-synthetic, dummy and Apollo scenarios) have no terrain tiles and are skipped.
+join per tile when its IDs are tile IDs (scorer input built by
+`integration.tile_environment`, `env_scope` = "tile"). Otherwise they join by
+region: baselines `eda_001`-`eda_007` each summarise one of the seven terrain
+regions, so every tile in a region carries that region's scores
+(`env_scope` = "region"), and other rows (further NASA names, synthetic, dummy
+and Apollo scenarios) are skipped.
 
 This joins existing outputs only. It adds no new score, threshold or claim:
 terrain classes remain Earth-trained proxies and environment scores keep the
@@ -77,8 +79,13 @@ def terrain_sites(predictions: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
-def environment_scores(results: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
-    """Region rows of the compact output, renamed to `env_*`; also returns skipped IDs."""
+def environment_scores(results: pd.DataFrame) -> tuple[pd.DataFrame, list[str], str]:
+    """Compact output renamed to `env_*`; returns (scores, skipped IDs, scope).
+
+    Scope is `tile` when every ID is a tile ID (per-tile scorer input from
+    `integration.tile_environment`), otherwise `region`: rows `eda_001`-`eda_007`
+    are kept and every other row is skipped.
+    """
     missing = [name for name in ENVIRONMENT_REQUIRED if name not in results.columns]
     if missing:
         raise ValueError(f'Environment results are missing columns: {missing}; '
@@ -86,26 +93,41 @@ def environment_scores(results: pd.DataFrame) -> tuple[pd.DataFrame, list[str]]:
     ids = results['ID'].astype(str)
     if results['ID'].isna().any() or ids.duplicated().any():
         raise ValueError('Environment results need one row per unique ID')
+    scores = results.rename(columns=lambda name: 'env_id' if name == 'ID' else f'env_{name}')
+    tiles = ids.str.count(':') == 2
+    if tiles.any():
+        if not tiles.all():
+            raise ValueError('Environment results mix tile IDs with other IDs, e.g. '
+                             f'{", ".join(ids[~tiles][:3])}')
+        scores.insert(0, 'tile_id', ids)
+        scores.insert(1, 'env_scope', 'tile')
+        return scores.reset_index(drop=True), [], 'tile'
     regional = ids.isin(REGION_ENVIRONMENT_IDS)
     if not regional.any():
-        raise ValueError(f'Environment results hold none of the region baselines '
+        raise ValueError(f'Environment results hold neither tile IDs nor the region baselines '
                          f'{", ".join(REGION_ENVIRONMENT_IDS)}')
-    scores = results.loc[regional].rename(columns=lambda name: 'env_id' if name == 'ID' else f'env_{name}')
+    scores = scores.loc[regional]
     scores.insert(0, 'region', ids[regional].map(REGION_ENVIRONMENT_IDS))
     scores.insert(1, 'env_scope', 'region')
-    return scores.reset_index(drop=True), sorted(ids[~regional])
+    return scores.reset_index(drop=True), sorted(ids[~regional]), 'region'
 
 
 def build_moon_sites(predictions: pd.DataFrame,
                      environment: pd.DataFrame | None = None) -> pd.DataFrame:
-    """Join terrain predictions and, optionally, region-level environment scores."""
+    """Join terrain predictions and, optionally, per-tile or region-level environment scores."""
     sites = terrain_sites(predictions)
     if environment is None:
         sites['env_assessed'] = False
     else:
-        scores, _ = environment_scores(environment)
-        sites = sites.merge(scores, on='region', how='left', validate='many_to_one')
-        sites['env_assessed'] = sites['region'].isin(scores['region'])
+        scores, _, scope = environment_scores(environment)
+        key = 'tile_id' if scope == 'tile' else 'region'
+        unknown = sorted(set(scores[key]) - set(sites[key])) if scope == 'tile' else []
+        if unknown:
+            raise ValueError(f'{len(unknown)} environment tile IDs are not in these predictions, '
+                             f'e.g. {", ".join(unknown[:3])}')
+        sites = sites.merge(scores, on=key, how='left',
+                            validate='one_to_one' if scope == 'tile' else 'many_to_one')
+        sites['env_assessed'] = sites[key].isin(scores[key])
     return sites.sort_values(['region', 'center_y', 'center_x'], ascending=[True, False, True],
                              ignore_index=True)
 
@@ -124,7 +146,8 @@ def summary_by_region(sites: pd.DataFrame) -> pd.DataFrame:
                          .rename(f'env_{assessment}_pass'))
     summary = pd.concat(parts, axis=1).fillna(0).astype(int)
     if 'env_operations_score' in sites.columns:
-        summary = summary.join(groups[['env_operations_score', 'env_survival_score']].first())
+        summary = summary.join(groups[['env_operations_score', 'env_survival_score']].median()
+                               .add_prefix('median_'))
     return summary.reset_index()
 
 
@@ -160,7 +183,7 @@ def main() -> None:
     parser.add_argument('--terrain-run', type=Path, required=True,
                         help='Lunar operability or walkability inference run holding predictions.csv')
     parser.add_argument('--environment-csv', type=Path,
-                        help='Environment pipeline compact output; eda_001-eda_007 join by region')
+                        help='Environment pipeline compact output keyed by tile IDs, or eda_001-eda_007 by region')
     args = parser.parse_args()
     print(json.dumps({'run': str(build(args.root, args.terrain_run, args.environment_csv))}))
 

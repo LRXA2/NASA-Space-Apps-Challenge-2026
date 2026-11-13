@@ -37,7 +37,7 @@ It writes `moon_tiles.csv` (one row per tile, its bounds, each source's patch ID
 
 ## Per-tile Moon site table
 
-[integration/moon_sites.py](integration/moon_sites.py) turns an operability or walkability inference run into one row per `tile_id`: rover class and probabilities, human-terrain class (walkability runs), predicted crossing directions and count, and slope/relief figures. Add the environment pipeline's compact output with `--environment-csv` to attach its Operations and Survival scores, statuses and domain scores (`env_*` columns). These join **by region**: baselines `eda_001`–`eda_007` each summarise one of the seven terrain regions, so every tile in a region gets the same scores and `env_scope` is `region`. Other environment rows have no terrain tiles; they are skipped and listed in the run record. Tiles in regions without scores stay in the table with `env_assessed` false.
+[integration/moon_sites.py](integration/moon_sites.py) turns an operability or walkability inference run into one row per `tile_id`: rover class and probabilities, human-terrain class (walkability runs), predicted crossing directions and count, and slope/relief figures. Add the environment pipeline's compact output with `--environment-csv` to attach its Operations and Survival scores, statuses and domain scores (`env_*` columns). When its IDs are tile IDs (see below) they join **per tile** (`env_scope` = `tile`). Otherwise they join **by region**: baselines `eda_001`–`eda_007` each summarise one of the seven terrain regions, so every tile in a region gets the same scores (`env_scope` = `region`), and other rows are skipped and listed in the run record. Tiles without scores stay in the table with `env_assessed` false.
 
 ```powershell
 .\.venv\Scripts\python.exe -m integration.moon_sites --terrain-run data/processed/terrain_human_walkability_lunar_inference/<run> --environment-csv path/to/results.csv
@@ -47,14 +47,23 @@ It writes `moon_sites.csv` and `summary_by_region.csv` to `data/processed/moon_s
 
 ## Run the whole Moon pipeline
 
-[integration/run_all.py](integration/run_all.py) chains every stage with one config, [run_all.json](integration/run_all.json): shared tile IDs, the environment scorer, the per-tile site table, and Earth matches for every tile against all five Earth sites. It needs processed runs only (the walkability inference run and the similarity model, dataset and orientation runs pinned in the similarity config), not raw downloads.
+[integration/run_all.py](integration/run_all.py) chains every stage with one config, [run_all.json](integration/run_all.json): shared tile IDs, per-tile environment scores, the per-tile site table, and Earth matches for every tile against all five Earth sites. It needs processed runs (the walkability inference run and the similarity model, dataset and orientation runs pinned in the similarity config) plus four 2016 LOLA illumination GeoTIFFs, about 117 MiB, in `data/raw/moon/illumination_2016/geotiff/south/`:
+
+| Folder | File (from [PGDA Product 69](https://pgda.gsfc.nasa.gov/products/69), TIF links) |
+| --- | --- |
+| `solar_illumination/` | `AVGVISIB_85S_060M_201608.TIF` (85S-90S, 60 m) |
+| `earth_visibility/` | `AVGVISIB_85S_060M_201608_EARTH.TIF` (85S-90S, 60 m) |
+| `permanent_shadow/` | `LPSR_85S_060M_201608.TIF` (85S-90S, 60 m) |
+| `sky_visibility/` | `SKYV_65S_240M.TIF` (65S-90S, 240 m) |
+
+[integration/tile_environment.py](integration/tile_environment.py) gives every tile its region's baseline row from the scorer input, then replaces Sun visibility, Earth visibility, permanent-shadow fraction and visible-sky fraction with values measured inside the tile's bounds, using the environment pipeline's own `profile` routine. All other inputs, including radiation, temperature, plasma, dust, soil and the sunlight window, stay region-wide test fixture values, so Survival scores are identical within a region and only Operations scores vary per tile. The scorer's current config disables hard gates, so every tile passes. Use `--environment-scope region` to skip the maps and join the region baselines instead.
 
 ```powershell
 .\.venv\Scripts\python.exe -m integration.run_all                    # all seven regions, about a minute
 .\.venv\Scripts\python.exe -m integration.run_all --region Haworth   # quick check on one region
 ```
 
-Each stage still writes its own run. The combined folder `data/processed/moon_pipeline/<run>/` holds what the app export reads: `moon_tiles.csv`, `moon_sites.csv`, `earth_matches.csv` (top `top_k_per_site` matches per tile and Earth site, with `overall_rank` across sites), `environment.csv`, `summary_by_region.csv` and `summary.json` (counts, best-matching Earth sites, stage runs and model versions). Every tile is matched; nothing is shortlisted or combined into a single score. Use `--no-environment` to skip the scorer, and `--top-k` to change matches per site. Set `RUN_PIPELINE_SMOKE=1` to include the real Haworth run in the integration tests.
+Each stage still writes its own run. The combined folder `data/processed/moon_pipeline/<run>/` holds what the app export reads: `moon_tiles.csv`, `moon_sites.csv`, `earth_matches.csv` (top `top_k_per_site` matches per tile and Earth site, with `overall_rank` across sites), `environment.csv`, `environment_sites.csv` (per-tile scorer input), `tile_support.csv` (map pixels behind each tile), `summary_by_region.csv` and `summary.json` (counts, best-matching Earth sites, stage runs and model versions). Every tile is matched; nothing is shortlisted or combined into a single score. Use `--no-environment` to skip the scorer, and `--top-k` to change matches per site. Set `RUN_PIPELINE_SMOKE=1` to include the real Haworth run in the integration tests.
 
 ## File paths
 
@@ -69,6 +78,7 @@ integration/
   moon_sites.py                      Per-tile terrain table with optional environment join
   run_all.py                         One command for the whole Moon pipeline
   run_all.json                       Pinned runs and settings for run_all.py
+  tile_environment.py                Per-tile environment scorer input from LOLA maps
   tests/                             Join, tile-ID and pipeline runner checks
 download scripts/
   README.md                          Download commands and source details

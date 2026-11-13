@@ -78,12 +78,24 @@ class MoonSiteTests(unittest.TestCase):
         summary = summary_by_region(sites).iloc[0]
         self.assertEqual((summary['tiles'], summary['env_assessed']), (4, 4))
         self.assertEqual((summary['env_operations_pass'], summary['env_survival_pass']), (4, 4))
-        self.assertEqual(summary['env_survival_score'], 64.38)
+        self.assertEqual(summary['median_env_survival_score'], 64.38)
         self.assertEqual((summary['rover_operable'], summary['human_caution']), (2, 2))
 
     def test_other_environment_rows_are_skipped_and_reported(self):
-        _, skipped = environment_scores(environment_results(['eda_001', 'eda_008', 'synthetic_001']))
+        _, skipped, _ = environment_scores(environment_results(['eda_001', 'eda_008', 'synthetic_001']))
         self.assertEqual(skipped, ['eda_008', 'synthetic_001'])
+
+    def test_tile_scores_join_per_tile(self):
+        second = tile_id(REGION, -43800., 93420.)
+        frame = environment_results([FIRST_TILE, second])
+        frame['operations_score'] = [40.0, 30.0]
+        sites = build_moon_sites(walkability_predictions(), frame)
+        self.assertEqual(sites['env_assessed'].tolist(), [True, True, False, False])
+        self.assertEqual(set(sites['env_scope'].dropna()), {'tile'})
+        self.assertEqual(sites.loc[sites['tile_id'] == second, 'env_operations_score'].item(), 30.0)
+        summary = summary_by_region(sites).iloc[0]
+        self.assertEqual((summary['env_assessed'], summary['env_operations_pass']), (2, 1))
+        self.assertEqual(summary['median_env_operations_score'], 35.0)
 
     def test_failed_region_status_is_kept(self):
         frame = environment_results(['eda_001', 'eda_004'])
@@ -97,8 +109,12 @@ class MoonSiteTests(unittest.TestCase):
         self.assertEqual(summary_by_region(sites).iloc[0]['env_assessed'], 0)
 
     def test_invalid_environment_results_are_refused(self):
-        with self.assertRaisesRegex(ValueError, 'none of the region baselines'):
-            build_moon_sites(walkability_predictions(), environment_results([FIRST_TILE]))
+        with self.assertRaisesRegex(ValueError, 'neither tile IDs nor the region baselines'):
+            build_moon_sites(walkability_predictions(), environment_results(['synthetic_001']))
+        with self.assertRaisesRegex(ValueError, 'mix tile IDs'):
+            build_moon_sites(walkability_predictions(), environment_results([FIRST_TILE, 'eda_004']))
+        with self.assertRaisesRegex(ValueError, 'not in these predictions'):
+            build_moon_sites(walkability_predictions(), environment_results([tile_id(REGION, 0., 0.)]))
         with self.assertRaisesRegex(ValueError, 'compact'):
             legacy = pd.DataFrame({'ID': ['eda_004'], 'hard_gate_status': ['Passed'],
                                    'final_habitability_score': [57.2]})

@@ -3,6 +3,7 @@
   "similarity_config": "notebooks/modeling/terrain_similarity/pipeline/config.json",
   "environment_input": "env_algo_task/env_pipeline/sample_input.csv",
   "environment_config": null,
+  "environment_scope": "tile",
   "top_k_per_site": 3,
   "regions": null
 }
