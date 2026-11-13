@@ -19,11 +19,16 @@ export function RegionsPage() {
     );
   }
   const { source, regions: entries } = regions.data;
+  const total = entries.reduce((sum, entry) => sum + entry.exported_patch_count, 0);
   return (
     <>
       <h1>Lunar south-pole regions</h1>
       <p className="lede">
         Terrain patches near the lunar south pole, with rover and on-foot predictions for each patch. Choose a region.
+      </p>
+      <p className="lede">
+        This build holds {entries.length} {entries.length === 1 ? "region" : "regions"} and {total.toLocaleString("en")}{" "}
+        terrain {total === 1 ? "patch" : "patches"}.
       </p>
       {entries.length === 0 ? (
         <p>No regions have been exported yet.</p>

@@ -12,8 +12,62 @@
    "name": "Leibnitz Beta Plateau",
    "patches_file": "patches/leibnitz-beta-plateau.json",
    "grid_file": "grids/leibnitz-beta-plateau.bin",
-   "exported_patch_count": 1,
+   "exported_patch_count": 225,
    "source_patch_count": 225
+  },
+  {
+   "slug": "malapert-massif",
+   "source_id": "A3CLR22_11_Malapert_Massif",
+   "name": "Malapert Massif",
+   "patches_file": "patches/malapert-massif.json",
+   "grid_file": "grids/malapert-massif.bin",
+   "exported_patch_count": 400,
+   "source_patch_count": 400
+  },
+  {
+   "slug": "de-gerlache-kocher-massif",
+   "source_id": "A3CLR22_12_deGerlache_Kocher_Massif",
+   "name": "de Gerlache–Kocher Massif",
+   "patches_file": "patches/de-gerlache-kocher-massif.json",
+   "grid_file": "grids/de-gerlache-kocher-massif.bin",
+   "exported_patch_count": 361,
+   "source_patch_count": 361
+  },
+  {
+   "slug": "haworth",
+   "source_id": "A3CLR22_2_Haworth",
+   "name": "Haworth",
+   "patches_file": "patches/haworth.json",
+   "grid_file": "grids/haworth.bin",
+   "exported_patch_count": 841,
+   "source_patch_count": 841
+  },
+  {
+   "slug": "faustini-rim-a",
+   "source_id": "A3CLR22_3_Faustini_Rim_A",
+   "name": "Faustini Rim A",
+   "patches_file": "patches/faustini-rim-a.json",
+   "grid_file": "grids/faustini-rim-a.bin",
+   "exported_patch_count": 361,
+   "source_patch_count": 361
+  },
+  {
+   "slug": "de-gerlache-rim-2",
+   "source_id": "A3CLR22_4_deGerlache_Rim_2",
+   "name": "de Gerlache Rim 2",
+   "patches_file": "patches/de-gerlache-rim-2.json",
+   "grid_file": "grids/de-gerlache-rim-2.bin",
+   "exported_patch_count": 361,
+   "source_patch_count": 361
+  },
+  {
+   "slug": "connecting-ridge-extension",
+   "source_id": "A3CLR22_5_Connecting_Ridge_Extension",
+   "name": "Connecting Ridge Extension",
+   "patches_file": "patches/connecting-ridge-extension.json",
+   "grid_file": "grids/connecting-ridge-extension.bin",
+   "exported_patch_count": 361,
+   "source_patch_count": 361
   }
  ]
 }
