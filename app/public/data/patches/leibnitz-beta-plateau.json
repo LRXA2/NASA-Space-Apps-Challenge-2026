@@ -1,0 +1,93 @@
+{
+ "schema_version": 1,
+ "run_id": "20261112T120422201915Z_101366",
+ "region": {
+  "slug": "leibnitz-beta-plateau",
+  "source_id": "A3CLR22_10_Leibnitz_Beta_Plateau",
+  "name": "Leibnitz Beta Plateau"
+ },
+ "patch_size_m": 960,
+ "spacing_m": 30,
+ "patch_order": "The order of the patches array. Patch i starts at byte grid_offset.",
+ "grid": {
+  "file": "grids/leibnitz-beta-plateau.bin",
+  "dtype": "int16",
+  "byte_order": "little",
+  "scale": 10,
+  "shape": [
+   32,
+   32
+  ],
+  "cell_order": "row-major: row 0 first, column 0 first within a row",
+  "channels": [
+   {
+    "name": "relative_elevation_m",
+    "unit": "m"
+   },
+   {
+    "name": "slope_deg",
+    "unit": "deg"
+   }
+  ],
+  "bytes_per_patch": 4096,
+  "byte_length": 4096
+ },
+ "patches": [
+  {
+   "slug": "r32-c32",
+   "source_id": "A3CLR22_10_Leibnitz_Beta_Plateau:960:32:32",
+   "top_row": 32,
+   "top_col": 32,
+   "center_x_m": 66420.0,
+   "center_y_m": 124560.0,
+   "tensor": {
+    "shard": "tensors/A3CLR22_10_Leibnitz_Beta_Plateau_960m.npz",
+    "index": 0
+   },
+   "rover": {
+    "class": "operable",
+    "probabilities": {
+     "operable": 0.8036532402038574,
+     "marginal": 0.19581718742847443,
+     "non_operable": 0.0005295791197568178
+    }
+   },
+   "walking": {
+    "class": "caution",
+    "probabilities": {
+     "easy": 0.009783986024558544,
+     "caution": 0.9714691638946533,
+     "unsuitable": 0.018746869638562202
+    }
+   },
+   "crossing": {
+    "north_south": {
+     "predicted": true,
+     "probability": 0.9489597678184509
+    },
+    "east_west": {
+     "predicted": true,
+     "probability": 0.945158839225769
+    },
+    "northwest_southeast": {
+     "predicted": true,
+     "probability": 0.8226938247680664
+    },
+    "northeast_southwest": {
+     "predicted": true,
+     "probability": 0.9193025231361389
+    }
+   },
+   "physical": {
+    "slope_median_deg": 8.871908187866211,
+    "slope_p90_deg": 12.841445922851562,
+    "relative_relief_m": 180.05859375
+   },
+   "direct_rule": {
+    "walking_class": "caution",
+    "cnn_agrees": true
+   },
+   "grid_offset": 0
+  }
+ ]
+}

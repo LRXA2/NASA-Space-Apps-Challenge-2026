@@ -1,0 +1,19 @@
+{
+ "schema_version": 1,
+ "source": {
+  "stage": "terrain_human_walkability_lunar_inference",
+  "run_id": "20261112T120422201915Z_101366",
+  "claim_boundary": "Earth-trained terrain-only human walkability proxy on unlabeled lunar terrain; not measured EVA performance or human safety"
+ },
+ "regions": [
+  {
+   "slug": "leibnitz-beta-plateau",
+   "source_id": "A3CLR22_10_Leibnitz_Beta_Plateau",
+   "name": "Leibnitz Beta Plateau",
+   "patches_file": "patches/leibnitz-beta-plateau.json",
+   "grid_file": "grids/leibnitz-beta-plateau.bin",
+   "exported_patch_count": 1,
+   "source_patch_count": 225
+  }
+ ]
+}
