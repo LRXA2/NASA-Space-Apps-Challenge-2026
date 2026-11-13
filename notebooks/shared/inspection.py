@@ -30,7 +30,9 @@ def verify_run(run: Path) -> dict[str, str]:
     record = json.loads((run / 'provenance.json').read_text())
     if record['status'] != 'complete':
         raise ValueError(f'Incomplete run: {run}')
-    return {str((run / item['path']).resolve()): item['sha256'] for item in record['outputs']}
+    # Runs recorded on Windows store backslash paths; normalize so they verify on any OS.
+    return {str((run / item['path'].replace('\\', '/')).resolve()): item['sha256']
+            for item in record['outputs']}
 
 
 def check_input(path: Path, expected: dict[str, str], evidence: dict[str, str]) -> Path:
