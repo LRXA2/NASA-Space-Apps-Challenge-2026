@@ -35,6 +35,16 @@ The similarity CNN and the operability CNNs name the same 960 m lunar windows di
 
 It writes `moon_tiles.csv` (one row per tile, its bounds, each source's patch ID and `in_<source>` flags), `tile_sources.csv` (tile → source patch) and `coverage_by_region.csv` to `data/processed/moon_tiles/<run>/`. Sources whose windows are not on the same 960 m lattice are refused, for example when two lunar processing runs used different grids; rebuild one source from the other's lunar run rather than matching nearest tiles.
 
+## Per-tile Moon site table
+
+[integration/moon_sites.py](integration/moon_sites.py) turns an operability or walkability inference run into one row per `tile_id`: rover class and probabilities, human-terrain class (walkability runs), predicted crossing directions and count, and slope/relief figures. Add the environment pipeline's compact output with `--environment-csv` to attach its Operations and Survival scores, statuses and domain scores (`env_*` columns). These join **by region**: baselines `eda_001`–`eda_007` each summarise one of the seven terrain regions, so every tile in a region gets the same scores and `env_scope` is `region`. Other environment rows have no terrain tiles; they are skipped and listed in the run record. Tiles in regions without scores stay in the table with `env_assessed` false.
+
+```powershell
+.\.venv\Scripts\python.exe -m integration.moon_sites --terrain-run data/processed/terrain_human_walkability_lunar_inference/<run> --environment-csv path/to/results.csv
+```
+
+It writes `moon_sites.csv` and `summary_by_region.csv` to `data/processed/moon_sites/<run>/`. It joins existing outputs only and adds no new score.
+
 ## File paths
 
 Paths below are relative to the repository root. See [notebooks/README.md](notebooks/README.md) for links to every numbered notebook.
@@ -44,6 +54,9 @@ README.md                            Project overview
 outline.md                           Pipeline, findings, decisions and data sources
 DOWNLOAD_CHECKLIST.md                Acquisition and readiness checklist
 .gitignore                           Files excluded from Git
+integration/
+  moon_sites.py                      Per-tile terrain table with optional environment join
+  tests/                             Join and tile-ID checks
 download scripts/
   README.md                          Download commands and source details
   download_*.py                      Dataset downloaders
