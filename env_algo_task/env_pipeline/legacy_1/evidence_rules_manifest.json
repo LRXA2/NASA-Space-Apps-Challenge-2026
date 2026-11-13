@@ -1,0 +1,172 @@
+{
+  "schema": 1,
+  "register": "../research/environment_rule_register.json",
+  "sources": {
+    "apollo": {
+      "run": "stage3_resources_eda/20261108T211453295966Z_b828df",
+      "files": [
+        "primary_resource_changes.csv",
+        "remaining_prediction_summary.csv",
+        "historical_context_not_adopted_limits.csv"
+      ],
+      "basis": "historical_primary_and_reconstructed_reports",
+      "spatial_scope": "historical_Apollo_configuration_not_current_components",
+      "temporal_scope": "historical_EVA_records_not_requested_mission_period",
+      "quantity_class": "resource_usage_and_source_redlines_lb_Ah_not_Wh"
+    },
+    "dated_thermal": {
+      "run": "stage3_radiation_refresh_thermal/20261109T121152690888Z_08dd99",
+      "files": [
+        "dated_thermal_support.csv",
+        "dated_thermal_quality_flags.csv"
+      ],
+      "basis": "combined_previously_checked_orbital_query_cohorts_with_quality_exclusions",
+      "spatial_scope": "three_named_ROI_query_cohorts_not_validated_component_temperatures",
+      "temporal_scope": "2023-06_to_2026-06_sparse_channel_month_queries_not_mission_history",
+      "quantity_class": "query_rows_and_channel_brightness_temperature_not_independent_events_or_equipment_response"
+    },
+    "geometry": {
+      "run": "stage3_expanded_terrain/20261108T213605563555Z_8c254f",
+      "files": [
+        "reference_observers.csv",
+        "terrain_geometry_summary.csv",
+        "geometry_resolution_convergence.csv"
+      ],
+      "basis": "modelled_from_measured_DEM_and_DE421_geometry",
+      "spatial_scope": "seven_ROI_center_reference_points_not_component_footprints",
+      "temporal_scope": "two_30_day_windows_starting_2020-06-01_and_2020-12-01",
+      "quantity_class": "target_center_blocking_not_solar_generation_or_working_links"
+    },
+    "annual_radiation": {
+      "run": "stage3_late_radiation_refresh/20261108T215757093675Z_372fd0",
+      "files": [
+        "refreshed_crater_daily_context.csv",
+        "refreshed_crater_missing_dates.csv",
+        "refreshed_goes_daily_directional_support.csv",
+        "refreshed_goes_energy_direction_support.csv",
+        "refreshed_goes_missing_dates.csv"
+      ],
+      "basis": "observed_spacecraft_instrument_context",
+      "spatial_scope": "LRO_orbit_and_GOES16_not_lunar_component_shielded_dose",
+      "temporal_scope": "CRaTER_2023-07_to_2024-11_and_GOES_2023-11_to_2025-04_with_gaps",
+      "quantity_class": "SEC_counters_directional_differential_flux_and_quality_not_crew_dose"
+    },
+    "hazards": {
+      "run": "stage3_resources_eda/20261108T211453295966Z_b828df",
+      "files": [
+        "hazard_evidence_boundaries.csv"
+      ],
+      "basis": "compiled_literature_and_data_applicability_synthesis",
+      "spatial_scope": "mixed_global_and_reference_context_not_local_risk_assay",
+      "temporal_scope": "mixed_historical_and_reference_periods_not_a_selected_mission",
+      "quantity_class": "qualitative_hazard_evidence_boundaries_not_risk_scores"
+    },
+    "events": {
+      "run": "stage3_radiation_eda/20261108T211459851919Z_a935df",
+      "files": [
+        "seismic_evidence_context.csv",
+        "impact_evidence_context.csv",
+        "reference_radiation_duration_sensitivity.csv"
+      ],
+      "basis": "observational_catalogs_and_published_shielding_model_sensitivity",
+      "spatial_scope": "historical_event_locations_and_model_scenarios_not_local_mission_rates",
+      "temporal_scope": "historical_catalogs_and_declared_study_solar_cases",
+      "quantity_class": "catalog_entries_detections_and_illustrative_model_rates_not_actual_crew_dose"
+    },
+    "download_review": {
+      "run": "stage3_download_review/20261109T080133314763Z_73e820",
+      "files": [
+        "dated_thermal_support.csv",
+        "dated_thermal_quality_flags.csv",
+        "region_thermal_support.csv",
+        "radiation_file_availability.csv",
+        "download_job_status.csv",
+        "acquisition_holds.csv"
+      ],
+      "basis": "observed_orbital_channel_radiometry_quality_and_receipt_size_availability_audit",
+      "spatial_scope": "two_named_regional_ROIs_and_instrument_platform_file_availability_not_component_measurements",
+      "temporal_scope": "frozen_2026-11-09T07:48:39Z_snapshot_30_thermal_months_and_platform_separated_radiation_dates",
+      "quantity_class": "query_rows_quality_flags_and_available_file_dates_not_unique_observations_or_qualified_radiation_coverage_or_crew_dose"
+    },
+    "thermal_pilot": {
+      "run": "stage3_thermal_eda/20261108T211520197662Z_f64ea4",
+      "files": [
+        "dated_thermal_support.csv",
+        "dated_thermal_quality_flags.csv"
+      ],
+      "basis": "observed_orbital_channel_radiometry_with_quality_exclusions",
+      "spatial_scope": "one_Leibnitz_regional_rectangle_not_component_validated",
+      "temporal_scope": "2023-06_2025-03_2026-06_sparse_observations",
+      "quantity_class": "channel_brightness_temperature_K_not_component_response"
+    },
+    "radiation_goes": {
+      "run": "stage3_radiation_refresh_goes/20261109T114257507105Z_bc3e95",
+      "files": [
+        "goes_daily_directional_support.csv",
+        "goes_platform_support.csv",
+        "goes_energy_direction_version_support.csv",
+        "goes_monthly_support.csv",
+        "goes_missing_dates.csv",
+        "goes_qualified_peak_days.csv"
+      ],
+      "basis": "observed_directional_differential_proton_flux_with_strict_sample_flag_selection",
+      "spatial_scope": "Earth_geostationary_GOES16_GOES19_separate_not_lunar_transported_dose",
+      "temporal_scope": "2023-11_to_2026-10_platform_windows_versions_gaps_and_energy_direction_support_separate",
+      "quantity_class": "protons_per_cm2_sr_keV_s_and_qualified_channel_time_bins_not_crew_dose"
+    },
+    "radiation_crater": {
+      "run": "stage3_radiation_refresh_crater/20261109T114752812642Z_5e13db",
+      "files": [
+        "crater_daily_context.csv",
+        "crater_new_daily_context.csv",
+        "crater_missing_dates.csv",
+        "crater_monthly_support.csv",
+        "crater_support_summary.csv"
+      ],
+      "basis": "observed_LRO_SEC_counters_selected_configuration_states_with_reused_checked_baseline",
+      "spatial_scope": "LRO_orbit_not_component_surface_or_local_shielded_crew",
+      "temporal_scope": "2023-07_to_2026-06_completed_dates_with_explicit_gaps_and_partial_days",
+      "quantity_class": "SEC_counters_and_state_support_not_dose_or_certified_events"
+    },
+    "radiation_primary": {
+      "run": "stage3_radiation_refresh_primary/20261109T120623984912Z_d1fa5a",
+      "files": [
+        "primary_sample_coverage.csv",
+        "primary_sample_LET_diagnostics.csv",
+        "primary_sample_DQI_context.csv"
+      ],
+      "basis": "deterministic_distributed_record_blocks_not_random_or_complete_primary_event_series",
+      "spatial_scope": "six_LRO_CRATER_silicon_detectors_not_lunar_site_shielded_crew",
+      "temporal_scope": "sparse_selected_monthly_days_2023-07_to_2026-06_not_continuous_history",
+      "quantity_class": "sampled_silicon_LET_keV_per_micron_DQI_unqualified_not_event_rate_or_dose"
+    },
+    "temporal": {
+      "run": "stage3_temporal_environment/20261109T183729619637Z_3d72dc",
+      "files": [
+        "series_catalog.csv",
+        "daily_context.csv",
+        "monthly_context.csv",
+        "quarterly_context.csv",
+        "temporal_support.csv",
+        "cross_dataset_overlap.csv",
+        "plasma_file_diagnostics.csv"
+      ],
+      "basis": "observed_historical_SOLSTICE_spectra_ARTEMIS_CDF_and_previously_checked_CRATER_GOES_daily_statistics",
+      "spatial_scope": "solar_reference_and_spacecraft_position_strata_NOT_candidate_surface_or_equipment_response",
+      "temporal_scope": "SOLSTICE_2003-05_to_2020-02_ARTEMIS_2023-10_to_2026-09_CRATER_2023-07_to_2026-06_GOES16_19_separate_2023-11_to_2026-10;UTC_calendar_months_and_quarters_NOT_lunar_seasons",
+      "quantity_class": "daily_band_irradiance_or_record_statistics_with_explicit_quality_coverage_and_position;NOT_local_dose_voltage_risk_or_future_forecast"
+    }
+  },
+  "science_models": {
+    "run": "lunar_science_indicators/20261109T125300938144Z_2ab576",
+    "config": "research/lunar_science_models.json",
+    "files": [
+      "candidate_science_profiles.csv",
+      "candidate_science_indicators.csv",
+      "indicator_contract.csv",
+      "radiation_reference_scenarios.csv",
+      "plasma_reference_cases.csv",
+      "science_sources.csv"
+    ]
+  }
+}

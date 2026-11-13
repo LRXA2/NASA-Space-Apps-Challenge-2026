@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "sources": {
+    "sourcebook": {
+      "relative_path": "reference/lunar_soil_comparison/sourcebook_table7_15.asc",
+      "bytes": 6745,
+      "sha256": "bbd83e45297c52d4b1bc96978686bd43217be5fc92f7ad5a999d7132b00f9028",
+      "source_receipt": {
+        "url": "https://lunar-consortium.astrogeology.usgs.gov/data/chem_min/tab7_15.asc",
+        "sha256": "bbd83e45297c52d4b1bc96978686bd43217be5fc92f7ad5a999d7132b00f9028",
+        "bytes": 6745
+      }
+    },
+    "ce5_article": {
+      "relative_path": "reference/lunar_soil_comparison/ce5_article.html",
+      "bytes": 208851,
+      "sha256": "bc43c2319289310b94e5763a0cb9fae163f6ae5f3e37714715de21a4126b1751",
+      "source_receipt": {
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8974359/",
+        "sha256": "bc43c2319289310b94e5763a0cb9fae163f6ae5f3e37714715de21a4126b1751",
+        "bytes": 208851
+      }
+    },
+    "ce6_article": {
+      "relative_path": "reference/lunar_soil_comparison/ce6_article.html",
+      "bytes": 195211,
+      "sha256": "b0f6606c972d7890cb2db708040252fc5775c97a86975282c66213a233fa2611",
+      "source_receipt": {
+        "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11495410/",
+        "sha256": "b0f6606c972d7890cb2db708040252fc5775c97a86975282c66213a233fa2611",
+        "bytes": 195211
+      }
+    },
+    "ce5_supplement": {
+      "relative_path": "reference/lunar_soil_comparison/ce5_supplement.docx",
+      "bytes": 5303748,
+      "sha256": "47312752508b076680223e3a5b237f5d77bc49a1ff77b09b222a198a35526e61",
+      "source_receipt": {
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC8974359/supplementaryFiles",
+        "member": "nwab188_supplemental_file.docx",
+        "sha256": "47312752508b076680223e3a5b237f5d77bc49a1ff77b09b222a198a35526e61",
+        "bytes": 5303748
+      }
+    },
+    "ce6_supplement": {
+      "relative_path": "reference/lunar_soil_comparison/ce6_supplement.docx",
+      "bytes": 1181595,
+      "sha256": "f0db9adec1d937b2ef909ceddaa6be4e7b9a11fd7c317c154c748e07b47e0a5b",
+      "source_receipt": {
+        "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11495410/supplementaryFiles",
+        "member": "nwae328_supplemental_file.docx",
+        "sha256": "f0db9adec1d937b2ef909ceddaa6be4e7b9a11fd7c317c154c748e07b47e0a5b",
+        "bytes": 1181595
+      }
+    },
+    "maturity_reference": {
+      "relative_path": "reference/lunar_soil_comparison/noble_regolith.pdf",
+      "bytes": 6650592,
+      "sha256": "6bf14976540d2ae32653603e009390ac4ad79e6cc2e2540475b45736edfd40c7",
+      "source_receipt": {
+        "url": "https://www.nasa.gov/wp-content/uploads/2019/04/05_1_snoble_thelunarregolith.pdf",
+        "bytes": 6650592,
+        "sha256": "6bf14976540d2ae32653603e009390ac4ad79e6cc2e2540475b45736edfd40c7"
+      }
+    },
+    "physical_context": {
+      "relative_path": "reference/lunar_soil_comparison/physical_context.json",
+      "bytes": 1693,
+      "sha256": "6b0fe9b56381d173f7de4031f6e4aacf8a66aacaab6f0e04b9262c7170341f24"
+    },
+    "metric_evidence": {
+      "relative_path": "reference/lunar_soil_comparison/metric_evidence.json",
+      "bytes": 3437,
+      "sha256": "36860dd9d98435c1495e5f470ed7d2c0b7e7b451b6c27e9a1ffd1218a7fe3dd8"
+    }
+  },
+  "apollo_baseline_run": "20261113T053529630638Z_f65c49",
+  "purpose": "Soil-only NASA versus wider actual mission references; no global random sample or suitability labels",
+  "pipeline_changed": false
+}

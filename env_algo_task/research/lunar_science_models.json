@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "body": "Moon",
+  "candidate_run": "dar_020_candidate_environment/20261106T175311055762Z_b68ce6",
+  "radiation_reference_run": "stage3_radiation_eda/20261108T211459851919Z_a935df",
+  "research_register": "research/environmental_data.csv",
+  "scope": "Science-backed candidate indicators and common reference scenarios; no adopted operational limits or mission/equipment defaults",
+  "sources": [
+    {
+      "id": "LOLA_POLAR",
+      "url": "https://pgda.gsfc.nasa.gov/products/69",
+      "citation": "Mazarico et al. (2011), doi:10.1016/j.icarus.2010.10.030",
+      "role": "Long-period solar visibility and terrain sky solid-angle definitions",
+      "reviewed": "2026-11-09",
+      "limitation": "Static/long-period geometry is not a requested mission-window history or irradiance."
+    },
+    {
+      "id": "GCR_GEOMETRY",
+      "url": "https://ntrs.nasa.gov/api/citations/20210021043/downloads/Phipps_LPSC_2021_abstract.pdf",
+      "citation": "Phipps et al. (2021), Galactic Cosmic Ray Proton Radiation Dosage Near a Simple Lunar Crater",
+      "role": "Terrain obscures part of the incident sky; geometric exposure is a useful separate indicator",
+      "reviewed": "2026-11-09",
+      "limitation": "We use solid angle divided by 4*pi, not their dose values. No secondary-particle transport, response, material shielding or human dose is inferred."
+    },
+    {
+      "id": "REDMOON",
+      "url": "https://www.nature.com/articles/s41550-024-02287-8",
+      "citation": "Dobynde and Guo (2024), Guidelines for radiation-safe human activities on the Moon",
+      "role": "Existing checked lunar shielding/solar reference scenarios",
+      "reviewed": "2026-11-09",
+      "limitation": "Published study cases, not selected hardware or a site dose. Do not multiply whole-field reference doses by the geometric proxy."
+    },
+    {
+      "id": "UV_SCIENCE",
+      "url": "https://ntrs.nasa.gov/api/citations/20220005646/downloads/Ahrens.ultraviolet.STI.pdf",
+      "citation": "Ahrens, Ultraviolet Radiation, NASA GSFC",
+      "role": "Solar UV is relevant to lunar photoemission and the near-surface environment",
+      "reviewed": "2026-11-09",
+      "limitation": "Sun visibility supplies an opportunity proxy only, not spectrum, incident energy, biological exposure or material degradation."
+    },
+    {
+      "id": "CHARGING_MODEL",
+      "url": "https://ntrs.nasa.gov/citations/20160005752",
+      "citation": "Stubbs et al. (2014), doi:10.1016/j.pss.2013.07.008",
+      "role": "Charging depends on electron/ion plasma and photoemission parameters and solar geometry",
+      "reviewed": "2026-11-09",
+      "limitation": "Ion records and mean illumination alone do not establish local potential or discharge risk."
+    },
+    {
+      "id": "PSR_CHARGING",
+      "url": "https://science.gsfc.nasa.gov/LEADER/Science/Nuggets/2019/Lunar_Plasma_Environment_nugget.pdf",
+      "citation": "Rhodes and Farrell (2019), Lunar polar plasma environment, NASA GSFC",
+      "role": "Dark plasma-poor polar terrain can have difficulty dissipating triboelectric charge",
+      "reviewed": "2026-11-09",
+      "limitation": "Darkness is not a universal charging benefit; there is no monotonic plasma score or invented voltage."
+    },
+    {
+      "id": "MODEL_CREDIBILITY",
+      "url": "https://standards.nasa.gov/node/263",
+      "citation": "NASA-STD-7009B, Standard for Models and Simulations",
+      "role": "Document model assumptions, scope and credibility",
+      "reviewed": "2026-11-09",
+      "limitation": "This prototype does not claim NASA-standard compliance or validated operational adequacy."
+    }
+  ],
+  "reference_policy": {
+    "assign_common_dose_to_candidates": false,
+    "multiply_reference_dose_by_sky_proxy": false,
+    "adopt_operational_limits": false
+  },
+  "comparison_views": [
+    {
+      "id": "environmental_exposure_tradeoff",
+      "objectives": [
+        {
+          "metric": "sky_visible_fraction_4pi",
+          "direction": "lower"
+        },
+        {
+          "metric": "uv_sun_visibility_opportunity_proxy",
+          "direction": "lower"
+        },
+        {
+          "metric": "earth_visibility_fraction_median",
+          "direction": "higher"
+        }
+      ],
+      "meaning": "Pareto tradeoff among candidates passing the current illustrative filters. Lower geometric exposure/opportunity and higher Earth visibility; not an operational safety ranking.",
+      "solar_handling": "Solar visibility remains an existing hard context filter, and is not also added as an independent weighted benefit in this view."
+    },
+    {
+      "id": "with_thermal_stability",
+      "objectives": [
+        {
+          "metric": "sky_visible_fraction_4pi",
+          "direction": "lower"
+        },
+        {
+          "metric": "uv_sun_visibility_opportunity_proxy",
+          "direction": "lower"
+        },
+        {
+          "metric": "earth_visibility_fraction_median",
+          "direction": "higher"
+        },
+        {
+          "metric": "thermal_phase_median_span_K",
+          "direction": "lower"
+        }
+      ],
+      "meaning": "Same tradeoff with explicitly chosen lower phase-median span, only when complete fixed-common thermal cohorts exist. Not equipment-temperature adequacy.",
+      "solar_handling": "No double-counted sunlight/UV weights; unsupported thermal candidates remain unranked in this view."
+    }
+  ]
+}

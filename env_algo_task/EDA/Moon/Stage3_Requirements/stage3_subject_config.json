@@ -1,0 +1,227 @@
+{
+  "schema": 1,
+  "body": "Moon",
+  "screening_run": "stage3_acquired_environment/20261110T162301033833Z_df1a52",
+  "temporal_run": "stage3_temporal_environment/20261109T183729619637Z_3d72dc",
+  "acquisition_config": "stage3_acquired_config.json",
+  "time_bins": [
+    "month",
+    "quarter",
+    "four_month_term",
+    "half_year",
+    "year",
+    "two_year",
+    "calendar_season"
+  ],
+  "two_year_anchor": 2000,
+  "time_contract": "UTC; half-year=Jan-Jun/Jul-Dec; two-year=nonoverlapping even-year pairs anchored 2000; four-month term=Jan-Apr/May-Aug/Sep-Dec; DJF/MAM/JJA/SON are calendar labels only, not lunar seasons",
+  "uv_bands_nm": {
+    "XUV_0_27": [
+      0,
+      27
+    ],
+    "EUV_27_115": [
+      27,
+      115
+    ],
+    "EGS_subband_50_115": [
+      50,
+      115
+    ],
+    "FUV_115_180": [
+      115,
+      180
+    ],
+    "UV_180_190": [
+      180,
+      190
+    ]
+  },
+  "lamp_window_pixels": 256,
+  "lamp_display_stride": 8,
+  "scope": "Stage 3 subject studies and unadopted Stage 4 proposals only; no pipeline integration",
+  "subjects": [
+    {
+      "id": "solar_uv",
+      "datasets": [
+        "D09_SEE",
+        "D09 historical SOLSTICE",
+        "D32"
+      ],
+      "dimensions": [
+        "spectrum",
+        "uncertainty",
+        "model assistance",
+        "calendar variation",
+        "spatial quality",
+        "geometry applicability"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "plasma_charging",
+      "datasets": [
+        "D11 P1/P2",
+        "D11_ESA"
+      ],
+      "dimensions": [
+        "mode",
+        "electron/ion moments",
+        "quality",
+        "spacecraft potential",
+        "SSE geometry",
+        "cadence",
+        "calendar variation"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "polar_thermal",
+      "datasets": [
+        "D20_PRP",
+        "D01",
+        "D20 acquired"
+      ],
+      "dimensions": [
+        "model vs observation",
+        "surface vs depth",
+        "extremes",
+        "terrain/site association",
+        "period applicability"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "subsurface_thermal",
+      "datasets": [
+        "D28"
+      ],
+      "dimensions": [
+        "probe/sensor/depth",
+        "flags",
+        "deployment disturbances",
+        "time variation",
+        "gaps"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "seismic",
+      "datasets": [
+        "D14_PSE",
+        "D13"
+      ],
+      "dimensions": [
+        "all motion axes",
+        "response modes",
+        "ATT timing",
+        "raw vs corrected motion",
+        "natural vs operational events",
+        "calendar coverage"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "dust",
+      "datasets": [
+        "D10",
+        "mission PDFs"
+      ],
+      "dimensions": [
+        "mass/threshold",
+        "saturation/quality",
+        "current/background",
+        "time",
+        "operational contamination"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "exosphere",
+      "datasets": [
+        "D35",
+        "mission PDFs"
+      ],
+      "dimensions": [
+        "species",
+        "uncertainty",
+        "altitude",
+        "latitude",
+        "local solar time",
+        "time/background"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "neutrons_resources",
+      "datasets": [
+        "D29",
+        "D32",
+        "D20_PRP"
+      ],
+      "dimensions": [
+        "spectra/channels",
+        "state/zero channels",
+        "time",
+        "geometry/altitude",
+        "resource inference limits"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "radiation",
+      "datasets": [
+        "D07",
+        "D08",
+        "D31",
+        "mission PDFs"
+      ],
+      "dimensions": [
+        "detectors/energy/platform",
+        "quality",
+        "year+ coverage",
+        "events vs counters",
+        "solar covariation",
+        "shielding applicability"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "terrain_illumination",
+      "datasets": [
+        "D02-D06",
+        "D15",
+        "D26",
+        "D27",
+        "D30",
+        "mission PDFs"
+      ],
+      "dimensions": [
+        "terrain uncertainty",
+        "map support",
+        "solar/Earth visibility",
+        "darkness continuity",
+        "imagery/radar interpretation"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "operations_habitat",
+      "datasets": [
+        "retained PDFs",
+        "S01-S03",
+        "R01-R02"
+      ],
+      "dimensions": [
+        "source identity",
+        "deployment",
+        "failure/mitigation",
+        "conditional rules",
+        "resource use",
+        "qualification/applicability"
+      ],
+      "status": "pending"
+    }
+  ],
+  "science_profile_run": "lunar_science_indicators/20261109T125300938144Z_2ab576"
+}

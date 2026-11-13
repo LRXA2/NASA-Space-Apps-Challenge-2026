@@ -1,0 +1,332 @@
+{
+  "schema": 1,
+  "calendar": "UTC year-month and calendar quarters, NOT lunar seasons",
+  "external_root": "D:\\projects\\NASA Dataset",
+  "uv_files": [
+    {
+      "relative_path": "moon/eda_pilots/D09/18453f7e4673/sorce_muv_latest.txt.zip",
+      "receipt": "moon/eda_pilots/D09/18453f7e4673/sorce_muv_latest.txt.zip.json",
+      "size_bytes": 8198316,
+      "sha256": "31a493c62073a2b348cb9de094bac3ce445446c866dc2a28585781ebbc8c2b04",
+      "url": "https://lasp.colorado.edu/data/sorce/ssi_data/solstice/muv/txt/sorce_muv_latest.txt.zip",
+      "band": "MUV"
+    },
+    {
+      "relative_path": "moon/eda_pilots/D09/ca3a0cdfef7b/sorce_fuv_latest.txt.zip",
+      "receipt": "moon/eda_pilots/D09/ca3a0cdfef7b/sorce_fuv_latest.txt.zip.json",
+      "size_bytes": 4346855,
+      "sha256": "0a9af05172c454b94a32cfee06222143e2f7f3d5bec72194a8b9bab8ab3d7957",
+      "url": "https://lasp.colorado.edu/data/sorce/ssi_data/solstice/fuv/txt/sorce_fuv_latest.txt.zip",
+      "band": "FUV"
+    }
+  ],
+  "plasma_files": [
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2023/thb_l2_merged_20231001_v01.cdf",
+      "size_bytes": 791535,
+      "sha256": "8b7823410412c4ae2954b4d68945b116c0b8e248926fbdededbf8e26c921919d",
+      "receipt": "datasets/D11/thb/2023/thb_l2_merged_20231001_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2023/thb_l2_merged_20231001_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2023/thb_l2_merged_20231101_v01.cdf",
+      "size_bytes": 791535,
+      "sha256": "ea1a874567c6330ac5365a1ce739fe1685c3d883af1b883d433ed98e3ad5dbf5",
+      "receipt": "datasets/D11/thb/2023/thb_l2_merged_20231101_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2023/thb_l2_merged_20231101_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2023/thb_l2_merged_20231201_v01.cdf",
+      "size_bytes": 865387,
+      "sha256": "2d9499f27b4cafce862b6125a89a78d08fe7ea9ff602bef5b7b611fba305ec3e",
+      "receipt": "datasets/D11/thb/2023/thb_l2_merged_20231201_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2023/thb_l2_merged_20231201_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20240101_v01.cdf",
+      "size_bytes": 791949,
+      "sha256": "0acbd9acfd73306eb1cd3d9c3d6b83f43d10d5f035a0d3876db0b431d767779c",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20240101_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20240101_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20240201_v01.cdf",
+      "size_bytes": 569357,
+      "sha256": "bc010794d6ff672a06f23c1c92bb4946063a793f99552cd43bc509a93a5b41b2",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20240201_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20240201_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20240301_v01.cdf",
+      "size_bytes": 750049,
+      "sha256": "04f2494cea28302f7a75a36a3962c1076edc27451b88355d7d8ca8e8e9d9a93a",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20240301_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20240301_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20240401_v01.cdf",
+      "size_bytes": 791949,
+      "sha256": "8c4f93eee36d4237cdebdcfc5e1e759f37949a09124a719eed9ce8afe1804c96",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20240401_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20240401_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20240501_v01.cdf",
+      "size_bytes": 791949,
+      "sha256": "9f7e2ff5f55fa61998a1cf1ece644292dda36d0ec7fdd2da76cb89ebba2d83e3",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20240501_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20240501_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20240601_v01.cdf",
+      "size_bytes": 750049,
+      "sha256": "d3158555e3a37bee6bc2db08b57166d2d8c2ae16c55dbba52314d996b04afdd6",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20240601_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20240601_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20240701_v01.cdf",
+      "size_bytes": 758253,
+      "sha256": "4bb3484c2f38411a420c226a6a3de552accfd5544246cfcfcd0edb8c61e274a0",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20240701_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20240701_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20240801_v01.cdf",
+      "size_bytes": 758253,
+      "sha256": "15593a91941d92574f0bb4376384410f897d561ad50134f0c7d4588f2a353d3e",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20240801_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20240801_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20240901_v01.cdf",
+      "size_bytes": 750049,
+      "sha256": "2c85473527c83a98debb7bb46c581b514e296ad8404fef9805f6cf10de37a4ea",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20240901_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20240901_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20241001_v01.cdf",
+      "size_bytes": 791949,
+      "sha256": "3812504a05a71e83a9524d170b5ebaf1d6bd468f11e0b5335157455ce8e0daad",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20241001_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20241001_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20241101_v01.cdf",
+      "size_bytes": 791949,
+      "sha256": "6a9b038619dbf79e064c20c7145d5824efd46e4b77676df1c1ca14b212112252",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20241101_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20241101_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2024/thb_l2_merged_20241201_v01.cdf",
+      "size_bytes": 791949,
+      "sha256": "983c30d2415ea706009874330bb3074c334b155e7cffe1d54d92a96b3ca49341",
+      "receipt": "datasets/D11/thb/2024/thb_l2_merged_20241201_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2024/thb_l2_merged_20241201_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20250101_v01.cdf",
+      "size_bytes": 750049,
+      "sha256": "38847859ac6d11aba01e191f99900bee18d07c866075aafa7cfddabc2f58a34f",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20250101_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20250101_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20250201_v01.cdf",
+      "size_bytes": 717217,
+      "sha256": "4a9581533625201dab801556dc3e243954110c71c8bd6cf595fa78fd592c7261",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20250201_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20250201_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20250301_v01.cdf",
+      "size_bytes": 791949,
+      "sha256": "3d9092c391ea92d97029fab09335220724be31d48c42b948fde45f90e9e7b767",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20250301_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20250301_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20250401_v01.cdf",
+      "size_bytes": 791949,
+      "sha256": "2cfdd80e6c6ddbdf40ca18026c379307fff89a68b9f0c3535e49292599021c26",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20250401_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20250401_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20250501_v01.cdf",
+      "size_bytes": 791949,
+      "sha256": "1daae99c3d84dd74c113680de224711031182ebc04f2358840c820a25e76367a",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20250501_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20250501_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20250601_v01.cdf",
+      "size_bytes": 750049,
+      "sha256": "e9ddd7d14bb56870d7973355021427315dca262358184d34de8a0b24afeb7f95",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20250601_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20250601_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20250701_v01.cdf",
+      "size_bytes": 750049,
+      "sha256": "affd1209245c7a5ef11abad88d35164ccea8d9eaa632d2017d031fc45befff31",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20250701_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20250701_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20250801_v01.cdf",
+      "size_bytes": 758253,
+      "sha256": "7103e19c146d327255c6111db8ae1a85a98e3a9899de2ee71beac26c022269c5",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20250801_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20250801_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20250901_v01.cdf",
+      "size_bytes": 643365,
+      "sha256": "0d6f5dfc1a618543c89245e5d4f6e9915be3fc55a4a356178b57a7252bb99a45",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20250901_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20250901_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20251001_v01.cdf",
+      "size_bytes": 717217,
+      "sha256": "512b5abb11025e2ad888891be25bbc418c8ce620c5b89614435cadc4c4c4dd4e",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20251001_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20251001_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20251101_v01.cdf",
+      "size_bytes": 643365,
+      "sha256": "9e0bf793d07e8f74239a6332a42f4a1e6a0a17f3de5f5abb6553539e1d08a9b1",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20251101_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20251101_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2025/thb_l2_merged_20251201_v01.cdf",
+      "size_bytes": 750049,
+      "sha256": "35e5c2f4e4e651c9a15987f5ca3b5847aab7b16d1e285b5e0260cae6f92448f3",
+      "receipt": "datasets/D11/thb/2025/thb_l2_merged_20251201_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2025/thb_l2_merged_20251201_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2026/thb_l2_merged_20260101_v01.cdf",
+      "size_bytes": 717217,
+      "sha256": "ad81a735ff1983097b6b86c05429afd46c6fe88b1602a63252f9cd740132eb09",
+      "receipt": "datasets/D11/thb/2026/thb_l2_merged_20260101_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2026/thb_l2_merged_20260101_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2026/thb_l2_merged_20260201_v01.cdf",
+      "size_bytes": 717217,
+      "sha256": "8758b86dba31874731f6e30de26ef3186868492c63e9414e073c8ce13ec9d78d",
+      "receipt": "datasets/D11/thb/2026/thb_l2_merged_20260201_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2026/thb_l2_merged_20260201_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2026/thb_l2_merged_20260301_v01.cdf",
+      "size_bytes": 750049,
+      "sha256": "ea2a6075d1c622bd5235648ea1494f2fd0a65e5fc293f46614d9c08c087f7150",
+      "receipt": "datasets/D11/thb/2026/thb_l2_merged_20260301_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2026/thb_l2_merged_20260301_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2026/thb_l2_merged_20260401_v01.cdf",
+      "size_bytes": 750049,
+      "sha256": "8fee85b9495c8e2ab03629aa0bf9a22bfb22f479d4d888a89a26937142cc0cc2",
+      "receipt": "datasets/D11/thb/2026/thb_l2_merged_20260401_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2026/thb_l2_merged_20260401_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2026/thb_l2_merged_20260501_v01.cdf",
+      "size_bytes": 791949,
+      "sha256": "125a0ea9203074fe4360dced071434aedd19db77c7c6479e4b215f578c89efb7",
+      "receipt": "datasets/D11/thb/2026/thb_l2_merged_20260501_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2026/thb_l2_merged_20260501_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2026/thb_l2_merged_20260601_v01.cdf",
+      "size_bytes": 758253,
+      "sha256": "ee2319f111efbb1d9c9fade51c00fbd10b3a32a7ffb41f55a6160d893caf14b4",
+      "receipt": "datasets/D11/thb/2026/thb_l2_merged_20260601_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2026/thb_l2_merged_20260601_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2026/thb_l2_merged_20260701_v01.cdf",
+      "size_bytes": 199505,
+      "sha256": "e079c2c2002b0ecba7940b0ee43701bdd15e8806f187a7dc7e175e833163c76d",
+      "receipt": "datasets/D11/thb/2026/thb_l2_merged_20260701_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2026/thb_l2_merged_20260701_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2026/thb_l2_merged_20260801_v01.cdf",
+      "size_bytes": 421077,
+      "sha256": "d05e5972f6221deeb8fe11c305d9687c006c7e13d93b6fbec7d357923d890f0c",
+      "receipt": "datasets/D11/thb/2026/thb_l2_merged_20260801_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2026/thb_l2_merged_20260801_v01.cdf"
+    },
+    {
+      "dataset": "D11",
+      "relative_path": "datasets/D11/thb/2026/thb_l2_merged_20260901_v01.cdf",
+      "size_bytes": 643365,
+      "sha256": "740f200aa83dd433305971afcea2d43fb19feb04376988c75d7ca35038fd4407",
+      "receipt": "datasets/D11/thb/2026/thb_l2_merged_20260901_v01.cdf.json",
+      "url": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/cdf/2026/thb_l2_merged_20260901_v01.cdf"
+    }
+  ],
+  "radiation_sources": {
+    "radiation_goes": "stage3_radiation_refresh_goes/20261109T114257507105Z_bc3e95",
+    "radiation_crater": "stage3_radiation_refresh_crater/20261109T114752812642Z_5e13db"
+  },
+  "plasma_distance_edges_Rm": [
+    1,
+    5,
+    20
+  ],
+  "plasma_grouping": "SSE x sign and selenocentric radius, descriptive position strata NOT certified plasma regimes",
+  "sources": {
+    "uv": "https://lasp.colorado.edu/sorce/data/",
+    "uv_user_guide": "https://docserver.gesdisc.eosdis.nasa.gov/repository/Mission/SORCE/3_Product_Documentation/Product%20Requirements%20and%20Designs/SORCE_Data_User_Guide.pdf",
+    "plasma": "https://cdaweb.gsfc.nasa.gov/misc/NotesT.html#THB_L2_MERGED",
+    "plasma_readme": "https://spdf.gsfc.nasa.gov/pub/data/themis/thb/l2/merged/ascii/00readme_themisb.txt",
+    "lunar_seasons": "https://svs.gsfc.nasa.gov/5229",
+    "cdf_reader": "https://cdflib.readthedocs.io/en/latest/"
+  },
+  "crater_product_version": "V01"
+}

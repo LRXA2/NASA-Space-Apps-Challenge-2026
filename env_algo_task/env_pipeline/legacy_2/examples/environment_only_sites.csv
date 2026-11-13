@@ -1,0 +1,5 @@
+id,candidate_id,start_utc,stop_utc,evidence_ref,solar_visibility_median,demo_uv_W_m2
+A_pass,fictional_A_pass,2023-06-01T00:00:00Z,2023-07-01T00:00:00Z,environment_only_evidence.json,0.8,2
+B_fail,fictional_B_fail,2023-06-01T00:00:00Z,2023-07-01T00:00:00Z,environment_only_evidence.json,0.3,2
+C_unknown,fictional_C_unknown,2023-06-01T00:00:00Z,2023-07-01T00:00:00Z,environment_only_evidence.json,,2
+D_missing_soft,fictional_D_missing_soft,2023-06-01T00:00:00Z,2023-07-01T00:00:00Z,environment_only_evidence.json,0.8,

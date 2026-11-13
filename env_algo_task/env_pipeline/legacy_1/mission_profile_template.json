@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "body": "Moon",
+  "start_utc": null,
+  "stop_utc": null,
+  "crew_count": null,
+  "activities": null,
+  "equipment_configuration": null,
+  "requirements_inventory_complete": null,
+  "requirements": null,
+  "candidate_inputs": {},
+  "soft_preferences": [],
+  "note": "Blank project input contract, NOT a selected mission. Fill only documented requirements/equipment and applicable observed/modelled candidate evidence. Published references are not silently adopted."
+}
