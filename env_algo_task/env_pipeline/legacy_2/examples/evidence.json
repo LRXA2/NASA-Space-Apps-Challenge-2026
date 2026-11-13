@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "rows": {
+    "A_pass": {
+      "solar_visibility_median": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_A_pass",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "fraction",
+        "quantity": "spatial_median_sun_visibility",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      },
+      "slope_q90_deg": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_A_pass",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "degree",
+        "quantity": "spatial_slope_q90",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      }
+    },
+    "B_fail": {
+      "solar_visibility_median": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_B_fail",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "fraction",
+        "quantity": "spatial_median_sun_visibility",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      },
+      "slope_q90_deg": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_B_fail",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "degree",
+        "quantity": "spatial_slope_q90",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      }
+    },
+    "C_unknown": {
+      "solar_visibility_median": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_C_unknown",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "fraction",
+        "quantity": "spatial_median_sun_visibility",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      },
+      "slope_q90_deg": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_C_unknown",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "degree",
+        "quantity": "spatial_slope_q90",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      }
+    },
+    "D_missing_soft": {
+      "solar_visibility_median": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_D_missing_soft",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "fraction",
+        "quantity": "spatial_median_sun_visibility",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      },
+      "slope_q90_deg": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_D_missing_soft",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "degree",
+        "quantity": "spatial_slope_q90",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      }
+    },
+    "E_other_period": {
+      "solar_visibility_median": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_E_other_period",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "fraction",
+        "quantity": "spatial_median_sun_visibility",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      },
+      "slope_q90_deg": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_E_other_period",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "degree",
+        "quantity": "spatial_slope_q90",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      }
+    },
+    "F_tie": {
+      "solar_visibility_median": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_F_tie",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "fraction",
+        "quantity": "spatial_median_sun_visibility",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      },
+      "slope_q90_deg": {
+        "body": "Moon",
+        "candidate_id": "fictional_site_F_tie",
+        "scope": "candidate",
+        "basis": "synthetic",
+        "quality": "qualified",
+        "unit": "degree",
+        "quantity": "spatial_slope_q90",
+        "temporal_support": "static",
+        "source": "Fictional software fixture, not observed Moon data",
+        "support_count": 1
+      }
+    }
+  }
+}

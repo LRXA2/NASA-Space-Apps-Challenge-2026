@@ -1,0 +1,404 @@
+{
+  "schema": 1,
+  "selection_frozen_utc": "2026-11-08T21:02:57.202233+00:00",
+  "external_root": "D:\\projects\\NASA Dataset",
+  "scope": "Moon-only Step 3 available-data EDA; no mission selection, adopted gates or engine changes",
+  "selection_rule": "Three evenly spaced common completed UTC dates; three evenly spaced completed months common to available channels per region; choose before reading science values",
+  "sample_limit": "Not full acquisition, event census, climatology, or independent validation",
+  "source_plan": "manifests\\addons\\plans\\0c03339b841b538c28fd3fd0.json",
+  "source_results": "manifests\\addons\\runs\\20261108T171407488968Z\\results.json",
+  "radiation_days": [
+    {
+      "date": "2023-11-01",
+      "D07": {
+        "checkpoint": "manifests\\addons\\jobs\\0bac3867c9f8d171797aabe8\\inventory.json",
+        "files": [
+          {
+            "relative_path": "datasets/D07/secondary/2023/CRAT_L2_SEC_2023305_V01.TAB",
+            "size_bytes": 16761600,
+            "sha256": "c952f69f192ab6fbdaced00f9889a894f21d1a131a1e93aabc0203cdfb4025e8",
+            "receipt": "datasets\\D07\\secondary\\2023\\CRAT_L2_SEC_2023305_V01.TAB.json",
+            "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2023/CRAT_L2_SEC_2023305_V01.TAB"
+          },
+          {
+            "relative_path": "datasets/D07/secondary/2023/CRAT_L2_SEC_2023305_V01.xml",
+            "size_bytes": 23777,
+            "sha256": "44b74b8930469ef8dd292e61e747ca7e87093503b90ac07383dc21fe9cb34576",
+            "receipt": "datasets\\D07\\secondary\\2023\\CRAT_L2_SEC_2023305_V01.xml.json",
+            "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2023/CRAT_L2_SEC_2023305_V01.xml"
+          }
+        ]
+      },
+      "D08": {
+        "checkpoint": "manifests\\addons\\jobs\\6b5fd84bc5e3484d4281f4bd\\inventory.json",
+        "files": [
+          {
+            "relative_path": "datasets/D08/16/2023/sci_sgps-l2-avg5m_g16_d20231101_v3-0-2.nc",
+            "size_bytes": 598556,
+            "sha256": "13f91b0d5d4db37742e283ae5ba650ba218ff38b2c2d3fb757b6ab506317d5f5",
+            "receipt": "datasets\\D08\\16\\2023\\sci_sgps-l2-avg5m_g16_d20231101_v3-0-2.nc.json",
+            "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2023/11/sci_sgps-l2-avg5m_g16_d20231101_v3-0-2.nc"
+          }
+        ]
+      }
+    },
+    {
+      "date": "2024-02-12",
+      "D07": {
+        "checkpoint": "manifests\\addons\\jobs\\85ab5aa2fe076a8ea93f9795\\inventory.json",
+        "files": [
+          {
+            "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024043_V01.TAB",
+            "size_bytes": 16761600,
+            "sha256": "6aa8938c20e9ed2fac411ed477522ff60ac5713b497d229e14eb7500d54c8e9c",
+            "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024043_V01.TAB.json",
+            "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024043_V01.TAB"
+          },
+          {
+            "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024043_V01.xml",
+            "size_bytes": 23778,
+            "sha256": "667213bdd7d82abfd0727c2a3434f9612d72d51ee63d2f2e928e14f9068eb1fa",
+            "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024043_V01.xml.json",
+            "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024043_V01.xml"
+          }
+        ]
+      },
+      "D08": {
+        "checkpoint": "manifests\\addons\\jobs\\9d52b3090c0295b2a726f81a\\inventory.json",
+        "files": [
+          {
+            "relative_path": "datasets/D08/16/2024/sci_sgps-l2-avg5m_g16_d20240212_v3-0-2.nc",
+            "size_bytes": 640397,
+            "sha256": "5901db6121bcd2905459c86ec4cfb75acb679055dcbbb243a1e77f3cd34d69ad",
+            "receipt": "datasets\\D08\\16\\2024\\sci_sgps-l2-avg5m_g16_d20240212_v3-0-2.nc.json",
+            "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2024/02/sci_sgps-l2-avg5m_g16_d20240212_v3-0-2.nc"
+          }
+        ]
+      }
+    },
+    {
+      "date": "2024-05-25",
+      "D07": {
+        "checkpoint": "manifests\\addons\\jobs\\98b76e83e2cd7eb3ffdd7756\\inventory.json",
+        "files": [
+          {
+            "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024146_V01.TAB",
+            "size_bytes": 16761600,
+            "sha256": "41998cc4b26bb3efd961c04d51580cba6ed413258f75d9859709be37cb2af1b5",
+            "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024146_V01.TAB.json",
+            "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024146_V01.TAB"
+          },
+          {
+            "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024146_V01.xml",
+            "size_bytes": 23858,
+            "sha256": "5bc04be6272b1d91f02de4cc993988b46dfbd4d58213a7ce28c5d33f31d685bc",
+            "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024146_V01.xml.json",
+            "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024146_V01.xml"
+          }
+        ]
+      },
+      "D08": {
+        "checkpoint": "manifests\\addons\\jobs\\679b9c73217af827b9680b7f\\inventory.json",
+        "files": [
+          {
+            "relative_path": "datasets/D08/16/2024/sci_sgps-l2-avg5m_g16_d20240525_v3-0-2.nc",
+            "size_bytes": 612131,
+            "sha256": "8f9e75e0f73ecc882f3c0181263a2895860622b244d8b95eebfc96f33e73a26b",
+            "receipt": "datasets\\D08\\16\\2024\\sci_sgps-l2-avg5m_g16_d20240525_v3-0-2.nc.json",
+            "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2024/05/sci_sgps-l2-avg5m_g16_d20240525_v3-0-2.nc"
+          }
+        ]
+      }
+    }
+  ],
+  "thermal_products": [
+    {
+      "region": "A3CLR22_10_Leibnitz_Beta_Plateau",
+      "channel": 3,
+      "month": "2023-06",
+      "params": {
+        "channel": "fftffffff",
+        "easternlon": 36.36658017263624,
+        "maxcalibration": 0,
+        "maxgeometry": 12,
+        "maxlat": -85.06330364350973,
+        "maxmisc": 0,
+        "maxobtime": "2023-06-30T23:59:59.999",
+        "mincalibration": 0,
+        "mingeometry": 0,
+        "minlat": -85.42581944073811,
+        "minmisc": 0,
+        "minobtime": "2023-06-15T23:59:59.974",
+        "output": "XML",
+        "query": "divinerrdr",
+        "results": "v",
+        "westernlon": 27.287987945515503
+      },
+      "checkpoint": "manifests\\addons\\jobs\\240ad94386c4a4465180a6cd\\inventory.json",
+      "files": [
+        {
+          "relative_path": "datasets/D20/240ad94386c4a4465180a6cd/DivinerRDR_-85N-85N_27E36E_20261108T125014896.tab",
+          "size_bytes": 10806174,
+          "sha256": "ea2328cf133ea1a3e46b11699e0ea535695a43be8473327748d016dd14beb9f4",
+          "receipt": "datasets\\D20\\240ad94386c4a4465180a6cd\\DivinerRDR_-85N-85N_27E36E_20261108T125014896.tab.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t125009371/DivinerRDR_-85N-85N_27E36E_20261108T125014896.tab"
+        },
+        {
+          "relative_path": "datasets/D20/240ad94386c4a4465180a6cd/DivinerRDR_-85N-85N_27E36E_20261108T125014896.lbl",
+          "size_bytes": 19871,
+          "sha256": "3b1287afce7e123805ce9c57749b1864cc7a03ad67ff6dc72c5f5904c72570f1",
+          "receipt": "datasets\\D20\\240ad94386c4a4465180a6cd\\DivinerRDR_-85N-85N_27E36E_20261108T125014896.lbl.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t125009371/DivinerRDR_-85N-85N_27E36E_20261108T125014896.lbl"
+        }
+      ]
+    },
+    {
+      "region": "A3CLR22_10_Leibnitz_Beta_Plateau",
+      "channel": 4,
+      "month": "2023-06",
+      "params": {
+        "channel": "ffftfffff",
+        "easternlon": 36.36658017263624,
+        "maxcalibration": 0,
+        "maxgeometry": 12,
+        "maxlat": -85.42581944073811,
+        "maxmisc": 0,
+        "maxobtime": "2023-06-30T23:59:59.999",
+        "mincalibration": 0,
+        "mingeometry": 0,
+        "minlat": -85.7883352379665,
+        "minmisc": 0,
+        "minobtime": "2023-06-15T23:59:59.974",
+        "output": "XML",
+        "query": "divinerrdr",
+        "results": "v",
+        "westernlon": 27.287987945515503
+      },
+      "checkpoint": "manifests\\addons\\jobs\\dca82fad0f56fb9a7b5daf8a\\inventory.json",
+      "files": [
+        {
+          "relative_path": "datasets/D20/dca82fad0f56fb9a7b5daf8a/DivinerRDR_-86N-85N_27E36E_20261108T131822126.tab",
+          "size_bytes": 18106506,
+          "sha256": "3bcc90825ca6e98c8a51e637f0ab760d353a6a5bdb48bbeb9f04d1f4ef131c3d",
+          "receipt": "datasets\\D20\\dca82fad0f56fb9a7b5daf8a\\DivinerRDR_-86N-85N_27E36E_20261108T131822126.tab.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t131818049/DivinerRDR_-86N-85N_27E36E_20261108T131822126.tab"
+        },
+        {
+          "relative_path": "datasets/D20/dca82fad0f56fb9a7b5daf8a/DivinerRDR_-86N-85N_27E36E_20261108T131822126.lbl",
+          "size_bytes": 19871,
+          "sha256": "87f7a70153bd5033878f086360b2b0d94fc0c61b5cdfe8c550b4d7ae96e885d9",
+          "receipt": "datasets\\D20\\dca82fad0f56fb9a7b5daf8a\\DivinerRDR_-86N-85N_27E36E_20261108T131822126.lbl.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t131818049/DivinerRDR_-86N-85N_27E36E_20261108T131822126.lbl"
+        }
+      ]
+    },
+    {
+      "region": "A3CLR22_10_Leibnitz_Beta_Plateau",
+      "channel": 3,
+      "month": "2025-03",
+      "params": {
+        "channel": "fftffffff",
+        "easternlon": 36.36658017263624,
+        "maxcalibration": 0,
+        "maxgeometry": 12,
+        "maxlat": -85.42581944073811,
+        "maxmisc": 0,
+        "maxobtime": "2025-03-31T23:59:59.999",
+        "mincalibration": 0,
+        "mingeometry": 0,
+        "minlat": -85.7883352379665,
+        "minmisc": 0,
+        "minobtime": "2025-03-01T00:00:00.000",
+        "output": "XML",
+        "query": "divinerrdr",
+        "results": "v",
+        "westernlon": 27.287987945515503
+      },
+      "checkpoint": "manifests\\addons\\jobs\\1b4567262bae2c15fc508c0f\\inventory.json",
+      "files": [
+        {
+          "relative_path": "datasets/D20/1b4567262bae2c15fc508c0f/DivinerRDR_-86N-85N_27E36E_20261108T123315424.tab",
+          "size_bytes": 650826,
+          "sha256": "dccfe3fa43394fa50b6eb17bb77215cbe61a17162f68208973a560061193e40d",
+          "receipt": "datasets\\D20\\1b4567262bae2c15fc508c0f\\DivinerRDR_-86N-85N_27E36E_20261108T123315424.tab.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t123311790/DivinerRDR_-86N-85N_27E36E_20261108T123315424.tab"
+        },
+        {
+          "relative_path": "datasets/D20/1b4567262bae2c15fc508c0f/DivinerRDR_-86N-85N_27E36E_20261108T123315424.lbl",
+          "size_bytes": 19869,
+          "sha256": "521f612fcc587020805eaace0fdd7be73a7fcdd66e9038970fd1b6c5f8be2d74",
+          "receipt": "datasets\\D20\\1b4567262bae2c15fc508c0f\\DivinerRDR_-86N-85N_27E36E_20261108T123315424.lbl.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t123311790/DivinerRDR_-86N-85N_27E36E_20261108T123315424.lbl"
+        }
+      ]
+    },
+    {
+      "region": "A3CLR22_10_Leibnitz_Beta_Plateau",
+      "channel": 4,
+      "month": "2025-03",
+      "params": {
+        "channel": "ffftfffff",
+        "easternlon": 36.36658017263624,
+        "maxcalibration": 0,
+        "maxgeometry": 12,
+        "maxlat": -85.42581944073811,
+        "maxmisc": 0,
+        "maxobtime": "2025-03-31T23:59:59.999",
+        "mincalibration": 0,
+        "mingeometry": 0,
+        "minlat": -85.7883352379665,
+        "minmisc": 0,
+        "minobtime": "2025-03-01T00:00:00.000",
+        "output": "XML",
+        "query": "divinerrdr",
+        "results": "v",
+        "westernlon": 27.287987945515503
+      },
+      "checkpoint": "manifests\\addons\\jobs\\99dc832b555016b386b4e60e\\inventory.json",
+      "files": [
+        {
+          "relative_path": "datasets/D20/99dc832b555016b386b4e60e/DivinerRDR_-86N-85N_27E36E_20261108T133150888.tab",
+          "size_bytes": 666900,
+          "sha256": "ab5df4f8bc92b3ede7028d1c7fde047197e8bb8effd5fdb15c27fa86c14fb03a",
+          "receipt": "datasets\\D20\\99dc832b555016b386b4e60e\\DivinerRDR_-86N-85N_27E36E_20261108T133150888.tab.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t133146792/DivinerRDR_-86N-85N_27E36E_20261108T133150888.tab"
+        },
+        {
+          "relative_path": "datasets/D20/99dc832b555016b386b4e60e/DivinerRDR_-86N-85N_27E36E_20261108T133150888.lbl",
+          "size_bytes": 19869,
+          "sha256": "b35a3c947e60b20b06102e7a956e1cc97e217332ecd28ad82af93e3df93828de",
+          "receipt": "datasets\\D20\\99dc832b555016b386b4e60e\\DivinerRDR_-86N-85N_27E36E_20261108T133150888.lbl.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t133146792/DivinerRDR_-86N-85N_27E36E_20261108T133150888.lbl"
+        }
+      ]
+    },
+    {
+      "region": "A3CLR22_10_Leibnitz_Beta_Plateau",
+      "channel": 3,
+      "month": "2026-06",
+      "params": {
+        "channel": "fftffffff",
+        "easternlon": 36.36658017263624,
+        "maxcalibration": 0,
+        "maxgeometry": 12,
+        "maxlat": -85.06330364350973,
+        "maxmisc": 0,
+        "maxobtime": "2026-06-15T23:59:59.973",
+        "mincalibration": 0,
+        "mingeometry": 0,
+        "minlat": -85.42581944073811,
+        "minmisc": 0,
+        "minobtime": "2026-06-01T00:00:00.000",
+        "output": "XML",
+        "query": "divinerrdr",
+        "results": "v",
+        "westernlon": 27.287987945515503
+      },
+      "checkpoint": "manifests\\addons\\jobs\\66ebb20c3c0358bc6f9bc456\\inventory.json",
+      "files": [
+        {
+          "relative_path": "datasets/D20/66ebb20c3c0358bc6f9bc456/DivinerRDR_-85N-85N_27E36E_20261108T131141987.tab",
+          "size_bytes": 1245222,
+          "sha256": "73c8db082fb3c1961b2713b2aec2cc9a45c684d8dc2750def67d4bf14064feda",
+          "receipt": "datasets\\D20\\66ebb20c3c0358bc6f9bc456\\DivinerRDR_-85N-85N_27E36E_20261108T131141987.tab.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t131138779/DivinerRDR_-85N-85N_27E36E_20261108T131141987.tab"
+        },
+        {
+          "relative_path": "datasets/D20/66ebb20c3c0358bc6f9bc456/DivinerRDR_-85N-85N_27E36E_20261108T131141987.lbl",
+          "size_bytes": 19869,
+          "sha256": "fc45308a443f61b42598d03411d262cff209e80b14e03956f30fa157a9041c4d",
+          "receipt": "datasets\\D20\\66ebb20c3c0358bc6f9bc456\\DivinerRDR_-85N-85N_27E36E_20261108T131141987.lbl.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t131138779/DivinerRDR_-85N-85N_27E36E_20261108T131141987.lbl"
+        }
+      ]
+    },
+    {
+      "region": "A3CLR22_10_Leibnitz_Beta_Plateau",
+      "channel": 4,
+      "month": "2026-06",
+      "params": {
+        "channel": "ffftfffff",
+        "easternlon": 36.36658017263624,
+        "maxcalibration": 0,
+        "maxgeometry": 12,
+        "maxlat": -85.42581944073811,
+        "maxmisc": 0,
+        "maxobtime": "2026-06-15T23:59:59.973",
+        "mincalibration": 0,
+        "mingeometry": 0,
+        "minlat": -85.7883352379665,
+        "minmisc": 0,
+        "minobtime": "2026-06-01T00:00:00.000",
+        "output": "XML",
+        "query": "divinerrdr",
+        "results": "v",
+        "westernlon": 27.287987945515503
+      },
+      "checkpoint": "manifests\\addons\\jobs\\9f8f021d3962abf53b1bab19\\inventory.json",
+      "files": [
+        {
+          "relative_path": "datasets/D20/9f8f021d3962abf53b1bab19/DivinerRDR_-86N-85N_27E36E_20261108T134116113.tab",
+          "size_bytes": 1260270,
+          "sha256": "1944602f68abf43e947b294aaaedb4098965227b2e650d664ec97e5e249c0b41",
+          "receipt": "datasets\\D20\\9f8f021d3962abf53b1bab19\\DivinerRDR_-86N-85N_27E36E_20261108T134116113.tab.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t134113133/DivinerRDR_-86N-85N_27E36E_20261108T134116113.tab"
+        },
+        {
+          "relative_path": "datasets/D20/9f8f021d3962abf53b1bab19/DivinerRDR_-86N-85N_27E36E_20261108T134116113.lbl",
+          "size_bytes": 19869,
+          "sha256": "5a6180110736fe15e960b9025a6f399ff73892c72be50ff2831ebde2b691b004",
+          "receipt": "datasets\\D20\\9f8f021d3962abf53b1bab19\\DivinerRDR_-86N-85N_27E36E_20261108T134116113.lbl.json",
+          "url": "https://oderest.rsl.wustl.edu/output/20261108t134113133/DivinerRDR_-86N-85N_27E36E_20261108T134116113.lbl"
+        }
+      ]
+    }
+  ],
+  "region_bounds_m": {
+    "A3CLR22_10_Leibnitz_Beta_Plateau": [
+      65000,
+      110000,
+      81000,
+      126000
+    ],
+    "A3CLR22_11_Malapert_Massif": [
+      -11000,
+      111000,
+      10000,
+      132000
+    ],
+    "A3CLR22_12_deGerlache_Kocher_Massif": [
+      -123400,
+      -66100,
+      -103400,
+      -46100
+    ],
+    "A3CLR22_2_Haworth": [
+      -52900,
+      75600,
+      -23100,
+      105400
+    ],
+    "A3CLR22_3_Faustini_Rim_A": [
+      54000,
+      -10000,
+      74000,
+      10000
+    ],
+    "A3CLR22_4_deGerlache_Rim_2": [
+      -58500,
+      13000,
+      -38500,
+      33000
+    ],
+    "A3CLR22_5_Connecting_Ridge_Extension": [
+      -38700,
+      -16100,
+      -18700,
+      3900
+    ]
+  },
+  "evidence_run": "mission_equipment_extraction/20261108T205148887009Z_evidence",
+  "radiation_reference_run": "dar_005_research_radiation/20261107T160219935579Z_f7779c",
+  "seismic_run": "dar_007_research_seismic/20261107T160226955774Z_fe01f4",
+  "impact_run": "dar_008_research_imagery/20261107T160228308066Z_661fcf"
+}

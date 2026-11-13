@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "external_root": "D:\\projects\\NASA Dataset",
+  "plans": [
+    "13463d47df502b8e50ef81be",
+    "2d4a64cbcb795eb90eda4e75"
+  ],
+  "scope": "Moon Step 3 EDA only; no candidate scoring, new requirements, forecasts or physical safety certification",
+  "cohorts": {
+    "D09_SEE": "all available daily spectra",
+    "D11_P2": "all monthly merged files",
+    "D11_ESA": "first and last available file per UTC month; six ion/electron modes kept separate",
+    "D28": "all clean thermal tables",
+    "D14_PSE": "all MHZ and ATT days, 1973-1974; other channels not analysed",
+    "D10": "all current and mass tables",
+    "D35": "first and last orbit file per species/month",
+    "D29": "first and last available science day per UTC month, all records on those days",
+    "D20_PRP": "all model triangles in bounded chunks",
+    "D32": "systematic native-pixel stride 4, all four map families with matched quality/SNR/exposure"
+  },
+  "lamp_stride": 4,
+  "region_bounds_m": {
+    "A3CLR22_10_Leibnitz_Beta_Plateau": [
+      65000,
+      110000,
+      81000,
+      126000
+    ],
+    "A3CLR22_11_Malapert_Massif": [
+      -11000,
+      111000,
+      10000,
+      132000
+    ],
+    "A3CLR22_12_deGerlache_Kocher_Massif": [
+      -123400,
+      -66100,
+      -103400,
+      -46100
+    ],
+    "A3CLR22_2_Haworth": [
+      -52900,
+      75600,
+      -23100,
+      105400
+    ],
+    "A3CLR22_3_Faustini_Rim_A": [
+      54000,
+      -10000,
+      74000,
+      10000
+    ],
+    "A3CLR22_4_deGerlache_Rim_2": [
+      -58500,
+      13000,
+      -38500,
+      33000
+    ],
+    "A3CLR22_5_Connecting_Ridge_Extension": [
+      -38700,
+      -16100,
+      -18700,
+      3900
+    ]
+  },
+  "previous_temporal_run": "stage3_temporal_environment/20261109T183729619637Z_3d72dc",
+  "pdf_review_pages": "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\data\\verification\\download_pdf_review_20261110T150331Z\\targeted_pdf_pages.json"
+}

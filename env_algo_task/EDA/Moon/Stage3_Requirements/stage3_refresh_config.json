@@ -1,0 +1,1000 @@
+{
+  "schema": 1,
+  "external_root": "D:\\projects\\NASA Dataset",
+  "cutoff_utc": "2026-11-08T21:55:42.105481+00:00",
+  "scope": "Incremental receipt-complete inputs frozen by the required late folder revisit; no endless live-download chase",
+  "annual_reference_run": "stage3_annual_radiation/20261108T214216442281Z_e729e6",
+  "goes_files": [
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250130_v3-0-2.nc",
+      "size_bytes": 605713,
+      "sha256": "f224de3381f98c2f68b6690a788323341c7255367c86b83f49fc1d0ae2faf26a",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250130_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/01/sci_sgps-l2-avg5m_g16_d20250130_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250131_v3-0-2.nc",
+      "size_bytes": 604543,
+      "sha256": "cec43c0601c4e91d60c740a6d75e764868a2c4070a22866dc75498e75325bb4c",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250131_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/01/sci_sgps-l2-avg5m_g16_d20250131_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250201_v3-0-2.nc",
+      "size_bytes": 604845,
+      "sha256": "1bfd25261a42e3c788e18f86670b95f7c12a2ebb7865968caae09be9ff23f758",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250201_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250201_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250202_v3-0-2.nc",
+      "size_bytes": 604738,
+      "sha256": "46a3710dbfd28cd5dd38bb23665303c8455df257f2af8ca25aabe92c595b9d6e",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250202_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250202_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250203_v3-0-2.nc",
+      "size_bytes": 591724,
+      "sha256": "affcc1c2dd3ad53e7b0b8f85a751f4f8e87501ae476ca3c3ddf43dda28064f7b",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250203_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250203_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250204_v3-0-2.nc",
+      "size_bytes": 589580,
+      "sha256": "1ed9ead7f2a2e57d5a9cc048483aba76ba26d3b72f591603ed8022aea0f4e348",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250204_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250204_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250205_v3-0-2.nc",
+      "size_bytes": 593650,
+      "sha256": "b1e7b09fc3dc5ee143d87995facc5b0af493c92280d89ca05c494951bde7bcb7",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250205_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250205_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250206_v3-0-2.nc",
+      "size_bytes": 587649,
+      "sha256": "dbef6ab395b042a04c954d76eb2383bb275a4d5d4f12c4faca6171f24cd90605",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250206_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250206_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250207_v3-0-2.nc",
+      "size_bytes": 585447,
+      "sha256": "897d83457e6d7a2d2e14d09e60adf7e4a8b61cd1e42a0873022cab8aa9d0b84b",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250207_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250207_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250208_v3-0-2.nc",
+      "size_bytes": 587999,
+      "sha256": "0c1ce70eb9c0e35d928df8075aa172a9c265391ef9c7edf9c10f03a22dcec893",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250208_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250208_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250209_v3-0-2.nc",
+      "size_bytes": 591477,
+      "sha256": "883f50e101644c12b6d096dada5b2e3c1cf9fb351af7df311b3e9475a67dea24",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250209_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250209_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250210_v3-0-2.nc",
+      "size_bytes": 588104,
+      "sha256": "756a06f27bfa80647871f0e6c0eedcd448f4f5ada3a8ba2eefab5a2a111d06ee",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250210_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250210_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250211_v3-0-2.nc",
+      "size_bytes": 587830,
+      "sha256": "992980a0fda43e2051935854cc0cf5f3fa4f536765da6923f7fd3c6653e47469",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250211_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250211_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250212_v3-0-2.nc",
+      "size_bytes": 591756,
+      "sha256": "76567a2de1e00de0c6a4a5bbe8fe4205df23bcec8399ba5128b46721e980a942",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250212_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250212_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250213_v3-0-2.nc",
+      "size_bytes": 592930,
+      "sha256": "d8a3263bf0e55b9e2d1927a67bd123a825c278e026fb2b08d4ecada7a9f2cf90",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250213_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250213_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250214_v3-0-2.nc",
+      "size_bytes": 596035,
+      "sha256": "8c9ddd0a98e7b4bc0b23a6f9a4e4a6591bdc66d751cb94b2becd3d8d2456147e",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250214_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250214_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250215_v3-0-2.nc",
+      "size_bytes": 593791,
+      "sha256": "da86e57821c9360b4335351619465772eccffe31ae6340bfee8b943f47fc6f4c",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250215_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250215_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250216_v3-0-2.nc",
+      "size_bytes": 592373,
+      "sha256": "d803f5cef4ad05ffcf41ca51e5b84ac6b99286c6c05327c55680565b9c49b147",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250216_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250216_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250217_v3-0-2.nc",
+      "size_bytes": 589232,
+      "sha256": "d03b421c252b8c697247f34c0401dfb7e0c95c0fc4bd102428cdfbdda058e5a5",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250217_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250217_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250218_v3-0-2.nc",
+      "size_bytes": 586549,
+      "sha256": "9c8e4f87d792ae5c88adc44fe60a71dbae68ec52cc00a7dccb5170f49ee213ce",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250218_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250218_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250219_v3-0-2.nc",
+      "size_bytes": 587026,
+      "sha256": "ed0951e01a5907e1546082e36faee23d0f48f35fc7a727bcd5675de3b5c2ac6e",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250219_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250219_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250220_v3-0-2.nc",
+      "size_bytes": 591970,
+      "sha256": "3ba6da0b59def622bfcbbc306fec1c93939226b4e5fee71155998fcb2fb92326",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250220_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250220_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250221_v3-0-2.nc",
+      "size_bytes": 594397,
+      "sha256": "09a3d62efc499013e22c28d77cd9d73418f0c1af9f85aa6dbb536a956e257e46",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250221_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250221_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250222_v3-0-2.nc",
+      "size_bytes": 623046,
+      "sha256": "de65daf3d69db0ac7b477666478f8d1793fa32708ba32b628e7c85b127fffabb",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250222_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250222_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250223_v3-0-2.nc",
+      "size_bytes": 619681,
+      "sha256": "cefe650484335169267e55d413686fe60746ddb0c4f790fe4897a80baa0a251d",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250223_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250223_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250224_v3-0-2.nc",
+      "size_bytes": 621630,
+      "sha256": "1260162a0093fe0e1605f088cb7554fd22c3ab135e0341fce26b6476cf782b3f",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250224_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250224_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250225_v3-0-2.nc",
+      "size_bytes": 633906,
+      "sha256": "503a7ec4edd790416874043bb7c72d8e99a221ccac67eb9de500e9643e33ae7b",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250225_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250225_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250226_v3-0-2.nc",
+      "size_bytes": 628667,
+      "sha256": "0c513c7857071060605c403a6df0c10fe48bcaa45659761447df4e4919732484",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250226_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250226_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250227_v3-0-2.nc",
+      "size_bytes": 619821,
+      "sha256": "bb124d9f49c571994cb45e18dffa147527e0c12510642367936f3649af91518b",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250227_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250227_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250228_v3-0-2.nc",
+      "size_bytes": 612467,
+      "sha256": "ae700543e292bf7f78d31ba6981893992f802a1e8be44f251603d74b5ad6bff9",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250228_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/02/sci_sgps-l2-avg5m_g16_d20250228_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250301_v3-0-2.nc",
+      "size_bytes": 607168,
+      "sha256": "d829f3b2008a7279d98a30aa76fe0a90a446679b8ff756e2cbb863a1aed728d8",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250301_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/03/sci_sgps-l2-avg5m_g16_d20250301_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250302_v3-0-2.nc",
+      "size_bytes": 604165,
+      "sha256": "39aa0eb3312d2848732b945734da7f6b6144667309218dd788c7d4e6c4580843",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250302_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/03/sci_sgps-l2-avg5m_g16_d20250302_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250303_v3-0-2.nc",
+      "size_bytes": 597815,
+      "sha256": "368fa3f9d1b407986f92f6923ac0d407b11b9647b5d08126e3ac28a46f3e2fe7",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250303_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/03/sci_sgps-l2-avg5m_g16_d20250303_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250304_v3-0-2.nc",
+      "size_bytes": 594863,
+      "sha256": "b33000591c10e6a02afe2bf5a2745c1e813b42a04239661ecae489d6486020b7",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250304_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/03/sci_sgps-l2-avg5m_g16_d20250304_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250305_v3-0-2.nc",
+      "size_bytes": 595272,
+      "sha256": "2b24b0b8eedfc10db3e061eecc51c4eceed0b58342a24db9627c614c83dc4005",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250305_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/03/sci_sgps-l2-avg5m_g16_d20250305_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250306_v3-0-2.nc",
+      "size_bytes": 590843,
+      "sha256": "1a970f28b7cbaccbb1eec493f49812dadb98ad8d7b671488521fd94d54340875",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250306_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/03/sci_sgps-l2-avg5m_g16_d20250306_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250307_v3-0-2.nc",
+      "size_bytes": 593788,
+      "sha256": "efe950fc6c5d77e949be8eccc3ab5f9e9a9295ad1ba5eea0390322210db536f4",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250307_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/03/sci_sgps-l2-avg5m_g16_d20250307_v3-0-2.nc"
+    },
+    {
+      "relative_path": "datasets/D08/16/2025/sci_sgps-l2-avg5m_g16_d20250308_v3-0-2.nc",
+      "size_bytes": 596595,
+      "sha256": "49ffbc6502aee938156ea439cdbe0b341d6f1f151c48d69f0f34400d24199a15",
+      "receipt": "datasets\\D08\\16\\2025\\sci_sgps-l2-avg5m_g16_d20250308_v3-0-2.nc.json",
+      "url": "https://data.ngdc.noaa.gov/platforms/solar-space-observing-satellites/goes/goes16/l2/data/sgps-l2-avg5m/2025/03/sci_sgps-l2-avg5m_g16_d20250308_v3-0-2.nc"
+    }
+  ],
+  "crater_days": [
+    {
+      "date": "2024-10-01",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024275_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "82d6e8144a235ebef21028a09d2df2aa7fbf10b107bb365a6341e520d2db0386",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024275_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024275_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024275_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "edb31096ec3f008bb720dfe0373aa3342a600f8e913e8a2c12d9da1cd673861f",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024275_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024275_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-02",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024276_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "3b98a01d26f070b74995dde0e5827b161783fbe2e90a6cc8e0855ee3bd6b0b11",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024276_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024276_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024276_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "32dfdfe0503c6de0b29d463da1d106e5f385e1d97c200d81f32d590ef6b275f5",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024276_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024276_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-03",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024277_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "7f841ceafca514f160b964db6140d8c1be1d8bf789114fd925b56b11459c69f3",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024277_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024277_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024277_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "508b054a2b998f67b63058f049801d2191d1bdb6ed7fa4480b41e43390fb92c4",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024277_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024277_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-04",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024278_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "717072061ad50879b0f9fe63103b29a6b59fe97bc08db91873a58d6f50b3969e",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024278_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024278_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024278_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "694cbd747e67ed9a237015013e7917f09125f0ec68899ab0185338d37c4b48be",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024278_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024278_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-05",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024279_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "ca9071c7acfd54122d5550babca3bd9ab966589f81db342eef6000c2c2073f64",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024279_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024279_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024279_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "ccf9bbdf605fda62d8ba35b8b85358fa956eab6541a88a56d94173f9a38b7aec",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024279_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024279_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-06",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024280_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "e7b628b9a53c95eb46e8acb57e27030a0ee9fe86c650d9ede7dfe95fb30ddcda",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024280_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024280_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024280_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "b2ddc3983cb9666d80761cfd807e40c768524974d2c50717aca8e7089f96cb1d",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024280_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024280_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-07",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024281_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "258e5a2fc51a4449033111ebb2f3643b22e66c7cc5421af61e3f05cf4beaab85",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024281_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024281_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024281_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "4ded0c94cf6591572a4fba1b1a333be4b60024e771fa70c1c2032daec4a4d26c",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024281_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024281_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-08",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024282_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "5357d006d57808403e965c0701e08655b8f05039b65ef268b72b9b7bd84aa982",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024282_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024282_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024282_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "c6b087d4b37e287e6732e093d2772d8d00711671cbf056913437a5fb88dfe20c",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024282_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024282_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-09",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024283_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "addaf0d1943677e1da2862cb46c11b761817759ee5e56bc17a25d4348ecadcf0",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024283_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024283_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024283_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "193eb39af5073b01d8fedd00edc898622d98c2d3aaabc115fd7b0e626f7e6654",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024283_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024283_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-10",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024284_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "b1ccfdd97e17e278a09fda1d65c27d0e1f82fff16d188dd381ba7af1b532bb66",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024284_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024284_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024284_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "5ee5c53b5d45cc11be9b1fa33973c8a4b255e4b1c3fbd24253d3e0ad274ec99d",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024284_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024284_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-11",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024285_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "6eb297c126382f3f95e163e241914b9ddd7eb76a185ef0b702ba03a3d0d02306",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024285_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024285_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024285_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "5626ef7ab12c2a64ca8a08161c82660513ac057258e7da20860635040b7ef511",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024285_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024285_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-12",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024286_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "4ba2a28dc59466f146e53a5b6ff0c0faf0bebd85361cf230a9b6b9924fb5f3ea",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024286_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024286_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024286_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "4a4ba2d01715d5da2a913ec727bc1089e83f985b475adc6df31b00f04b026a0e",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024286_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024286_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-13",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024287_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "5ba97c4cb6fc919f23b14dc986e6fa0d8ac9bf258f50703700160d7770c3076d",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024287_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024287_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024287_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "1bfffd9e8bf858054e7b5b7971b2b7088582a92fa0e61ab7a5cbbc5054f14b3e",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024287_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024287_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-14",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024288_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "855e3273ff86bc28628abebf0097bb8c5295b6136a664b3498bae031af3b5c98",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024288_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024288_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024288_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "2d3a6e23edef5e16c98ea3087b0ae26331bdbd8e1eca9669deb92802148fb1c6",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024288_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024288_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-15",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024289_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "570916d76572729d14aef2ab37bd18f17ba7a7c2a72da3401165826bf9db6fa9",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024289_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024289_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024289_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "7ca163effc5f40c3fa73e1918a5e647e5da119cf351690333fd74bc78ecc8317",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024289_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024289_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-16",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024290_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "72b09e7f09ca2daed314dc5dd299cc78373ff2227e892747e3cc3a097bb3b7c3",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024290_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024290_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024290_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "c251c04b3820c0c3c9da6557e51659926bdb27d0331c5aef203fca53c36aa118",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024290_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024290_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-17",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024291_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "6d4681d8f55f4ac1f317eb51c101a0c7a8b5f7673bd6e095982352d348f15023",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024291_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024291_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024291_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "bc099a2e1022760fd4c0bd3116274ad07b6573dbb9e2b9d173d998e3080eb9a3",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024291_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024291_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-18",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024292_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "217f30345ac1da91620c70ccb5d55530f067cd3d735a6de83bda0e4e057f448e",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024292_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024292_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024292_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "6fdea35a00de0aba17ce03239de79940d466945f5455aabaf29426c71ff50082",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024292_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024292_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-19",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024293_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "59d01501967397bdb9e01ab7f89d0fc7afe1e241584ffa529af9bb7d37ae1690",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024293_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024293_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024293_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "c7e4a0ac241bc9324ca4e4ab0e780a8f3e627cb77f0b51fa3dabe14e85fe197b",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024293_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024293_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-20",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024294_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "d0da70d58ceb80a8574803d290505da5c27fac96fa0ccebb8ce5157e46502a18",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024294_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024294_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024294_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "f5c0b4e538449bc0f60cee858d6105d211ffdd1229b710b1ee3ea2eae30c583a",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024294_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024294_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-21",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024295_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "06371b743039e83ffce256e58b902f5ad612ba202fabef1ebf97c41efb8d6d77",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024295_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024295_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024295_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "3bc6835910dce0cddacea77b7e3b4af977cd6038eaf1874ac733a88b758550f3",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024295_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024295_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-22",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024296_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "b61a78e3539f9395b9bb3dd7a50895112080b4347a8c72e62256de6bec794cb4",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024296_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024296_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024296_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "7d4c387f7d6ae4fca4eb1d336429ee372e4b147d852433dff8a6590c0d1253e5",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024296_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024296_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-23",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024297_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "194edfbd39416633d40c48bdc55ea08905b926aac852cceb573bdb05eddb2117",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024297_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024297_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024297_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "b3f9e97f41eb80c140c678e7d21369175db75a7a8e23c0d8260133cde6259fad",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024297_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024297_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-24",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024298_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "8b4605313de9087ffb48f4f98c41d65428bc11aa967bc0c7b51744e1108edc82",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024298_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024298_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024298_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "cc8d49f279cc27f11a9e9836c24e91771313795e90f30b94373176758a117570",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024298_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024298_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-25",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024299_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "2e740c5f7986032d5956447a3cc759627ac745fa77bfbddc607db0e21e7e634a",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024299_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024299_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024299_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "488ab516dbba7eb1b86850f440c67dde4d0e22d3a7cbb9f6a7c6195e76630a99",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024299_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024299_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-26",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024300_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "4de156a546bf82450288e1ff530412d07214cffd6c8184f8fa97e0f43e8951ca",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024300_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024300_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024300_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "12cc78bbca29790e84e3f7d93447186cd2079d897e33b4f6e3b10c494574fe5f",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024300_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024300_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-27",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024301_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "9f1514699cd172b9cc89f087ab1ef2f7e9cfebc7bcace998e1194de5f1fa25d1",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024301_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024301_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024301_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "c59af8031e04971e73e8b34f07c2ba08559b3241e91fb8b28ea25668d378e078",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024301_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024301_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-28",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024302_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "d4c3d1dbc61cd9a86bd173118ab76a2bcf456f6c7cde6286fde25dc075a5d057",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024302_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024302_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024302_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "57422f6516833902552d95477c83981c9ba45aabe1dbe784dc6ee7b0d33904ac",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024302_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024302_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-29",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024303_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "539df02e61b5ab7a2e88ec7c3c972625070760c70ae765057b7563b23678b553",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024303_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024303_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024303_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "6c6b292e8522533a770d99bbd21795fe7116e921dae4d43ff265110b6127810a",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024303_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024303_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-30",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024304_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "0490c4630819b072fcb8330b24119a50e0c994295a0c1e95502fa020de29eb62",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024304_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024304_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024304_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "b4e0c300f830689eed3c351a0f2465ae8dd99d55ac7d68ebbb5b451269326a21",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024304_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024304_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-10-31",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024305_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "0355722cffdc5f2063603f2d55fbc84adb5a890c76cf29a1b999d8b2cc797af2",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024305_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024305_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024305_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "46915e395249b67af5ecf7aa399f4de7730d958031035e0e06645913a571c992",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024305_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024305_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-11-01",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024306_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "d2f1f22cae7ce417eab22b6d7fa6369f13436979ab0c622be046e0862ea04837",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024306_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024306_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024306_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "9cd17bc420f6237503f228a47ceaa296cfc8a4700547b2252e4db3e7104e16c8",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024306_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024306_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-11-02",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024307_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "caeca1d0d4727f1bd35e7cd075b509f79fb1d05127484addc4b40d2f6566bd0f",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024307_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024307_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024307_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "4a26ed8c4a6f2a56c740122ea3ee01a4672a15034e8596f15af7cb00207503df",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024307_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024307_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-11-03",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024308_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "19b011c6a5025da0411a74be1e6fa6d53ea6b88b0ebad57235cec864d9fbcc82",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024308_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024308_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024308_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "4cc5b0c1f8cb3f03a77686635b15f543941749911e7e94ddc60c7e431a2bfbab",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024308_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024308_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-11-04",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024309_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "37b01e049da9d37b0c6eb738e7f5f10353642a16737a4ade3b50dc6a2abc1b9e",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024309_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024309_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024309_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "30b286e0c7b7b89e4a49f89fcc7a185eca58baac0332ba3a6e09f619ff2e62e9",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024309_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024309_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-11-05",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024310_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "e40919104e768005f8e7e849c07173c089bbadcb62e90b5b97807852c7b861ba",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024310_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024310_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024310_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "b765c31d92aad84fb39b40843ab118e06840fee96353a116a6bddcb3c2404809",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024310_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024310_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-11-06",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024311_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "6e4ed13ca83fbb0120929d20f9dc0bf79d49d7cb1fa386adf8e4f80d0c9e2c32",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024311_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024311_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024311_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "4e4a535aed1cd2fd3266549c0a520c640a844ee8af3a9e3c978617b46fe10568",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024311_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024311_V01.xml"
+        }
+      ]
+    },
+    {
+      "date": "2024-11-07",
+      "files": [
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024312_V01.TAB",
+          "size_bytes": 16761600,
+          "sha256": "3c1619279776671e1fa4531be1b967f415bbf2c927658241fab733b404636239",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024312_V01.TAB.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024312_V01.TAB"
+        },
+        {
+          "relative_path": "datasets/D07/secondary/2024/CRAT_L2_SEC_2024312_V01.xml",
+          "size_bytes": 23861,
+          "sha256": "0db752d527035fd4ad1799ae3ab41652f0f072ca59829c9e969fab4f8ba17661",
+          "receipt": "datasets\\D07\\secondary\\2024\\CRAT_L2_SEC_2024312_V01.xml.json",
+          "url": "https://pds-ppi.igpp.ucla.edu/data/lro-crater/data-der-sec/2024/CRAT_L2_SEC_2024312_V01.xml"
+        }
+      ]
+    }
+  ],
+  "final_recheck": "env_algo_task/data/verification/stage3_expansion/final_external_recheck.json"
+}

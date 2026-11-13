@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "id": "fictional_eight_category_demo_v1",
+  "body": "Moon",
+  "mode": "synthetic_demo",
+  "note": "Fictional software fixture; arbitrary bounds/weights, not lunar safety limits.",
+  "metrics": [
+    {
+      "id": "solar_visibility_median",
+      "column": "solar_visibility_median",
+      "domain": "solar_illumination",
+      "unit": "fraction",
+      "quantity": "spatial_median_sun_visibility",
+      "temporal_support": "static",
+      "minimum": 0,
+      "maximum": 1,
+      "evidence_family": "sun_visibility"
+    },
+    {
+      "id": "demo_uv_W_m2",
+      "column": "demo_uv_W_m2",
+      "domain": "uv",
+      "unit": "W/m2",
+      "quantity": "fictional_local_band_irradiance",
+      "temporal_support": "window",
+      "minimum": 0,
+      "evidence_family": "qualified_UV_demo"
+    }
+  ],
+  "domains": [
+    {
+      "id": "radiation",
+      "priority": "Highest",
+      "scored": false,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "uv",
+      "priority": "Medium",
+      "scored": true,
+      "weight": 1,
+      "preferences": [
+        {
+          "metric": "demo_uv_W_m2",
+          "direction": "lower",
+          "lower": 0,
+          "upper": 10,
+          "weight": 1,
+          "source": "Fictional software test only",
+          "reason": "Exercise arithmetic, not scientific preference adoption"
+        }
+      ]
+    },
+    {
+      "id": "solar_illumination",
+      "priority": "High",
+      "scored": true,
+      "weight": 1,
+      "preferences": [
+        {
+          "metric": "solar_visibility_median",
+          "direction": "higher",
+          "lower": 0,
+          "upper": 1,
+          "weight": 1,
+          "source": "Fictional software test only",
+          "reason": "Exercise arithmetic, not scientific preference adoption"
+        }
+      ]
+    },
+    {
+      "id": "thermal",
+      "priority": "Highest",
+      "scored": false,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "plasma_charging",
+      "priority": "Medium",
+      "scored": false,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "dust",
+      "priority": "Medium",
+      "scored": false,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "seismic",
+      "priority": "Evidence-dependent",
+      "scored": false,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "exosphere",
+      "priority": "Context initially",
+      "scored": false,
+      "weight": null,
+      "preferences": []
+    }
+  ],
+  "hard_rules": [
+    {
+      "id": "fictional_sun_screen",
+      "metric": "solar_visibility_median",
+      "operator": "ge",
+      "limit": 0.5,
+      "source": "Fictional software fixture only",
+      "reason": "Exercise gate-first behavior"
+    }
+  ]
+}
