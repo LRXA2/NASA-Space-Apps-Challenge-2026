@@ -27,6 +27,10 @@ __pycache__/
 .nox/
 .cache/
 
+# App dependencies and build output
+node_modules/
+/app/dist/
+
 # Test coverage and packaging outputs
 .coverage
 .coverage.*
