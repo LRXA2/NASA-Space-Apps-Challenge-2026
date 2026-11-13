@@ -26,7 +26,7 @@ SCORES = {
     "solar_illumination": "solar_illumination_score", "dust": "dust_score",
     "plasma_charging": "plasma_charging_score", "uv": "uv_score",
     "seismic": "seismic_score", "exosphere": "exosphere_score",
-    "communications_geometry": "communications_geometry_score",
+    "earth_visibility": "earth_visibility_score",
     "soil": "soil_score",
 }
 # Keep internal assessment keys compatible; export human-readable CSV headings.
@@ -38,6 +38,16 @@ OUTPUT_COLUMN_NAMES = {
     "fail_reason": "Fail Reason",
 }
 ASSESSMENTS = ("operations", "survival")
+
+
+def score_columns(config):
+    """Use precise active names while preserving archived schema-1 exports."""
+    domains = config.get("domains", {})
+    legacy = "communications_geometry" in domains or (
+        config.get("schema") == 1 and "earth_visibility" not in domains)
+    return {("communications_geometry" if legacy and name == "earth_visibility" else name):
+            ("communications_geometry_score" if legacy and name == "earth_visibility" else column)
+            for name, column in SCORES.items()}
 
 
 def finite(value, label, *, config=False):
@@ -123,12 +133,16 @@ def validate_config(config):
                 "final_habitability_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
                 "reason", "fail_reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details"}
     computed |= set(SCORES.values()) | {c + "_status" for c in SCORES.values()} | set(OUTPUT_COLUMN_NAMES.values())
+    computed |= {"communications_geometry_score", "communications_geometry_score_status"}
     if set(metadata) & computed:
         raise ValueError("metadata_columns cannot shadow computed output columns")
     domains = config.get("domains")
-    required = set(SCORES) - {"communications_geometry", "soil"}
-    if not isinstance(domains, dict) or not required <= set(domains) <= set(SCORES):
-        raise ValueError("Declare the eight environmental domains plus optional communications_geometry and soil; terrain is not supported")
+    required = set(SCORES) - {"earth_visibility", "soil"}
+    allowed = set(SCORES) | {"communications_geometry"}
+    if not isinstance(domains, dict) or not required <= set(domains) <= allowed:
+        raise ValueError("Declare the eight environmental domains plus optional earth_visibility and soil; terrain is not supported")
+    if {"earth_visibility", "communications_geometry"} <= set(domains):
+        raise ValueError("Declare Earth visibility once; communications_geometry is its legacy alias")
     groups = config.get("comparison_group_columns", [])
     if not isinstance(groups, list) or any(not isinstance(c, str) or c not in metadata for c in groups) or len(groups) != len(set(groups)):
         raise ValueError("comparison_group_columns must be unique registered metadata columns")
@@ -396,7 +410,7 @@ def _assess_single(rows, config, config_hash):
         gates, details, domain_details, issues, weighted, weights = [], [], [], [], [], []
         complete = True
         used = supported = 0
-        for name, score_column in SCORES.items():
+        for name, score_column in score_columns(config).items():
             if name not in config["domains"]:  # Backward-compatible eight-domain YAML.
                 result[score_column] = ""
                 result[score_column + "_status"] = "Context_only"
@@ -623,7 +637,7 @@ def assess(rows, config, config_hash):
                            f"{name}_fail_reason": record["fail_reason"] if score == "" else "",
                            f"{name}_coverage": record["evidence_coverage"],
                            f"{name}_details": record})
-            for domain, column in SCORES.items():
+            for domain, column in score_columns(config).items():
                 result[f"{name}_{domain}_score"] = record[column]
     return results
 
@@ -632,7 +646,7 @@ def dual_columns(config, *, compact):
     columns = ["ID"]
     for assessment in ASSESSMENTS:
         rules = assessment_config(config, assessment)
-        columns += [f"{assessment}_{domain}_score" for domain in SCORES
+        columns += [f"{assessment}_{domain}_score" for domain in score_columns(config)
                     if domain in rules["domains"] and rules["domains"][domain].get("enabled", True)
                     and rules["domains"][domain]["include_in_score"]]
     columns += [f"{a}_{field}" for field in ("status", "fail_reason") for a in ASSESSMENTS]
@@ -656,7 +670,8 @@ def run(input_path, output_path, config_path, *, overwrite=False, compact=False)
     results = assess(read_csv(input_path, config), config, digest)
     columns = ["id", "candidate_id", "start_utc", "stop_utc", "time_mode", "comparison_start_utc", "comparison_stop_utc"]
     columns += [c for c in config.get("metadata_columns", []) if c not in columns]
-    columns += [field for name in SCORES.values() for field in (name, name + "_status")]
+    scores = score_columns(config)
+    columns += [field for name in scores.values() for field in (name, name + "_status")]
     columns += ["pipeline_mode", "comparison_preference_score", "hard_gate_status", "final_rec_score", "rank", "score_scope", "evidence_coverage",
                 "reason", "operational_suitability", "config_name", "config_sha256", "hard_gate_details", "score_details", "domain_score_details", "fail_reason", "final_habitability_score"]
     stream = io.StringIO(newline="")
@@ -666,7 +681,7 @@ def run(input_path, output_path, config_path, *, overwrite=False, compact=False)
         columns = dual_columns(config, compact=compact)
         writer = csv.DictWriter(stream, fieldnames=columns, lineterminator="\n")
     elif compact:
-        domains = [name for name in SCORES if name in config["domains"] and config["domains"][name].get("enabled", True)]
+        domains = [name for name in scores if name in config["domains"] and config["domains"][name].get("enabled", True)]
         writer = csv.DictWriter(stream, fieldnames=["ID", *("soil_score" if name == "soil" else name for name in domains), "hard_gate_status", "Fail Reason", "final_habitability_score"], lineterminator="\n")
     writer.writeheader()
     if dual:
@@ -681,7 +696,7 @@ def run(input_path, output_path, config_path, *, overwrite=False, compact=False)
     elif compact:
         display_score = lambda value: round(value, 2) if value != "" else ""
         writer.writerows({"ID": row["id"],
-                          **{("soil_score" if name == "soil" else name): display_score(row[SCORES[name]]) for name in domains},
+                          **{("soil_score" if name == "soil" else name): display_score(row[scores[name]]) for name in domains},
                           "hard_gate_status": row["hard_gate_status"],
                           "Fail Reason": row["fail_reason"],
                           "final_habitability_score": display_score(row["final_habitability_score"])}

@@ -50,10 +50,12 @@ metadata_columns:
 assessments:
   operations:
     weights:
-      solar_illumination: 40.0
-      communications_geometry: 35.0
+      solar_illumination: 30.0
+      earth_visibility: 25.0
       dust: 15.0
       soil: 10.0
+      thermal: 15.0
+      plasma_charging: 5.0
     domain_overrides: {}
     metric_overrides: {}
   survival:
@@ -329,7 +331,7 @@ domains:
       hard_gate: null
       meaning: Context measurement; not a qualified mission requirement.
       minimum: 0
-  communications_geometry:
+  earth_visibility:
     enabled: true
     hard_gates_enabled: false
     priority: High

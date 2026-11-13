@@ -4,9 +4,9 @@
 
 ## One input CSV
 
-Open and edit **[inputs/sites.csv](inputs/sites.csv)**. This is the single main pipeline input: 83 rows (**17 Artemis-region-labelled, 6 fully populated Apollo-labelled baseline scenarios, 30 synthetic and 30 dummy**) containing `id`, optional UTC window columns and the original measurement columns, including `median_visible_sky_fraction` and `median_earth_visibility_fraction`.
+Open and edit **[inputs/sites.csv](inputs/sites.csv)**. This is the single main pipeline input: 83 rows (**17 Artemis-region-labelled, 6 Apollo-labelled baseline scenarios, 30 synthetic and 30 dummy**) containing `id`, optional UTC window columns and the original measurement columns, including `median_visible_sky_fraction` and `median_earth_visibility_fraction`.
 
-Most measurement cells are populated in the original 77 fixtures, including four intentional dummy blanks. The six Apollo-labelled baseline rows are fully populated, using the measured references, conditional models and explicit test assumptions documented below. The 77 non-Apollo fixtures use fictional eight-day requested windows spread across 2000-2026; synthetic neighbours share their EDA baseline windows; Apollo rows instead use historical landing-to-ascent UTC windows. Non-Apollo windows are test scenario dates, not the observation dates of their borrowed or randomized measurements; changing those dates does not reconstruct historical site conditions. The original seven EDA-labelled baselines and all synthetic scenarios use equally sized 1.2 km patches and the same map statistics. The ten additional EDA-labelled scenarios have assumed values, including geometry, without a measured footprint. These are controlled software fixtures, not verified NASA site assessments; static maps are not filtered to that future window. NASA labels identify a declared region, not a NASA-selected exact patch or approval of the assumed conditions.
+Most measurement cells are populated in the original 77 fixtures, including four intentional dummy blanks. The six Apollo-labelled baseline rows are populated where supported, using the measured references, conditional models and explicit test assumptions documented below, except that unsupported Apollo spacecraft-potential cells remain blank. The 77 non-Apollo fixtures use fictional eight-day requested windows spread across 2000-2026; synthetic neighbours share their EDA baseline windows; Apollo rows instead use historical landing-to-ascent UTC windows. Non-Apollo windows are test scenario dates, not the observation dates of their borrowed or randomized measurements; changing those dates does not reconstruct historical site conditions. The original seven EDA-labelled baselines and all synthetic scenarios use equally sized 1.2 km patches and the same map statistics. The ten additional EDA-labelled scenarios have assumed values, including geometry, without a measured footprint. These are controlled software fixtures, not verified NASA site assessments; static maps are not filtered to that future window. NASA labels identify a declared region, not a NASA-selected exact patch or approval of the assumed conditions.
 
 EDA-labelled IDs reference the combined names in the [2022 announcement](https://www.nasa.gov/news-release/nasa-identifies-candidate-regions-for-landing-next-americans-on-moon/) and [2024 announcement](https://www.nasa.gov/news-release/nasa-provides-update-on-artemis-iii-moon-landing-regions/). Shared names appear once. This is a dated declaration-name inventory, not a claim that all entries remain selected today or that differently named regions have disjoint geographical boundaries.
 
@@ -34,137 +34,21 @@ Synthetic IDs `001`-`007`, `008`-`014`, `015`-`021` and `022`-`028` are respecti
 
 Additional NASA scenarios and randomized dummy values use Python `random.Random(20261112)`. NASA scenario ranges are assumed test ranges, not source measurements. Dummy ranges are broader to exercise preference boundaries and optional gate configurations while keeping fractions in 0-1, temperature span equal to high minus low, and sunlight duration within the 192-hour window. Dummy `001`-`010` retain controlled gate/boundary/toggle cases alongside randomized fields; blanks are Sun visibility (`005`), link margin (`006`), UV (`007`) and seismic (`008`). No generated values were tuned to improve NASA scores.
 
-Apollo rows identify the six [historical NASA landing sites](https://nssdc.gsfc.nasa.gov/planetary/lunar/apolloland.html): Apollo 11 (Mare Tranquillitatis), 12 (Oceanus Procellarum), 14 (Fra Mauro), 15 (Hadley-Apennine), 16 (Descartes Highlands) and 17 (Taurus-Littrow). The existing `apollo_<mission>_<site>_assumed` IDs identify baseline scenarios mixing sourced dates, measured historical/modern references, conditional geometry/thermal models and an explicit nominal RF assumption. The estimates below are not NASA measurements. Missing values are not zero-filled. Apollo 13 did not land and has no site row.
+### Apollo reference inputs
 
-| Apollo | `start_utc` (landing) | `stop_utc` (ascent) |
-| --- | --- | --- |
-| 11 | `1969-07-20T20:17:39Z` | `1969-07-21T17:54:00Z` |
-| 12 | `1969-11-19T06:54:36Z` | `1969-11-20T14:25:47Z` |
-| 14 | `1971-02-05T09:18:11Z` | `1971-02-06T18:48:42Z` |
-| 15 | `1971-07-30T22:16:29Z` | `1971-08-02T17:11:23Z` |
-| 16 | `1972-04-21T02:23:35Z` | `1972-04-24T01:25:47Z` |
-| 17 | `1972-12-11T19:54:58Z` | `1972-12-14T22:54:37Z` |
+Apollo 11, 12, 14, 15, 16 and 17 provide historical reference cases. Their `apollo_<mission>_<site>_assumed` IDs identify scenarios combining mission records, declared models and incomplete evidence, not six fully measured environments. Apollo 13 did not land and is not included.
 
-Landing sources: [NASA landing table](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_18-27_LM_Lunar_Landing.htm); Apollo 14 uses [first pad contact in its timeline](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_14i_Timeline.htm), not the table's two-seconds-later confirmation time. Ascent sources: NASA summaries for [11](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_11a_Summary.htm), [12](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_12a_Summary.htm), [14](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_14a_Summary.htm), [15](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_15a_Summary.htm), [16](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_16a_Summary.htm) and [17](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_17a_Summary.htm). Values use published whole-second precision; the Apollo 17 summary's corrected ascent is 22:54:37 UTC, not its erroneous 05:54:37 text.
-
-| Existing Apollo input fields | Researched preparation / reason for leaving blank |
+| Input family | Preparation rule |
 | --- | --- |
-| `historical_median_vertical_seismic_rms_counts` | **Source-local native PSE references at Apollo 11, 12, 14, 15 and 16.** Apollo 12 retains its 654-day S12/location-00/MHZ median `2.62109086492859` counts, 1973-01-01 through 1974-10-16, from [Dar053](../data/processed/analysis/subject_seismic/20261110T183033924956Z_ba610a/daily_context.csv). Apollo 11/14/15/16 use their own station's three post-ascent archive days as documented below, not copied S12 values. Apollo 17 still has the explicitly borrowed S12 reference: the PSE archive has no S17 station and a different seismic instrument is not silently substituted. These epochs/cohorts differ; no response/gain normalization, quiet-event selection or physical ground-motion conversion is claimed. |
-| Sun/Earth/sky visibility and permanent-shadow fraction | **Conditional mission-window model, not mapped measurements:** use a uniform flat, unobstructed reference patch at the [NASA landing coordinates](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_18-27_LM_Lunar_Landing.htm). Apollo `median_sun_visibility_fraction = 1` describes the landing-to-ascent window, not a full lunar cycle. Sun and Earth full-disc elevations remain above the assumed horizon in the JPL geometry described below; Earth visibility remains `1`. Sky fraction remains `2*pi/(4*pi) = 0.5`; permanent-shadow fraction remains `0`. Relief, rocks, hardware and pixel distributions are not reconstructed; these are not native LOLA raster summaries. |
-| Regional reference Sun fraction and longest shadow span | **Idealized proxy, not Dar054 history:** Sun fraction `0.5`; nominal half-cycle shadow span `29.5 * 24 / 2 = 354 h`. The rounded 29.5-day phase cycle is a generic reference, not a computed maximum over 2020-2021 or a real terrain-shadow record. |
-| `window_continuous_sunlight_hours` | **Conditional flat-horizon estimate:** [NASA HLS-PAP-039, section 3.6](https://ntrs.nasa.gov/api/citations/20230014980/downloads/HLS-PAP-039%20HLS%20White%20Paper%20Non-Design.pdf) gives morning landings, ascent before noon and positive geometric solar elevations across the crew stays. With the explicitly assumed unobstructed local horizon, estimate the daylit run *inside the supplied window* as `(stop_utc - start_utc)/3600`. This is censored at both mission boundaries and is not the site's maximum attainable sunlight run, not a measured power-supply duration and not proof against local terrain/hardware occlusion. Values range from approximately 21.6 to 75.0 h. The active comparison retains this as context and has no universal sunlight-duration gate; no dates or measurements are extended to improve an assessment. |
-| Three phase-median thermal columns | **Mission-window thermal MODEL cohort, not observed Diviner phases:** use 17 equally spaced instants including landing and ascent. Each instant represents the spatial median of the same uniform flat reference patch. With JPL Sun elevation `e_k` and local albedo `A` from [NASA HLS-PAP-039 Rev A, table 3.6-1](https://ntrs.nasa.gov/api/citations/20230014980/downloads/HLS-PAP-039%20HLS%20White%20Paper%20Non-Design.pdf), calculate `T_k = [104^4 + (390^4 - 104^4) * (1-A) * max(0,sin(e_k))]^(1/4)` K (convert degrees to radians). Supply minimum/maximum/difference across these 17 modeled spatial medians. **Model assumptions:** the existing 390 K dark-equatorial upper anchor, 104 K floor and approximate optical-albedo-as-solar-reflectance treatment are retained. NASA generic temperature endpoints do not validate this response law. No conduction, thermal inertia, emissivity calibration, self-heating, real footprint or propagated uncertainty is included. Apollo uses a mission-window cohort; this is not a measured temperature history or a component operating limit. |
-| Radiation counters, spacecraft potential, LDEX current and NMS orbital helium | **Shared measured reference proxies**, not reconstructed Apollo conditions. No defensible mission/site-specific replacement was established for these instrument-specific quantities. Their repeated values are intentional reference assumptions and must not be counted as six independent historical observations. |
-| FUV irradiance | Use each mission's **NRLSSI2 historical reconstruction** from [LASP LISIRD](https://lasp.colorado.edu/lisird/data/nrl2_files/). Integrate all 65 complete 1-nm bins centred 115.5-179.5 nm, then take the median of the supported UTC daily band integrals whose dates overlap landing through ascent. Results are modeled daily 1-AU references, not Apollo instrument measurements or subdaily/local surface dose. Whole UTC days include portions outside the precise crew window. They are not cross-calibrated here against the modern SEE fixture cohort. |
-| Spacecraft ion/electron density | Where available, use [NASA OMNI](https://omniweb.gsfc.nasa.gov/html/ow_data.html) **near-Earth upstream proxies** during fully contained mission hours, not lunar surface or P1 ESA observations. Mask proton fill `999.9`, reject nonpositive/nonfinite density and missing spacecraft ID. With valid alpha/proton ratio `r`, estimate ion density `n_p*(1+r)` and electron density `n_p*(1+2*r)`; without alpha support, approximate both as proton density (H-only quasi-neutral model). Medians use supported hours only; coverage is incomplete, especially Apollo 11. These are conditional density proxies, not an ESD/surface-charging model. |
-| `window_minimum_link_margin_db` | **Explicit TEST ASSUMPTION:** nominal `0 dB`, because no qualified historical minimum RF-margin series has been reconstructed. This is not derived from received power in dBm or Earth visibility. The comms gate remains disabled by the existing config; do not treat the placeholder as engineering evidence if enabling it. |
+| Dates and location | Use the respective mission's actual landing-to-ascent UTC window and [NASA landing coordinates](https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_18-27_LM_Lunar_Landing.htm). Keep the mission identity, site and time basis together. |
+| Sun and Earth visibility | Compute each mission's geometry at its own coordinates and dates using [JPL Horizons](https://ssd-api.jpl.nasa.gov/doc/horizons.html). A flat, unobstructed horizon is an explicit model assumption, not measured terrain visibility or a functioning radio link. Do not substitute a short mission-window result for a long-period map average. |
+| Thermal | The Apollo fixture uses a conditional 17-instant landing-to-ascent model, not measured Diviner phases. With solar elevation `e` and source local albedo `A`, the model is `T = [104^4 + (390^4 - 104^4) * (1-A) * max(0, sin(e))]^(1/4)` K. Use radians for `sin`, then take the minimum, maximum and difference across the cohort. The constants are model assumptions, not equipment limits. [NASA HLS environment reference](https://ntrs.nasa.gov/api/citations/20230014980/downloads/HLS-PAP-039%20HLS%20White%20Paper%20Non-Design.pdf). |
+| Historical UV and upstream plasma | Use reconstructed irradiance or archived solar-wind data matched to each mission window, with their native quality and coverage limits. [LASP LISIRD](https://lasp.colorado.edu/lisird/) and [NASA OMNI](https://omniweb.gsfc.nasa.gov/) provide these reference families; they are not automatically on-site measurements. |
+| On-site plasma | Prefer compatible mission data from the [Apollo SWS archives](https://pds-geosciences.wustl.edu/missions/apollo/). Match record times, reject fills/bad fits and preserve flow-angle assumptions. Where supported, estimate total ions as `n_p * (1 + alpha/proton)` and electrons as `n_p * (1 + 2 * alpha/proton)` under the declared proton/helium and charge-neutrality assumptions. These are density estimates, not voltage measurements. |
+| Spacecraft potential | No compatible mission-specific spacecraft-potential statistic is established for the Apollo controls. Keep it blank rather than insert a shared modern value, lunar-surface voltage or detector bias. Missing values follow the configured pipeline mode. |
+| Seismic and soil | Select the mission's station/sample evidence and retain native units, measurement definitions and support. Do not manufacture numerical differences or relabel another mission's reference as an on-site observation. |
 
-Earth-clearance geometry uses [JPL Horizons](https://ssd-api.jpl.nasa.gov/doc/horizons.html) airless apparent target-centre elevation and angular diameter at the actual landing coordinates and historical UTC windows. Full-disc clearance is `elevation_deg - angular_diameter_arcsec / 7200`. It supports only the stated unobstructed-horizon mission-window model, not local terrain clearance, actual DSN contact or an RF margin.
-
-These are **fully populated baseline scenarios, not a fully measured Apollo dataset**. Numeric completeness does not establish historical accuracy. The approximate map geometry, modern reference epochs and modeled mission-window thermal cohort are not like-for-like measured support. They supply the retained environmental proxies for the two comparison scores. The 390 K value is a surface-model anchor, not an active temperature gate. Historical NASA site selection is a positive calibration reference for intended operations, not a proof that these proxy rows are measured historical truth. This project envelope is not a component qualification limit or NASA-certified safety threshold, and there is no ID-based Apollo exemption.
-
-
-Apollo mission-window geometry and thermal preparation:
-
-- Query the [JPL Horizons API](https://ssd-api.jpl.nasa.gov/doc/horizons.html) for Sun `COMMAND=10` and Earth `COMMAND=399`, with `EPHEM_TYPE=OBSERVER`, `CENTER=coord@301`, `COORD_TYPE=GEODETIC`, and `SITE_COORD=east_longitude,latitude,0` (degrees, degrees, km). Coordinates below follow NASA's IAU Mean Earth landing table; Horizons uses its lunar Mean Earth frame. The nominal reference-surface elevation is an assumption, not surveyed local height.
-- Set `START_TIME` and `STOP_TIME` from the row's retained UTC dates, `TIME_TYPE=UT`, `TIME_DIGITS=FRACSEC`, `STEP_SIZE=256` (256 equal intervals, 257 samples including endpoints), `QUANTITIES=4,13`, `CSV_FORMAT=YES` and `APPARENT=AIRLESS`. Require complete, finite geometry; do not replace missing ephemerides with defaults. Query parameters are passed as quoted values per the API documentation.
-- Use every sixteenth Sun sample to form the complete 17-instant thermal cohort. Treat each modeled instant as a uniform-patch spatial median. The table lists these modeled cohort extrema, not raw measured temperature extrema. Sun elevations increase across these morning windows.
-- For this explicit scenario, piecewise-linear interpolation of the supported positive full-disc clearance defines the continuous flat-horizon visibility model. Its Sun visibility fraction is 1 and its window-censored sunlight duration equals the retained visit duration. This interpolation is not proof of actual uninterrupted sunlight: local shadows, terrain, surface assets and unmodeled occultations are not reconstructed. Earth visibility is likewise conditional and does not establish communications service.
-- Keep regional Sun visibility `0.5` and regional shadow span `354 h` as long-cycle reference assumptions, not mission-window outputs. No radiation/current/potential/helium unit conversion is introduced.
-
-| Apollo | East longitude / latitude (deg) | Albedo | Sun elevation, landing / ascent (deg) | Modeled low / high / span (K) | Minimum full-Earth-disc clearance (deg) |
-| --- | --- | ---: | --- | --- | ---: |
-| 11 | 23.47297 / 0.67408 | 0.078 | 10.703 / 21.707 | 252.398 / 298.754 / 46.356 | 57.917 |
-| 12 | -23.42157 / -3.01239 | 0.098 | 5.149 / 21.079 | 210.948 / 295.104 / 84.156 | 60.338 |
-| 14 | -17.47136 / -3.64530 | 0.114 | 10.349 / 27.265 | 247.964 / 311.865 / 63.900 | 65.008 |
-| 15 | 3.63386 / 26.13222 | 0.094 | 12.025 / 41.416 | 258.446 / 343.438 / 84.991 | 66.587 |
-| 16 | 15.50019 / -8.97301 | 0.196 | 14.760 / 50.014 | 263.649 / 345.785 / 82.136 | 71.921 |
-| 17 | 30.77168 / 20.19080 | 0.094 | 13.350 / 47.797 | 265.005 / 353.213 / 88.207 | 43.029 |
-
-**Interpretation:** Apollo thermal and Sun-visibility fields describe short mission windows, while non-Apollo geometry/thermal fixtures retain their existing long-period or phase-cohort assumptions. Their numerical scores are not like-for-like long-term habitat rankings. Differences in temporal support do not establish superior long-term habitability. The flat-patch spatial median is a modeling identity, not a measured footprint statistic. The HLS solar-angle compilation also uses Horizons, so agreement is not independent ephemeris validation. The [NASA Apollo thermal discussion](https://nasa.gov/wp-content/uploads/static/history/alsj/WOTM/WOTM-ThermalEnvrnmnt.html) provides useful context but its cable thermocouple temperatures are not direct validation of this uniform-ground model. All other Apollo values retain the source/assumption limitations documented here.
-
-Apollo reference values and preparation (shared references are distinguished from mission-window replacements; no label-dependent fitting):
-
-| Input | Value | Reference cohort / statistic |
-| --- | --- | --- |
-| Orbital radiation median / maximum | `28` / `71` counts per SEC record | [Dar049 daily context](../data/processed/analysis/subject_radiation_time/20261110T233725005604Z_72515a/daily_context.csv), `RAD_CRATER_SEC_selected_state`. Representative day 2023-09-19, selected by nearest daily median to the 1,091-day cohort median, earliest date as tie-break. Both statistics are from that SAME day, not a three-year maximum or Apollo exposure reconstruction. |
-| FUV irradiance | Mission-specific; see table below | NRLSSI2 daily reconstruction. These values describe reconstructed historical daily irradiance, not modern SEE observations. |
-| Ion / electron density | Mission-specific where OMNI coverage exists; **Apollo 15 retains** `3.481162190437317` / `5.511419773101807 cm^-3` | Apollo 15 has no valid OMNI proton hours in its fully contained mission hours; no density is invented or interpolated. Its retained values are explicitly the previous 2023-2026 Dar046/P1 reference, NOT reconstructed Apollo 15 plasma. Other rows use the conditional historical proxies below. |
-| Spacecraft potential | `3.2584742307662964 V` | Same Dar046 file, median of 1,140 supported `ESA_v01_thb_peif_sc_pot` daily medians. Not surface voltage. |
-| LDEX current | `38230 charges/s` | [Dar048](../data/processed/analysis/subject_dust/20261110T231630522312Z_a8ddbb/current_daily_context.csv), median of 166 supported `LDEX_CURRENT` daily medians, 2013-2014; not surface deposition. |
-| Orbital helium | `6460 particles/cm3` | [Dar051](../data/processed/analysis/subject_exosphere/20261110T233735590232Z_dffb7c/daily_context.csv), median of 148 supported `NMS_He_ABUNDANCE` daily medians, 2013-2014; not Apollo LACE or total exosphere density. |
-
-Station-specific seismic source and preparation: [NASA PDS Apollo PSE archive](https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-apollo_pse/data/xa/continuous_waveform/). The sample policy is declared **before** examining values: use the three archive UTC dates starting two calendar days after each mission's ascent date, with station `S<mission>`, location `00`, channel `MHZ`. This targets post-crew site references, not the crew's exposure or an annual quiet-site distribution. Reuse the exact `raw_statistics()` function from the existing `stage3_seismic_eda.py`: exclude nonfinite samples and `-1` fills, centre each valid daily file on its median, compute `sqrt(mean((x-median(x))^2))`, then take the median of the three daily RMS values. No filtering, interpolation, response removal or exclusion of high-count days is applied.
-
-| Apollo station | Archive dates | Median daily RMS counts | Per-day valid / recorded samples |
-| --- | --- | --- | --- |
-| S11 | 1969-07-23, 1969-07-24, 1969-07-25 | 67.3878981781 | 540868/571800; 305494/570872; 569829/572360 |
-| S14 | 1971-02-08, 1971-02-09, 1971-02-10 | 7.40550277151 | 571510/572436; 570611/572432; 570761/572432 |
-| S15 | 1971-08-04, 1971-08-05, 1971-08-06 | 17.178313181 | 570816/572432; 558343/572432; 562639/572432 |
-| S16 | 1972-04-26, 1972-04-27, 1972-04-28 | 20.6313294233 | 570907/572436; 571340/572440; 571361/572436 |
-
-These small native-count samples are not directly comparable calibrated hazard levels. Instrument response, heating, archive clock support, telemetry gaps and ADC-endpoint samples can affect the statistic. StationXML assigns the same nominal peaked-mode sensitivity to the selected location-00/MHZ channels (3,579,160,000 counts per metre); this is NOT evidence that their nominal gains differ. Equal nominal response does not make these short raw-count samples a qualified structural demand or provide an adopted 15-count site-failure limit. In particular, S11's middle sample has substantial gaps. Preserve these limitations rather than treating a high count RMS as proof of an unsuitable site. The active comparison has no 15-count hard gate or seismic score. Seismic inputs remain context only for **every row**. No source value is reduced and no Apollo ID is exempted. Apollo 12 retains its broader, different historical cohort, so this is not a controlled cross-station experiment. The config's legacy S12 evidence-family label is a software grouping identifier, not sufficient row-level station provenance; use the actual station/source references here.
-
-Native source receipts (relative to the PDS `continuous_waveform/` URL above; no external baseline file is loaded by the scorer):
-
-| Source path | SHA256 | ADC-endpoint samples (0 or 1023; not automatically reclassified) |
-| --- | --- | --- |
-| `s11/1969/204/xa.s11.00.mhz.1969.204.0.mseed` | `6ea8794b3148b5e843655d80842a6c4b1b054bd4f7d8843f47f3b99547c0f5af` | 6835 |
-| `s11/1969/205/xa.s11.00.mhz.1969.205.0.mseed` | `7f88e3466a9faeee3a83ac6680a59d55c5b4f1643fb3999e8c1b24cac7d24e9d` | 3411 |
-| `s11/1969/206/xa.s11.00.mhz.1969.206.0.mseed` | `25ec27059c179465de101ffaa6025ed98c33c06b3c137ed2ace6c45630661046` | 3709 |
-| `s14/1971/039/xa.s14.00.mhz.1971.039.0.mseed` | `65f4acf27138641ab9489a8d4a12d6fd34d3e5aaad0d2f311501c23d9cc13521` | 652 |
-| `s14/1971/040/xa.s14.00.mhz.1971.040.0.mseed` | `e9b15082a42a6a8eefa0ca988b0a1aaa77ff77b562a2090721379170d4f62db9` | 0 |
-| `s14/1971/041/xa.s14.00.mhz.1971.041.0.mseed` | `2a4c73625677421e2d537fb2d16bf20eed503e486bd43aa494b68af9ac46e248` | 5 |
-| `s15/1971/216/xa.s15.00.mhz.1971.216.0.mseed` | `9d76666a614aaf7ea88bd2a405e4fa50c745cb1413ec02b0915b33a5dd26167e` | 502 |
-| `s15/1971/217/xa.s15.00.mhz.1971.217.0.mseed` | `061b790602160c0a61848469c4968e9e8165e2afd164ef4b4b249e5304d87a8d` | 1894 |
-| `s15/1971/218/xa.s15.00.mhz.1971.218.0.mseed` | `b7d7389850ed07adcf36a17210391ca5a3b8b1e3ce2d7b6aa98d3259efcb0b06` | 0 |
-| `s16/1972/117/xa.s16.00.mhz.1972.117.0.mseed` | `2aac9da7ec33e839eb073c33f978b2434b6316db2ced525b6a1a9d818dd104be` | 2749 |
-| `s16/1972/118/xa.s16.00.mhz.1972.118.0.mseed` | `7df0056d93dfcdf6ae95dc62dd0dac14d40fe43e6e1297177d7b050b463d59bd` | 708 |
-| `s16/1972/119/xa.s16.00.mhz.1972.119.0.mseed` | `ce53afdf48c22f52d23f928fef2b39eb2967f8dd998d523a0b287b889cb10f8e` | 345 |
-
-Mission-specific evidence (no random perturbation):
-
-| Apollo | NASA local albedo | Reconstructed FUV W/m2 | Ion proxy cm^-3 | Electron estimate cm^-3 | Valid OMNI proton hours / fully contained hours | Supported alpha-ratio hours |
-| --- | --- | --- | --- | --- | --- | --- |
-| 11 | 0.078 | 0.0253984304063 | 8.1 | 8.1 | 3 / 20 | 0 |
-| 12 | 0.098 | 0.0258952640179 | 3.9 | 3.9 | 23 / 31 | 0 |
-| 14 | 0.114 | 0.0256690829819 | 3.9 | 3.9 | 14 / 32 | 0 |
-| 15 | 0.094 | 0.0245966059219 | shared modern reference | shared modern reference | 0 / 66 | 0 |
-| 16 | 0.196 | 0.0251757139422 | 9.6824 | 10.2648 | 53 / 70 | 53 |
-| 17 | 0.094 | 0.0239239812599 | 11.8623 | 12.2746 | 58 / 74 | 58 |
-
-Proton coverage is not continuous mission coverage: partial first/last hours are excluded; the reported hours also have gaps. Apollo 12 and 14 legitimately share a 3.9 proton-density median despite different underlying windows. No manufactured numerical differences are added. Density inputs are context-only under the existing scoring rules; the shared spacecraft-potential input still controls the plasma score.
-
-Reproduction: LASP endpoint `https://lasp.colorado.edu/lisird/latis/dap/nrl2_ssi_P1D.jsond`, filtered to each row's UTC start/stop **dates** and `115 <= wavelength <= 180` nm; require the exact 65-bin grid and finite positive values for every included day. OMNI annual ASCII files are at `https://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_<year>.dat`; word 24 is proton density and word 28 is alpha/proton ratio. Alpha fill `9.999` is not a measured ratio. Both substitutions retain their source/quantity limitations above.
-
-Source-response SHA256 receipts (historical files may later be revised):
-
-| Apollo | LASP query response SHA256 |
-| --- | --- |
-| 11 | `1832e0df9bf5d931484365f0406f35ef293809a721b64437ba9c20b4dc29a871` |
-| 12 | `a4acb8de82e2bc9710173c84e4ad2160752a7f1125423d4bb35125ea88bff73c` |
-| 14 | `e6bae19458daf46ac22cc8bfa688bb733743d05baa5c47d664d9be9a2572e4c9` |
-| 15 | `def3a45c3b355340b20053da79d66693d4179413e06a03d3dbc5ac78ca9b6a2c` |
-| 16 | `844131ce4f11c76b01cfb583587b9b03c0c9b104d4f163e6a0b3730f5cf13eff` |
-| 17 | `ea9fb50eefb1010a22e93a847b3e74509727e183309c84db7008d39c305ad567` |
-
-- `omni2_1969.dat`: `8bb9090254a1fbedd0d1b4dd0ec6004823c17e63ef3a1d40c03edfa2e8b2bcc7`
-- `omni2_1971.dat`: `8235e7ebb443161860bf7ef4b61c69267a23bdbb19ead75ee3e03af5905a294c`
-- `omni2_1972.dat`: `be11befb620501125c494e92c1ddc2689d0b5c102e4a3f5ebc46a228f0fff2f1`
-
-Earth and Sun visibility are 1 in all six conditional flat-horizon mission-window cases; the regional long-cycle reference Sun fraction remains 0.5. Repeats follow the geometry rather than invented site differences. Shared radiation/dust/helium/voltage and the remaining Apollo 17 borrowed seismic reference are still unresolved limitations, **not independent site validation**. Different NASA landing sites do not imply every global reference or every clipped/plateau score must differ. The output layout does not carry per-cell provenance; consult this section before interpreting an Apollo row as measured ground truth.
-
-The [approximately 29.5-day phase cycle](https://science.nasa.gov/moon/moon-phases/) supports the regional 354 h half-cycle only as an idealized reference; it must not be described as a measured longest shadow run. Mission dates retain the temporal support of the scenario and are required if a window-dependent gate is explicitly configured; they are intentionally retained.
-
-Local primary-report sources under `D:/projects/NASA Dataset/keep/` (physical PDF page numbers, not printed section-page numbers):
-
-- `A16_MissionReport.pdf`, pp. 28-31: central-station thermal-plate temperatures, abnormal seismic-instrument heating, received signal power and failed heat-flow deployment. Hardware temperatures are not phase-median ground temperatures; received power in dBm is not available-minus-required link margin in dB. Activity/impact seismic descriptions do not establish the configured daily RMS statistic.
-- `Apollo_17_Postflight_Mission_Report_19730015117.pdf`, pp. 37-38, 40-44 and 76: station thermal management, heat-flow deployment, mass-spectrometer activation/background, ejecta detection, gravimetry, radiation-detector context and soil observations. A probe reading near insertion, internal component heating, particle-track counts or local surface mass spectroscopy cannot replace phase medians, CRaTER SEC counters, LDEX current or NMS orbital helium.
-- `a17_final-flight-mission-rules_19720068065.pdf`, pp. 33 and 51: historical EVA/communications contingencies depend on crew activity, configuration and recovery options. They do not provide a footprint visibility fraction or numeric minimum RF margin.
-
-These references have the quantity and instrument limitations described above. OCR can be imperfect; ambiguous figure or text values must not be treated as precise measurements.
-
-There is no separate domain-score input CSV. Domain scores are calculated by the pipeline; do not enter scores in place of physical measurements.
+Some fixture quantities still use shared historical/modern references or explicit estimates. These remain reference assumptions, not individual Apollo measurements. Genuine equal values can occur after independent preparation; equality alone is neither an error nor evidence of copying. Unsupported values must not be presented as measured ground truth.
 
 [sample_input.csv](sample_input.csv) has the same input headers and scenario categories as `inputs/sites.csv`. It contains EDA-labelled, synthetic, dummy and Apollo control examples, not an independent measured-site catalogue. `start_utc` and `stop_utc` retain scenario support and enable optional window-dependent gates; neither is a basis for inferring missing environmental measurements.
 
@@ -193,9 +77,9 @@ There is no separate domain-score input CSV. Domain scores are calculated by the
 | `regional_reference_sun_visibility_fraction`, `regional_reference_longest_shadow_sample_span_hours` | A regional horizon/illumination calculation using a documented lunar elevation model, Sun ephemerides and [NASA NAIF/SPICE kernels](https://naif.jpl.nasa.gov/naif/data.html). These are calculated values, not a ready-made pair of downloadable measurements. | To reproduce the earlier EDA reference, use the same region center, 2020-2021 period, 2 m height, 20 km horizon radius and hourly sampling. Clear fraction = clear samples / recorded samples. For each blocked run, measure first-to-last sampled time and keep the longest span. Preserve gaps/censoring; it is not guaranteed continuous darkness. These remain regional reference values, not candidate-local measurements. |
 | `orbital_radiation_counter_median`, `orbital_radiation_counter_maximum` | [LRO CRaTER archive](https://pds-ppi.igpp.ucla.edu/data/lro-crater/), secondary science (`SEC`) tables with their labels. | For the current project's selected-state cohort, retain `BIASCMD=1`, `CALLOW=0`, `CALHIGH=0`, all six `PROCDFLAG=1`, and finite nonnegative `GOOD`/`REJECT`/`TOTAL` counters. Compute each UTC day's `GOOD` median and maximum. The first CSV value is the median of valid daily medians; the second is the maximum of valid daily maxima. This cohort is a project selection, not complete instrument qualification. Preserve counts per SEC record; no dose conversion is implied. |
 | `median_solar_far_uv_irradiance_w_m2` | [TIMED SEE Level 3 daily spectra](https://lasp.colorado.edu/see/data/daily-averages/level-3/), NetCDF products and README. | Use the complete supported 115-180 nm band. Integrate the daily spectral irradiance across the band using wavelength-bin widths, then take the median of valid daily band integrals. Result: W/m2. Retain model-assisted/flare-removed/1-AU scope; this is not a local surface UV reading. |
-| `median_spacecraft_ion_density_per_cm3`, `median_spacecraft_electron_density_per_cm3`, `median_spacecraft_electric_potential_volts` | [THEMIS/ARTEMIS data access](https://themis.ssl.berkeley.edu/data_products/index.php?nlist=2&ntype=2_tha-2_thb-2_thc-2_thd-2_the): select `thb` / ESA L2 (ARTEMIS P1), not an arbitrary Earth-orbit plasma product. | Use `thb_peif_density`, `thb_peef_density` and `thb_peef_sc_pot`, respectively. Apply native fill/valid-range, unique-clock and quality==0 selection. Keep full-ion and full-electron modes separate. Compute daily record medians, then the median of valid daily medians. Preserve native density/potential units; spacecraft potential is not surface charging voltage. |
+| `median_spacecraft_ion_density_per_cm3`, `median_spacecraft_electron_density_per_cm3`, `median_spacecraft_electric_potential_volts` | [THEMIS/ARTEMIS data access](https://themis.ssl.berkeley.edu/data_products/index.php?nlist=2&ntype=2_tha-2_thb-2_thc-2_thd-2_the): select `thb` / ESA L2 (ARTEMIS P1), not an arbitrary Earth-orbit plasma product. | Use `thb_peif_density`, `thb_peef_density` and a separately declared spacecraft-potential series. The configured potential reference uses `thb_peif_sc_pot`; do not pool distinct modes. Apply native fill/valid-range, unique-clock and quality==0 selection. Keep full-ion and full-electron modes separate. Compute daily record medians, then the median of valid daily medians. Preserve native density/potential units; spacecraft potential is not surface charging voltage. |
 | `historical_median_dust_detector_current_charges_per_second` | [LADEE LDEX calibrated data](https://sbnarchive.psi.edu/pds4/ldex/ladee_ldex_20240411/data_calibrated/), `current/` tables plus paired XML labels. Existing local copies are under `D:\projects\NASA Dataset\datasets\D10\` and the earlier `darrel stuff/data/moon/eda_pilots/D10/` baseline. | Read native `CURRENT`, apply clock/fill handling, retain signed background-subtracted values, take daily medians and then the median across valid days. Unit: elementary charges/s. Do not insert impact-catalog counts or mass-deposition estimates into this field. |
-| `historical_median_vertical_seismic_rms_counts` | [Apollo PSE archive](https://pds-geosciences.wustl.edu/missions/apollo/apollo_pse.htm): MiniSEED or equivalent GeoCSV with metadata, selecting station S12 for the original reference, location/mode `00`, channel `MHZ`; the additional Apollo station references are explicitly identified above. | Reproduce the project's daily median-centred RMS count statistic: for valid samples `x`, RMS = `sqrt(mean((x - median(x))^2))`, with the same trace/gap handling. Then take the median of supported daily RMS values. This is a project-defined count statistic, not a NASA ground-motion safety limit, event rate or acceleration measurement. |
+| `historical_median_vertical_seismic_rms_counts` | [Apollo PSE archive](https://pds-geosciences.wustl.edu/missions/apollo/apollo_pse.htm): MiniSEED or equivalent GeoCSV with metadata, selecting station S12 for the original reference, location/mode `00`, channel `MHZ`; select the relevant Apollo station and document its source interval when preparing a different control. | Reproduce the project's daily median-centred RMS count statistic: for valid samples `x`, RMS = `sqrt(mean((x - median(x))^2))`, with the same trace/gap handling. Then take the median of supported daily RMS values. This is a project-defined count statistic, not a NASA ground-motion safety limit, event rate or acceleration measurement. |
 | `historical_median_orbital_helium_density_per_cm3` | [LADEE NMS archive and calibrated collections](https://pds.nasa.gov/ds-view/pds/viewBundle.jsp?identifier=urn:nasa:pds:ladee_nms&version=2.0), helium abundance tables and labels. | Use `He_ABUNDANCE`; retain valid, unambiguous clocks and supported abundance values. Calculate daily medians, then their median. Native `P/Cc` means particles per cubic centimetre; no numerical unit conversion was made by renaming the header. Preserve orbital altitude/local-solar-time and uncertainty context; do not treat it as surface atmosphere. |
 | `soil_mean_grain_size_um` | `D:/projects/NASA Dataset/soils_hb.pdf` (*Handbook of Lunar Soils*, JSC 19069); [Dar_057](../EDA/Moon/Stage3_Requirements/Dar_057_lunar_soil_properties.ipynb), extracted `soil_samples.csv` field `Mz_um`. | Average accepted nonmissing values for the relevant Apollo mission and round to two decimals, in micrometres. Use mean grain size, not median; retain compatible source fractions. |
 | `soil_maturity_is_feo` | Same handbook and Dar_057, field `Is_FeO`. | Average accepted mission values and round to two decimals. This is the reported Is/FeO maturity index, not FeO concentration; it cannot be calculated from FeO alone. |
@@ -263,8 +147,9 @@ One row per input site, in one CSV:
 
 ```text
 ID,
-operations_solar_illumination_score, operations_dust_score,
-operations_communications_geometry_score, operations_soil_score,
+operations_thermal_score, operations_solar_illumination_score,
+operations_dust_score, operations_plasma_charging_score,
+operations_earth_visibility_score, operations_soil_score,
 survival_radiation_score, survival_thermal_score,
 survival_plasma_charging_score, survival_uv_score,
 operations_status, survival_status,
@@ -299,19 +184,21 @@ Schema 1 is supported for archived single-score configurations. `legacy_3` prese
 
 | Domain | Operations weight | Survival weight |
 | --- | ---: | ---: |
-| Solar illumination | 40% | - |
-| Communications geometry | 35% | - |
+| Solar illumination | 30% | - |
+| Earth visibility | 25% | - |
 | Dust reference | 15% | - |
 | Soil reference | 10% | - |
 | Radiation proxy | - | 40% |
-| Thermal variation | - | 35% |
-| Plasma-charging proxy | - | 15% |
+| Thermal variation | 15% | 35% |
+| Plasma charging | 5% | 15% |
 | UV proxy | - | 10% |
 | **Total** | **100%** | **100%** |
 
-Seismic and exosphere remain context only and contribute to neither total. A dash means unallocated, not a zero-valued measurement. Both flows process every input row; no input or hidden setting labels it crewed or uncrewed.
+Earth visibility is the geometric view of Earth, not radio-link performance. The active YAML domain is `earth_visibility` and its output is `operations_earth_visibility_score`; the input `median_earth_visibility_fraction` is unchanged. Archived configurations can still use the old domain alias, but both names cannot be declared together.
 
-Operations weights emphasize solar-power opportunities and direct-Earth visibility, with smaller experimental dust/soil-reference contributions. Survival weights emphasize radiation and thermal conditions, with charging and UV contributions. These are **project priorities**, not NASA-issued percentages or demonstrated equipment/crew survival limits. Each flow totals 100, but only relative multipliers matter. Available-data mode renormalizes the weights when contributions are missing or disabled.
+Seismic and exosphere remain context only and contribute to neither total. Only thermal variation and plasma charging overlap. A dash means the domain is not allocated to that flow; it does not mean the measured value is zero. Each flow applies the same configured allocation to every row, without mission-dependent exclusions. Both flows process every input row; no input or hidden setting labels it crewed or uncrewed.
+
+Operations weights emphasize solar-power opportunities and Earth visibility, with thermal, charging and experimental dust/soil-reference contributions. Survival weights emphasize radiation and thermal conditions, with charging and UV contributions. The overlapping domains currently share the same measurement-to-score mapping; their different weights change the contributions, not the measurements or claimed physical limits. These are **project priorities**, not NASA-issued percentages or demonstrated equipment/crew survival limits. Each flow totals 100, but only relative multipliers matter. Available-data mode renormalizes the weights when contributions are missing or disabled.
 
 Edit the two independent maps in the single `config.yml`:
 
@@ -319,19 +206,39 @@ Edit the two independent maps in the single `config.yml`:
 assessments:
   operations:
     weights:
-      solar_illumination: 40
-      communications_geometry: 35
-      dust: 15
-      soil: 10
+      solar_illumination: 30.0
+      earth_visibility: 25.0
+      dust: 15.0
+      soil: 10.0
+      thermal: 15.0
+      plasma_charging: 5.0
   survival:
     weights:
-      radiation: 40
-      thermal: 35
-      plasma_charging: 15
-      uv: 10
+      radiation: 40.0
+      thermal: 35.0
+      plasma_charging: 15.0
+      uv: 10.0
 ```
 
-Retain each flow's `domain_overrides` and `metric_overrides` when editing. Omitting a domain from a flow's weight map removes its score and gates there. Shared metric definitions live under `domains`. Overlap is supported but not enabled by default; allocate a domain to both maps and use `assessments.<flow>.metric_overrides` for genuinely different rules. Do not duplicate a proxy merely to increase its influence.
+Retain each flow's `domain_overrides` and `metric_overrides` when editing. Omitting a domain from a flow's weight map removes its score and gates there. Shared metric definitions live under `domains`. Thermal variation and plasma charging are allocated to both flows. To give a shared domain different scoring rules in the two flows, use `assessments.<flow>.metric_overrides` for genuinely different rules. Do not duplicate a proxy merely to increase its influence.
+
+### Why these domains overlap or remain separate
+
+This is a fixed project scoring allocation, not a claim that a domain has no physical effects outside its assigned flow. It applies consistently to every row and can be changed only through the YAML configuration.
+
+| Domain | Allocation rationale |
+| --- | --- |
+| Thermal variation | Both: temperature variation is relevant to equipment performance during work and to environmental stress on systems. Operations gives it 15%; Survival gives it 35%. The current surface-span proxy is not a measured component temperature or an operating/survival tolerance. |
+| Plasma charging | Both: electrical conditions are relevant to interference with activities and to electrical stress. Operations gives the proxy 5%; Survival gives it 15%. Spacecraft potential does not directly measure surface interference, discharge or equipment failure. |
+| Solar illumination | Operations only: the available fraction describes a solar-power opportunity. The input does not establish darkness endurance or energy reserves, so it is not also scored as survival capability. |
+| Earth visibility | Operations only: the fraction describes a geometric opportunity for contact. It does not establish an emergency link or system survival, so it is not duplicated in Survival. |
+| Dust reference | Operations only, experimental: the current score is resemblance to an orbital instrument reference, not measured wear or critical-system damage. No additional Survival contribution is claimed. |
+| Soil reference | Operations only, experimental: the existing Apollo-reference comparison is retained as agreed. It is not a bearing-strength or structural-failure measurement, so it does not contribute to Survival. |
+| Radiation proxy | Survival only: this project assigns the relative exposure proxy to environmental protection conditions. There is no separate activity-disruption metric to justify a second Operations contribution. Counts are not dose or demonstrated protection. |
+| UV proxy | Survival only: this project assigns the relative UV proxy to exposure/protection conditions. There is no separate task-performance metric for an Operations contribution; the input is not a surface dose or material-damage limit. |
+| Seismic and exosphere | Context only: the retained raw seismic counts and orbital helium density do not currently provide a supported operational-performance or survival scoring relationship. |
+
+The two totals remain independent. Shared thermal/charging values are not averaged back into a combined total, and a good Operations result cannot compensate for an enabled Survival gate failure. These allocations and weights are project assumptions, not NASA-issued priorities.
 
 ## Reference ranges and input roles
 
@@ -341,15 +248,15 @@ Numbers below are **scoring scales or data-validity bounds**, not certified miss
 | --- | --- | --- | --- |
 | `median_sun_visibility_fraction` | Higher preference | Not included | 0-1 maps to 0-100; the direction favours solar-power opportunity, not actual generated energy. |
 | `median_earth_visibility_fraction` | Higher preference | Not included | 0-1 maps to 0-100; geometry is not an RF link or relay assessment. |
-| `historical_median_dust_detector_current_charges_per_second` | Continuous reference resemblance | Not included | 100 only at the observed median, 38,230 elementary charges/s. Declines linearly to zero at p05=14,332.5 and p95=100,711.25; values beyond these anchors remain zero. Dar_048 LDEX_CURRENT, 166 daily medians. These anchors describe reference distance, not harmful-current limits. Signed current is not local deposition, abrasion or maintenance demand; preferring resemblance to the median is an experimental project assumption. |
+| `historical_median_dust_detector_current_charges_per_second` | Continuous reference resemblance | Not included | 100 only at the observed median, 38,230 elementary charges/s. Declines linearly to zero at p05=14,332.5 and p95=100,711.25; values beyond these anchors remain zero. Dar_048 LDEX_CURRENT daily reference. These anchors describe reference distance, not harmful-current limits. Signed current is not local deposition, abrasion or maintenance demand; preferring resemblance to the median is an experimental project assumption. |
 | `soil_mean_grain_size_um` | Reference-band resemblance | Not included | 100 at 53.01-91.5975 um; zero at 14.4225 and 130.185. |
 | `soil_maturity_is_feo` | Reference-band resemblance | Not included | 100 at 42.6225-72.47 Is/FeO; zero at 12.775 and 102.3175. |
 | `soil_agglutinates_percent` | Reference-band resemblance | Not included | 100 at 35.351-40.058%; zero at 30.644 and 44.765%. Preserve source modal basis. |
 | `soil_feo_wt_percent` | Reference-band resemblance | Not included | 100 at 6.4375-15.71 wt%; zero at -2.835 and 24.9825. Negative scoring anchors are extrapolated coordinates, not valid chemical measurements; input must be 0-100 wt%. |
-| `orbital_radiation_counter_median` | Not included | Lower proxy preference | 24-104.5 counts/SEC maps to 100-0. Dar_049 selected-state CRaTER daily medians, n=1,091, p05/p95. Not crew dose or electronics radiation tolerance. |
-| `phase_median_temperature_range_kelvin` | Not included | Lower variation preference | 0-300 K span maps to 100-0. Retained project comparison scale, not a fitted hardware limit. NASA/Diviner's roughly 400 K equatorial day versus below 100 K night illustrates the contrast; it does not define a south-polar safe interval. |
-| `median_spacecraft_electric_potential_volts` | Not included | Zero-centred proxy preference | 100 at 0 V; declines linearly to zero at +/-32.918969440460 V. Scale is Dar_046 p95(abs(daily median)), selected ESA_v01_thb_peif_sc_pot series, n=1,140. Choosing zero as preferred is a project assumption, not an arcing threshold or surface-voltage inference. |
-| `median_solar_far_uv_irradiance_w_m2` | Not included | Lower proxy preference | 0.021529459636-0.026638514010 W/m2 maps to 100-0. Dar_045 SEE_v012_FUV_115_180 daily band integrals, n=1,206, p05/p95. Not surface dose or a material/crew exposure limit. |
+| `orbital_radiation_counter_median` | Not included | Lower proxy preference | 24-104.5 counts/SEC maps to 100-0. Dar_049 selected-state CRaTER daily medians p05/p95. Not crew dose or electronics radiation tolerance. |
+| `phase_median_temperature_range_kelvin` | Lower variation preference | Lower variation preference | 0-300 K span maps to 100-0. Retained project comparison scale, not a fitted hardware limit. NASA/Diviner's roughly 400 K equatorial day versus below 100 K night illustrates the contrast; it does not define a south-polar safe interval. |
+| `median_spacecraft_electric_potential_volts` | Zero-centred proxy preference | Zero-centred proxy preference | 100 at 0 V; declines linearly to zero at +/-32.918969440460 V. Scale is Dar_046 p95(abs(daily median)), selected ESA_v01_thb_peif_sc_pot series. Choosing zero as preferred is a project assumption, not an arcing threshold or surface-voltage inference. |
+| `median_solar_far_uv_irradiance_w_m2` | Not included | Lower proxy preference | 0.021529459636-0.026638514010 W/m2 maps to 100-0. Dar_045 SEE_v012_FUV_115_180 daily band integrals p05/p95. Not surface dose or a material/crew exposure limit. |
 | `lowest_phase_median_temperature_kelvin`, `highest_phase_median_temperature_kelvin` | Context | Context | Nonnegative K. No universal 40/390 K gate: surface temperature is not component temperature. |
 | `orbital_radiation_counter_maximum` | Context | Context | Nonnegative native counts. No universal 7,500-count gate. |
 | `median_spacecraft_ion_density_per_cm3`, `median_spacecraft_electron_density_per_cm3` | Context | Context | Nonnegative native density; no universal preferred/safe density interval. |
@@ -359,21 +266,22 @@ Numbers below are **scoring scales or data-validity bounds**, not certified miss
 | `historical_median_vertical_seismic_rms_counts` | Context only | Context only | Nonnegative native counts, not response-qualified candidate-site structural demand. |
 | `historical_median_orbital_helium_density_per_cm3` | Context only | Context only | Nonnegative native density; no demonstrated habitability or survival threshold. |
 
-Dust has no flat 100-point interval. A zero dust score means outside the selected central reference interval, not a failed physical safety requirement; negative background-subtracted values must not be reinterpreted as negative dust burden. Shared Apollo inputs equal to the reference median still legitimately receive the same 100-point resemblance score. No input, weight, gate or other domain rule is changed by this definition.
+Dust has no flat 100-point interval. A zero dust score means outside the selected central reference interval, not a failed physical safety requirement; negative background-subtracted values must not be reinterpreted as negative dust burden. Equal inputs legitimately receive equal scores; this curve does not measure operational damage.
 
 All four soil metrics have multiplier 1; a complete soil score is their arithmetic mean. Their preferred bands are p05/p95 of rounded Apollo mission means from Dar_057. Scores fall to zero one band-width outside, with physical percentage validation retained. This is reference resemblance, not mechanical stability. Apollo mission means are historical-reference controls; missing Apollo 11/12/15 agglutinates retain the declared cross-mission estimate. Randomized EDA/synthetic/dummy inputs remain scenarios, not observations. Differences in mission window, method, epoch and support prevent interpreting these totals as like-for-like deployment certification.
 
 ## Evidence supporting the configuration
 
-- [NASA LOLA polar illumination products](https://pgda.gsfc.nasa.gov/products/69) supply long-period Sun/Earth geometry, and warn that shorter periods and radio-link geometry require further analysis. They do not prescribe visibility pass percentages.
-- [NASA Lunar Surface Data Book, section 6.3 and Appendix E](https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf) discusses approximately 150 hours of darkness for particular south-polar cases. That is a scenario demand, not a universal capability requirement or permission to equate regional sampled shadows to battery autonomy.
-- [NASA's published VIPER operations description](https://science.nasa.gov/mission/viper/lunar-operations/) describes a 50-hour continuous-darkness limit for that rover concept. It must not be transplanted to every base or Apollo scenario.
-- [NASA NESC lunar environment study, section 7.4](https://ntrs.nasa.gov/api/citations/20220017053/downloads/20220017053.pdf) describes surface conditions from roughly 18 K to above 400 K and thermal-control challenges. These environmental conditions are not system operating/survival limits. [Diviner thermal observations](https://www.diviner.ucla.edu/science) provide equatorial reference context for the retained span scale.
-- [NASA/PDS LDEX documentation](https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/LADEE/ldex.html) identifies an orbital impact-ionization/current measurement, not a direct surface-wear criterion.
-- [NASA cis-lunar charging study](https://ntrs.nasa.gov/api/citations/20200001582/downloads/20200001582.pdf) distinguishes spacecraft and lunar-surface potentials. This prevents interpreting the current input as surface discharge risk.
-- [NASA crew-health standards](https://www.nasa.gov/ochmo/human-spaceflight-and-aviation-standards/) and [radiation guidance](https://srag.jsc.nasa.gov/SpaceRadiation/FAQ/FAQ.cfm) address applicable crew requirements and dose quantities. Raw instrument counters are not interchangeable with those quantities; these scores do not model crew protection or life support.
+| Reference | Project use |
+| --- | --- |
+| [NASA LOLA illumination and Earth-visibility products](https://pgda.gsfc.nasa.gov/products/69) | Geometry definitions and map preparation; visibility is not generated power or radio-link performance. |
+| [NASA Lunar Surface Data Book](https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf) | Lunar-environment and deployment context; scenario examples are not universal system limits. |
+| [NASA NESC lunar environment study](https://ntrs.nasa.gov/api/citations/20220017053/downloads/20220017053.pdf) | Environmental interpretation; surface conditions are not component operating/survival tolerances. |
+| [NASA/PDS LDEX documentation](https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/LADEE/ldex.html) | Instrument quantity, units and applicability of the dust reference. |
+| [NASA cis-lunar charging study](https://ntrs.nasa.gov/api/citations/20200001582/downloads/20200001582.pdf) | Distinguish spacecraft potential from lunar-surface charging. |
+| [NASA human-spaceflight standards](https://www.nasa.gov/ochmo/human-spaceflight-and-aviation-standards/) | Applicable requirement families; raw instrument counters cannot be treated as crew dose. |
 
-Where a compatible threshold cannot be established, it is explicitly absent. No source here supplies this project's weight percentages. These references support the measurement meanings, reference environments and limitations, not every assumed scoring direction.
+Reference scales and project weights do not constitute NASA safety certification. Compatible requirements must be established before enabling operational hard gates.
 
 ## Pipeline mode and independent assessment toggles
 
@@ -389,7 +297,7 @@ For a genuinely applicable Operations link-margin check, the supported structure
 assessments:
   operations:
     domain_overrides:
-      communications_geometry:
+      earth_visibility:
         hard_gates_enabled: true
     metric_overrides:
       window_minimum_link_margin_db:
