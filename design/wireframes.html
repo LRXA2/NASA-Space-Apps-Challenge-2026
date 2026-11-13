@@ -1,0 +1,823 @@
+<title>Lunar Analog Finder Wireframes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: deck header with screen nav, then one app frame (top bar + main), then screen notes. Greyscale low-fi. */
+:root{
+  --bg:#eceef0; --frame:#ffffff; --fg:#1b1e22; --muted:#596069; --line:#c4c9cf; --line-strong:#8a9199;
+  --fill:#e4e7ea; --fill-2:#d3d8dd; --sidebar:#f4f5f7; --ann:#4a5058;
+  --sans:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121417; --frame:#1b1e22; --fg:#e7e9ec; --muted:#a3aab2; --line:#3a3f46; --line-strong:#6d747d;
+    --fill:#252930; --fill-2:#323840; --sidebar:#16191c; --ann:#b4bac1; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121417; --frame:#1b1e22; --fg:#e7e9ec; --muted:#a3aab2; --line:#3a3f46; --line-strong:#6d747d;
+  --fill:#252930; --fill-2:#323840; --sidebar:#16191c; --ann:#b4bac1; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--fg); font:14px/1.5 var(--sans); padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:20px 48px}
+::selection{background:var(--fg); color:var(--frame)}
+:focus-visible{outline:2px solid var(--fg); outline-offset:2px}
+h1,h2,h3,h4{margin:0; text-wrap:balance; font-weight:600; letter-spacing:-0.01em}
+p{margin:0}
+.wrap{max-width:1280px; margin:0 auto; display:grid; gap:16px}
+.num{font-variant-numeric:tabular-nums}
+
+/* Deck header */
+.deck{display:grid; gap:12px}
+.deck-top{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px 24px}
+.deck-top h1{font-size:20px}
+.deck-top p{color:var(--muted); max-width:70ch}
+.nav{display:flex; flex-wrap:wrap; gap:8px 20px; align-items:flex-start}
+.nav-group{display:grid; gap:6px}
+.nav-label{font-size:12px; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); font-weight:500}
+.nav-items{display:flex; flex-wrap:wrap; gap:6px}
+.nav a{display:inline-flex; gap:6px; align-items:center; padding:6px 10px; border:1px solid var(--line); border-radius:6px; color:var(--fg); text-decoration:none; background:var(--frame); font-size:13px}
+.nav a:hover{border-color:var(--line-strong)}
+.nav a[aria-current="page"]{background:var(--fg); color:var(--frame); border-color:var(--fg)}
+.step{font-family:var(--mono); font-size:12px; border:1px solid currentColor; border-radius:4px; padding:0 4px}
+.tools{display:flex; flex-wrap:wrap; gap:16px; align-items:center; font-size:13px; color:var(--muted)}
+.tools label{display:inline-flex; gap:6px; align-items:center; cursor:pointer}
+.legend{display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center}
+.changes{border:1px dashed var(--line-strong); border-radius:8px; padding:10px 14px; font-size:13px; display:grid; gap:4px; background:var(--frame)}
+.changes ul{margin:0; padding-left:18px; display:grid; gap:2px}
+
+/* Annotation chips */
+.ann{display:inline-flex; flex-wrap:wrap; gap:4px; align-items:center; font:500 12px/1.4 var(--mono); color:var(--ann); margin-bottom:8px}
+.ann span{border:1px dashed var(--line-strong); border-radius:4px; padding:1px 5px}
+.ann .src{border-style:solid; font-weight:600}
+.ann .ix{border-style:dotted; border-color:var(--fg)}
+.ann .flag{border-style:solid; border-color:var(--fg); color:var(--fg); background:var(--fill)}
+body.no-ann .ann{display:none}
+
+/* App frame */
+.app{display:grid; grid-template-columns:minmax(0,1fr); border:1px solid var(--line-strong); border-radius:10px; overflow:hidden; background:var(--frame); min-height:640px}
+.sidebar{background:var(--sidebar); border-bottom:1px solid var(--line); padding:10px 20px; display:flex; flex-wrap:wrap; gap:10px 20px; align-items:center}
+.sidebar .field{grid-template-columns:auto minmax(180px,auto); align-items:center; gap:8px}
+.sidebar .field > .cap{grid-column:2}
+.sidebar .spacer{flex:1}
+.main{padding:24px 28px 32px; display:grid; gap:18px; align-content:start; min-width:0}
+.brand{font-weight:600; font-size:15px}
+.brand small{display:block; color:var(--muted); font-weight:400; font-size:12px}
+.field{display:grid; gap:4px}
+.field > b{font-size:12px; font-weight:500}
+.select{border:1px solid var(--line); border-radius:6px; padding:7px 10px; background:var(--frame); display:flex; justify-content:space-between; gap:8px; font-size:13px}
+.select::after{content:""; width:8px; height:8px; border-right:1.5px solid var(--muted); border-bottom:1.5px solid var(--muted); transform:rotate(45deg) translateY(-3px); flex:none; align-self:center}
+.select.off{color:var(--muted); background:var(--fill); border-style:dashed}
+.radio{display:grid; gap:6px}
+.radio div{display:grid; grid-template-columns:14px 1fr; gap:8px; font-size:13px; align-items:start}
+.radio div::before{content:""; width:12px; height:12px; border-radius:50%; border:1.5px solid var(--line-strong); margin-top:3px}
+.radio div.on::before{background:radial-gradient(circle, var(--fg) 0 3px, transparent 3.5px); border-color:var(--fg)}
+.exp{border:1px solid var(--line); border-radius:6px; padding:7px 10px; font-size:13px; display:flex; justify-content:space-between; gap:8px; background:var(--frame)}
+.exp::after{content:"+"; color:var(--muted); font-family:var(--mono)}
+.cap{font-size:12px; color:var(--muted)}
+hr{border:0; border-top:1px solid var(--line); margin:0; width:100%}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:6px; overflow:hidden; font-size:12px; justify-self:start}
+.seg span{padding:4px 10px; border-right:1px solid var(--line)}
+.seg span:last-child{border-right:0}
+.seg span.on{background:var(--fg); color:var(--frame)}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line-strong); border-radius:6px; padding:5px 10px; font-size:13px; color:var(--fg); text-decoration:none; justify-self:start; background:var(--frame)}
+
+.page-head{display:grid; gap:4px}
+.page-head h2{font-size:26px; letter-spacing:-0.02em}
+.page-head p{color:var(--muted); max-width:72ch}
+.crumb{font-size:12px; color:var(--muted)}
+.crumb a{color:inherit}
+.tabs{display:flex; gap:2px; border-bottom:1px solid var(--line); overflow-x:auto; padding-top:14px}
+.tabs span,.tabs a{padding:8px 12px; font-size:13px; color:var(--muted); border-bottom:2px solid transparent; white-space:nowrap; text-decoration:none}
+.tabs span.on{color:var(--fg); border-bottom-color:var(--fg); font-weight:500}
+.tabs span.dis{opacity:.55}
+
+.cols{display:grid; gap:16px; grid-template-columns:repeat(var(--n, 2), minmax(0,1fr))}
+.cols.r32{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
+.cols.r23{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}
+.stack{display:grid; gap:16px; align-content:start; min-width:0}
+.box{border:1px solid var(--line); border-radius:8px; padding:14px; min-width:0; background:var(--frame); position:relative; display:grid; gap:10px; align-content:start}
+.box.plain{border-style:dashed}
+.box h3{font-size:15px}
+.box h4{font-size:13px; font-weight:600}
+.metric{display:grid; gap:2px}
+.metric .lbl{font-size:12px; color:var(--muted)}
+.metric .val{font-size:26px; font-weight:600; letter-spacing:-0.02em; line-height:1.15}
+.metric .sub{font-size:12px; color:var(--muted)}
+.scores{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px}
+
+/* placeholders */
+.ph{background:var(--fill); border-radius:6px; position:relative; overflow:hidden; display:grid; place-items:center; color:var(--muted); font-size:12px; text-align:center; padding:8px; min-height:120px}
+.ph.img{aspect-ratio:1/1; min-height:0; max-width:100%}
+.ph.img::before,.ph.img::after{content:""; position:absolute; inset:0; background:linear-gradient(to top right, transparent calc(50% - 0.5px), var(--line-strong) 50%, transparent calc(50% + 0.5px))}
+.ph.img::after{background:linear-gradient(to top left, transparent calc(50% - 0.5px), var(--line-strong) 50%, transparent calc(50% + 0.5px))}
+.ph.img span{position:relative; z-index:1; background:var(--fill); padding:2px 6px; border-radius:4px}
+.chart{width:100%; height:auto; display:block}
+.chart text{fill:var(--muted); font:12px var(--sans)}
+.chart .ax{stroke:var(--line-strong); stroke-width:1; fill:none}
+.chart .grid{stroke:var(--line); stroke-width:1; fill:none}
+.chart .s1{stroke:var(--fg); stroke-width:2; fill:none}
+.chart .s2{stroke:var(--muted); stroke-width:1.5; fill:none; stroke-dasharray:5 3}
+.chart .s3{stroke:var(--line-strong); stroke-width:1.2; fill:none}
+.chart .cell{fill:var(--fill); stroke:var(--frame); stroke-width:1}
+.chart .cell.m{fill:var(--fill-2)}
+.chart .cell.n{fill:var(--line-strong)}
+.chart .lt{font:600 12px var(--mono); fill:var(--fg)}
+
+/* tables */
+.tbl-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:6px}
+table{border-collapse:collapse; width:100%; font-size:13px; font-variant-numeric:tabular-nums}
+th,td{text-align:left; padding:7px 10px; border-bottom:1px solid var(--line); white-space:nowrap}
+th{font-weight:500; color:var(--muted); background:var(--fill); font-size:12px}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right}
+tr.sel td{background:var(--fill)}
+tr.dim td{color:var(--muted)}
+td.wrapc{white-space:normal; min-width:220px}
+.bar{display:inline-block; width:64px; height:6px; background:var(--fill-2); border-radius:3px; vertical-align:middle; margin-right:6px; position:relative; overflow:hidden}
+.bar i{position:absolute; inset:0 auto 0 0; background:var(--fg); border-radius:3px}
+
+/* status pills: shape + icon + label, never tone alone */
+.pill{display:inline-flex; gap:4px; align-items:center; font-size:12px; font-weight:500; padding:1px 8px 1px 5px; border-radius:999px; border:1px solid var(--fg); white-space:nowrap; line-height:1.5; justify-self:start}
+.pill.pass{background:var(--fg); color:var(--frame)}
+.pill.fail{background:var(--frame); color:var(--fg); border-width:2px}
+.pill.unk{background:var(--frame); color:var(--muted); border-style:dashed; border-color:var(--line-strong)}
+.pill.mid{background:var(--frame); color:var(--fg); border-color:var(--line-strong)}
+.pill.blk{background:var(--fill-2); color:var(--fg); border-color:var(--fill-2)}
+.i{width:14px; height:14px; flex:none; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
+
+/* limitations panel */
+.limits{border:1.5px solid var(--fg); border-radius:8px; padding:14px 16px; display:grid; gap:8px; background:var(--frame)}
+.limits h3{font-size:14px; display:flex; gap:8px; align-items:center}
+.limits ul{margin:0; padding-left:18px; display:grid; gap:4px; max-width:90ch}
+.limits .exp{background:transparent}
+
+/* hotspots */
+.hot{position:relative; outline:2px dashed var(--fg); outline-offset:3px; border-radius:6px; cursor:pointer; text-decoration:none; color:inherit}
+.hot-tag{position:absolute; top:-12px; right:8px; font:600 12px/1 var(--mono); background:var(--fg); color:var(--frame); padding:4px 7px; border-radius:4px; z-index:2; white-space:nowrap}
+.tabs a.hot{outline-offset:-2px; display:inline-block; color:var(--fg)}
+.tabs a.hot .hot-tag{top:-14px; right:auto; left:4px}
+tr a{color:inherit; text-underline-offset:3px}
+tr.hot-row{cursor:pointer}
+tr.hot-row td{border-top:2px dashed var(--fg); border-bottom:2px dashed var(--fg)}
+tr.hot-row td:first-child{border-left:2px dashed var(--fg); position:relative}
+tr.hot-row td:last-child{border-right:2px dashed var(--fg)}
+tr.hot-row .hot-tag{top:-11px; left:6px; right:auto}
+body.no-hot .hot{outline:none}
+body.no-hot .hot-tag{display:none}
+body.no-hot tr.hot-row td{border-top:0; border-left:0; border-right:0; border-bottom:1px solid var(--line)}
+
+/* screen notes */
+.notes{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:16px}
+.notes ul{margin:0; padding-left:18px; display:grid; gap:4px}
+.notes p,.notes li{font-size:13px}
+.notes .say{font-style:italic}
+
+.screen{display:grid; gap:16px}
+.kv{display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:13px; margin:0}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+.readiness{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
+.readiness .ph{min-height:84px; align-content:center; gap:4px}
+.scale{display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:12px}
+.scale i{display:block; width:160px; height:10px; border-radius:2px; background:linear-gradient(90deg, var(--fill), var(--fg))}
+.readout{font-size:13px; border:1px dashed var(--line-strong); border-radius:6px; padding:6px 10px}
+.callout{border:1px solid var(--line-strong); border-radius:6px; padding:10px 12px; display:flex; gap:10px; align-items:flex-start; font-size:13px}
+.callout.strong{border:2px solid var(--fg)}
+.empty{border:1.5px dashed var(--line-strong); border-radius:8px; padding:28px 20px; display:grid; gap:6px; justify-items:center; text-align:center; color:var(--muted)}
+.empty b{color:var(--fg); font-size:15px}
+.probs{display:grid; grid-template-columns:auto 1fr auto; gap:4px 8px; align-items:center; font-size:12px}
+.probs .bar{width:100%; margin:0}
+
+@media (max-width: 900px){
+  .notes{grid-template-columns:1fr}
+  .cols,.cols.r32,.cols.r23{grid-template-columns:1fr}
+}
+@media (max-width: 760px){
+  .sidebar .field{grid-template-columns:1fr}
+  .sidebar .field > .cap{grid-column:1}
+  .main{padding:20px 16px}
+  .readiness,.scores{grid-template-columns:1fr}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-pass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16.5 9.5"/></symbol>
+  <symbol id="i-fail" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></symbol>
+  <symbol id="i-unk" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2-2.4 3.6"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-block" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.5M12 17h.01"/></symbol>
+  <symbol id="i-op" viewBox="0 0 24 24"><path d="M4 18h16"/><path d="M4 14h16"/></symbol>
+  <symbol id="i-marg" viewBox="0 0 24 24"><path d="M4 18h16"/><path d="M4 14l4-4 4 3 4-5 4 3"/></symbol>
+  <symbol id="i-nonop" viewBox="0 0 24 24"><path d="M4 19l5-12 4 7 3-4 4 9z"/></symbol>
+  <symbol id="i-walk" viewBox="0 0 24 24"><circle cx="13" cy="4.5" r="1.8"/><path d="M11 21l2-6-3-3 1-5 3 3h3"/><path d="M9 12l-2 4"/></symbol>
+  <symbol id="i-rover" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="7" rx="1.5"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/><path d="M12 8V4h4"/></symbol>
+</svg>
+
+<div class="wrap">
+  <header class="deck">
+    <div class="deck-top">
+      <h1>Lunar Analog Finder · low-fi wireframes</h1>
+      <p>Pass 1, revision 3: layout only, greyscale. Target stack is a static React site reading precomputed JSON. Every number is a sample value for layout. Chips show the data source (A similarity CNN, B environment engine, C terrain CNN) and, where it matters, how the component behaves.</p>
+    </div>
+    <div class="changes">
+      <b>What changed in revision 3</b>
+      <ul>
+        <li>Stack is now static React (Vite + TypeScript). All Streamlit chips and workarounds are removed.</li>
+        <li>The sidebar becomes a top bar with Region and Patch switchers, so maps and terrain get the full width.</li>
+        <li>The region patch map is a Leaflet CRS.Simple grid: click a 960 m square to open it, hover for its classes.</li>
+        <li>Pair comparison draws all four terrain canvases from grids, on one shared colour scale, with a linked crosshair and live readout.</li>
+        <li>Earth matches sit on a Leaflet lat/lon map, linked to the ranked table on hover.</li>
+        <li>Each screen now has its own URL, listed in the notes below the frame.</li>
+      </ul>
+    </div>
+    <nav class="nav" aria-label="Screens">
+      <div class="nav-group">
+        <span class="nav-label">Demo walkthrough</span>
+        <div class="nav-items">
+          <a href="#map"><span class="step">1</span>Region map</a>
+          <a href="#region"><span class="step">2</span>Region · pick a patch</a>
+          <a href="#patch"><span class="step">3</span>Patch terrain</a>
+          <a href="#analogs"><span class="step">4</span>Earth analogs</a>
+          <a href="#compare"><span class="step">5</span>Pair comparison</a>
+        </div>
+      </div>
+      <div class="nav-group">
+        <span class="nav-label">Other screens and states</span>
+        <div class="nav-items">
+          <a href="#environment">Region environment</a>
+          <a href="#env-only">Environment-only region</a>
+          <a href="#blocked">Failed hard gate</a>
+        </div>
+      </div>
+    </nav>
+    <div class="tools">
+      <label><input type="checkbox" id="t-ann" checked> Annotations</label>
+      <label><input type="checkbox" id="t-hot" checked> Demo click targets</label>
+      <span class="legend">
+        <span class="ann" style="margin:0"><span class="src">A</span><span class="src">B</span><span class="src">C</span> data source</span>
+        <span class="ann" style="margin:0"><span class="ix">click · hover</span> interaction</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- ============ 1. REGION MAP ============ -->
+  <section class="screen" data-hash="map" aria-label="Region map">
+    <div class="app">
+      <aside class="sidebar" data-sidebar="map"></aside>
+      <div class="main">
+        <div class="page-head">
+          <h2>South-pole candidate regions</h2>
+          <p>17 Artemis candidate regions have environment scores. 7 of them also have terrain patches, about 2,900 in total, with Earth analogs. Pick a region.</p>
+        </div>
+        <div class="cols r23">
+          <div class="box">
+            <div class="ann"><span class="src">B</span><span class="ix">SVG in polar stereo km · click a region</span></div>
+            <h3>South-pole overview, 84°S to pole</h3>
+            <svg class="chart" viewBox="0 0 420 380" role="img" aria-label="Schematic polar map with latitude rings and region markers">
+              <circle class="grid" cx="210" cy="190" r="170"/><circle class="grid" cx="210" cy="190" r="113"/><circle class="grid" cx="210" cy="190" r="57"/>
+              <path class="grid" d="M210 20v340M40 190h340"/>
+              <text x="214" y="32">84°S</text><text x="214" y="88">86°S</text><text x="214" y="145">88°S</text>
+              <text x="380" y="186">90°E</text><text x="4" y="186">90°W</text><text x="196" y="374">180°</text><text x="202" y="14">0°</text>
+              <circle cx="210" cy="190" r="3" fill="var(--muted)"/>
+              <circle cx="190" cy="162" r="5" fill="none" stroke="var(--fg)" stroke-width="2"/><text x="118" y="156">Shackleton</text>
+              <circle cx="250" cy="122" r="5" fill="var(--fg)"/><text x="258" y="126">Malapert Massif</text>
+              <rect x="145" y="240" width="10" height="10" fill="var(--fg)"/><text x="86" y="266">Haworth</text>
+              <circle cx="268" cy="250" r="5" fill="var(--fg)"/><text x="276" y="256">de Gerlache Rim 2</text>
+              <circle cx="300" cy="86" r="5" fill="var(--fg)"/><circle cx="300" cy="86" r="11" class="s1"/><text x="236" y="70">Leibnitz Beta Plateau</text>
+              <circle cx="120" cy="150" r="5" fill="none" stroke="var(--fg)" stroke-width="2"/><text x="44" y="138">Nobile Rim 1</text>
+              <circle cx="230" cy="292" r="5" fill="var(--fg)"/><text x="238" y="308">Faustini Rim A</text>
+            </svg>
+            <p class="cap">Filled circle: has terrain patches. Ring: environment only. Square: a hard gate failed. Positions are schematic.</p>
+          </div>
+          <div class="box">
+            <div class="ann"><span class="src">B</span><span class="src">A</span><span class="ix">click a row · sort by column</span></div>
+            <h3>Regions by environment score</h3>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th>Region</th><th class="r">Ops</th><th class="r">Survivability</th><th>Terrain</th></tr></thead>
+                <tbody>
+                  <tr><td>Peak Near Shackleton</td><td class="r">79</td><td class="r">72</td><td>Env only</td></tr>
+                  <tr><td>Connecting Ridge Ext.</td><td class="r">77</td><td class="r">70</td><td class="num">418 patches</td></tr>
+                  <tr class="sel hot-row" data-href="#region"><td><a href="#region">Leibnitz Beta Plateau</a><span class="hot-tag">Click 1</span></td><td class="r">74</td><td class="r">68</td><td class="num">412 patches</td></tr>
+                  <tr><td>Malapert Massif</td><td class="r">71</td><td class="r">66</td><td class="num">405 patches</td></tr>
+                  <tr><td>de Gerlache Rim 2</td><td class="r">69</td><td class="r">63</td><td class="num">421 patches</td></tr>
+                  <tr><td>Nobile Rim 1</td><td class="r">66</td><td class="r">60</td><td>Env only</td></tr>
+                  <tr><td>Faustini Rim A</td><td class="r">64</td><td class="r">61</td><td class="num">409 patches</td></tr>
+                  <tr><td>Haworth</td><td class="r">—</td><td class="r">—</td><td class="num">423 patches</td></tr>
+                  <tr class="dim"><td colspan="4" style="white-space:normal">Haworth: Illumination failed, longest darkness 9.2 days, test limit 5</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="cap">+ 9 more regions. A failed hard gate blanks both scores, sorts the region last, and shows the reason in the row below it.</p>
+          </div>
+        </div>
+        <div class="limits" data-limits="map"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. REGION · PICK A PATCH ============ -->
+  <section class="screen" data-hash="region" aria-label="Region overview and patch picker" hidden>
+    <div class="app">
+      <aside class="sidebar" data-sidebar="region"></aside>
+      <div class="main">
+        <div class="page-head">
+          <span class="crumb"><a href="#map">Regions</a> › Leibnitz Beta Plateau</span>
+          <h2>Leibnitz Beta Plateau</h2>
+          <p>Artemis III candidate region · 412 terrain patches of 960 m × 960 m</p>
+        </div>
+        
+        <nav class="tabs" aria-label="Region sections"><span class="on">Overview · patches</span><a href="#environment">Environment</a></nav>
+        <div class="box">
+          <div class="ann"><span class="src">B</span></div>
+          <div class="cols" style="--n:3; align-items:end">
+            <div class="metric"><span class="lbl">Ops score</span><span class="val num">74 / 100</span><span class="sub">Can crews and systems work here</span></div>
+            <div class="metric"><span class="lbl">Survivability score</span><span class="val num">68 / 100</span><span class="sub">Can crews and hardware stay safe here</span></div>
+            <div style="display:grid; gap:6px"><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>All 4 hard gates passed</span><a class="cap" href="#environment">See all 9 domains in Environment</a></div>
+          </div>
+        </div>
+        <div class="cols r23">
+          <div class="box">
+            <div class="ann"><span class="src">C</span><span class="ix">Leaflet CRS.Simple · click a square to open · hover for classes</span></div>
+            <h3>Patches in this region</h3>
+            <div class="seg" role="group" aria-label="Colour patches by"><span class="on">Rover class</span><span>On foot</span><span>Best analog score</span></div>
+            <svg class="chart" id="patchgrid" viewBox="0 0 300 220" role="img" aria-label="Schematic grid of patches, each lettered by class"></svg>
+            <p class="cap">Each square is one 960 m patch, lettered O operable, M marginal, N non-operable, so it reads without colour. Zoom shows letters; zoomed out, the fill pattern carries the class. The outlined square is the selected patch.</p>
+          </div>
+          <div class="box">
+            <div class="ann"><span class="src">A</span><span class="src">C</span><span class="ix">click a row</span></div>
+            <h3>Featured patches</h3>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th>Patch</th><th>Rover</th><th>On foot</th><th>Best analog</th></tr></thead>
+                <tbody>
+                  <tr class="sel hot-row" data-href="#patch"><td><a href="#patch">LBP-0412</a><span class="hot-tag">Click 2</span></td><td><span class="pill mid"><svg class="i"><use href="#i-marg"/></svg>Marginal</span></td><td><span class="pill mid"><svg class="i"><use href="#i-warn"/></svg>Caution</span></td><td>Lanzarote 0.91</td></tr>
+                  <tr><td>LBP-0187</td><td><span class="pill pass"><svg class="i"><use href="#i-op"/></svg>Operable</span></td><td><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>Easy</span></td><td>Lanzarote 0.93</td></tr>
+                  <tr><td>LBP-0033</td><td><span class="pill fail"><svg class="i"><use href="#i-nonop"/></svg>Non-operable</span></td><td><span class="pill fail"><svg class="i"><use href="#i-fail"/></svg>Unsuitable</span></td><td>Wadi Rum 0.81</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="cap">The team picks 3 to 5 featured patches per region, including at least one misleading match.</p>
+            
+            <div class="exp"><span>All 412 patches · filter by rover or on-foot class</span></div>
+          </div>
+        </div>
+        <div class="limits" data-limits="region"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. PATCH TERRAIN ============ -->
+  <section class="screen" data-hash="patch" aria-label="Patch terrain" hidden>
+    <div class="app">
+      <aside class="sidebar" data-sidebar="patch"></aside>
+      <div class="main">
+        <div class="page-head">
+          <span class="crumb"><a href="#map">Regions</a> › <a href="#region">Leibnitz Beta Plateau</a> › Patch LBP-0412</span>
+          <h2>Patch LBP-0412</h2>
+          <p>Leibnitz Beta Plateau · 960 m × 960 m · 32 × 32 grid at 30 m · region Ops 74, Survivability 68</p>
+        </div>
+        <nav class="tabs" aria-label="Patch sections"><span class="on">Terrain</span><a class="hot" href="#analogs"><span class="hot-tag">Click 3</span>Earth analogs</a></nav>
+        <div class="cols" style="--n:3">
+          <div class="box">
+            <div class="ann"><span class="src">C</span></div>
+            <div class="metric"><span class="lbl">Rover</span><span class="val" style="display:flex;gap:8px;align-items:center"><svg class="i" style="width:22px;height:22px"><use href="#i-rover"/></svg>Marginal</span></div>
+            <div class="probs num"><span>Operable</span><span class="bar"><i style="width:31%"></i></span><span>0.31</span><span><b>Marginal</b></span><span class="bar"><i style="width:54%"></i></span><span><b>0.54</b></span><span>Non-operable</span><span class="bar"><i style="width:15%"></i></span><span>0.15</span></div>
+          </div>
+          <div class="box">
+            <div class="ann"><span class="src">C</span></div>
+            <div class="metric"><span class="lbl">Crew on foot</span><span class="val" style="display:flex;gap:8px;align-items:center"><svg class="i" style="width:22px;height:22px"><use href="#i-walk"/></svg>Caution</span></div>
+            <div class="probs num"><span>Easy</span><span class="bar"><i style="width:28%"></i></span><span>0.28</span><span><b>Caution</b></span><span class="bar"><i style="width:49%"></i></span><span><b>0.49</b></span><span>Unsuitable</span><span class="bar"><i style="width:23%"></i></span><span>0.23</span></div>
+          </div>
+          <div class="box">
+            <div class="ann"><span class="src">C</span><span class="ix">SVG</span></div>
+            <h4>Rover crossable directions</h4>
+            <svg class="chart" viewBox="0 0 200 150" role="img" aria-label="Direction diagram">
+              <circle class="grid" cx="100" cy="72" r="56"/>
+              <path class="s1" d="M100 18v108"/><path class="s1" d="M46 72h108"/>
+              <path class="s2" d="M60 32l80 80"/><path class="s2" d="M140 32l-80 80"/>
+              <text x="80" y="12">N–S yes</text><text x="144" y="64">E–W yes</text><text x="134" y="146">NW–SE no</text><text x="0" y="146">NE–SW no</text>
+            </svg>
+            <p class="cap">Solid: crossable. Dashed: not crossable.</p>
+          </div>
+        </div>
+        <div class="cols r32">
+          <div class="box">
+            <div class="ann"><span class="src">A</span><span class="ix">canvas from 32×32 grid · hover readout</span></div>
+            <h3>Terrain</h3>
+            <div class="cols">
+              <div style="display:grid;gap:6px"><span class="cap">Slope, degrees</span><div class="ph img"><span>Canvas from grid · hover shows °</span></div></div>
+              <div style="display:grid;gap:6px"><span class="cap">Relative elevation, metres</span><div class="ph img"><span>Canvas from grid · hover shows m</span></div></div>
+            </div>
+            <div class="readout num"><b>Hover readout</b> · cell (14, 9) · slope 12.4° · elevation +18 m</div>
+          </div>
+          <div class="box">
+            <div class="ann"><span class="src">A</span></div>
+            <h3>Patch measurements</h3>
+            <dl class="kv num">
+              <dt>Median slope</dt><dd>8.2°</dd>
+              <dt>P90 slope</dt><dd>17.5°</dd>
+              <dt>Relief</dt><dd>64 m</dd>
+              <dt>Plane residual</dt><dd>6.1 m</dd>
+              <dt>Local elevation SD</dt><dd>11.3 m</dd>
+              <dt>Centre (polar stereo)</dt><dd>x, y in km</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="limits" data-limits="patch"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. EARTH ANALOGS ============ -->
+  <section class="screen" data-hash="analogs" aria-label="Earth analogs" hidden>
+    <div class="app">
+      <aside class="sidebar" data-sidebar="patch"></aside>
+      <div class="main">
+        <div class="page-head">
+          <span class="crumb"><a href="#map">Regions</a> › <a href="#region">Leibnitz Beta Plateau</a> › <a href="#patch">Patch LBP-0412</a> › Earth analogs</span>
+          <h2>Patch LBP-0412</h2>
+          <p>Top 5 Earth patches. The score says how alike the terrain looks to the CNN. The checks say whether the physics agrees.</p>
+        </div>
+        <nav class="tabs" aria-label="Patch sections"><a href="#patch">Terrain</a><span class="on">Earth analogs</span></nav>
+        <div class="box">
+          <div class="ann"><span class="src">A</span><span class="ix">click a row · hover highlights its map marker</span></div>
+          <h3>Ranked matches</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th class="r">Rank</th><th>Earth region</th><th>Cosine score</th><th>Checks in band</th><th>Flag</th><th>Centre lat, lon</th></tr></thead>
+              <tbody>
+                <tr><td class="r">1</td><td>Lanzarote</td><td><span class="bar"><i style="width:91%"></i></span>0.91</td><td>4 / 5</td><td>—</td><td>29.0°N, 13.7°W</td></tr>
+                <tr class="sel hot-row" data-href="#compare"><td class="r">2<span class="hot-tag">Click 4</span></td><td><a href="#compare">Northern Arizona</a></td><td><span class="bar"><i style="width:89%"></i></span>0.89</td><td>2 / 5</td><td><span class="pill fail"><svg class="i"><use href="#i-warn"/></svg>Relief 2.4× Moon</span></td><td>35.2°N, 111.4°W</td></tr>
+                <tr><td class="r">3</td><td>Wadi Rum</td><td><span class="bar"><i style="width:86%"></i></span>0.86</td><td>3 / 5</td><td>P90 slope +6.1°</td><td>29.6°N, 35.4°E</td></tr>
+                <tr><td class="r">4</td><td>Lanzarote</td><td><span class="bar"><i style="width:84%"></i></span>0.84</td><td>4 / 5</td><td>—</td><td>29.1°N, 13.6°W</td></tr>
+                <tr class="dim"><td class="r">5</td><td>Death Valley</td><td><span class="bar"><i style="width:78%"></i></span>0.78</td><td>1 / 5</td><td><span class="pill unk"><svg class="i"><use href="#i-unk"/></svg>Weak match, kept for honesty</span></td><td>36.5°N, 117.0°W</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="cols">
+          <div class="box">
+            <div class="ann"><span class="src">A</span><span class="ix">Leaflet lat/lon · click a marker to open the pair</span></div>
+            <h3>Where the matches are on Earth</h3>
+            <div class="ph" style="min-height:200px">Leaflet world map · 5 Earth sites · markers numbered by rank · fits bounds to the matches</div>
+          </div>
+          <div class="box">
+            <div class="ann"><span class="src">A</span><span class="ix">hover a line to highlight its row</span></div>
+            <h3>Slope distribution, Moon patch vs top 5</h3>
+            <svg class="chart" viewBox="0 0 360 200" role="img" aria-label="Schematic slope CDF chart">
+              <path class="ax" d="M40 170H350M40 170V14"/><path class="grid" d="M40 92H350M40 14H350"/>
+              <text x="8" y="174">0</text><text x="4" y="96">0.5</text><text x="12" y="18">1</text>
+              <text x="40" y="188">0°</text><text x="186" y="188">15°</text><text x="326" y="188">30°</text>
+              <path class="s1" d="M40 170C90 150 120 80 170 46S270 18 350 15"/>
+              <path class="s3" d="M40 170C96 140 132 76 180 44S280 20 350 16"/>
+              <path class="s2" d="M40 170C120 160 170 120 220 82S300 34 350 22"/>
+              <text x="250" y="60">Moon</text><text x="236" y="112">Rank 2 Arizona</text>
+            </svg>
+            <p class="cap">Moon line solid, rank 2 dashed, others thin, each labelled directly.</p>
+          </div>
+        </div>
+        <div class="limits" data-limits="analogs"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. PAIR COMPARISON ============ -->
+  <section class="screen" data-hash="compare" aria-label="Pair comparison" hidden>
+    <div class="app">
+      <aside class="sidebar" data-sidebar="patch"></aside>
+      <div class="main">
+        <div class="page-head">
+          <span class="crumb"><a href="#map">Regions</a> › <a href="#region">Leibnitz Beta Plateau</a> › <a href="#patch">Patch LBP-0412</a> › <a href="#analogs">Earth analogs</a> › Rank 2</span>
+          <h2>LBP-0412 vs Northern Arizona, rank 2</h2>
+          <p class="num">Cosine 0.89 · 2 of 5 physical checks in band · centre 35.2°N, 111.4°W</p>
+        </div>
+        <nav class="tabs" aria-label="Patch sections"><a href="#patch">Terrain</a><span class="on">Earth analogs</span></nav>
+        <div class="callout strong"><svg class="i" style="width:18px;height:18px;margin-top:1px"><use href="#i-warn"/></svg><p><b>High score, poor physical fit.</b> The CNN sees similar texture, but this Earth patch has 2.4× the relief and twice the local roughness. Use it to practise route planning over this texture, not climbing these slopes.</p></div>
+        <div class="cols r32">
+          <div class="box">
+            <div class="ann"><span class="src">A</span><span class="ix">4 canvases · linked crosshair · one colour scale</span></div>
+            <h3>Side by side, same colour scale</h3>
+            <div class="cols">
+              <div style="display:grid;gap:6px"><span class="cap">Moon · slope</span><div class="ph img"><span>Canvas from grid</span></div></div>
+              <div style="display:grid;gap:6px"><span class="cap">Earth · slope</span><div class="ph img"><span>Canvas from grid</span></div></div>
+              <div style="display:grid;gap:6px"><span class="cap">Moon · relative elevation</span><div class="ph img"><span>Canvas from grid</span></div></div>
+              <div style="display:grid;gap:6px"><span class="cap">Earth · relative elevation</span><div class="ph img"><span>Canvas from grid</span></div></div>
+            </div>
+            <div class="scale"><span class="num">0°</span><i></i><span class="num">35°</span><span class="cap">Slope · one scale for Moon and Earth in this pair</span></div>
+            <div class="readout num"><b>Hover readout</b> · cell (14, 9) · Moon 12.4° · Earth 15.1° · Δ +2.7°</div>
+            <p class="cap">The crosshair follows the pointer on any of the four canvases and shows the same cell on the others.</p>
+          </div>
+          <div class="stack">
+            <div class="box">
+              <div class="ann"><span class="src">A</span></div>
+              <h3>Physical checks</h3>
+              <div class="tbl-wrap">
+                <table>
+                  <thead><tr><th>Metric</th><th class="r">Moon</th><th class="r">Earth</th><th class="r">Δ</th><th>Band</th><th>Status</th></tr></thead>
+                  <tbody>
+                    <tr><td>Median slope</td><td class="r">8.2°</td><td class="r">9.0°</td><td class="r">+0.8°</td><td>±2°</td><td><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>In band</span></td></tr>
+                    <tr><td>P90 slope</td><td class="r">17.5°</td><td class="r">21.9°</td><td class="r">+4.4°</td><td>±3°</td><td><span class="pill fail"><svg class="i"><use href="#i-fail"/></svg>Out</span></td></tr>
+                    <tr><td>Relief</td><td class="r">64 m</td><td class="r">154 m</td><td class="r">×2.4</td><td>±40%</td><td><span class="pill fail"><svg class="i"><use href="#i-fail"/></svg>Out</span></td></tr>
+                    <tr><td>Plane residual</td><td class="r">6.1 m</td><td class="r">7.0 m</td><td class="r">+0.9 m</td><td>±2 m</td><td><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>In band</span></td></tr>
+                    <tr><td>Local elev. SD</td><td class="r">11.3 m</td><td class="r">24.8 m</td><td class="r">+13.5 m</td><td>±5 m</td><td><span class="pill fail"><svg class="i"><use href="#i-fail"/></svg>Out</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="box">
+              <div class="ann"><span class="src">A</span></div>
+              <h3>Slope and height distributions</h3>
+              <div class="cols">
+                <svg class="chart" viewBox="0 0 180 120" role="img" aria-label="Schematic slope CDF"><path class="ax" d="M20 100H175M20 100V8"/><path class="s1" d="M20 100C50 86 70 40 100 24S150 10 175 9"/><path class="s2" d="M20 100C70 94 100 64 125 40S160 16 175 12"/><text x="22" y="116">Slope CDF</text></svg>
+                <svg class="chart" viewBox="0 0 180 120" role="img" aria-label="Schematic height CDF"><path class="ax" d="M20 100H175M20 100V8"/><path class="s1" d="M20 100C60 90 80 30 110 18S160 10 175 9"/><path class="s2" d="M20 100C80 96 110 70 135 44S165 18 175 14"/><text x="22" y="116">Height CDF</text></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="box plain">
+          
+          <h3>Earth site readiness · Northern Arizona</h3>
+          <div class="readiness">
+            <div class="ph"><b style="color:var(--fg)">Climate</b><span>Temperature, aridity, wind, solar</span><span class="pill unk"><svg class="i"><use href="#i-unk"/></svg>Not yet computed</span></div>
+            <div class="ph"><b style="color:var(--fg)">Land cover</b><span>Bare ground %, vegetation</span><span class="pill unk"><svg class="i"><use href="#i-unk"/></svg>Not yet computed</span></div>
+            <div class="ph"><b style="color:var(--fg)">Access</b><span>Roads, settlements (OSM)</span><span class="pill unk"><svg class="i"><use href="#i-unk"/></svg>Not yet computed</span></div>
+          </div>
+        </div>
+        <div class="limits" data-limits="compare"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REGION ENVIRONMENT ============ -->
+  <section class="screen" data-hash="environment" aria-label="Region environment" hidden>
+    <div class="app">
+      <aside class="sidebar" data-sidebar="region"></aside>
+      <div class="main">
+        <div class="page-head">
+          <span class="crumb"><a href="#map">Regions</a> › Leibnitz Beta Plateau › Environment</span>
+          <h2>Leibnitz Beta Plateau</h2>
+          <p>Nine environmental domains, scored for the whole region. The thresholds are project test assumptions, not NASA certification.</p>
+        </div>
+        <nav class="tabs" aria-label="Region sections"><a href="#region">Overview · patches</a><span class="on">Environment</span></nav>
+        <div class="box">
+          <div class="ann"><span class="src">B</span></div>
+          <div class="cols" style="--n:3; align-items:end">
+            <div class="metric"><span class="lbl">Ops score</span><span class="val num">74 / 100</span></div>
+            <div class="metric"><span class="lbl">Survivability score</span><span class="val num">68 / 100</span></div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px"><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>7 passed</span><span class="pill fail"><svg class="i"><use href="#i-fail"/></svg>1 failed (not a gate)</span><span class="pill unk"><svg class="i"><use href="#i-unk"/></svg>1 unknown</span></div>
+          </div>
+          <p class="cap">Rule: if any hard gate fails, both scores are left blank and the reason is shown.</p>
+        </div>
+        <div class="box">
+          <div class="ann"><span class="src">B</span></div>
+          <h3>Domains</h3>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Domain</th><th>Hard gate</th><th>Feeds</th><th class="r">Score</th><th>Status</th><th>Detail</th></tr></thead>
+              <tbody>
+                <tr><td>Temperature &amp; thermal</td><td>Yes</td><td>Ops, Surv.</td><td class="r">78</td><td><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>Passed</span></td><td>5 checks passed</td></tr>
+                <tr><td>Illumination &amp; power</td><td>Yes</td><td>Ops, Surv.</td><td class="r">84</td><td><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>Passed</span></td><td>3 checks passed</td></tr>
+                <tr><td>Radiation</td><td>Yes</td><td>Surv.</td><td class="r">70</td><td><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>Passed</span></td><td>4 passed · 1 unknown</td></tr>
+                <tr><td>Terrain &amp; surface</td><td>Yes</td><td>Ops</td><td class="r">66</td><td><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>Passed</span></td><td>6 checks passed</td></tr>
+                <tr><td>UV</td><td>No</td><td>Surv.</td><td class="r">—</td><td><span class="pill unk"><svg class="i"><use href="#i-unk"/></svg>Unknown</span></td><td>No dataset coverage</td></tr>
+                <tr><td>Plasma &amp; magnetic</td><td>No</td><td>Ops</td><td class="r">65</td><td><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>Passed</span></td><td>4 checks passed</td></tr>
+                <tr><td>Dust</td><td>No</td><td>Ops, Surv.</td><td class="r">58</td><td><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>Passed</span></td><td>2 checks passed</td></tr>
+                <tr><td>Seismic</td><td>No</td><td>Surv.</td><td class="r">70</td><td><span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>Passed</span></td><td>3 checks passed</td></tr>
+                <tr><td>Communications</td><td>No</td><td>Ops</td><td class="r">41</td><td><span class="pill fail"><svg class="i"><use href="#i-fail"/></svg>Failed</span></td><td>Earth visible 42% of the time, test needs 50%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="cap">"Feeds" shows which of the two scores each domain contributes to. Sample mapping; the engine defines the real one.</p>
+        </div>
+        <div class="box">
+          <div class="ann"><span class="src">B</span></div>
+          <div class="exp"><span>Radiation · 5 checks · dataset, value, threshold, status</span></div>
+          <div class="exp"><span>Communications · 3 checks</span></div>
+          <div class="exp"><span>7 more domains</span></div>
+        </div>
+        <div class="limits" data-limits="environment"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ENV-ONLY REGION ============ -->
+  <section class="screen" data-hash="env-only" aria-label="Region with environment data only" hidden>
+    <div class="app">
+      <aside class="sidebar" data-sidebar="envonly"></aside>
+      <div class="main">
+        <div class="page-head">
+          <span class="crumb"><a href="#map">Regions</a> › Nobile Rim 1</span>
+          <h2>Nobile Rim 1</h2>
+          <p>Artemis III candidate region · environment data only</p>
+        </div>
+        <nav class="tabs" aria-label="Region sections"><span class="on">Overview · patches</span><span>Environment</span></nav>
+        <div class="box">
+          <div class="ann"><span class="src">B</span></div>
+          <div class="cols" style="--n:3; align-items:end">
+            <div class="metric"><span class="lbl">Ops score</span><span class="val num">66 / 100</span></div>
+            <div class="metric"><span class="lbl">Survivability score</span><span class="val num">60 / 100</span></div>
+            <span class="pill pass"><svg class="i"><use href="#i-pass"/></svg>All 4 hard gates passed</span>
+          </div>
+        </div>
+        <div class="box">
+          <div class="ann"><span class="src">A</span><span class="src">C</span></div>
+          <div class="empty">
+            <b>No terrain patches for this region</b>
+            <span>Terrain grids were prepared for 7 of the 17 regions. Without them there are no rover or on-foot predictions and no Earth analogs here.</span>
+            <span>The environment assessment above still applies to the whole region.</span>
+          </div>
+          
+          <div style="display:flex;flex-wrap:wrap;gap:8px; align-items:center"><span class="cap">Nearby regions with terrain:</span><a class="btn" href="#region">Leibnitz Beta Plateau</a><span class="btn">Malapert Massif</span><span class="btn">Connecting Ridge Ext.</span></div>
+        </div>
+        <div class="limits" data-limits="env-only"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAILED HARD GATE ============ -->
+  <section class="screen" data-hash="blocked" aria-label="Region with a failed hard gate" hidden>
+    <div class="app">
+      <aside class="sidebar" data-sidebar="blocked"></aside>
+      <div class="main">
+        <div class="page-head">
+          <span class="crumb"><a href="#map">Regions</a> › Haworth</span>
+          <h2>Haworth</h2>
+          <p>Artemis III candidate region · 423 terrain patches</p>
+        </div>
+        <nav class="tabs" aria-label="Region sections"><span class="on">Overview · patches</span><span>Environment</span></nav>
+        <div class="box">
+          <div class="ann"><span class="src">B</span></div>
+          <div class="cols" style="--n:3; align-items:end">
+            <div class="metric"><span class="lbl">Ops score</span><span class="val">—</span><span class="sub">Not scored</span></div>
+            <div class="metric"><span class="lbl">Survivability score</span><span class="val">—</span><span class="sub">Not scored</span></div>
+            <span class="pill blk"><svg class="i"><use href="#i-block"/></svg>Hard gate failed · Illumination</span>
+          </div>
+          <div class="callout strong"><svg class="i" style="width:18px;height:18px;margin-top:1px"><use href="#i-fail"/></svg><p><b>Why there is no score.</b> Illumination &amp; power failed: the longest continuous darkness is 9.2 days, and our test limit is 5 days for battery-backed operations. A failed hard gate leaves both scores blank. The other 8 domain results are still in the Environment tab.</p></div>
+        </div>
+        <div class="box">
+          <div class="ann"><span class="src">A</span><span class="src">C</span></div>
+          <h3>Patches in this region</h3>
+          <p class="cap">Terrain analysis is independent of the environment gate, so the patch map, featured patches and Earth analogs work as usual here.</p>
+          <div class="ph" style="min-height:120px">Leaflet patch grid and featured patches, as on the Leibnitz region screen</div>
+        </div>
+        <div class="limits" data-limits="blocked"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN NOTES ============ -->
+  <section class="notes" aria-label="Screen notes">
+    <div class="box"><h3>Demo script</h3><p class="say" id="n-say"></p></div>
+    <div class="box"><h3>Purpose</h3><p id="n-purpose"></p></div>
+    <div class="box"><h3>Build notes</h3><p class="cap num" id="n-route"></p><ul id="n-flags"></ul></div>
+  </section>
+</div>
+
+<script>
+const BRAND = `<div class="brand">Lunar Analog Finder<small>South pole · Earth analogs</small></div>`;
+const SIDEBARS = {
+  map: `${BRAND}
+    <div class="field"><b>Region</b><div class="select">Choose a region…</div></div>
+    <div class="field"><b>Patch</b><div class="select off">Pick a region first</div></div>
+    <span class="spacer"></span><div class="seg" role="group" aria-label="Show regions"><span class="on">All 17</span><span>With terrain (7)</span></div>`,
+  region: `${BRAND}
+    <div class="field"><b>Region</b><div class="select">Leibnitz Beta Plateau</div></div>
+    <div class="field"><b>Patch</b><div class="select">Choose a patch…</div></div>`,
+  patch: `${BRAND}
+    <div class="field"><b>Region</b><div class="select">Leibnitz Beta Plateau</div></div>
+    <div class="field"><b>Patch</b><div class="select">LBP-0412 · featured</div></div>
+    <span class="spacer"></span><a class="btn" href="#region">Back to region</a>`,
+  envonly: `${BRAND}
+    <div class="field"><b>Region</b><div class="select">Nobile Rim 1</div></div>
+    <div class="field"><b>Patch</b><div class="select off">No terrain patches here</div></div>`,
+  blocked: `${BRAND}
+    <div class="field"><b>Region</b><div class="select">Haworth</div></div>
+    <div class="field"><b>Patch</b><div class="select">Choose a patch…</div></div>`
+};
+
+const LIMITS = {
+  map: ["Scores use project test thresholds. They are not NASA certification.",
+        "Environment is scored per region. A good region score does not mean every patch inside it is safe.",
+        "Only 7 of 17 regions have terrain patches and Earth analogs."],
+  region: ["Ops and Survivability describe the region as a whole, not any single patch.",
+           "Patch classes are CNN predictions trained on Earth terrain. They are not safety certifications.",
+           "The patch map covers only the prepared 960 m tiles, not the whole region outline."],
+  patch: ["Rover and on-foot classes are predictions from a CNN trained on Earth terrain, not certifications.",
+          "On-foot walkability ignores spacesuit limits, lighting and fatigue. It reads slope and roughness only.",
+          "A 30 m grid cannot see boulders or craters smaller than about 30 m.",
+          "Directions are 4 straight-line axes across one patch, not a route plan."],
+  analogs: ["Cosine score measures what the CNN sees as similar. It can be high while slope or relief differ a lot. Read the checks.",
+            "Only 5 Earth sites were searched. A better analog may exist elsewhere.",
+            "General retrieval accuracy is not yet validated."],
+  compare: ["Earth gravity is about 6× the Moon's, so traction, braking, tip-over and walking gait all differ.",
+            "No vacuum or lunar radiation on Earth. Thermal swings and dust charging cannot be rehearsed here.",
+            "Earth terrain is shaped by wind and water. Regolith is not sand or basalt, so wheel sinkage differs.",
+            "Polar sun angles near 1.5° cast long shadows that no Earth site reproduces."],
+  environment: ["Thresholds are project test assumptions, not NASA certification.",
+                "Unknown means no data. It is never treated as a pass.",
+                "Which domains feed Ops and which feed Survivability is a project choice, shown in the table."],
+  "env-only": ["No terrain patches means no evidence either way about rover or on-foot access here.",
+               "The environment scores apply to the whole region, at 240 m or coarser."],
+  blocked: ["A failed hard gate means this region fails one of our test limits. It is not a NASA ruling.",
+            "Terrain results still show, because terrain does not depend on the environment gate. A crew could rehearse this terrain on Earth even if the region itself fails."]
+};
+
+const NOTES = {
+  map: {route:"/",
+        say:"“These are the 17 Artemis candidate regions, each with two environment scores: Ops and Survivability. Haworth gets no score, and the table says exactly why. Seven regions also have terrain patches. Let’s open Leibnitz Beta Plateau.”",
+        purpose:"Orient the judges, show engine B across all regions, and make the failed-gate rule visible from the first screen.",
+        flags:["Overview map: a small SVG in polar stereographic km, not Leaflet. Marker shape (circle, ring, square) carries the state. Hovering a marker highlights its table row, and the reverse.",
+               "Data: regions.json, one row per region with ops, survivability, gate status, fail_reason and patch_count."]},
+  region: {route:"/region/leibnitz-beta-plateau",
+           say:"“Leibnitz passes every hard gate: Ops 74, Survivability 68. Here are its 412 terrain patches, each classed for rovers. We picked three featured patches. Let’s open LBP-0412, which is marginal for a rover.”",
+           purpose:"Hand over from region (environment) to patch (terrain). The patch picker is the main job of this screen.",
+           flags:["Leaflet with L.CRS.Simple, bounds in region-local metres. Each patch is an L.rectangle 960 m wide, so the grid keeps true scale. Click opens the patch route.",
+                  "The class switch restyles the same rectangles (rover, on foot, best analog score). Use letters plus fill patterns so it reads without colour.",
+                  "Data: one patches/<region>.json per region (~415 rows) with id, x, y, rover class, walk class and best score. Featured patch ids come from a small curated list."]},
+  patch: {route:"/region/leibnitz-beta-plateau/patch/LBP-0412",
+          say:"“For this patch the model says marginal for a rover and caution on foot. North–south and east–west are crossable. This is the actual terrain, drawn from the grid. Now: where on Earth can a crew practise this?”",
+          purpose:"Answer ‘can a mission operate here’ at patch level: rover class, crew-on-foot class, directions and the terrain itself.",
+          flags:["Terrain canvases: 32×32 grid scaled with image-rendering: pixelated, so each 30 m cell stays a crisp square. Hover maps pointer position to the cell and updates the readout.",
+                 "Tabs are routes (/terrain, /analogs), so the back button and shared links work."]},
+  analogs: {route:"/region/leibnitz-beta-plateau/patch/LBP-0412/analogs",
+            say:"“These are the 5 closest Earth patches. Score alone would say Arizona is nearly as good as Lanzarote. The physical checks disagree. Let’s look.”",
+            purpose:"The core of the challenge: ranked analogs with physical evidence beside the score, weak matches included.",
+            flags:["Table rows, map markers and CDF lines share one hover state, so pointing at any of them highlights the same match everywhere.",
+                   "Earth map: Leaflet with a lat/lon tile basemap; keep the tile attribution visible. Markers are numbered by rank.",
+                   "Data: analogs/<patch>.json with top 5 matches, scores, checks and CDF points."]},
+  compare: {route:"/region/leibnitz-beta-plateau/patch/LBP-0412/analogs/2",
+            say:"“Side by side on the same scale. Two of five checks are in band; relief is 2.4 times higher on Earth. So this is a texture analog, not a slope analog. And here is what Earth can never give us.”",
+            purpose:"Prove the analogy and its limits for one pair. This is the screen judges remember.",
+            flags:["Shared colour scale: compute min and max across both grids in the pair at build time or on load, then draw all four canvases from one scale. The linked crosshair is the moment to rehearse in the demo.",
+                   "Its own route, so a judge can be sent straight to it. Back returns to the ranked list.",
+                   "Readiness slot: three placeholders reading “Not yet computed” until that engine exists."]},
+  environment: {route:"/region/leibnitz-beta-plateau/environment",
+                say:"(Optional) “Each domain shows Passed, Failed or Unknown, which score it feeds, and whether it is a hard gate.”",
+                purpose:"Full engine B detail for one region.",
+                flags:["Domain rows expand in place to list each check’s dataset, value, threshold and status.",
+                       "The Apollo baseline chart from revision 1 stays out until we confirm whether the baselines are still in the data."]},
+  "env-only": {route:"/region/nobile-rim-1",
+               say:"(Q&A) “Ten regions have environment data but no terrain grids. They still get both scores, and the app says plainly that it has no terrain evidence.”",
+               purpose:"Handle the 10 regions with environment data only, without breaking the region → patch flow.",
+               flags:["The Patch switcher is disabled with an explanatory placeholder.",
+                      "The patch area becomes one message with shortcut links to regions that have terrain."]},
+  blocked: {route:"/region/haworth",
+            say:"(Q&A) “When a hard gate fails we don’t show a number at all. We show the reason in plain words. Terrain still works, so you can still find an Earth analog.”",
+            purpose:"The failed-gate state: both scores blank, a readable fail reason, terrain still available.",
+            flags:["Both scores render as “—” with “Not scored”, then the engine’s fail_reason text in full.",
+                   "Open question: should an Unknown hard gate also blank both scores? The update only mentions Failed."]}
+};
+
+function limitsHTML(key){
+  const items = LIMITS[key].map(t => `<li>${t}</li>`).join("");
+  return `
+    <h3><svg class="i" style="width:16px;height:16px"><use href="#i-warn"/></svg>Where this breaks down</h3>
+    <ul>${items}</ul>
+    <div class="exp"><span>More about the method and data limits</span></div>`;
+}
+document.querySelectorAll("[data-sidebar]").forEach(el => el.innerHTML = SIDEBARS[el.dataset.sidebar]);
+document.querySelectorAll("[data-limits]").forEach(el => el.innerHTML = limitsHTML(el.dataset.limits));
+
+/* schematic patch grid: deterministic letters */
+(function(){
+  const g = document.getElementById("patchgrid"); if(!g) return;
+  const cols = 12, rows = 9, s = 24, ox = 6, oy = 2;
+  let out = "";
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const edge = Math.abs(c-5.5)/6 + Math.abs(r-4)/4.5;
+    if(edge > 1.5) continue;
+    const v = (c*7 + r*13 + c*r) % 10;
+    const k = v < 5 ? "o" : v < 8 ? "m" : "n";
+    const x = ox + c*s, y = oy + r*s;
+    out += `<rect class="cell ${k==="o"?"":k}" x="${x}" y="${y}" width="${s-2}" height="${s-2}"/><text class="lt" x="${x+7}" y="${y+16}">${k.toUpperCase()}</text>`;
+  }
+  out += `<rect x="${ox+7*s-2}" y="${oy+3*s-2}" width="${s+2}" height="${s+2}" fill="none" stroke="var(--fg)" stroke-width="2.5"/>`;
+  g.innerHTML = out;
+})();
+
+const screens = [...document.querySelectorAll(".screen")];
+const navLinks = [...document.querySelectorAll(".nav a")];
+function show(){
+  let h = location.hash.replace("#","");
+  if(!screens.some(s => s.dataset.hash === h)) h = "map";
+  screens.forEach(s => s.hidden = s.dataset.hash !== h);
+  navLinks.forEach(a => a.getAttribute("href") === "#"+h ? a.setAttribute("aria-current","page") : a.removeAttribute("aria-current"));
+  const n = NOTES[h];
+  document.getElementById("n-say").textContent = n.say;
+  document.getElementById("n-purpose").textContent = n.purpose;
+  document.getElementById("n-route").textContent = "Route: " + n.route;
+  document.getElementById("n-flags").innerHTML = n.flags.map(f => `<li>${f}</li>`).join("");
+}
+window.addEventListener("hashchange", () => { show(); window.scrollTo(0,0); });
+show();
+
+document.querySelectorAll("tr[data-href]").forEach(tr => tr.addEventListener("click", e => { if(!e.target.closest("a")) location.hash = tr.dataset.href; }));
+const tAnn = document.getElementById("t-ann"), tHot = document.getElementById("t-hot");
+tAnn.addEventListener("change", () => document.body.classList.toggle("no-ann", !tAnn.checked));
+tHot.addEventListener("change", () => document.body.classList.toggle("no-hot", !tHot.checked));
+</script>
