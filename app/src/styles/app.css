@@ -169,6 +169,154 @@ h2 {
   text-align: right;
 }
 
+/* Region switcher */
+.region-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+}
+
+.region-switch a {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-card);
+  text-decoration: none;
+}
+
+.region-switch a[aria-current="page"] {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  font-weight: 650;
+}
+
+/* Patch map */
+.map-mode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  margin: 16px 0 8px;
+}
+
+.map-mode-label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.map-mode label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.patch-fills {
+  position: absolute;
+}
+
+.patch-map {
+  aspect-ratio: 1;
+  max-height: min(70vh, 560px);
+  border: 1px solid var(--border);
+  isolation: isolate;
+}
+
+.patch-map.leaflet-container {
+  background: var(--surface-card);
+  font: inherit;
+}
+
+.patch-square {
+  stroke: var(--surface-card);
+  stroke-width: 1;
+}
+
+.patch-highlight {
+  stroke: var(--text-primary);
+  stroke-width: 3;
+}
+
+.patch-hatch {
+  fill: none;
+  stroke: var(--status-mark);
+  stroke-width: 1.5;
+}
+
+.patch-hatch-warning {
+  stroke: var(--status-mark-warning);
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+}
+
+.map-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-swatch {
+  flex: none;
+  border: 1px solid var(--border);
+}
+
+.map-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 20px;
+  min-height: 1.75em;
+  margin: 8px 0 4px;
+}
+
+.map-readout .badge {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.map-note {
+  margin: 0;
+}
+
+.patch-table caption {
+  padding: 8px 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+/* The page never scrolls sideways. On a very narrow screen the table scrolls inside this box. */
+.table-scroll {
+  overflow-x: auto;
+}
+
+@media (max-width: 520px) {
+  .patch-table th,
+  .patch-table td {
+    padding: 8px 4px;
+    font-size: 0.875rem;
+  }
+
+  .patch-table .badge {
+    gap: 4px;
+    font-size: 0.875rem;
+  }
+
+  .patch-table .tone-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
 /* Cards */
 .cards {
   display: grid;

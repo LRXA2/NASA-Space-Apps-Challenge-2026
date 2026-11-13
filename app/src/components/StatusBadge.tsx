@@ -1,6 +1,6 @@
 import type { RoverClass, WalkingClass } from "../data/types";
 
-type Tone = "good" | "warning" | "critical";
+export type Tone = "good" | "warning" | "critical";
 
 const CLASSES: Record<RoverClass | WalkingClass, { label: string; tone: Tone }> = {
   operable: { label: "Operable", tone: "good" },
@@ -13,6 +13,10 @@ const CLASSES: Record<RoverClass | WalkingClass, { label: string; tone: Tone }> 
 
 export function classLabel(value: RoverClass | WalkingClass): string {
   return CLASSES[value].label;
+}
+
+export function classTone(value: RoverClass | WalkingClass): Tone {
+  return CLASSES[value].tone;
 }
 
 // Each tone has its own shape, so the class reads without colour.

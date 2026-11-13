@@ -2,7 +2,7 @@
 
 A static React site (Vite + TypeScript). It reads precomputed files from `public/data/`. Nothing runs a model in the browser.
 
-Current scope: one lunar region and one terrain patch, with rover and on-foot predictions, crossing directions, and slope and relative-elevation grids.
+Current scope: seven lunar regions and 2,910 terrain patches. Each region has a patch map and a patch list. Each patch has rover and on-foot predictions, crossing directions, and slope and relative-elevation grids.
 
 ## Run the app
 
@@ -26,19 +26,23 @@ The export script turns a teammate's pipeline output into the files the app read
 
 `--input-dir` is the folder that holds `terrain_human_walkability_lunar_inference/<run-id>/`.
 
-macOS or Linux:
+This exports all seven regions. macOS or Linux:
 
 ```bash
-python3 app/scripts/export_data.py --input-dir data/app_inputs --region leibnitz-beta-plateau --patch-id "A3CLR22_10_Leibnitz_Beta_Plateau:960:32:32"
+python3 app/scripts/export_data.py --input-dir data/app_inputs
 python3 -m unittest discover -s app/scripts/tests -p "test_*.py"
 ```
 
 Windows (Gareth's setup):
 
 ```powershell
-.\.venv\Scripts\python.exe app\scripts\export_data.py --input-dir temp --region leibnitz-beta-plateau --patch-id "A3CLR22_10_Leibnitz_Beta_Plateau:960:32:32"
+.\.venv\Scripts\python.exe app\scripts\export_data.py --input-dir temp
 .\.venv\Scripts\python.exe -m unittest discover -s app/scripts/tests -p "test_*.py"
 ```
+
+To review an export before you publish it, add `--output-dir <temporary folder>`. Then copy the files into `app/public/data/`.
+
+To export less, add `--region leibnitz-beta-plateau`, or one region and `--patch-id "A3CLR22_10_Leibnitz_Beta_Plateau:960:32:32"`.
 
 Options:
 
@@ -71,10 +75,24 @@ Route names such as `leibnitz-beta-plateau` and `r32-c32` are for URLs. Every re
 | URL | Page |
 | --- | --- |
 | `#/` | Region list |
-| `#/region/<region>` | Patches in one region |
+| `#/region/<region>` | Patch map and patch list for one region |
 | `#/region/<region>/patch/<patch>` | One patch |
 
 URLs use a `#` so that links work on any static host without server rules. `src/router.ts` is the only file that knows the URL form.
+
+## Patch map
+
+The region page draws one square per patch with Leaflet. The map uses `L.CRS.Simple`, which is a flat grid with no basemap. Lunar coordinates are never put on an Earth map.
+
+- Map units are source grid cells of 30 m. Each patch is 32 by 32 cells.
+- x is the grid column (`top_col`). y is minus the grid row (`top_row`), because Leaflet's y axis points up.
+- So row 0 is at the top, and a larger row is drawn lower. A larger column is drawn further right.
+- Only patches in the data are drawn. A missing patch stays an empty gap.
+- The grid is the stored grid. It is not a north-up map.
+
+`patchBounds` in `src/components/PatchMap.tsx` is the only place that holds this convention.
+
+A square and its row in the patch list open the same URL. The list is the keyboard route to every patch. Class colours on the map also carry a pattern: plain, striped, or cross-hatched.
 
 ## Styling
 
