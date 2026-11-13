@@ -5,6 +5,7 @@
 /outputs/
 /artifacts/
 /checkpoints/
+/notebooks/modeling/terrain_similarity/weights/
 /runs/
 /mlruns/
 /wandb/

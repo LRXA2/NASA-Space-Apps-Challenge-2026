@@ -11,6 +11,20 @@ Broad EDA is complete across five Earth sites and seven lunar regions. [Notebook
 - [Project outline](outline.md) — intended pipeline and sources.
 - [Download instructions](download%20scripts/README.md) and [inventory](DOWNLOAD_CHECKLIST.md) — source acquisition.
 
+## Compare two prepared sites
+
+Use the saved CNN from Python, without opening Jupyter:
+
+```powershell
+.\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.pipeline --moon-site Haworth --earth-site wadi_rum
+```
+
+The inputs are **whole prepared Moon and Earth regions**. For every eligible 960 m lunar patch, the pipeline finds the closest patches within the specified Earth site. It saves a summary, ranked matches, physical differences and visual comparisons. The median best-patch cosine describes these matches; it is not a similarity percentage or proof that the whole regions are equivalent.
+
+Use `--list-sites` to see available names, `--top-k 3` to set candidates per lunar patch, or `--no-plots` for tables only. The [configuration](notebooks/modeling/terrain_similarity/pipeline/config.json) pins the saved model run, dataset and rotation/reflection cache. Weights live in `notebooks/modeling/terrain_similarity/weights/<run>/<view>/<sampling>/model.pt`; the model run still holds preprocessing, tables and provenance. `--rebuild-cache` explicitly rebuilds that cache with the same weights and scaler; it does not train a model. Required local artifacts must be present.
+
+Reusable results go to `data/processed/terrain_similarity_pipeline/<run>/`; reports and figures go to `reports/terrain-similarity-pipeline/<run>/`. Each execution creates a new run. See the [pipeline details](notebooks/README.md#saved-model-site-comparison) for outputs and interpretation.
+
 ## File paths
 
 Paths below are relative to the repository root. See [notebooks/README.md](notebooks/README.md) for links to every numbered notebook.
@@ -40,6 +54,13 @@ notebooks/
       terrain_learning.py            Tensor, split and normalization contracts
       similarity_cnn.py              Encoder, similarity head and training objective
       similarity_experiment.py       Training, inference and retrieval comparison
+      model_weights.py               Shared checkpoint paths, saving and hash checks
+      weights/                       Saved weights by run, view and sampling (Git-ignored)
+      pipeline/                      Importable two-site comparison package
+        main.py                      Main script, comparison and run orchestration
+        artifacts.py                 Verified model, terrain and cache loading
+        report.py                    Side-by-side terrain maps and report
+        config.json                  Pinned inference artifacts and chosen variant
       candidate_coverage.py          Physical compatibility and ranking diagnostics
       model_comparison.py            Shared-location alignment and regional comparison summaries
       terrain_perturbation.py        Controlled vertical-scale sensitivity
