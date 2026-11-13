@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "dataset_run": "data/processed/terrain_operability_eda/20261110T130243908177Z_49a299",
+  "patch_size_m": 960,
+  "test_region": "death_valley",
+  "validation_group_fraction": 0.2,
+  "seed": 38,
+  "epochs": 6,
+  "batch_size": 128,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "direction_loss_weight": 0.5,
+  "human_loss_weight": 1.0,
+  "human_rule": {
+    "easy_min_crossings": 3,
+    "easy_min_component_fraction": 0.6,
+    "easy_max_p90_slope_deg": 10.0,
+    "caution_min_crossings": 1,
+    "caution_min_component_fraction": 0.35,
+    "caution_max_p90_slope_deg": 20.0
+  },
+  "selection_rule": "Highest validation human-terrain balanced accuracy; Death Valley evaluated once after selection",
+  "claim_boundary": "Terrain-only macro walkability proxy at 30 m resolution; not measured EVA performance or human safety"
+}

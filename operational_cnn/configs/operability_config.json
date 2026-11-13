@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "objective": "Directional macro-route traversability; provisional generated labels, not certified rover safety",
+  "spacing_m": 30,
+  "patch_sizes_m": [600, 960],
+  "primary_patch_size_m": 960,
+  "center_stride_cells": 32,
+  "minimum_natural_fraction": 0.8,
+  "roughness_windows_cells": [3, 11],
+  "spatial_block_m": 5000,
+  "scenarios": {
+    "conservative": {"hard_slope_deg": 10.0},
+    "nominal": {"hard_slope_deg": 15.0},
+    "permissive": {"hard_slope_deg": 20.0}
+  },
+  "class_rule": {
+    "operable_min_nominal_directions": 3,
+    "operable_min_nominal_largest_component_fraction": 0.5,
+    "marginal_min_permissive_directions": 1
+  },
+  "source_runs": {
+    "northern_arizona": "data/processed/earth_terrain_landcover/20261105T141804484483Z_ec092e",
+    "lanzarote": "data/processed/earth_terrain_landcover/20261105T141804484483Z_ec092e",
+    "atacama_san_pedro": "data/processed/earth_terrain_landcover/20261105T141804484483Z_ec092e",
+    "death_valley": "data/processed/earth_terrain_expansion/20261105T142733371423Z_6b423f",
+    "wadi_rum": "data/processed/earth_terrain_expansion/20261105T142706815522Z_3857de"
+  }
+}
+
