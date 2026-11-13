@@ -1,5 +1,9 @@
 ﻿# Local datasets and all generated analysis artifacts
-/data/
+# Data stays local; only the folder layout (.gitkeep) and data/README.md are tracked
+/data/**
+!/data/**/
+!/data/**/.gitkeep
+!/data/README.md
 /reports/
 /.scratch/
 /outputs/

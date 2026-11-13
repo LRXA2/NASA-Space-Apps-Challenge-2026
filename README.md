@@ -122,6 +122,7 @@ notebooks/
     moon_tiles.py                    Shared lunar tile IDs joining similarity and operability outputs
     tests/                           Shared and cross-stage processing/analysis checks
 data/
+  README.md                          What to put where; only this and empty folders are tracked
   raw/                               Local downloaded source data
   processed/                         Local versioned processing runs
     analysis/                        Reusable EDA tables, rasters and manifests
@@ -133,6 +134,6 @@ reports/                             Disposable figures, reports and the current
 .venv/                               Local Python environment
 ```
 
-Git keeps code, tests, documentation and notebooks with saved plots, tables and other useful outputs so readers can view results without rerunning the analysis. Retain these outputs when committing notebooks. Standalone data, reports, scratch work and local environments are ignored; cloning the repository will not include those files. Keep required `data/` inputs; `reports/` can be deleted and regenerated.
+Git keeps code, tests, documentation and notebooks with saved plots, tables and other useful outputs so readers can view results without rerunning the analysis. Retain these outputs when committing notebooks. Standalone data, reports, scratch work and local environments are ignored; cloning the repository will not include those files. [data/README.md](data/README.md) lists the runs and maps `run_all` needs and where each goes. Keep required `data/` inputs; `reports/` can be deleted and regenerated.
 
 The similarity CNN proof of concept is complete. Next: environmental, access and equipment checks. General analog relevance and operational suitability remain unvalidated.
