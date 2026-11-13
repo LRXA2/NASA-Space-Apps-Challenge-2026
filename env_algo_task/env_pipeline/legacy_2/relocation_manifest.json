@@ -1,0 +1,50 @@
+﻿{
+    "moves":  [
+                  {
+                      "source":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\run_pipeline.py",
+                      "destination":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\legacy\\run_pipeline.py"
+                  },
+                  {
+                      "source":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\export_eda_input.py",
+                      "destination":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\legacy\\export_eda_input.py"
+                  },
+                  {
+                      "source":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\environmental_policy.json",
+                      "destination":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\legacy\\environmental_policy.json"
+                  },
+                  {
+                      "source":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\eda_sources.json",
+                      "destination":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\legacy\\eda_sources.json"
+                  },
+                  {
+                      "source":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\input_template.csv",
+                      "destination":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\legacy\\input_template.csv"
+                  },
+                  {
+                      "source":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\README.md",
+                      "destination":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\legacy\\README_previous.md"
+                  },
+                  {
+                      "source":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\examples",
+                      "destination":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\legacy\\examples"
+                  },
+                  {
+                      "source":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\inputs",
+                      "destination":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\legacy\\inputs"
+                  },
+                  {
+                      "source":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\outputs",
+                      "destination":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\legacy\\outputs"
+                  },
+                  {
+                      "source":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\tests",
+                      "destination":  "C:\\Darrel\\Self-Projects\\1 group proj\\NASA-Space-Apps-Challenge-2026\\env_algo_task\\env_pipeline\\legacy\\tests"
+                  }
+              ],
+    "protected_test_hashes":  {
+                                  "test_run_pipeline.py":  "9DC3BBC80885563A4EAF06119AB6A2B33E44F7B77F720D18873E98975BF36E2B",
+                                  "test_optional_time.py":  "5CC48E181769B4AE9E8BE3229BB3A643077A2001F34178A6E75F51E5EC12BC62",
+                                  "test_eda_input.py":  "69A1851B1A854E514492A89D3DDF8771263E2D8F73B7636B4BD4EA3817D817AC"
+                              },
+    "reason":  "User-approved preservation of EDA-dependent implementation; standalone runtime is env_pipeline.py plus config.yml"
+}
