@@ -25,6 +25,16 @@ Use `--list-sites` to see available names, `--top-k 3` to set candidates per lun
 
 Reusable results go to `data/processed/terrain_similarity_pipeline/<run>/`; reports and figures go to `reports/terrain-similarity-pipeline/<run>/`. Each execution creates a new run. See the [pipeline details](notebooks/README.md#saved-model-site-comparison) for outputs and interpretation.
 
+## Shared Moon tile IDs
+
+The similarity CNN and the operability CNNs name the same 960 m lunar windows differently (centre row/column per view versus top-left row/column). [moon_tiles.py](notebooks/shared/moon_tiles.py) gives every window one `tile_id`, `<region>:<centre x>:<centre y>` in metres in the common lunar polar stereographic CRS, so their outputs can be joined:
+
+```powershell
+.\.venv\Scripts\python.exe -m notebooks.shared.moon_tiles --similarity-run data/processed/terrain_learning_readiness/<run> --operability-run rover=data/processed/terrain_operability_lunar_inference/<run> --operability-run walkability=data/processed/<walkability inference run>
+```
+
+It writes `moon_tiles.csv` (one row per tile, its bounds, each source's patch ID and `in_<source>` flags), `tile_sources.csv` (tile → source patch) and `coverage_by_region.csv` to `data/processed/moon_tiles/<run>/`. Sources whose windows are not on the same 960 m lattice are refused, for example when two lunar processing runs used different grids; rebuild one source from the other's lunar run rather than matching nearest tiles.
+
 ## File paths
 
 Paths below are relative to the repository root. See [notebooks/README.md](notebooks/README.md) for links to every numbered notebook.
@@ -73,6 +83,7 @@ notebooks/
     patch_analysis.py                Terrain patch measurements
     retrieval_analysis.py            Physical terrain comparisons
     analysis_artifacts.py            Separates reusable data from disposable reports
+    moon_tiles.py                    Shared lunar tile IDs joining similarity and operability outputs
     tests/                           Shared and cross-stage processing/analysis checks
 data/
   raw/                               Local downloaded source data
