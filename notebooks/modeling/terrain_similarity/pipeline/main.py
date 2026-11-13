@@ -22,6 +22,7 @@ from notebooks.modeling.terrain_similarity.pipeline.artifacts import (
 from notebooks.modeling.terrain_similarity.similarity_cnn import cosine_top_k
 from notebooks.modeling.terrain_similarity.terrain_dataset import FEATURES
 from notebooks.shared.inspection import file_hash
+from notebooks.shared.moon_tiles import build_tile_table
 from notebooks.shared.processing import Run
 from notebooks.shared.retrieval_analysis import terrain_discrepancies
 
@@ -108,6 +109,105 @@ def compare_sites(
     return matches, physical, summary
 
 
+def lunar_tile_ids(patches: pd.DataFrame) -> pd.Series:
+    """Shared `moon_tiles` ID of every prepared lunar patch, indexed by patch ID."""
+    _, mapping = build_tile_table(similarity=patches.rename_axis("patch_id").reset_index())
+    return mapping.set_index("patch_id")["tile_id"]
+
+
+def match_tiles(
+    terrain: TerrainModel,
+    tile_ids: list[str],
+    earth_sites: list[str] | None = None,
+    top_k: int = 3,
+) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+    """Match chosen lunar tiles against each Earth site, keeping top_k per site.
+
+    Ranking within each site is unchanged from `compare_sites`; `overall_rank`
+    orders a tile's matches across all sites by cosine. Sites with fewer than
+    top_k prepared patches return all of them.
+    """
+    if not tile_ids or len(set(tile_ids)) != len(tile_ids):
+        raise ValueError("Choose at least one unique lunar tile ID")
+    if type(top_k) is not int or top_k < 1:
+        raise ValueError("top_k must be a positive integer")
+    tiles = lunar_tile_ids(terrain.patches)
+    patch_by_tile = pd.Series(tiles.index, index=tiles.to_numpy())
+    unknown = sorted(set(tile_ids) - set(patch_by_tile.index))
+    if unknown:
+        raise ValueError(
+            f"{len(unknown)} tile IDs have no prepared lunar patch in this view, "
+            f"e.g. {', '.join(unknown[:3])}"
+        )
+    patches = terrain.patches
+    available = sorted(patches.loc[patches.body == "earth", "region"].unique())
+    sites = (
+        available
+        if earth_sites is None
+        else [resolve_site(patches, "earth", name) for name in earth_sites]
+    )
+    if not sites or len(set(sites)) != len(sites):
+        raise ValueError("Choose at least one unique Earth site")
+    query_ids = tuple(patch_by_tile.loc[tile_ids])
+    query_vectors = terrain.encode(list(query_ids))
+    saved_queries = terrain.vectors[patches.index.get_indexer(query_ids)]
+    if not np.allclose(query_vectors, saved_queries, atol=1e-5, rtol=0):
+        raise ValueError(
+            "Saved query embeddings disagree with the model and preprocessing"
+        )
+    match_frames, physical_frames, per_site = [], [], []
+    for site in sites:
+        selected = patches.loc[
+            patches.index.isin(query_ids)
+            | ((patches.body == "earth") & (patches.region == site))
+        ].sort_index()
+        site_count = int((selected.body == "earth").sum())
+        vectors = terrain.vectors[patches.index.get_indexer(selected.index)]
+        matches, physical = retrieve_matches(
+            selected, vectors, query_ids, query_vectors, min(top_k, site_count)
+        )
+        match_frames.append(matches)
+        physical_frames.append(physical)
+        first = matches.loc[matches["rank"] == 1]
+        passes = matches.physical_checks_within_band.eq(5).groupby(matches.query_id).any()
+        per_site.append(
+            {
+                "earth_site": site,
+                "earth_patch_count": site_count,
+                "median_best_patch_cosine": float(first.cosine_similarity.median()),
+                "fraction_tiles_with_all_five_checks_in_top_k": float(passes.mean()),
+            }
+        )
+    matches = pd.concat(match_frames, ignore_index=True).drop(columns="example")
+    physical = pd.concat(physical_frames, ignore_index=True).drop(columns="example")
+    for frame in (matches, physical):
+        frame.insert(0, "tile_id", frame.query_id.map(tiles))
+        frame.rename(columns={"rank": "site_rank"}, inplace=True)
+    matches = matches.sort_values(
+        ["tile_id", "cosine_similarity", "earth_region", "site_rank"],
+        ascending=[True, False, True, True],
+        ignore_index=True,
+    )
+    matches.insert(
+        matches.columns.get_loc("site_rank") + 1,
+        "overall_rank",
+        matches.groupby("tile_id").cumcount() + 1,
+    )
+    summary = {
+        "direction": "moon_tiles_to_each_earth_site",
+        "tile_count": len(tile_ids),
+        "earth_sites": sites,
+        "top_k_per_site": top_k,
+        "per_site": per_site,
+        "maximum_replay_embedding_difference": float(
+            np.abs(query_vectors - saved_queries).max()
+        ),
+        "interpretation": "Per-site cosine ranking of lunar tiles; cosine is not a percentage, "
+        "validated accuracy or practical suitability. Physical checks explain, not rerank.",
+    }
+    return matches, physical, summary
+
+
 def resolve_site(patches: pd.DataFrame, body: str, name: str) -> str:
     """Resolve a full region ID or its readable name without fuzzy matching."""
 
@@ -160,40 +260,7 @@ def run_inference(
         settings,
         "modeling/terrain_similarity/pipeline/main.py",
     ) as run:
-        for name in [
-            "pipeline/artifacts.py",
-            "pipeline/__init__.py",
-            "pipeline/__main__.py",
-            "model_weights.py",
-            "similarity_cnn.py",
-            "similarity_experiment.py",
-            "terrain_dataset.py",
-            "terrain_learning.py",
-        ]:
-            run.input(root / "notebooks/modeling/terrain_similarity" / name)
-        for name in [
-            "shared/inspection.py",
-            "shared/retrieval_analysis.py",
-            "requirements-modeling.txt",
-            "requirements-processing.txt",
-        ]:
-            run.input(root / "notebooks" / name)
-        revision = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=root,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        run.record.update(
-            {
-                "git_revision": revision.stdout.strip() or None,
-                "torch": str(torch.__version__),
-                "device": "cpu",
-                "independent_relevance_validated": False,
-                "reserves_opened": False,
-            }
-        )
+        record_code_inputs(run, root)
         terrain = TerrainModel(root, config, rebuild_cache=rebuild_cache)
         matches, physical, summary = compare_sites(
             terrain, moon_site, earth_site, top_k
@@ -258,13 +325,102 @@ def run_inference(
                 encoding="utf-8",
             )
             run.record["optional_reports"] = report_dir.relative_to(root).as_posix()
-        for path, digest in terrain.evidence.items():
-            run.input(Path(path))
-            key = str(Path(path).relative_to(root))
-            if run.record["inputs"][key]["sha256"] != digest:
-                raise ValueError(f"Input changed during inference: {path}")
+        check_evidence(run, root, terrain)
         run.record["summary"] = summary
     return run.directory
+
+
+def record_code_inputs(run: Run, root: Path) -> None:
+    """Hash the code and requirements a run depends on, plus its git revision."""
+    for name in [
+        "pipeline/artifacts.py",
+        "pipeline/__init__.py",
+        "pipeline/__main__.py",
+        "model_weights.py",
+        "similarity_cnn.py",
+        "similarity_experiment.py",
+        "terrain_dataset.py",
+        "terrain_learning.py",
+    ]:
+        run.input(root / "notebooks/modeling/terrain_similarity" / name)
+    for name in [
+        "shared/inspection.py",
+        "shared/retrieval_analysis.py",
+        "shared/moon_tiles.py",
+        "requirements-modeling.txt",
+        "requirements-processing.txt",
+    ]:
+        run.input(root / "notebooks" / name)
+    revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    run.record.update(
+        {
+            "git_revision": revision.stdout.strip() or None,
+            "torch": str(torch.__version__),
+            "device": "cpu",
+            "independent_relevance_validated": False,
+            "reserves_opened": False,
+        }
+    )
+
+
+def check_evidence(run: Run, root: Path, terrain: TerrainModel) -> None:
+    """Fail the run if any verified model or data input changed while it ran."""
+    for path, digest in terrain.evidence.items():
+        run.input(Path(path))
+        key = str(Path(path).relative_to(root))
+        if run.record["inputs"][key]["sha256"] != digest:
+            raise ValueError(f"Input changed during inference: {path}")
+
+
+def run_tile_matching(
+    root: Path,
+    config: ArtifactConfig,
+    tile_ids: list[str],
+    *,
+    earth_sites: list[str] | None = None,
+    top_k: int = 3,
+) -> Path:
+    """Write `earth_matches.csv` for chosen lunar tiles as a versioned run."""
+    root = root.resolve()
+    settings = {
+        "artifacts": asdict(config),
+        "tile_count": len(tile_ids),
+        "earth_sites": earth_sites or "all",
+        "top_k_per_site": top_k,
+    }
+    torch.set_num_threads(2)
+    torch.use_deterministic_algorithms(True)
+    with Run(
+        root,
+        "terrain_similarity_tile_matches",
+        settings,
+        "modeling/terrain_similarity/pipeline/main.py",
+    ) as run:
+        record_code_inputs(run, root)
+        terrain = TerrainModel(root, config)
+        matches, physical, summary = match_tiles(terrain, tile_ids, earth_sites, top_k)
+        matches.to_csv(run.path("earth_matches.csv"), index=False)
+        physical.to_csv(run.path("physical_comparison.csv"), index=False)
+        run.path("summary.json").write_text(
+            json.dumps(summary, indent=2), encoding="utf-8"
+        )
+        check_evidence(run, root, terrain)
+        run.record["summary"] = summary
+    return run.directory
+
+
+def read_tile_ids(path: Path) -> list[str]:
+    """Tile IDs from a CSV with a `tile_id` column, e.g. `moon_tiles.csv` or a shortlist."""
+    frame = pd.read_csv(path)
+    if "tile_id" not in frame.columns:
+        raise ValueError(f"{path} has no tile_id column")
+    return frame["tile_id"].dropna().astype(str).drop_duplicates().tolist()
 
 
 def select_report_examples(matches: pd.DataFrame) -> pd.DataFrame:
@@ -306,7 +462,13 @@ def main() -> None:
         "--moon-site", help="Full lunar region ID or readable name, e.g. Haworth"
     )
     parser.add_argument(
-        "--earth-site", help="Earth region ID or readable name, e.g. wadi_rum"
+        "--earth-site",
+        help="Earth region ID or readable name, e.g. wadi_rum; with --tiles, optional (default: all)",
+    )
+    parser.add_argument(
+        "--tiles",
+        type=Path,
+        help="CSV with a tile_id column (e.g. moon_tiles.csv); matches each tile against every Earth site",
     )
     parser.add_argument(
         "--top-k",
@@ -338,6 +500,23 @@ def main() -> None:
                 .rename("patch_count")
                 .to_string()
             )
+            return
+        if args.tiles is not None:
+            if args.moon_site:
+                parser.error("Use either --tiles or --moon-site, not both")
+            output = run_tile_matching(
+                args.root,
+                config,
+                read_tile_ids(args.tiles),
+                earth_sites=[args.earth_site] if args.earth_site else None,
+                top_k=args.top_k,
+            )
+            summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
+            print(
+                f"Matched {summary['tile_count']} lunar tiles against "
+                f"{len(summary['earth_sites'])} Earth sites."
+            )
+            print(f"Results: {output / 'earth_matches.csv'}")
             return
         if not args.moon_site or not args.earth_site:
             parser.error(

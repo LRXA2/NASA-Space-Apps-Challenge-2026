@@ -19,10 +19,25 @@ from notebooks.modeling.terrain_similarity.pipeline import (
     TerrainModel,
     compare_sites,
 )
+from notebooks.modeling.terrain_similarity.pipeline import (
+    lunar_tile_ids,
+    match_tiles,
+)
 from notebooks.modeling.terrain_similarity.pipeline.main import retrieve_matches
 from notebooks.modeling.terrain_similarity.similarity_cnn import TerrainSimilarityCNN
 from notebooks.modeling.terrain_similarity.similarity_experiment import embed
 from notebooks.shared.inspection import file_hash
+from notebooks.shared.moon_tiles import tile_id
+from notebooks.shared.processing import MOON_CRS
+
+# Top-left corners of the fixture's lunar patches when `lunar_grid` is set.
+LUNAR_TILE_ORIGINS = {
+    "moon-a": (-45240.0, 93900.0),
+    "moon-b": (65940.0, 125040.0),
+    "moon-c": (-44280.0, 93900.0),
+}
+HAWORTH_A = tile_id("A3CLR22_2_Haworth", -44760.0, 93420.0)
+HAWORTH_C = tile_id("A3CLR22_2_Haworth", -43800.0, 93420.0)
 
 
 def write_manifest(directory: Path, **metadata) -> None:
@@ -38,7 +53,11 @@ def write_manifest(directory: Path, **metadata) -> None:
 
 
 def prepared_fixture(
-    root: Path, *, extra_moon_patch: bool = False, relocate_weights: bool = True
+    root: Path,
+    *,
+    extra_moon_patch: bool = False,
+    relocate_weights: bool = True,
+    lunar_grid: bool = False,
 ) -> ArtifactConfig:
     """Four approved development patches, identical inputs and a known ID ordering."""
     dataset = root / "data/processed/fixture_dataset"
@@ -94,6 +113,12 @@ def prepared_fixture(
                 "tensor_index": 4,
             }
         )
+    if lunar_grid:
+        # Lunar patches on one 960 m polar-stereographic lattice, as prepared runs store them.
+        for row in rows:
+            if row["body"] == "moon":
+                x, y = LUNAR_TILE_ORIGINS[row["patch_id"]]
+                row.update(crs_wkt=MOON_CRS, left=x, right=x + 960.0, bottom=y - 960.0, top=y)
     pd.DataFrame(rows).to_csv(dataset / "patches.csv", index=False)
     physical = np.random.default_rng(7).normal(size=(1, 3, 32, 32)).astype(np.float32)
     physical[:, 1:] = np.abs(physical[:, 1:])
@@ -258,6 +283,99 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(summary["moon_patch_count"], 2)
             self.assertEqual(summary["earth_patch_count"], 1)
             self.assertAlmostEqual(summary["median_best_patch_cosine"], 1.0, places=6)
+
+    def test_tile_mode_matches_each_tile_against_every_earth_site(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            terrain = TerrainModel(
+                root, prepared_fixture(root, extra_moon_patch=True, lunar_grid=True)
+            )
+            ids = lunar_tile_ids(terrain.patches)
+            self.assertEqual((ids["moon-a"], ids["moon-c"]), (HAWORTH_A, HAWORTH_C))
+            matches, physical, summary = match_tiles(
+                terrain, [HAWORTH_C, HAWORTH_A], top_k=3
+            )
+            # Each site holds one patch, so top_k=3 keeps one match per site.
+            first, second = sorted([HAWORTH_A, HAWORTH_C])
+            self.assertEqual(matches.tile_id.tolist(), [first, first, second, second])
+            self.assertEqual(
+                matches.loc[matches.tile_id == HAWORTH_A, "query_id"].unique().tolist(),
+                ["moon-a"],
+            )
+            self.assertEqual(
+                matches.earth_region.tolist(),
+                ["atacama_san_pedro", "wadi_rum"] * 2,
+            )
+            self.assertEqual(matches.overall_rank.tolist(), [1, 2, 1, 2])
+            self.assertEqual(matches.site_rank.tolist(), [1, 1, 1, 1])
+            self.assertEqual(len(physical), 4 * 5)
+            self.assertEqual(set(physical.tile_id), {HAWORTH_A, HAWORTH_C})
+            self.assertEqual(summary["earth_sites"], ["atacama_san_pedro", "wadi_rum"])
+            self.assertEqual(
+                [site["earth_patch_count"] for site in summary["per_site"]], [1, 1]
+            )
+
+    def test_tile_mode_restricts_sites_and_rejects_bad_requests(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            terrain = TerrainModel(root, prepared_fixture(root, lunar_grid=True))
+            matches, _, _ = match_tiles(
+                terrain, [HAWORTH_A], earth_sites=["Wadi Rum"], top_k=1
+            )
+            self.assertEqual(matches.candidate_id.tolist(), ["earth-a"])
+            with self.assertRaisesRegex(ValueError, "no prepared lunar patch"):
+                match_tiles(terrain, [HAWORTH_C], top_k=1)
+            with self.assertRaisesRegex(ValueError, "unique lunar tile ID"):
+                match_tiles(terrain, [HAWORTH_A, HAWORTH_A], top_k=1)
+            with self.assertRaisesRegex(ValueError, "positive integer"):
+                match_tiles(terrain, [HAWORTH_A], top_k=0)
+            with self.assertRaisesRegex(ValueError, "Unknown or ambiguous earth site"):
+                match_tiles(terrain, [HAWORTH_A], earth_sites=["Haworth"], top_k=1)
+
+    def test_cli_tile_mode_writes_earth_matches(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = prepared_fixture(root, lunar_grid=True)
+            repository = Path(__file__).resolve().parents[4]
+            shutil.copytree(
+                repository / "notebooks",
+                root / "notebooks",
+                ignore=shutil.ignore_patterns(
+                    "*.ipynb", "__pycache__", "tests", "weights"
+                ),
+                dirs_exist_ok=True,
+            )
+            path = root / "fixture.json"
+            path.write_text(json.dumps(asdict(config)), encoding="utf-8")
+            tiles = root / "shortlist.csv"
+            pd.DataFrame({"tile_id": [HAWORTH_A]}).to_csv(tiles, index=False)
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "notebooks.modeling.terrain_similarity.pipeline",
+                    "--config",
+                    str(path),
+                    "--tiles",
+                    str(tiles),
+                    "--top-k",
+                    "1",
+                ],
+                cwd=root,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(
+                completed.returncode, 0, completed.stdout + completed.stderr
+            )
+            (folder,) = (root / "data/processed/terrain_similarity_tile_matches").iterdir()
+            matches = pd.read_csv(folder / "earth_matches.csv")
+            self.assertEqual(matches.tile_id.tolist(), [HAWORTH_A, HAWORTH_A])
+            self.assertEqual(sorted(matches.earth_region), ["atacama_san_pedro", "wadi_rum"])
+            self.assertEqual(
+                json.loads((folder / "provenance.json").read_text())["status"],
+                "complete",
+            )
 
     def test_cli_exports_a_complete_pair_run_and_marks_a_bad_site_run_failed(self):
         with tempfile.TemporaryDirectory() as directory:

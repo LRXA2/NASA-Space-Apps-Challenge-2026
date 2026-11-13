@@ -65,9 +65,17 @@ The [Python pipeline](modeling/terrain_similarity/pipeline/main.py) compares a w
 
 Training and all notebook/pipeline readers share [model_weights.py](modeling/terrain_similarity/model_weights.py). The configured `model_run` identifies the training metadata; its run ID determines the weights folder. New training runs register a `weights.json` location/hash descriptor beside their preprocessing. Relocated checkpoints are checked against their original manifest hashes, so historical manifests and orientation caches remain unchanged. Keep both the weights folder and the referenced data runs when transferring the pipeline.
 
-The script compares **one Moon site and one Earth site per call**. Your application owns the loop over Earth sites and selects the highest-scoring result. For in-memory integration, `compare_sites(terrain, moon_site, earth_site)` returns match tables and a summary; the score is `summary["median_best_patch_cosine"]`.
+The site mode compares **one Moon site and one Earth site per call**. For in-memory integration, `compare_sites(terrain, moon_site, earth_site)` returns match tables and a summary; the score is `summary["median_best_patch_cosine"]`.
 
-Import the callable interface from `notebooks.modeling.terrain_similarity.pipeline`: `ArtifactConfig`, `TerrainModel`, `compare_sites` and `run_inference`. `main.py` is the implementation entry point; `__main__.py` enables the shorter package command below.
+The tile mode matches **chosen lunar tiles against every Earth site** in one run. Pass a CSV with a `tile_id` column, such as `moon_tiles.csv` or a shortlist from it (see [shared Moon tile IDs](../README.md#shared-moon-tile-ids)):
+
+```powershell
+.\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.pipeline --tiles path/to/shortlist.csv --top-k 3
+```
+
+It keeps the top `--top-k` Earth patches **per site** (all of a site's patches when it has fewer), adds `overall_rank` across sites by cosine, and writes `earth_matches.csv`, `physical_comparison.csv` and `summary.json` to `data/processed/terrain_similarity_tile_matches/<run>/`. Add `--earth-site` to restrict it to one site. Ranking within a site is the same cosine ranking as the site mode; physical checks still explain rather than rerank. In memory, use `match_tiles(terrain, tile_ids)`; `lunar_tile_ids(terrain.patches)` maps prepared patch IDs to tile IDs.
+
+Import the callable interface from `notebooks.modeling.terrain_similarity.pipeline`: `ArtifactConfig`, `TerrainModel`, `compare_sites`, `match_tiles`, `lunar_tile_ids`, `run_inference` and `run_tile_matching`. `main.py` is the implementation entry point; `__main__.py` enables the shorter package command below.
 
 ```powershell
 .\.venv\Scripts\python.exe -m notebooks.modeling.terrain_similarity.pipeline --list-sites
