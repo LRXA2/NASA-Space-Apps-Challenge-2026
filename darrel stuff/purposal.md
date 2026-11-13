@@ -14,7 +14,7 @@ The filename is retained as a project guide, not a runtime input. [Sources](rese
 
 ## 2. Gate and preference separation
 
-The default `assumption_NASA_values` policy defines nine domains with equal test weights in `config.yml`; no terrain score is included. `pipeline_mode: available_data` uses supplied measurements and explicitly renormalizes available weights; `strict` withholds incomplete final assessments. `enabled`, `include_in_score` and `hard_gates_enabled` independently control each domain. Comms currently contributes where supplied, with its hard gate off. These are project assumptions, not NASA safety limits.
+The default `assumption_NASA_values` policy defines nine environmental domains plus experimental soil, with relative domain weights in `config.yml`; no terrain score is included. `pipeline_mode: available_data` uses supplied measurements and explicitly renormalizes available weights; `strict` withholds incomplete final assessments. `enabled`, `include_in_score` and `hard_gates_enabled` independently control each domain. Comms currently contributes where supplied, with its hard gate off. These are project assumptions, not NASA safety limits.
 
 Operational assessment requires a declared mission, hardware and applicable requirement inventory. Known active hard-gate failure dominates Unknown; an evaluated Failed/Unknown blocks final scoring. Blank measurements can be explicitly omitted in available-data mode, but skipping them is not an operational pass. Expected synthetic outcomes are test labels, never rule inputs.
 
@@ -52,3 +52,18 @@ Published REDMoon scenarios are a common what-if library, never assigned to cand
 [environment_rule_register.json](research/environment_rule_register.json) records the research rule families, applicability and consequences. [The pipeline guide](env_pipeline/README.md) explains the active assumption policy, modes and toggles; the [archived prototype guide](env_pipeline/legacy_1/README.md) describes its separate evidence annex. The active script does not read the research register or this document. Failed evidence-use checks reject an unsupported inference, not necessarily the physical site.
 
 New downloads must pass source/schema/quality/support review before becoming evidence. More files alone never justify a new score factor, physical threshold or operational pass.
+
+## 5. Agreed soil scoring proposal
+
+- **Metric:** `soil_stability_score`, a soil-only measure of mechanical stability, not a ranking of named soil types or similarity to NASA samples.
+- **Basis:** shear strength at a common reference depth and normal stress, preferably measured directly. Where justified, estimate `shear_strength = cohesion + normal_stress * tan(friction_angle)` using compatible units and angle conventions.
+- **Scoring:** `score = 100 * clip((shear_strength - lower_benchmark) / (target - lower_benchmark), 0, 1)`, with `target > lower_benchmark`.
+- **Interpretation:** 0 at or below the lower benchmark; increasing between the lower benchmark and target; 100 at or above the target. Strength above the target earns no additional points. This scores mechanical stability, not overall soil superiority.
+- **Missing evidence:** missing or incompatible measurements remain **Unknown**, not zero. Do not substitute chemistry, grain size or maturity for strength without a supported predictive relationship; retain them as context.
+- **Pending definition:** common test conditions, compatible candidate measurements and justified numerical benchmarks. Do not derive suitability limits from Apollo chemistry minima/maxima.
+- **Adoption:** mechanical-stability proposal only; no stability hard gate or weight is established. Contribution to the habitability total requires justification of the benchmarks and measurement conditions. The active pipeline is not changed by this proposal.
+
+
+### Adopted experimental soil-reference extension
+
+For the current prototype, four equal categories (mean grain size, Is/FeO maturity, agglutinate percentage and FeO wt% as a chemical proxy) form `soil_score`. The reference uses rounded Apollo mission means from Dar_057, not dummy inputs. Existing target-range scoring maps the p05-p95 mission-mean interval to 100, declining to zero one interval-width outside. Soil contributes with multiplier 10; other domain rules and gates remain unchanged. This intentionally assumed resemblance contribution is not the mechanical-stability proposal above and does not establish operational superiority. The [pipeline guide](env_pipeline/README.md#experimental-soil-contribution) specifies source support, cross-mission placeholders, units and limitations. The mechanical-stability proposal remains deferred. EDA-labelled inputs are randomized within observed soil ranges; synthetic inputs vary near the reference band; dummy inputs use broad random ranges; Apollo controls retain rounded mission aggregates and explicitly identified missing-evidence substitutes. These are scenario categories, not suitability labels. Generation patterns and high Apollo-reference scores do not validate operational benefit.

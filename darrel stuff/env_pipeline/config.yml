@@ -4,7 +4,7 @@
 # Proxy directions/bounds (including counters/current/potential) are deliberately fictional
 # test mappings. Do not interpret resulting scores as real site habitability or safety.
 # enabled: false disables an entire domain: inputs, hard gates and scoring.
-# Domain multipliers total 90: project priorities for a crewed, solar-powered habitat.
+# Domain multipliers total 100 (including experimental soil weight 10): project priorities for a crewed, solar-powered habitat.
 # These are NOT NASA-approved weights; available-data scoring renormalizes present domains.
 # pipeline_mode: strict requires complete inputs; available_data omits blank measurements.
 # hard_gates_enabled controls each domain independently from scoring.
@@ -389,3 +389,82 @@ domains:
         threshold: 0
       meaning: 'assumption_NASA_values: fictional gate-only test check. Native input
         units are retained; this does not qualify mission capability or local hazard.'
+
+# Soil source: Dar_057 soil_samples.csv, extracted Handbook of Lunar Soils JSC 19069.
+# SHA256: 8506f2db4b782a05393ca327073d709a7c6e0e158212aa67a9879668f606030d
+
+  soil:
+    # Experimental Apollo-reference resemblance, not measured operational suitability.
+    # Equal weights for four requested categories; correlated proxies are not independent.
+    enabled: true
+    hard_gates_enabled: false
+    priority: Experimental
+    include_in_score: true
+    multiplier: 10.0
+    metrics:
+    # Grain size: p05/p95 of rounded observed mission means, n=6 missions.
+    - column: soil_mean_grain_size_um
+      unit: 'um'
+      role: score
+      evidence_family: apollo_soil_mz_um
+      multiplier: 1.0
+      minimum: 0
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: 14.42250000
+        upper: 130.18500000
+        preferred_lower: 53.01000000
+        preferred_upper: 91.59750000
+      hard_gate: null
+      meaning: 'Experimental Apollo-reference score; rounded mission aggregates are placeholders, not site measurements or NASA requirements.'
+    # Maturity: p05/p95 of rounded observed mission means, n=6 missions.
+    - column: soil_maturity_is_feo
+      unit: 'Is/FeO index'
+      role: score
+      evidence_family: apollo_soil_is_feo
+      multiplier: 1.0
+      minimum: 0
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: 12.77500000
+        upper: 102.31750000
+        preferred_lower: 42.62250000
+        preferred_upper: 72.47000000
+      hard_gate: null
+      meaning: 'Experimental Apollo-reference score; rounded mission aggregates are placeholders, not site measurements or NASA requirements.'
+    # Agglutinate content: p05/p95 of rounded observed mission means, n=3 missions.
+    - column: soil_agglutinates_percent
+      unit: 'percent (source modal basis)'
+      role: score
+      evidence_family: apollo_soil_agglutinates_percent
+      multiplier: 1.0
+      minimum: 0
+      maximum: 100
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: 30.64400000
+        upper: 44.76500000
+        preferred_lower: 35.35100000
+        preferred_upper: 40.05800000
+      hard_gate: null
+      meaning: 'Experimental Apollo-reference score; rounded mission aggregates are placeholders, not site measurements or NASA requirements.'
+    # Chemical composition (FeO proxy): p05/p95 of rounded observed mission means, n=6 missions.
+    - column: soil_feo_wt_percent
+      unit: 'wt%'
+      role: score
+      evidence_family: apollo_soil_feo
+      multiplier: 1.0
+      minimum: 0
+      maximum: 100
+      requires_time_window: false
+      preference:
+        direction: target_range
+        lower: -2.83500000
+        upper: 24.98250000
+        preferred_lower: 6.43750000
+        preferred_upper: 15.71000000
+      hard_gate: null
+      meaning: 'Experimental Apollo-reference score; rounded mission aggregates are placeholders, not site measurements or NASA requirements.'

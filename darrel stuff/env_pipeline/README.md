@@ -236,11 +236,11 @@ python "darrel stuff/env_pipeline/env_pipeline.py" --output "darrel stuff/env_pi
 
 ## Simple output
 
-The command-line default writes only enabled domain columns. With all nine domains enabled, it writes **13 columns**:
+The command-line default writes only enabled domain columns. With all ten domains enabled, it writes **14 columns**:
 
 ```text
 ID, radiation, thermal, solar_illumination, dust, plasma_charging,
-uv, seismic, exosphere, communications_geometry,
+uv, seismic, exosphere, communications_geometry, soil_score,
 hard_gate_status, Fail Reason, final_habitability_score
 ```
 
@@ -387,7 +387,7 @@ This is an explicit test/comparison policy, not evidence of operational safety.
 
 ## Scoring behavior
 
-The nine domains are radiation, thermal, solar illumination, dust, plasma/charging, UV, seismic, exosphere and communications geometry.
+The ten domains are radiation, thermal, solar illumination, dust, plasma/charging, UV, seismic, exosphere, communications geometry and experimental soil.
 
 The solar gate uses an opt-in `cap_to_window_duration: true`: effective threshold = `min(configured threshold, (stop_utc - start_utc) in hours)`. Thus a short visit must have modeled continuous sunlight for its entire requested window; a window of 156 h or longer still requires 156 h. This is an explicit project policy for comparing different mission durations, not a newly sourced universal NASA rule. Missing dates remain Unknown for a supplied duration; missing limits are not defaulted. A supplied sunlight duration beyond the window is rejected. Detailed gate audit records both configured and effective thresholds.
 
@@ -409,7 +409,7 @@ Gate applicability is reviewed separately from data completeness. The raw seismi
 This is a **traceable evidence/proxy baseline for software calibration**, not six complete measured nine-domain Apollo datasets. Testing the same reference/model assumptions that generated these rows is a consistency check, not independent predictive validation. The remaining shared references, nominal RF assumption and conditional model limitations are deliberately visible rather than concealed by manufactured diversity.
  All Apollo input cells are populated for a nine-domain **proxy/test baseline**. The field-level provenance above distinguishes actual dates/site reference data from borrowed references and assumptions. This is not nine-domain historical validation or proof that the sites meet the configured requirements.
 
-The active `config.yml` policy is **`assumption_NASA_values`**: project assumptions for testing NASA-site scenarios, **not official NASA values or safety limits**. All nine domain definitions retain complete preference bounds and the project domain weights listed below; all nine are currently enabled, with comms and seismic hard gates disabled. One score-bearing metric per domain avoids weighting multiple related proxies as independent evidence. Other fields are either gate-only or context-only. These fictional mappings must not be used to interpret orbital/reference quantities as local hazard, dose, surface charging or real habitability.
+The active `config.yml` policy is **`assumption_NASA_values`**: project assumptions for testing NASA-site scenarios, **not official NASA values or safety limits**. All ten domain definitions retain complete preference bounds and the project domain weights listed below; all ten are currently enabled, with comms, seismic and soil hard gates disabled. The original nine domains each use one score-bearing metric; soil uses four equally weighted, potentially related descriptors as an explicit experimental exception. Other fields are either gate-only or context-only. These fictional mappings must not be used to interpret orbital/reference quantities as local hazard, dose, surface charging or real habitability.
 
 | Domain | Relative weight |
 | --- | ---: |
@@ -422,6 +422,7 @@ The active `config.yml` policy is **`assumption_NASA_values`**: project assumpti
 | UV | 5 |
 | Seismic | 3 |
 | Exosphere | 2 |
+| Soil (experimental) | 10 |
 
 Weights are project priorities, not NASA-approved percentages. The aggregate divides by the sum of included weights; they need not total 100. Available-data mode renormalizes around omitted measurements. Change domain-level `multiplier` values in `config.yml`; metric multipliers control weighting within each domain.
 
@@ -447,4 +448,3 @@ Every bound, direction, plateau and gate above is an **assumption for exercising
 - Simple output shows diagnostic domain scores, gate status, `Fail Reason` and the gate-qualified habitability score.
 
 The script remains standalone: Python 3.10+, PyYAML, the selected YAML and one input CSV. It does not read source datasets, preparation scripts, notebooks or provenance sidecars at runtime.
-

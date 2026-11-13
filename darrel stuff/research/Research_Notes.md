@@ -2,7 +2,7 @@
 
 **Purpose:** identify the evidence available for our Moon environmental assessment, what it can support and what remains unresolved. Analysis methods belong in [EDA Notes](../EDA/EDA_Notes.md); algorithm choices belong in [Feature decisions](../purposal.md).
 
-**Stage 3-4 scope:** [Dar_045-055](../EDA/EDA_Notes.md#expanded-subject-eda-and-time-windows---11-november-2026) cover the subject studies; Dar_056 defines the source/field/outline and requirement proposal. Dated analyses use month, quarter, four-month term, half-year, year, two-year and calendar-season labels; these are not lunar seasons. Static PRP does not supply a chronology. Full/sparse/experimental scope and unresolved qualification must remain explicit. The separate [Stage 5 pipeline](../env_pipeline/README.md) uses `assumption_NASA_values`, not adopted NASA limits.
+**Stage 3-4 scope:** [Dar_045-055](../EDA/EDA_Notes.md#expanded-subject-eda-and-time-windows) cover the subject studies; Dar_056 defines the source/field/outline and requirement proposal. Dated analyses use month, quarter, four-month term, half-year, year, two-year and calendar-season labels; these are not lunar seasons. Static PRP does not supply a chronology. Full/sparse/experimental scope and unresolved qualification must remain explicit. The separate [Stage 5 pipeline](../env_pipeline/README.md) uses `assumption_NASA_values`, not adopted NASA limits.
 
 **Source-quality checks:** review native invalid constants and physical-domain validity for PRP depth, component-clock handling for NMS, and declared units for LEND before using values. Keep clock policy separate from orbital sampling and do not infer a missing unit. These are evidence-use/applicability checks, not operational limits or site failures.
 
@@ -96,7 +96,7 @@ Page numbers below are PDF pages, with printed references in parentheses where a
 
 **Interpretation rules:** retain lb/Ah; Ah is not Wh. Preserve printed totals, rounding and any discrepancy with displayed component sums rather than silently correcting them. Initial-minus-consumed balances do not validate a new mission. Reconstructions and primary reports are related evidence, not independent experiments. Further OCR/dense-table extraction requires explicit scope.
 
-### Expanded PDF library and environmental impact (10 November 2026)
+### Expanded PDF library and environmental impact
 
 The external [PDF relevance index](file:///D:/projects/NASA%20Dataset/PDF_Relevance_Index.md) and [journal review](file:///D:/projects/NASA%20Dataset/Apollo_Journal_PDF_Review.md) describe the library under `keep/` and `discard/`. Check PDF identity, page coverage and extraction holds before using a source. Pointers below are one-based PDF pages, including covers; extracted text is not numerical/image verification.
 
@@ -112,7 +112,7 @@ The external [PDF relevance index](file:///D:/projects/NASA%20Dataset/PDF_Releva
 
 **Document use:** frame source-backed EDA questions and evidence-quality/conditional-rule proposals without automatically changing YAML limits or declaring operational safety. The PDF library is not a runtime pipeline input. Sources remain under `keep/` or `discard/`; use move logs to resolve historical root-level paths without rewriting extraction provenance.
 
-**EDA source handoff:** [Dar_044](../EDA/Moon/Stage3_Requirements/Dar_044_acquired_environment.ipynb) defines initial environmental/PDF screening with SEE overlap checks, ESA virtual-Q/clock handling, historical HFE/PSE support, PRP model context and LAMP/LADEE/LEND quality handling. Retain each cohort definition rather than treating a selected sample as a full archive. [Methods and scope](../EDA/EDA_Notes.md#new-download-eda--executed-dar_044-11-november-2026). This does not automatically adopt a radiation/thermal/charging requirement.
+**EDA source handoff:** [Dar_044](../EDA/Moon/Stage3_Requirements/Dar_044_acquired_environment.ipynb) defines initial environmental/PDF screening with SEE overlap checks, ESA virtual-Q/clock handling, historical HFE/PSE support, PRP model context and LAMP/LADEE/LEND quality handling. Retain each cohort definition rather than treating a selected sample as a full archive. [Methods and scope](../EDA/EDA_Notes.md#new-download-eda---dar_044). This does not automatically adopt a radiation/thermal/charging requirement.
 
 ## Supporting references and model routes
 

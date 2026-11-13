@@ -25,13 +25,13 @@ Preference scores cannot compensate for failed or unknown evaluated hard gates. 
 
 The [science-based comparison](EDA/EDA_Notes.md#final-results-and-findings) covers candidate radiation-geometry/UV proxies, charging references and unweighted preference fronts in the archived prototype. Keep this evidence-based research separate from the active test mappings, avoid duplicate sunlight/UV weighting, and do not interpret plasma density as safety.
 
-## Step 4-5 alignment check (10 November 2026)
+## Step 4-5 alignment check
 
 - Compare handoff tables with their declared EDA source pins, schemas, units and scope before adopting them.
 - Keep the archived context-comparison policy separate from the active standalone assumption policy; do not treat a missing operational profile as a safety pass.
 - Validate missing-data, mode/toggle and gate-before-final-score behavior with targeted checks. See the [pipeline guide](env_pipeline/README.md) for the current workflow.
 
-## EDA extensions (9 November 2026)
+## EDA extensions
 
 The following notebooks extend the environmental analysis scope. Keep their acquisition cohorts, quality policies and scientific applicability separate from software-test assumptions.
 

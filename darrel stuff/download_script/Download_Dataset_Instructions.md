@@ -42,7 +42,7 @@ Run from the repository root in PowerShell. `--download` authorizes transfers. W
 
 Use `--help` for the current CLI. Change destination with `--output PATH`; addon `--baseline-root PATH` can reference existing collections. A pinned `--from-inventory PATH` preserves exact selections, not an exemption from current limits/integrity checks. Research `inventory.json` and Moon-support `run.json` are different schemas, not interchangeable.
 
-## Appended Moon environmental sources — 10 November 2026
+## Moon environmental sources
 
 The add-on reads published provider file listings and retrieves **native science files over HTTPS**, rather than automating browser clicks or saving NASA catalogue HTML. The existing transfer, receipt, source/hash verification, bounded retries and resume helpers are reused. The default destination remains **`D:\projects\NASA Dataset`**; no source folders or old data were moved.
 
@@ -114,7 +114,7 @@ Read back each pinned full selection against its on-disk files, expected sizes a
 
 D20 GDS stays explicitly disabled; unstarted legacy queries are not active transfers. D21-D24 require authorised access. Keep reference-rate extracts separate from their original PDFs and preserve access/manifest holds rather than inferring availability. Resolve Apollo and other PDF paths through `keep/` or `discard/` and relocation records; Earth-climate scope is separate from the Moon algorithm.
 
-**Verification:** retain pinned run IDs, selected files, receipt/checksum scope and unresolved limits in acquisition manifests. Downloaded means acquired within the selection, not EDA-qualified or operationally adequate. [EDA preparation scope](../EDA/EDA_Notes.md#newly-acquired-inputs-and-pdf-leads-10-november-2026).
+**Verification:** retain pinned run IDs, selected files, receipt/checksum scope and unresolved limits in acquisition manifests. Downloaded means acquired within the selection, not EDA-qualified or operationally adequate. [EDA preparation scope](../EDA/EDA_Notes.md#newly-acquired-inputs-and-pdf-leads).
 
 ## Selection and quality boundaries
 

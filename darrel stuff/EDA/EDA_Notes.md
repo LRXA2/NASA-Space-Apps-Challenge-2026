@@ -2,7 +2,7 @@
 
 **Purpose:** understand lunar conditions and compare candidate sites using observations, modelled indicators and reference studies. This is environmental evidence, not proof that a mission can operate safely.
 
-**Reviewed 12 November 2026:** findings below describe scientific EDA, not the standalone pipeline's assumed test fixture. Dar_044 screening/subset results are retained as earlier baselines; the Dar_045-055 subject studies and Dar_056 handoff provide the expanded coverage. Exact completed-run sources are listed under Evidence and notebook conventions.
+**Scope:** findings below describe scientific EDA, not the standalone pipeline's assumed test fixture. Dar_044 screening/subset results are retained as earlier baselines; the Dar_045-055 subject studies and Dar_056 handoff provide the expanded coverage. Exact completed-run sources are listed under Evidence and notebook conventions.
 
 ## Scope and coverage
 
@@ -10,9 +10,9 @@
 - Quality flags, missing dates, spatial support and observation cohorts are checked before comparison. Missing evidence stays **Unknown**, not zero risk.
 - **Expanded Stage 3-4 complete within declared evidence scopes:** Dar_044 remains the initial screen; Dar_045-055 are the eleven executed subject studies and Dar_056 is the unadopted requirement synthesis. Full/sampled/experimental coverage and unresolved qualification remain explicit. The separate [Stage 5 pipeline](../env_pipeline/README.md) now uses `assumption_NASA_values`, available-data/strict modes and independent toggles; those test choices do not update or validate these EDA findings. [Scope/checklist](../todo_workflow.md#comprehensive-subject-eda-and-stage-4).
 
-## Expanded subject EDA and time windows - 11 November 2026
+## Expanded subject EDA and time windows
 
-All **eleven subject notebooks (Dar_045-055)** and **Stage 4 synthesis Dar_056** are executed and saved. Each subject adds analysis beyond Dar_044, cross-checks earlier results and states its base conclusion and remaining uncertainty. Completion means the scoped EDA/proposal work is finished, **not that a mission/site is operationally qualified**.
+The **eleven subject notebooks (Dar_045-055)** and **Stage 4 synthesis Dar_056** define the expanded analysis. Each subject adds analysis beyond Dar_044, cross-checks source evidence and states its conclusion and remaining uncertainty. Their scope does **not establish that a mission/site is operationally qualified**.
 
 | Grouping | Definition |
 | --- | --- |
@@ -127,28 +127,133 @@ Run again from the repository root: `.venv/Scripts/python.exe "darrel stuff/EDA/
 - **Expanded findings (Dar_051):** **592,721 records / 876 daily rows**, covering 2013-11-21 to 2014-04-17; **33** noncanonical/missing-clock records are held explicitly. Added orbit coverage changes matched-date medians, so clock-policy and orbit-selection effects are analysed separately. **Earlier Dar_044 subset:** 10,869 records on 12 sampled dates per species, with sampled altitude 1.88-145.01 km. Its sparse support is not the full selected cohort.
 - **Limit:** full selected orbit coverage is still historical spacecraft sampling, not a surface concentration, modern atmosphere or life-support assessment. Apollo outgassing/background cases reinforce the need for contamination checks.
 
+## Standalone soil/regolith properties - Dar_057
+
+[Notebook](Moon/Stage3_Requirements/Dar_057_lunar_soil_properties.ipynb) | [Analysis helper](Moon/Stage3_Requirements/stage3_soil_eda.py) | [Tables, figures and source provenance](../data/processed/analysis/subject_soil/)
+
+**Question and scope:** compare the available soil-property distributions and associations before deciding whether they can inform a later environmental algorithm. This is a standalone study: no dust/thermal/mobility/engineering-response model, candidate-site mapping, soil scoring domain or pipeline edits. Sample IDs and missions distinguish observations; sample coordinates and collection-location tables are not required outputs.
+
+### Evidence and method
+
+- **Handbook of Lunar Soils**, JSC 19069, supplied as `D:/projects/NASA Dataset/soils_hb.pdf`: examine all 1,183 PDF pages for selected scalar soil properties. The supported cohort contains **168 sample-sheet identities**: Apollo 11 **7**, Apollo 12 **14**, Apollo 14 **9**, Apollo 15 **30**, Apollo 16 **40**, Apollo 17 **68**. These are related historical non-core returned samples, not 168 independent landing-site experiments or every measurement in the handbook.
+- Retain reported major-oxide percentages, `Is/FeO`, maturity-table agglutinate percentages and grain-size descriptors `Mz`/`Md`. Keep blanks missing. Each extracted number retains its PDF page, line, units and source text. Do not mix adjacent petrography/trace-element columns, average competing analyses, or guess missing decimal points. The extraction holds include the `21003` sample-ID/mission inconsistency, four out-of-range printed/OCR percentages and ambiguous grain-fraction assignments; no silent repair is made.
+- The handbook's default is the less-than-1-mm fraction unless otherwise stated. For wrapped grain-size entries containing both less-than-1-cm and less-than-1-mm results, select only the explicitly labelled fine-fraction value. Leave the other descriptor missing when its fraction cannot be established. Supported values: **139 maturity indices, 75 Mz values, 22 Md values, 60 maturity-table agglutinate percentages, 131 FeO values and 131 Al2O3 values**. Support differs by property and mission.
+- Use pairwise-complete Spearman associations with pair counts; report nominal multiple-comparison-adjusted statistics as exploratory, not evidence of independent site trials. Compare within-mission associations, mission-adjusted rank residuals, leave-one-mission-out results and distinct-pair-profile sensitivity. Stratified bootstrap/permutation results describe conditional sample sensitivity, not population confidence or a causal effect. Do not impute missing values or correlate unpaired mission-labelled environmental histories.
+- **68 complete eleven-oxide profiles** support a closure diagnostic; reported sums span **98.90-101.88%**. Values are not forcibly renormalised. Chemical percentages are compositional, so an association can reflect shared closure, geological mixtures or analytical dependencies rather than an independent effect. `Is/FeO` also contains FeO in its definition.
+- Reuse the label-driven reader for **six Apollo 15 penetrometer runs / 94 native records**. Keep cone/plate geometry, reported depth limitations and the collapse flag. Loading-path points are not independent repeated soil-type experiments. No chemical profile is joined to a penetrometer run by mission label alone.
+- **Surveyor comparison:** [USGS analysis of Surveyor 7](https://www.usgs.gov/publications/implications-surveyor-7-results) reports lower Fe in the highland material than in the previously analysed mare material. This qualitatively agrees with the iron/aluminium composition contrast in the Apollo data, but is not a matched sample comparison. The handbook contains no Surveyor sample sheets; no harmonized local Surveyor numerical table is pooled with these oxide percentages. [NASA/JPL Surveyor 5](https://www.jpl.nasa.gov/missions/surveyor-5/) supplies additional mission context. Regional D37 geology, D34 M3 L1B radiance and D30 radar products are different quantities, not extra soil specimens; without a requested spatial join or compatible derivation they remain context rather than fabricated correlation pairs.
+
+### Findings relevant to a later environmental algorithm
+
+| Relationship | Supported comparison | What can be used later |
+| --- | --- | --- |
+| FeO versus Al2O3 | **rho = -0.908, n=130**, six missions; mission-adjusted rank association **-0.741**. The association remains negative when any one mission is excluded. | A composition/regime distinction, not an iron-is-bad or aluminium-is-good safety rule. Avoid separately weighting correlated oxides as independent evidence. |
+| FeO versus TiO2 | **rho = +0.789, n=126**; mission-adjusted association **+0.794**. Without Apollo 16 the pooled rho is approximately **+0.507**, illustrating cohort sensitivity. | Useful chemical context; not a demonstrated environmental hazard or an adopted scoring direction. |
+| Maturity versus agglutinates | **rho = +0.702, n=47**, only three missions; **36 paired samples are Apollo 17**. Mission-adjusted association **+0.719**. | Related maturity indicators may be redundant; neither higher nor lower maturity is shown to be safer. The sample imbalance limits transfer. |
+| Maturity versus Mz | Weak pooled association: **rho = -0.154, n=70**, five missions; conditional bootstrap range approximately **-0.370 to +0.085**. Apollo-specific and leave-one-mission-out results differ. | Do not infer grain size from maturity or adopt a universal maturity-to-fineness rule from this cohort. |
+| Mz versus Md | **rho = +0.764, n=11**, with sparse mixed mission support. | Potentially related grain descriptors, but too little paired support for a universal conversion or redundant-feature decision without further evidence. |
+| Penetrometer stress contrasts | Cone maxima approximately **342-347 kPa**, plate maxima **34.1-34.3 kPa**; tool areas differ by about a factor of ten. Four runs have depth limitations; one includes documented trench collapse. | Geometry/protocol are essential context. The apparent tenfold stress difference is not evidence of a tenfold soil-strength contrast or a transferable threshold. |
+
+**Illustrative composition medians, not mission-wide uniform soil values:** Apollo 11 has FeO **15.83%** and Al2O3 **13.21%** (four supported records each); Apollo 16 has FeO **5.365%** (40) and Al2O3 **26.90%** (39). Apollo 17 spans FeO **8.45-22.04%** and TiO2 **1.39-10.31%** in the extracted supported records, so a single mission/site label conceals substantial sample variability.
+
+**End-goal conclusion:** the evidence supports adding soil-property descriptors to a future research comparison, but does **not** establish which soil type provides the best base environment or whether soil type causes an operational/environmental outcome. There is no specimen-matched outcome or appropriate negative comparison. NASA mission selection/success is not a ground-truth soil-suitability label, and historical Apollo/Surveyor coverage does not establish polar-site properties.
+
+`pipeline_research_candidates.csv` separates candidate chemistry, grain-size and maturity descriptors from reference-only mechanical evidence. It explicitly leaves scoring direction, thresholds and weights unestablished. No pipeline inputs, schema, scoring formulas, gates, weights or outputs are changed by this EDA.
+
+### Reproduce
+
+Open the notebook or run from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -B "darrel stuff/EDA/Moon/Stage3_Requirements/stage3_soil_eda.py" --pdf "D:/projects/NASA Dataset/soils_hb.pdf" --pdf-python "C:/Users/silen/AppData/Local/Programs/Python/Python310/python.exe"
+```
+
+The analysis environment uses the existing NumPy, pandas, SciPy and plotting dependencies; the explicitly selected PDF Python needs `pypdf`. In the notebook, set `SOIL_PDF_PYTHON` if the default `python` does not contain it. `--sample` selects a bounded extraction sample, not the full EDA. Generated source text, extraction holds, figures, tables and provenance stay under `data/processed/analysis/subject_soil/`, separate from the standalone scoring runtime.
+
+## Soil-only NASA versus wider mission evidence - Dar_058
+
+[Notebook](Moon/Stage3_Requirements/Dar_058_soil_cross_mission_metrics.ipynb) | [Analysis helper](Moon/Stage3_Requirements/stage3_soil_comparison_eda.py) | [Source pins](Moon/Stage3_Requirements/stage3_soil_comparison_config.json) | [Derived tables and figures](../data/processed/analysis/soil_cross_mission/)
+
+**Purpose:** identify soil-only measurements, reference intervals and categorical boundaries that could inform a later pipeline field. Compare actual mission-area evidence, not the pipeline's assumed input rows. This is a soil study, not a combined environmental-response model or an adopted soil scoring domain.
+
+### Real-world evidence and comparable units
+
+- [USGS Historical Lunar Data Archive, Lunar Sourcebook Table 7.15](https://lunar-consortium.astrogeology.usgs.gov/data/chem_min/tab7_15.asc) supplies six selected Apollo mission references and three Luna references in oxide wt%. Retain the ten Apollo regional references separately; they overlap mission averages and are not ten additional independent missions. Apollo 11 is represented by soil 10002, whereas other entries are selected averages: these are published reference profiles, not equivalent random mission-wide surveys.
+- [Chang'e-5 primary study](https://pmc.ncbi.nlm.nih.gov/articles/PMC8974359/), Table 1, supplies one bulk-soil XRF reference. Its repeated laboratory measurements are technical repeats, not extra landing areas. [Chang'e-6 primary study](https://pmc.ncbi.nlm.nih.gov/articles/PMC11495410/), Table 2, supplies two soil aliquots; average them once for the mission-level comparison and explicitly exclude the basalt fragment and later trace-element rows. This yields **11 mission references: six NASA, five non-NASA**. Laboratory/sieve methods are not fully harmonized, so descriptive differences are not an isolated agency effect.
+- Use the Dar_057 individual Apollo sample cohort as a separate reference-range sensitivity. Do not count those related specimens as additional independent missions or merge their sample-level distributions with mission averages.
+- The Chang'e-5 supplementary grain table has **80 Apollo analysis records, five missions and 23 parent sample IDs**. Despite broader Apollo/Luna wording in the article narrative, the actual supplementary table has no Luna analyses. Preserve this attribution. Related parent/depth/subsample records are not 80 independent operating areas. Compare their reported phi statistics with the Chang'e studies' model-mass grain statistics; retain number-versus-mass and method distinctions.
+- Surveyor remains external qualitative NASA context: the [USGS Surveyor 7 analysis](https://www.usgs.gov/publications/implications-surveyor-7-results) identifies lower Fe in highland material than in earlier mare analyses. Do not convert grouped/atomic-element summaries into oxide wt% by assumption. No suitable numerical Surveyor soil cohort is merged here.
+- The available collection is broader **real-mission evidence**, not a representative whole-Moon survey or an unvisited-site control. No global general-soil population distribution is inferred. Original source files, source tables and source hashes are retained under `data/reference/lunar_soil_comparison/`. The archived ASCII's Apollo 11 Na2O value `47` and `P2O3` label are held out rather than silently repaired or remapped.
+
+### Differences and explanations
+
+All values below are the selected mission-reference oxide percentages, not whole-area uniform conditions:
+
+| Mission | FeO wt% | Al2O3 wt% | TiO2 wt% |
+| --- | ---: | ---: | ---: |
+| Apollo 11 | 15.3 | 13.6 | 7.8 |
+| Apollo 12 | 15.1 | 12.9 | 3.0 |
+| Apollo 14 | 10.4 | 17.4 | 1.7 |
+| Apollo 15 | 14.3 | 14.6 | 1.4 |
+| Apollo 16 | 5.1 | 27.3 | 0.54 |
+| Apollo 17 | 12.2 | 17.1 | 4.2 |
+| Luna 16 | 16.7 | 15.3 | 3.4 |
+| Luna 20 | 7.0 | 22.3 | 0.55 |
+| Luna 24 | 19.8 | 12.5 | 1.3 |
+| Chang'e-5 | 22.5 | 10.8 | 5.0 |
+| Chang'e-6 | 17.2 | 14.35 | 2.7 |
+
+- **There are differences, but no NASA-only chemical signature:** selected NASA-reference FeO median is **13.25%**, versus **17.20%** in the five wider mission references. However, all five wider references' TiO2 values fall within the NASA-reference interval **0.54-7.8%**. Luna 20 has a highland-like low-Fe/high-Al pattern resembling Apollo 16, whereas Luna 16 and Chang'e-6 are compositionally nearer Apollo 12 in the selected three-oxide log-ratio diagnostic. This describes geological composition, not suitability or a NASA preference policy.
+- **Geological mixtures matter within NASA areas:** Apollo 17 regional references span FeO **8.8-16.7%**, TiO2 **1.7-8.4%**, and Al2O3 **12.0-20.7%**. The source distinguishes mare and massif/light-mantle-related materials. Such within-mission variation contradicts a single agency-labelled soil type. The Chang'e papers discuss local basalt versus non-basaltic ejecta mixing and different source material; these are supported geological explanations, not a causal test of agency membership.
+- **Grain differences overlap historical support:** Chang'e-5 mass median is **52.54 um**; Chang'e-6 is **35.03 um**. Using the published mean-phi definitions, **47/80** Apollo analyses are coarser than Chang'e-5 and **66/80** are coarser than Chang'e-6. After replacing related analyses with a median per parent ID, the comparisons are **15/23** and **20/23**. Both modern mean/median phi values still lie inside the observed 80-record Apollo ranges. These are cohort/method sensitivities, not independent site-probability estimates. The phi-derived equivalent diameter is not an arithmetic average of particle diameters.
+- **Maturity is not a NASA preference:** the 80-record table contains **26 immature, 33 submature and 21 mature** analyses. This is a different, partly depth-related cohort from Dar_057; its labels are not evidence of equivalent mission outcomes. Chang'e-5's grain-inferred maturity must not be treated as an independent measured Is/FeO value in a grain/maturity correlation.
+- **Density needs its own protocol:** reported returned-soil bulk densities are **1.2387 g/cm3** for Chang'e-5 and **0.983 g/cm3** for Chang'e-6. The corresponding true grain densities are **3.1952** and **3.035 g/cm3**, respectively. Packing/preparation and depth affect these quantities; they are not interchangeable with each other or in-situ density profiles.
+
+### What can become a soil-only pipeline field?
+
+| Candidate | Defensible use | Range/threshold interpretation |
+| --- | --- | --- |
+| Soil chemistry: FeO, Al2O3, TiO2 | Measured composition or regime context, with analytical/sieve support | **No preferred or forbidden range established.** Percent plausibility 0-100 is data validation, not a site-failure rule. |
+| Is/FeO maturity class | Categorical descriptor | [NASA Noble reference, PDF page 8](https://www.nasa.gov/wp-content/uploads/2019/04/05_1_snoble_thelunarregolith.pdf): immature **<30**, submature **30-60**, mature **>60**. This study assigns equality at 30/60 to submature under that reference convention; other publications differ at boundaries. Categories are not best-to-worst. Check original FMR/fraction definitions before transfer; a generic bulk-soil fraction must not be assumed equivalent. |
+| Mass-median grain diameter | Continuous soil descriptor with weighting/fraction/method metadata | The [NASA geotechnical reference](https://ntrs.nasa.gov/citations/20220014634), PDF page 1, describes **40-130 um** as a typical historical median-size range, **not a preferred interval**. Chang'e-6's reported 35.03 um demonstrates why it cannot be a universal exclusion rule. |
+| Bulk density | Protocol/depth-dependent descriptor | **No universal preferred range or gate.** Do not substitute true density or loose returned-sample packing for in-situ bulk density. |
+| Nearest-reference composition distance | Optional research diagnostic: centred-log-ratio distance for positive FeO/TiO2/Al2O3 | Lower means more compositionally similar to the selected Apollo reference only. It is **not** an adopted NASA metric, suitability score or evidence that closer is better. Zero/detection-limit treatment requires explicit support; no pseudocount is invented. |
+
+**Why not turn the NASA ranges into gates?** The selected Apollo mission-reference FeO interval is **5.1-15.3%**, while Dar_057's individual Apollo sample interval is **4.09-22.04%**. Merely changing aggregation radically changes the apparent boundary. A hypothetical upper gate of 15.3% would exclude Luna 16, Luna 24, Chang'e-5 and Chang'e-6 reference profiles. A sample p95 gate of 17.58% would instead exclude Luna 24 and Chang'e-5. These flags are conditional reference-range diagnostics, not failed-site conclusions; they demonstrate an unsupported rule's transfer sensitivity. Chang'e-5's 22.5% is also a point estimate with reported FeO uncertainty of 0.33 wt% (k=2), not a precisely known natural boundary.
+
+**Recommendation:** retain soil composition, grain-size definition and maturity class as individual/categorical research fields. `metric_candidate_evidence.csv` and `reference_range_audit.csv` document which quantities/ranges are observed and why none is an adopted preference or hard gate. No chemical exclusion, soil suitability score or weight is justified by NASA-versus-other-mission membership alone. No active pipeline file is changed.
+
+### Reproduce
+
+Open Dar_058 or run from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -B "darrel stuff/EDA/Moon/Stage3_Requirements/stage3_soil_comparison_eda.py"
+```
+
+The helper works offline with the pinned archived sources and the declared completed Dar_057 baseline. It writes its tables, figures, source-quality holds and provenance under `data/processed/analysis/soil_cross_mission/`; it does not download files or import the active scorer. Source hashes, cohort identities and units must match the pinned selection; missing/changed sources fail explicitly.
+
 ## Equipment and past missions
 
 - **Steps taken:** compared Apollo resource predictions with actual usage; analysed laboratory batteries, Apollo soil tests and nominal crew-load sensitivities.
 - **Findings:** **16/18 Apollo 17 resource consumptions exceeded predictions**. Rounded oxygen headroom reaches zero, reinforcing the need for contingency analysis. Battery protocols and six historical soil tests are references, not qualification of our lunar equipment. Crew-rate sensitivities are not actual stocks or life-support adequacy.
 - **Dar_044 PDF cases:** coded seven source/page-linked cases covering calibration, deployment/dust, outgassing and duty cycle, signal attribution, illumination, conditional decisions and equipment cooling. They guide analysis and later rule applicability; historical redlines and secondary journal diagnoses were not adopted as modern requirements.
 
-<a id="newly-acquired-inputs-and-pdf-leads-10-november-2026"></a>
+<a id="newly-acquired-inputs-and-pdf-leads"></a>
 <a id="new-download-eda-dar_044"></a>
-## New-download EDA ? executed Dar_044 (11 November 2026)
+## New-download EDA - Dar_044
 
 **Earlier screening baseline:** the subset counts and checks in this section belong to Dar_044. The expanded subject studies above supersede its coverage for ESA, NMS, LEND, native LAMP and three-axis seismic interpretation; do not label a screening subset as the latest full cohort.
 
-[Dar_044 notebook](Moon/Stage3_Requirements/Dar_044_acquired_environment.ipynb) has **three saved executed code cells, no notebook errors**, and produces **18 tables / 10 plots**. It analysed **2,986 science files across ten source families**, generating 70 series, 45,465 daily rows, 2,469 monthly rows and 874 quarterly rows. This is the declared cohort, **not every downloaded file or an event census**.
+[Dar_044 notebook](Moon/Stage3_Requirements/Dar_044_acquired_environment.ipynb) produces **18 tables / 10 plots**. It analysed **2,986 science files across ten source families**, generating 70 series, 45,465 daily rows, 2,469 monthly rows and 874 quarterly rows. This is the declared cohort, **not every downloaded file or an event census**.
 
 - **Full selected collections:** 1,206 SEE days; 40 P2 monthly files; 30 HFE tables; 36 LDEX tables; all 2.88 million PRP triangles.
 - **Bounded collections:** 82 ESA days; 36 NMS orbit/species files; 74 LEND days, selected by calendar filenames before values were read. LAMP uses stride 4 in 20 maps with aligned support. PSE covers two years of MHZ/ATT, not all three motion axes.
 - **Method:** validate receipts/hashes and labels; screen quality, fill values and clock ambiguity; preserve body, depth, units, modes, gaps and provenance; aggregate UTC months/quarters without filling missing periods. SEE daily band maxima are maxima of daily means, not subdaily flare peaks.
 - **Results:** see the environmental categories above. Contemporary FUV now supports matched-date context comparisons; it does not identify a safest month or prove surface dose/charging. No repeatable lunar-season claim or forecast is made.
-- **Recorded screening checks:** independent raw FUV integrals, binary group decoding, aggregation and registered output hashes are documented with the Dar_044 execution record. These are the earlier screening checks, not a statement that the current standalone scorer is unchanged or its test suite passes. [Execution, cohorts and verification](../data/verification/latest_new_environment_eda.txt).
 - **Handoff:** these are recorded Step 3 research outputs. They did not themselves adopt operational requirements; the separate standalone test policy is configured independently. Equipment response, local exposure, physical hazard rates and applicable limits remain unresolved; missing mandatory evidence stays Unknown.
 
-Reproduce with `.venv/Scripts/python.exe "darrel stuff/EDA/Moon/Stage3_Requirements/stage3_acquired_eda.py"` or the notebook. Use `--sample` only for bounded checks. [Source/PDF applicability](../research/Research_Notes.md#expanded-pdf-library-and-environmental-impact-10-november-2026).
+Reproduce with `.venv/Scripts/python.exe "darrel stuff/EDA/Moon/Stage3_Requirements/stage3_acquired_eda.py"` or the notebook. Use `--sample` only for bounded checks. [Source/PDF applicability](../research/Research_Notes.md#expanded-pdf-library-and-environmental-impact).
 
 <a id="final-comparison-scope"></a>
 ## Final results and findings
@@ -163,7 +268,7 @@ Reproduce with `.venv/Scripts/python.exe "darrel stuff/EDA/Moon/Stage3_Requireme
 
 [Source register](../research/Research_Notes.md) | [Science/model assumptions](../research/lunar_science_models.json) | [Active pipeline guide](../env_pipeline/README.md) | [Archived research comparison](../env_pipeline/legacy_1/README.md)
 
-**Completed-run sources reviewed on 12 November 2026:** latest non-sample completed subject artifacts currently on disk. The synthesis remains its own frozen, pinned handoff; reviewing a newer individual subject run does not silently change that handoff or a pipeline rule.
+**Analysis source references:** non-sample subject artifacts supporting the documented evidence. The synthesis remains its own frozen, pinned handoff; reviewing a newer individual subject run does not silently change that handoff or a pipeline rule.
 
 | Notebook | Recorded analysis source |
 | --- | --- |

@@ -26,6 +26,7 @@ SCORES = {
     "plasma_charging": "plasma_charging_score", "uv": "uv_score",
     "seismic": "seismic_score", "exosphere": "exosphere_score",
     "communications_geometry": "communications_geometry_score",
+    "soil": "soil_score",
 }
 # Keep internal assessment keys compatible; export human-readable CSV headings.
 OUTPUT_COLUMN_NAMES = {
@@ -120,9 +121,9 @@ def validate_config(config):
     if set(metadata) & computed:
         raise ValueError("metadata_columns cannot shadow computed output columns")
     domains = config.get("domains")
-    required = set(SCORES) - {"communications_geometry"}
+    required = set(SCORES) - {"communications_geometry", "soil"}
     if not isinstance(domains, dict) or not required <= set(domains) <= set(SCORES):
-        raise ValueError("Declare the eight environmental domains plus optional communications_geometry; terrain is not supported")
+        raise ValueError("Declare the eight environmental domains plus optional communications_geometry and soil; terrain is not supported")
     groups = config.get("comparison_group_columns", [])
     if not isinstance(groups, list) or any(not isinstance(c, str) or c not in metadata for c in groups) or len(groups) != len(set(groups)):
         raise ValueError("comparison_group_columns must be unique registered metadata columns")
@@ -541,12 +542,12 @@ def run(input_path, output_path, config_path, *, overwrite=False, compact=False)
     writer = csv.DictWriter(stream, fieldnames=[OUTPUT_COLUMN_NAMES.get(c, c) for c in columns], lineterminator="\n")
     if compact:
         domains = [name for name in SCORES if name in config["domains"] and config["domains"][name].get("enabled", True)]
-        writer = csv.DictWriter(stream, fieldnames=["ID", *domains, "hard_gate_status", "Fail Reason", "final_habitability_score"], lineterminator="\n")
+        writer = csv.DictWriter(stream, fieldnames=["ID", *("soil_score" if name == "soil" else name for name in domains), "hard_gate_status", "Fail Reason", "final_habitability_score"], lineterminator="\n")
     writer.writeheader()
     if compact:
         display_score = lambda value: round(value, 2) if value != "" else ""
         writer.writerows({"ID": row["id"],
-                          **{name: display_score(row[SCORES[name]]) for name in domains},
+                          **{("soil_score" if name == "soil" else name): display_score(row[SCORES[name]]) for name in domains},
                           "hard_gate_status": row["hard_gate_status"],
                           "Fail Reason": row["fail_reason"],
                           "final_habitability_score": display_score(row["final_habitability_score"])}
