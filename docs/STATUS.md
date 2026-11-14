@@ -2,50 +2,54 @@
 
 > **Remove before submission.** This is an internal progress log for the team. Delete it before the Space Apps submission on 2026-11-15.
 
-Updated 2026-11-14. It replaces `design/docs/STATUS.md` (Ian, 13 Nov), which is out of date. How the parts fit together is in [architecture.md](architecture.md). Open questions are in [team-blockers.md](team-blockers.md).
+Updated 2026-11-14 (evening). It replaces `design/docs/STATUS.md` (Ian, 13 Nov), which is out of date. How the parts fit together is in [architecture.md](architecture.md). Open questions and every teammate answer are in [team-blockers.md](team-blockers.md).
+
+## Where things stand
+
+- **Branch:** `gareth/app`, in sync with `origin` at `6b11e17` (merge of `main`, which brought Darrel's gated config). The per-check gate evidence below is **not committed yet**.
+- **Pipeline run in the app:** `moon_pipeline/20261114T081013177916Z_da70aa`, region scope, Darrel's gated config. Its terrain and Earth matches are identical to earlier runs; only the environment results changed.
+- **Teammate answers:** Darrel D1–D5, Aarron A1–A4 and Hanxi H1–H3 are all answered and recorded word for word. The whole-team questions T1–T7 are still open.
 
 ## Done
 
 | Area | State |
 | --- | --- |
-| Branch | `main` merged into `gareth/app` (`668bf7c`). Integration and app work committed (`885f127`, `3b5937e`). Scorer hash fix, overview map, linked cursor and featured tiles committed in `acb07e5`. The bug report fixes below are **not committed yet**. `origin/gareth/app` has 3 newer commits (pair page charts, design docs) that also touch `PairPage.tsx` and `app.css` |
-| Scorer hashes | **Bug fixed.** The export hashed the Windows CRLF copies of the scorer files, but git stores LF, so on a host that builds from a clean clone the browser upload would refuse 3 of the 4 scorer files. The export now writes and hashes LF bytes, and `.gitattributes` keeps `app/public/data/` text files LF in every checkout |
-| Overview and pair | Polar overview map of all 7 regions on the front page (regions.json now has each region's `extent_m`). One cursor shared by the four pair grids |
-| Featured tiles | Draft in [featured-tiles.md](featured-tiles.md): 5 per region and a suggested demo path, for the team to choose from (T6) |
-| Bug report fixes | (1) Pair page relief and IDs: **not a data bug.** On all 2,910 tiles, the similarity query ID names the tile's centre cell (top-left + 16) and the drawn grid's p95−p5 range matches the check's relief to within 0.09 m. The check is now labelled "Relief, 5th to 95th percentile" (the patch page shows max − min), and the page explains the three IDs. (2) 32 px gap under card headings fixed. (3) Pair URLs also accept the numeric candidate index, and an unknown ID says what form it expects. (4) With gates off, statuses read "Pass · gates off" with no tick, plus a note. The export reads this from the scorer config (`hard_gates` in environment.json), and the current config defines no gate thresholds at all. (5) Region patch table paged at 50 rows (Leibnitz page 3,592 px instead of 12,111 px) |
-| Python setup | `.venv` with Python 3.12, repo requirements, CPU PyTorch and onnxruntime, on Gareth's Windows machine |
-| Teammate data | Hanxi's inference run and Aarron's dataset, model and embedding cache copied into `data/processed/`. Weights copied into `notebooks/modeling/terrain_similarity/weights/` |
-| Integration | `run_all` fixes G1–G3 (caveat follows the scope, `physical_comparison.csv` copied, POSIX paths). Current run: `moon_pipeline/20261114T023547307090Z_39a681`, region scope |
+| Environment gates | Darrel's config has hard gates on (D1). Artemis: Operations 14 Pass and 3 Fail (eda_007 Connecting Ridge Extension, eda_012, eda_014: Earth visibility below 0.30), Survival 17 Pass. Fail shows the scorer's reason. Whether gates are on is read from the config (`hard_gates` in `environment.json`); an assessment with no active gate would show "Pass · gates off" |
+| Per-check gate evidence (D2, D4) | `run_all` also writes `environment_detailed.csv`. The export uses it after checking it matches the compact file. The scenario page lists each gate under its assessment: value, rule (≥, ≤ or between, and when a duration threshold is capped to a short time window), Pass/Fail/Unknown, the reason for Unknown, and Darrel's "not a NASA limit" rationale. Uploads run in detailed mode and show the same table. The region list is the "General" view (two scores), the scenario page the "Details" view |
+| Strict mode (D5) | A blank required input gives Unknown with a reason (for example "Missing required measurement or time window"), not an error. Checked in the scorer and in a browser upload |
+| Bug report fixes | Pair page relief and IDs: not a data bug (query ID names the centre cell; relief is p95 − p5 vs the patch page's max − min; both match the drawn grid on all 2,910 tiles). Now labelled and explained. Heading gaps fixed. Pair URLs accept the numeric candidate. Region table paged at 50 rows |
+| Scorer hashes | The export writes and hashes LF bytes and `.gitattributes` keeps `app/public/data/` text files LF, so a host building from a clean clone serves files that match their hashes |
+| Overview and pair | Polar overview map of the 7 regions on the front page. One cursor shared by the four pair grids. Slope and elevation distribution charts on the pair page (Ian's commit `b0b4641`) |
+| Featured tiles | Draft in [featured-tiles.md](featured-tiles.md), still valid for the current run (Earth matches unchanged) |
+| Integration | `run_all` writes `environment.csv` (compact) and `environment_detailed.csv`. Fixes G1–G3 |
 | Tile join | All 2,910 tiles have both an Aarron and a Hanxi patch. Their Moon grids agree |
-| Export v2 | `app/scripts/export_data.py` reads the pipeline run. Writes patches with `tile_id`, Moon grids, analogs, Earth candidates and grids, environment, and scorer files (31 MB) |
-| App pages | Region list, region map, patch page (plus best Earth match and region environment), **Earth analogs** (table and OpenStreetMap map), **Moon–Earth pair** (5 checks, 4 grids on shared scales), **environment** list and scenario pages, **environment upload** |
-| Environment upload | Darrel's unmodified scorer in Pyodide 0.28.3 in a Web Worker. Output identical to the CLI for all 83 sample rows. Upload and an invalid file checked in headless Chrome |
-| ONNX | Both CNNs export and match the saved outputs (2.2e-7 and 5.4e-7, no class changes). `app/scripts/check_onnx_parity.py`. Not used by the app yet |
-| Tests | Integration 18 (1 skipped smoke test), app scripts 23, notebooks 79. App type-check and build pass. Scorer parity: 83 rows identical |
-| Accessibility | axe-core: no violations on all 8 routes, light and dark. Keyboard: Tab reaches every control on every page, all with a visible focus style. Not tried with a real screen reader (NVDA) |
-| Docs | `docs/` architecture, team blockers and this status. `app/README.md` updated for schema v2 |
+| App pages | Regions (with polar map), region map and paged table, patch, Earth analogs, Moon–Earth pair, environment list and scenario, environment upload |
+| Environment upload | Darrel's unmodified scorer in Pyodide 0.28.3 in a Web Worker, detailed mode. Output identical to the CLI for all 83 sample rows (`config_sha256` differs only by line endings, so the parity check masks it) |
+| ONNX | Both CNNs export and match the saved outputs (2.2e-7 and 5.4e-7, no class changes). Both scalers are applied outside the ONNX models, so they ship as separate files (A2, H1). Not used by the app yet |
+| Tests | Integration 19 (1 skipped), app scripts 27, notebooks 79. Type-check and build pass. Scorer parity: 83 rows identical |
+| Accessibility | axe-core: no violations on all 8 routes, light and dark. Tab reaches every control with a visible focus style. Not tried with a real screen reader (NVDA) |
 
 ## Not done
 
 - **Deploy:** waiting on the host (T2).
-- **Terrain upload (ONNX):** waiting on the upload scope (T1).
-- **Apollo rows:** exported, but hidden until T3 is answered (`SHOW_APOLLO` in `app/src/pages/EnvironmentPage.tsx`).
+- **Terrain upload (ONNX):** every model question is answered (A1 format: 42 × 42 `.asc` at 30 m, metres, no gaps; A2 and H1/H2: ship both models as ONNX with their scalers and Aarron's embedding bank; H3: show the direct slope rule beside the CNN, never overwriting it). Still waiting on the team's scope decision (T1).
+- **Apollo rows:** exported, hidden until T3 (`SHOW_APOLLO` in `app/src/pages/EnvironmentPage.tsx`). With gates on, all six Apollo rows pass both assessments.
 - **Per-tile environment:** needs the 4 LOLA maps and a `run_all` rerun (T4).
-- **Per-check environment evidence:** waiting on D2 (`--detailed`).
-- **Not checked yet:** slope and height distribution charts, and a pass with a real screen reader.
-- **Darrel's answers (D1, D4, D5)** are in [team-blockers.md](team-blockers.md). D1 still needs one clarification: whether "include all of them" means switching the hard gates on. Changing gates or weights from the upload page is not built.
+- **Darrel's status counts don't fully match ours.** He reported Operations 60/21/2 (matches) and Survival 68 Pass, 11 Fail, 4 Unknown. With the committed config and input we get Survival 70/11/2 (Unknown: dummy_003, dummy_007). Ask him which 4 IDs are Unknown; his run may have used an uncommitted input or config.
 - **Visual design:** placeholder styles only. Gareth is refining the design separately.
+- **Not checked:** a pass with a real screen reader.
 
 ## Next, in order
 
-1. Review and commit the bug report fixes, then merge `origin/gareth/app` (pair page charts).
-2. Host decision (T2), then deploy and check the hosted walkthrough.
-3. Choose featured tiles for the demo (T6) from [featured-tiles.md](featured-tiles.md).
-4. Apply the visual design.
-5. If T1 says yes: terrain upload with ONNX and an `.asc` elevation template.
-6. Submission: demo script, project page, and delete this file.
+1. Review and commit the per-check gate evidence (code, tests, data export and docs).
+2. Ask Darrel about the Survival Unknown count (above).
+3. Host decision (T2), then deploy and check the hosted walkthrough.
+4. Choose featured tiles for the demo (T6) from [featured-tiles.md](featured-tiles.md).
+5. Apply the visual design.
+6. If T1 says yes: terrain upload with ONNX and the `.asc` template.
+7. Submission: demo script, project page, and delete this file.
 
 ## Stale elsewhere
 
-- `design/docs/STATUS.md` and parts of `design/docs/specs/app/` (especially `earth-analogs.md`) describe the situation before integration. Use `docs/` instead.
-- `design/handoff/developer_handoff_2026-11-13.md` lists blockers that are now resolved (see the Resolved table in [team-blockers.md](team-blockers.md)).
+- `design/docs/STATUS.md` and parts of `design/docs/specs/app/` describe earlier states. Use `docs/` instead.
+- `design/handoff/developer_handoff_2026-11-13.md` lists blockers that are now resolved (see [team-blockers.md](team-blockers.md)).

@@ -1,4 +1,4 @@
-import type { Assessment, AssessmentName, AssessmentStatus, EnvironmentDocument, Evidence } from "../data/types";
+import type { Assessment, AssessmentName, AssessmentStatus, EnvironmentDocument, Evidence, GateCheck } from "../data/types";
 import { ToneIcon } from "./StatusBadge";
 import type { Tone } from "./StatusBadge";
 
@@ -95,7 +95,87 @@ export function AssessmentView(props: { title: string; assessment: Assessment; g
           ))}
         </tbody>
       </table>
-      <p className="muted">Per-check values and thresholds are not in this build. These are the scorer's domain summaries.</p>
+      {assessment.gates == null ? (
+        <p className="muted">Per-check values and thresholds are not in this build. These are the scorer's domain summaries.</p>
+      ) : (
+        <GateTable title={title} gates={assessment.gates} coverage={assessment.coverage ?? null} />
+      )}
     </section>
+  );
+}
+
+const number = new Intl.NumberFormat("en", { maximumFractionDigits: 3 });
+
+function quantity(value: number, unit: string): string {
+  const text = number.format(value).replace("-", "−");
+  return unit ? `${text} ${unit}` : text;
+}
+
+/** The rule a gate checks, in words a reader can compare with the value. */
+export function gateRule(check: GateCheck): string {
+  if (check.operator === "between" && check.lower !== null && check.upper !== null) {
+    return `between ${quantity(check.lower, "")} and ${quantity(check.upper, check.unit)}`;
+  }
+  if (check.threshold === null) return "no threshold";
+  const rule = `${check.operator === "above" ? "≥" : "≤"} ${quantity(check.threshold, check.unit)}`;
+  // The scorer shortens a duration threshold that cannot fit in the time window.
+  if (check.configured_threshold !== null && check.window_hours !== null) {
+    return `${rule} (${quantity(check.configured_threshold, check.unit)}, capped to the ${number.format(check.window_hours)} h window)`;
+  }
+  return rule;
+}
+
+/** Every hard gate behind the status: value, rule, verdict and, for Fail or Unknown, the scorer's reason. */
+function GateTable({ title, gates, coverage }: { title: string; gates: GateCheck[]; coverage: string | null }) {
+  if (gates.length === 0) {
+    return <p className="muted">No hard gate applies to {title}, so its status only reflects missing inputs.</p>;
+  }
+  const rationales = [...new Set(gates.map((check) => check.rationale).filter(Boolean))];
+  return (
+    <>
+      <h3 className="subhead">Gate checks</h3>
+      <div className="table-scroll">
+        <table className="patch-table gate-table">
+          <caption>
+            The {gates.length} hard gates behind the {title} status, as the scorer reported them.
+            {coverage ? ` Evidence coverage ${coverage}.` : ""}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Check</th>
+              <th scope="col" className="number">
+                Value
+              </th>
+              <th scope="col">Rule</th>
+              <th scope="col">Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            {gates.map((check) => (
+              <tr key={check.column}>
+                <th scope="row">
+                  {check.label}
+                  <span className="muted gate-domain">{check.domain_label}</span>
+                </th>
+                <td className="number">{check.value === null ? <span className="muted">Missing</span> : quantity(check.value, check.unit)}</td>
+                <td>{gateRule(check)}</td>
+                <td>
+                  <AssessmentBadge status={check.status} />
+                  {/* The scorer repeats the rationale as the reason when a value is present; show only real reasons. */}
+                  {check.status !== "Pass" && check.reason && check.reason !== check.rationale && (
+                    <span className="gate-reason">{check.reason}</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {rationales.map((text) => (
+        <p key={text} className="muted gate-rationale">
+          {text}
+        </p>
+      ))}
+    </>
   );
 }

@@ -405,12 +405,74 @@ class EnvironmentTests(ExportCase):
         self.export()
         self.assertIsNone(self.read("environment.json")["hard_gates"])
 
-    def test_current_team_config_has_every_gate_off(self) -> None:
-        # Guards the "gates off" label against a config change. Update this when the team switches gates on.
+    def test_current_team_config_gates_both_assessments(self) -> None:
+        # Darrel switched gates on for the demo (D1, 2026-11-14 15:00). If this fails, the config changed: the app
+        # shows "Pass · gates off" for any assessment reported False here.
         repo = Path(__file__).resolve().parents[3]
         if not (repo / export_data.SCORER).is_file():
             self.skipTest("scorer not in this checkout")
-        self.assertEqual(export_data.hard_gates(repo, None), {"operations": False, "survival": False})
+        self.assertEqual(export_data.hard_gates(repo, None), {"operations": True, "survival": True})
+
+    def write_detailed(self, rows: list[dict[str, str]], gate_entries: list[dict]) -> None:
+        details = json.dumps({"hard_gate_details": json.dumps(gate_entries)})
+        detailed = [{**row, "operations_coverage": "9/9", "survival_coverage": "4/4",
+                     "operations_details": details, "survival_details": json.dumps({})} for row in rows]
+        write_csv(self.pipeline / "environment_detailed.csv", detailed,
+                  ENVIRONMENT_COLUMNS + ["operations_coverage", "survival_coverage", "operations_details", "survival_details"])
+
+    def test_detailed_output_adds_gate_checks(self) -> None:
+        compact = [environment_row("eda_001", operations_status="Fail", operations_score="",
+                                   operations_fail_reason="earth_visibility: 0.0 below 0.3")]
+        self.write_environment(compact)
+        self.write_detailed(compact, [
+            {"domain": "earth_visibility", "column": "median_earth_visibility_fraction", "unit": "fraction",
+             "value": 0.0, "condition": {"operator": "above_threshold", "threshold": 0.3, "rationale": "demo"},
+             "status": "Failed", "reason": "required >= 0.3"},
+            {"domain": "solar_illumination", "column": "window_continuous_sunlight_hours", "unit": "h", "value": 20.0,
+             "condition": {"operator": "above_threshold", "threshold": 21.6, "cap_to_window_duration": True},
+             "configured_threshold": 24.0, "window_duration_hours": 21.6, "status": "Passed", "reason": ""},
+            {"domain": "plasma_charging", "column": "median_spacecraft_electric_potential_volts", "unit": "V",
+             "value": None, "condition": {"operator": "between", "lower": -15.0, "upper": 10.0},
+             "status": "Unknown", "reason": "Missing required measurement"},
+        ])
+        self.export()
+        operations = self.read("environment.json")["scenarios"][0]["operations"]
+        visibility, sunlight, potential = operations["gates"]
+        self.assertEqual((visibility["status"], visibility["operator"], visibility["threshold"], visibility["value"]),
+                         ("Fail", "above", 0.3, 0.0))
+        self.assertEqual((visibility["label"], visibility["domain_label"]), ("Median earth visibility fraction", "Earth visibility"))
+        self.assertEqual((sunlight["status"], sunlight["threshold"], sunlight["configured_threshold"]), ("Pass", 21.6, 24.0))
+        self.assertEqual((potential["status"], potential["value"], potential["lower"], potential["upper"]),
+                         ("Unknown", None, -15.0, 10.0))
+        self.assertEqual(operations["coverage"], "9/9")
+        # survival_details has no hard_gate_details: detailed output with no gates is an empty list, not None.
+        self.assertEqual(self.read("environment.json")["scenarios"][0]["survival"]["gates"], [])
+
+    def test_compact_only_output_has_no_gate_evidence(self) -> None:
+        self.export()
+        self.assertIsNone(self.read("environment.json")["scenarios"][0]["operations"]["gates"])
+
+    def test_detailed_output_that_disagrees_with_compact_is_rejected(self) -> None:
+        self.write_environment([environment_row("eda_001")])
+        self.write_detailed([environment_row("eda_001", operations_score="99.9")], [])
+        with self.assertRaisesRegex(ExportError, "does not match environment.csv"):
+            self.export()
+
+    def test_malformed_gate_entries_are_rejected(self) -> None:
+        good = {"column": "x", "value": 1.0, "status": "Passed", "condition": {"operator": "below_threshold", "threshold": 2.0}}
+        cases = {
+            "unknown status": {**good, "status": "Maybe"},
+            "unknown operator": {**good, "condition": {"operator": "near", "threshold": 2.0}},
+            "between without bounds": {**good, "condition": {"operator": "between", "lower": 1.0}},
+            "threshold missing": {**good, "condition": {"operator": "above_threshold"}},
+            "value not a number": {**good, "value": "high"},
+        }
+        for name, entry in cases.items():
+            with self.subTest(name):
+                self.write_environment([environment_row("eda_001")])
+                self.write_detailed([environment_row("eda_001")], [entry])
+                with self.assertRaises(ExportError):
+                    self.export()
 
     def test_old_format_and_unknown_ids_are_rejected(self) -> None:
         self.write_environment([{"ID": "eda_001", "final_habitability_score": "50"}],

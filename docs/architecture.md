@@ -91,6 +91,7 @@ Configured by `integration/run_all.json`. It needs the runs listed in [`data/REA
 | `moon_sites.csv` | 2,910 | Hanxi's classes, probabilities and slope figures, plus `env_*` columns |
 | `earth_matches.csv` | 43,650 | 2,910 tiles × 5 Earth sites × top 3. `site_rank`, `overall_rank`, `cosine_similarity`, lat/lon, relief and slope differences, `physical_checks_within_band` |
 | `environment.csv` | 83 | Darrel's compact output (see below) |
+| `environment_detailed.csv` | 83 | The same scoring with `--detailed`: compact columns plus `*_coverage` and `*_details`. The app reads per-gate evidence from it |
 | `environment_sites.csv`, `tile_support.csv` | | Tile scope only: scorer input per tile, and which tiles were measured |
 | `physical_comparison.csv` | 218,250 | The five physical checks behind every match: Moon value, Earth value, tolerance band, in band |
 | `summary.json`, `summary_by_region.csv` | | Counts, best Earth site per region, stage run paths (POSIX), a caveat worded for the environment scope |
@@ -101,7 +102,7 @@ Each stage also keeps its own run folder under `data/processed/` (`moon_tiles/`,
 
 `ID`, then `operations_<domain>_score` (thermal, solar_illumination, dust, plasma_charging, earth_visibility, soil), `survival_<domain>_score` (radiation, thermal, plasma_charging, uv), `operations_status`, `survival_status` (`Pass` / `Fail` / `Unknown`), `operations_fail_reason`, `survival_fail_reason`, `operations_score`, `survival_score`.
 
-Read domain columns by prefix, because the domain list has changed before. `--detailed` adds `*_coverage` and `*_details` (JSON) columns.
+Read domain columns by prefix, because the domain list has changed before. `--detailed` adds `*_coverage` and `*_details` (JSON) columns. Inside `*_details`, `hard_gate_details` is a JSON string: one entry per gate with the column, unit, value, condition (operator and threshold, or lower and upper), status (`Passed`/`Failed`/`Unknown`, shown as Pass/Fail/Unknown) and reason. A duration gate capped to a short window also has `configured_threshold` and `window_duration_hours` (D2).
 
 The 83 rows are 17 Artemis regions (`eda_001`–`eda_017`), 6 Apollo references, and 60 test rows (`synthetic_*`, `dummy_*`). The app never shows the test rows. Only `eda_001`–`eda_007` have terrain. Most input values are assumptions, not measurements (Darrel's README).
 
@@ -117,7 +118,7 @@ Written by `app/scripts/export_data.py` from one `moon_pipeline/<run>/` folder, 
 | `analogs/<region>.json` | Per patch: Moon check values and 15 matches (rank, cosine, bands, in-band flags) | 6.6 MB |
 | `earth/candidates.json` | The 2,222 Earth patches used in any match: site, lat/lon, check values | 0.4 MB |
 | `earth/grids.bin` | Their relative elevation and slope, same format, from Aarron's dataset | 9.1 MB |
-| `environment.json` | 17 Artemis and 6 Apollo scenarios (test rows left out): both assessments, domains read by prefix. `hard_gates` says whether each assessment can fail a gate under the scorer config; the app labels a Pass "gates off" when it can't | small |
+| `environment.json` | 17 Artemis and 6 Apollo scenarios (test rows left out): both assessments, domains read by prefix. `gates` per assessment holds each hard-gate check from the detailed output (null if only compact output was available). `hard_gates` says whether each assessment can fail a gate under the scorer config; the app labels a Pass "gates off" when it can't | small |
 | `environment/` | `sample_input.csv` and the scorer files for the upload, copied with SHA-256 hashes. Only line endings change (to LF, as git stores them), so the hashes match on every checkout and host | small |
 
 Moon grids from Hanxi's and Aarron's tensors agree (checked 2026-11-14), so Moon and Earth grids share one scale on the pair page.
@@ -199,7 +200,7 @@ Questions for teammates are in [team-blockers.md](team-blockers.md).
 
 ## Known caveats
 
-- Hard gates are off in Darrel's config, so all 83 rows are `Pass` and no score is blank. No metric defines a gate threshold either, so switching the toggles on alone would still gate nothing. The app shows "Pass · gates off".
+- Hard gates are on (Darrel, D1, 2026-11-14). The thresholds are project test values, not NASA limits. `pipeline_mode: strict` turns a blank required input into Unknown with a reason. The app labels a Pass "gates off" only for an assessment whose config has no active gate.
 - Two relief measures: the patch page shows Hanxi's max − min (`relative_relief_m`), and the physical checks use Aarron's p95 − p5 (`central_relief_m`). Both come from the same grid.
 - Atacama is the best match for about 88% of tiles. It also has 3,078 of the 5,693 Earth patches.
 - 193 match rows have cosine above 0.95 with 0 of 5 physical checks in band. Keep these visible: they show why physical checks matter.

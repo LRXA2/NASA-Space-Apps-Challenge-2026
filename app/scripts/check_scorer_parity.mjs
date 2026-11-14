@@ -3,8 +3,8 @@
 //
 //   node app/scripts/check_scorer_parity.mjs <reference.csv> [input.csv]
 //
-// <reference.csv>: env_pipeline.py --compact output for the same input, e.g. a moon_pipeline run's
-// environment.csv. [input.csv] defaults to the published sample input.
+// <reference.csv>: env_pipeline.py --detailed output for the same input, e.g. a moon_pipeline run's
+// environment_detailed.csv (the upload scores in detailed mode). [input.csv] defaults to the published sample input.
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -34,12 +34,19 @@ if (!result.ok) {
   console.error(`Scorer error in Pyodide: ${result.error}`);
   process.exit(1);
 }
-const expected = readFileSync(reference, "utf8");
-if (result.csv !== expected) {
-  const got = result.csv.split("\n");
+// Detailed output records the SHA-256 of the config file's bytes. A Windows checkout holds a CRLF copy while
+// the site publishes LF, so that one field can differ with identical rules. Mask it; everything else must match.
+const CONFIG_HASH = /""config_sha256"":""[0-9a-f]{64}""/g;
+const mask = (text) => text.replace(CONFIG_HASH, '""config_sha256"":""<masked>""');
+const raw = readFileSync(reference, "utf8");
+const expected = mask(raw);
+const actual = mask(result.csv);
+if (actual !== expected) {
+  const got = actual.split("\n");
   const want = expected.split("\n");
   const line = got.findIndex((text, index) => text !== want[index]);
   console.error(`Mismatch at line ${line + 1}:\n  pyodide: ${got[line]}\n  cli:     ${want[line]}`);
   process.exit(1);
 }
-console.log(`Pyodide ${pyodide.version}: ${result.scenarios.length} rows identical to ${reference}`);
+const note = raw !== result.csv ? " (config_sha256 differs only because of line endings)" : "";
+console.log(`Pyodide ${pyodide.version}: ${result.scenarios.length} rows identical to ${reference}${note}`);

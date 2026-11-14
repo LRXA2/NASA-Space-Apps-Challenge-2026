@@ -447,6 +447,14 @@ def environment_document(root: Path, pipeline_run: Path, run_id: str, scope: str
     if scope is None or not path.is_file():
         return None
     columns, rows = read_csv(path)
+    detailed = pipeline_run / "environment_detailed.csv"
+    if detailed.is_file():
+        # Same scoring with each gate's evidence added. Use it only if it agrees with the compact file.
+        detailed_columns, detailed_rows = read_csv(detailed)
+        missing = [name for name in columns if name not in detailed_columns]
+        if missing or [{c: r[c] for c in columns} for r in detailed_rows] != rows:
+            raise ExportError("environment_detailed.csv does not match environment.csv: rerun integration.run_all")
+        columns, rows = detailed_columns, detailed_rows
     try:
         scenarios = scenarios_from_rows(columns, rows)
     except EnvironmentDataError as error:

@@ -128,11 +128,36 @@ export interface EarthDocument {
 export type AssessmentStatus = "Pass" | "Fail" | "Unknown";
 export type AssessmentName = "operations" | "survival";
 
+/** One hard-gate check, copied from the scorer's detailed output (hard_gate_details). */
+export interface GateCheck {
+  domain: string;
+  domain_label: string;
+  column: string;
+  label: string;
+  unit: string;
+  /** Null when the input was missing: the check is then Unknown. */
+  value: number | null;
+  operator: "above" | "below" | "between";
+  threshold: number | null;
+  lower: number | null;
+  upper: number | null;
+  /** Set only when the scorer capped the threshold to a shorter time window. */
+  configured_threshold: number | null;
+  window_hours: number | null;
+  status: AssessmentStatus;
+  reason: string;
+  rationale: string;
+}
+
 export interface Assessment {
   status: AssessmentStatus;
   score: number | null;
   fail_reasons: string[];
   domains: { name: string; label: string; score: number | null }[];
+  /** Null or missing: compact output, so per-check evidence is not available. */
+  gates?: GateCheck[] | null;
+  /** The scorer's evidence coverage, for example "9/9". */
+  coverage?: string | null;
 }
 
 export type ScenarioKind = "artemis" | "apollo" | "uploaded";

@@ -50,6 +50,15 @@ class RunAllTests(unittest.TestCase):
         self.assertTrue({'ID', 'operations_score', 'survival_score'} <= set(frame.columns))
         self.assertIsNone(score_environment(ROOT, PipelineConfig(terrain_run='x'), Path('unused.csv')))
 
+    def test_detailed_output_matches_compact_and_adds_gate_details(self):
+        config = load_config(DEFAULT_CONFIG)
+        with tempfile.TemporaryDirectory() as folder:
+            compact = pd.read_csv(score_environment(ROOT, config, Path(folder) / 'c.csv'), keep_default_na=False)
+            detailed = pd.read_csv(score_environment(ROOT, config, Path(folder) / 'd.csv', detailed=True),
+                                   keep_default_na=False)
+        self.assertTrue({'operations_details', 'survival_details'} <= set(detailed.columns))
+        pd.testing.assert_frame_equal(detailed[compact.columns], compact)
+
     def test_environment_scorer_failure_is_reported(self):
         config = PipelineConfig(terrain_run='x', environment_input='missing/sites.csv')
         with tempfile.TemporaryDirectory() as folder, self.assertRaisesRegex(RuntimeError, 'scorer failed'):

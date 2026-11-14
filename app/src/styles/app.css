@@ -940,6 +940,25 @@ details.card[open] > summary {
 }
 
 /* A table right under a card heading: the heading's margin is enough. Its own top margin left a 32 px gap. */
-.card h2 + .table-scroll > .patch-table {
+.card h2 + .table-scroll > .patch-table,
+.subhead + .table-scroll > .patch-table {
   margin-top: 0;
+}
+
+/* Gate checks under an assessment (scenario page and upload details). */
+.gate-table .gate-domain,
+.gate-table .gate-reason {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+.gate-table .gate-reason {
+  margin-top: 4px;
+  color: var(--text-secondary);
+}
+
+.gate-rationale {
+  margin: 4px 0;
+  font-size: 0.8125rem;
 }

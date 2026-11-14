@@ -1,6 +1,6 @@
 # Featured tiles (draft for T6)
 
-Draft for the team to choose from, 2026-11-14. Picked by a script from `moon_pipeline/20261114T023547307090Z_39a681` (region environment scope). The team still decides the final 3–5 per region ([T6](team-blockers.md)).
+Draft for the team to choose from, 2026-11-14. Picked by a script from `moon_pipeline/20261114T023547307090Z_39a681` (region environment scope). Still valid for the current run `20261114T081013177916Z_da70aa`: its Earth matches and terrain classes are identical. The team still decides the final 3–5 per region ([T6](team-blockers.md)).
 
 ## How they were picked
 

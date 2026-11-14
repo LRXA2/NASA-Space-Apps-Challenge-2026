@@ -22,12 +22,16 @@ class ScoreUploadTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             reference = Path(folder) / "cli.csv"
             subprocess.run([sys.executable, str(SCORER / "env_pipeline.py"), "--input", str(SAMPLE),
-                            "--output", str(reference), "--compact"], check=True, capture_output=True)
+                            "--output", str(reference), "--detailed"], check=True, capture_output=True)
             result = json.loads(score(SAMPLE.read_text(encoding="utf-8-sig"), str(SCORER)))
             self.assertTrue(result["ok"], result.get("error"))
             self.assertEqual(result["csv"], reference.read_text(encoding="utf-8"))
         self.assertEqual(len(result["scenarios"]), 83)
         self.assertTrue(all(row["kind"] == "uploaded" for row in result["scenarios"]))
+        # Detailed mode: every row carries its gate checks, with Pass/Fail rather than Passed/Failed.
+        statuses = {g["status"] for row in result["scenarios"] for a in ("operations", "survival") for g in row[a]["gates"]}
+        self.assertLessEqual(statuses, {"Pass", "Fail", "Unknown"})
+        self.assertIn("Fail", statuses)
 
     def test_invalid_uploads_return_the_scorer_message(self) -> None:
         header, first, *_ = SAMPLE.read_text(encoding="utf-8-sig").splitlines()

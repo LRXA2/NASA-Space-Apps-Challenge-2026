@@ -28,7 +28,8 @@ def score(csv_text: str, folder: str) -> str:
         source, output = Path(work) / "upload.csv", Path(work) / "results.csv"
         source.write_text(csv_text, encoding="utf-8", newline="")
         try:
-            env_pipeline.run(source, output, config, overwrite=True, compact=True)
+            # Detailed output: the compact columns plus each hard gate's value, threshold and verdict.
+            env_pipeline.run(source, output, config, overwrite=True, compact=False)
         except SCORER_ERRORS as error:
             return json.dumps({"ok": False, "error": f"Environmental pipeline error: {error}"})
         text = output.read_text(encoding="utf-8")

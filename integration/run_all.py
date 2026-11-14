@@ -11,6 +11,7 @@ script records them and copies the files the app export reads into one
 - `earth_matches.csv`: top-k Earth patches per tile for every Earth site
 - `physical_comparison.csv`: the five physical checks behind every match
 - `environment.csv`: the environment scorer's compact output, when configured
+- `environment_detailed.csv`: the same scoring with `--detailed` (adds each hard gate's value, threshold and verdict)
 - `environment_sites.csv` and `tile_support.csv`: the per-tile scorer input and
   which tiles had their map columns measured (`environment_scope` = "tile")
 - `summary.json`: per-region counts, best-matching Earth sites and stage runs
@@ -97,15 +98,16 @@ def select_regions(available: list[str], wanted: tuple[str, ...] | None) -> list
     return sorted(set(chosen))
 
 
-def score_environment(root: Path, config: PipelineConfig, output: Path, sites: Path | None = None) -> Path | None:
-    """Run the environment scorer's compact export into `output`, if configured.
+def score_environment(root: Path, config: PipelineConfig, output: Path, sites: Path | None = None,
+                      *, detailed: bool = False) -> Path | None:
+    """Run the environment scorer's compact (or detailed) export into `output`, if configured.
 
     `sites` replaces the configured input, e.g. with per-tile rows.
     """
     if config.environment_input is None:
         return None
     command = [sys.executable, str(root / ENVIRONMENT_SCORER), '--input', str(sites or root / config.environment_input),
-               '--output', str(output), '--compact', '--overwrite']
+               '--output', str(output), '--detailed' if detailed else '--compact', '--overwrite']
     if config.environment_config:
         command += ['--config', str(root / config.environment_config)]
     result = subprocess.run(command, cwd=root, capture_output=True, text=True)
@@ -141,6 +143,8 @@ def run_all(root: Path, config: PipelineConfig) -> Path:
             for path in map_paths(root).values():
                 run.input(path)
         environment = score_environment(root, config, run.path('environment.csv'), sites_input)
+        # Same input and config: the app reads per-gate evidence from this one.
+        score_environment(root, config, run.path('environment_detailed.csv'), sites_input, detailed=True)
         stages['moon_sites'] = moon_sites.build(
             root, Path(config.terrain_run), None if environment is None else environment.relative_to(root))
 
