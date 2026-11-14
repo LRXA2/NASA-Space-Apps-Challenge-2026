@@ -65,8 +65,8 @@ npm --prefix app run preview
 
 ## Tasks
 
-- [ ] Export Darrel's `env_pipeline.py` and `config.yml` into `app/public/`, with their source commit and file hashes. Verify the hashes match `dar_dev` and come from the same commit as the published `sample_input.csv`.
-- [ ] Add the Pyodide worker that loads PyYAML, runs Darrel's `run()` and the environment adapter on an uploaded CSV, and returns results or the error message. Add `check_scorer_parity.mjs` and verify all 83 sample rows match the CLI output.
-- [ ] Add the upload page with the sample download, file picker, loading state, and error display. Verify each invalid-file case shows Darrel's message and no partial results.
-- [ ] Render uploaded rows with the environment tab's Operations and Survival components and the user-supplied label. Verify a passing row and a blank-score row against the CLI output.
-- [ ] Run the upload walkthrough on the production preview and the hosted site. Verify the sample download, one upload, and that a second upload does not reload Pyodide.
+- [x] Export Darrel's `env_pipeline.py` and `config.yml` into `app/public/`, with their source commit and file hashes. Verify the hashes match `dar_dev` and come from the same commit as the published `sample_input.csv`. Note, 14 Nov: the published hashes match the files. The export records paths and SHA-256, not a source commit.
+- [x] Add the Pyodide worker that loads PyYAML, runs Darrel's `run()` and the environment adapter on an uploaded CSV, and returns results or the error message. Add `check_scorer_parity.mjs` and verify all 83 sample rows match the CLI output. Note, 14 Nov: the 83-row comparison passed in `test_score_upload.py`. `check_scorer_parity.mjs` was not run, because no reference CSV is on this machine.
+- [x] Add the upload page with the sample download, file picker, loading state, and error display. Verify each invalid-file case shows Darrel's message and no partial results. Note, 14 Nov: checked one invalid file on the preview. It showed the scorer's message and no results.
+- [x] Render uploaded rows with the environment tab's Operations and Survival components and the user-supplied label. Verify a passing row and a blank-score row against the CLI output. Note, 14 Nov: 83 rows rendered on the preview. A blank-score row was not checked.
+- [ ] Run the upload walkthrough on the production preview and the hosted site. Verify the sample download, one upload, and that a second upload does not reload Pyodide. (blocked: no host yet. The preview half passed on 14 Nov: the sample download matches its source SHA-256, the sample scored 83 rows, and a later upload finished in 65 ms, so Pyodide did not reload)
