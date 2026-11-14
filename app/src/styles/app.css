@@ -2283,3 +2283,334 @@ h1.display {
     display: none;
   }
 }
+
+/* ───────── Patch page: closest Earth terrain banner ───────── */
+.analog-banner-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+}
+
+.analog-banner-body > div {
+  flex: 1 1 480px;
+}
+
+.analog-banner-body p {
+  margin: 0 0 10px;
+}
+
+.analog-banner-body p:last-child {
+  margin-bottom: 0;
+}
+
+.analog-banner-facts {
+  font-size: 17px;
+}
+
+/* ───────── Analogs page: callouts and sort ───────── */
+.callouts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(220px, 0.8fr);
+  align-items: stretch;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.callout {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel-fill);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.callout:hover {
+  color: var(--text-primary);
+}
+
+.has-fit .callout-shape {
+  border-color: rgba(228, 128, 105, 0.45);
+}
+
+.callout-fit {
+  border-color: rgba(98, 194, 173, 0.5);
+}
+
+.callout:hover .callout-site {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.callout-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.callout-site {
+  font: 600 22px/1.25 var(--font-display);
+}
+
+.callout-cosine {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.callout-checks {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.callout-note {
+  align-self: center;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.sort-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 14px;
+  margin-bottom: 12px;
+}
+
+.row-tag {
+  margin-left: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tag-shape {
+  color: var(--status-critical);
+}
+
+.tag-fit {
+  color: var(--status-good);
+}
+
+@media (max-width: 1000px) {
+  .callouts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ───────── Pair page: rank tabs and check bands ───────── */
+.rank-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 4px 0 20px;
+}
+
+.rank-tab {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-height: 56px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-inner);
+  background: rgba(12, 15, 46, 0.6);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.rank-tab:hover {
+  border-color: var(--select-line);
+  color: var(--text-primary);
+}
+
+.rank-tab[aria-current="page"] {
+  border-color: var(--accent);
+  background: var(--select);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.rank-tab-title {
+  font: 500 15px var(--font-display);
+}
+
+.rank-tab .badge-small {
+  align-self: flex-start;
+}
+
+.check-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.check-key li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.check-bands {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 6px 40px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.check-band {
+  padding: 12px 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.check-band-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+
+.check-band-label {
+  font: 600 15px var(--font-display);
+}
+
+.check-band-track {
+  position: relative;
+  height: 20px;
+  margin: 10px 0 6px;
+}
+
+.check-band-plot {
+  display: block;
+  width: 100%;
+  height: 20px;
+}
+
+.check-band-axis {
+  stroke: var(--hairline);
+  vector-effect: non-scaling-stroke;
+}
+
+.check-band-range {
+  fill: rgba(56, 189, 248, 0.12);
+  stroke: rgba(56, 189, 248, 0.45);
+  vector-effect: non-scaling-stroke;
+}
+
+.marker-moon,
+.marker-earth {
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translate(-50%, -50%);
+}
+
+.marker-moon {
+  border: 1.5px solid var(--surface-page);
+  border-radius: 50%;
+  background: var(--moon);
+}
+
+.marker-earth {
+  border: 1.5px solid var(--surface-page);
+  background: var(--earth);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.marker-moon.is-key,
+.marker-earth.is-key {
+  position: static;
+  display: inline-block;
+  transform: none;
+}
+
+.marker-earth.is-key {
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+}
+
+.band-key {
+  display: inline-block;
+  width: 22px;
+  height: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  border-radius: 2px;
+  background: rgba(56, 189, 248, 0.12);
+}
+
+.check-band-values {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 16px;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* ───────── Environment page summary ───────── */
+.env-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 40px;
+  margin-top: 20px;
+  padding: 18px 24px;
+}
+
+.env-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin: 0;
+}
+
+.env-counts dt {
+  margin-bottom: 4px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.env-counts dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin: 0;
+}
+
+.env-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.env-summary-note {
+  flex: 1 1 360px;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.env-summary-note strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.patch-table tbody th .region-number {
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+}

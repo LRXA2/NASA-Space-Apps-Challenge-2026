@@ -9,11 +9,13 @@ import type { Cell } from "../components/TerrainCanvas";
 import {
   candidateOf,
   checkLabel,
+  bestFit,
   checksWithin,
   findMatch,
   loadEarthTerrain,
   loadMoonTerrain,
   loadPatchAnalogs,
+  shortSiteName,
   siteName,
 } from "../data/analogs";
 import type { PatchAnalogs } from "../data/analogs";
@@ -40,7 +42,9 @@ async function loadPair(region: string, patch: string, candidateId: string): Pro
   const matches = base.tile?.matches ?? [];
   const match = findMatch(base.earth, matches, candidateId);
   if (!match) {
-    const example = matches[0] ? ` For example ${candidateOf(base.earth, matches[0]).id} (or its number, ${matches[0].candidate}).` : "";
+    const example = matches[0]
+      ? ` For example ${candidateOf(base.earth, matches[0]).id} (or its number, ${matches[0].candidate}).`
+      : "";
     throw new DataError(
       `"${candidateId}" is not one of this patch's Earth matches. The address ends with an Earth patch ID from its match list.${example}`,
     );
@@ -87,7 +91,8 @@ function Grids({ pair }: { pair: Pair }) {
   const slopeScale = { kind: "slope" as const, min: 0, max: slopeMax };
   const elevationScale = { kind: "elevation" as const, min: -elevationMax, max: elevationMax };
   const slopeNote = "Brighter is steeper. Moon and Earth share this slope scale.";
-  const elevationNote = "Lighter is higher: height above or below the patch's own reference. Moon and Earth share this scale.";
+  const elevationNote =
+    "Lighter is higher: height above or below the patch's own reference. Moon and Earth share this scale.";
   return (
     <>
       <div className="pair-grid">
@@ -130,6 +135,93 @@ function format(value: number): string {
   return Math.abs(value) >= 100 ? value.toFixed(0) : Math.abs(value) >= 1 ? value.toFixed(2) : value.toFixed(3);
 }
 
+/** A signed difference: "+0.884" or "−0.316". */
+function signed(value: number): string {
+  return value < 0 ? `−${format(-value)}` : `+${format(value)}`;
+}
+
+/** Links to the other candidates worth comparing: this one, rank 1 or the best physical fit, and all matches. */
+function RankTabs({ pair }: { pair: Pair }) {
+  const { patches, record, match, earth, tile } = pair;
+  const matches = tile?.matches ?? [];
+  const first = matches[0];
+  const fit = bestFit(matches);
+  // The other tab is rank 1, or, when this is rank 1, the best physical fit.
+  const other = first && first !== match ? first : fit && fit !== match ? fit : undefined;
+  const tab = (entry: AnalogMatch, current: boolean) => {
+    const candidate = candidateOf(earth, entry);
+    return (
+      <a
+        key={candidate.id}
+        className="rank-tab"
+        href={links.pair(patches.region.slug, record.slug, candidate.id)}
+        aria-current={current ? "page" : undefined}
+      >
+        <span className="rank-tab-title">
+          Rank {entry.overall_rank} · {shortSiteName(earth, candidate.site)}
+        </span>
+        <CheckCount within={checksWithin(entry)} total={entry.within.length} />
+      </a>
+    );
+  };
+  return (
+    <nav className="rank-tabs" aria-label="Compare another match">
+      {tab(match, true)}
+      {other && tab(other, false)}
+      <a className="rank-tab" href={links.analogs(patches.region.slug, record.slug)}>
+        <span className="rank-tab-title">All {matches.length} matches</span>
+      </a>
+    </nav>
+  );
+}
+
+/**
+ * One physical check as a band: the allowed band around the Moon value, a Moon dot and an Earth diamond.
+ * The numbers are written out beside it, so the drawing is decorative.
+ */
+function CheckBand(props: { label: string; moon: number; earth: number; band: number; within: boolean }) {
+  const { moon, earth, band } = props;
+  const reach = Math.max(band * 1.6, Math.abs(earth - moon) * 1.25, 1e-9);
+  const low = moon - reach;
+  const x = (value: number) => 4 + Math.max(0, Math.min(1, (value - low) / (2 * reach))) * 292;
+  const earthX = x(earth);
+  return (
+    <li className="check-band">
+      <div className="check-band-head">
+        <span className="check-band-label">{props.label}</span>
+        <InBand within={props.within} />
+      </div>
+      <div className="check-band-track" aria-hidden="true">
+        <svg className="check-band-plot" viewBox="0 0 300 20" preserveAspectRatio="none">
+          <line className="check-band-axis" x1="0" x2="300" y1="10" y2="10" />
+          <rect
+            className="check-band-range"
+            x={x(moon - band)}
+            width={x(moon + band) - x(moon - band)}
+            y="3"
+            height="14"
+            rx="2"
+          />
+        </svg>
+        <span className="marker-moon" style={{ left: `${(x(moon) / 300) * 100}%` }} />
+        <span className="marker-earth" style={{ left: `${(earthX / 300) * 100}%` }} />
+      </div>
+      <p className="check-band-values">
+        <span>
+          Moon <span className="data">{format(moon)}</span>
+        </span>
+        <span>
+          Earth <span className="data text-earth">{format(earth)}</span>
+        </span>
+        <span>
+          Difference <span className="data">{signed(earth - moon)}</span> of{" "}
+          <span className="data">±{format(band)}</span>
+        </span>
+      </p>
+    </li>
+  );
+}
+
 export function PairPage({ region, patch, candidate }: { region: string; patch: string; candidate: string }) {
   const loaded = useData(`pair:${region}/${patch}/${candidate}`, () => loadPair(region, patch, candidate));
   const title = loaded.status === "ready" ? `Moon–Earth pair · Patch ${patch}` : "Moon–Earth pair";
@@ -155,8 +247,9 @@ export function PairPage({ region, patch, candidate }: { region: string; patch: 
         <a href={links.patch(patches.region.slug, record.slug)}>Patch {record.slug}</a> ›{" "}
         <a href={links.analogs(patches.region.slug, record.slug)}>Earth analogs</a> › Rank {match.overall_rank}
       </nav>
+      <RankTabs pair={pair} />
       <h1>
-        {patches.region.name} and {site}
+        <span className="text-moon">{patches.region.name}</span> and <span className="text-earth">{site}</span>
       </h1>
       <p className="lede">
         Rank {match.overall_rank} of {tile?.matches.length}. Cosine similarity {match.cosine.toFixed(3)}.{" "}
@@ -178,51 +271,34 @@ export function PairPage({ region, patch, candidate }: { region: string; patch: 
 
       <section className="card" aria-labelledby="checks-title">
         <h2 id="checks-title">Physical checks</h2>
-        {/* Focusable so the table can be scrolled by keyboard on a narrow screen. */}
-        <div className="table-scroll" tabIndex={0} role="region" aria-label="Physical checks table, scrolls sideways">
-          <table className="patch-table">
-            <caption>
-              Values from the similarity pipeline. Difference is Earth minus Moon. Relief here is the 5th to 95th
-              percentile height range, so it is lower than the patch page's highest-minus-lowest relief.
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">Measurement</th>
-                <th scope="col" className="number">
-                  Moon
-                </th>
-                <th scope="col" className="number">
-                  Earth
-                </th>
-                <th scope="col" className="number">
-                  Difference
-                </th>
-                <th scope="col" className="number">
-                  Tolerance
-                </th>
-                <th scope="col">Result</th>
-              </tr>
-            </thead>
-            <tbody>
-              {earth.checks.map((check, index) => {
-                const moonValue = tile?.moon_checks[index] ?? Number.NaN;
-                const earthValue = pair.candidate.checks[index];
-                return (
-                  <tr key={check.name}>
-                    <th scope="row">{checkLabel(check)}</th>
-                    <td className="number">{format(moonValue)}</td>
-                    <td className="number">{format(earthValue)}</td>
-                    <td className="number">{format(earthValue - moonValue).replace("-", "−")}</td>
-                    <td className="number">±{format(match.bands[index])}</td>
-                    <td>
-                      <InBand within={match.within[index]} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <ul className="check-key" aria-hidden="true">
+          <li>
+            <span className="marker-moon is-key" /> Moon
+          </li>
+          <li>
+            <span className="marker-earth is-key" /> Earth
+          </li>
+          <li>
+            <span className="band-key" /> Allowed band around the Moon value
+          </li>
+        </ul>
+        <ul className="check-bands">
+          {earth.checks.map((check, index) => (
+            <CheckBand
+              key={check.name}
+              label={checkLabel(check)}
+              moon={tile?.moon_checks[index] ?? Number.NaN}
+              earth={pair.candidate.checks[index]}
+              band={match.bands[index]}
+              within={match.within[index]}
+            />
+          ))}
+        </ul>
+        <p className="muted">
+          Values from the similarity pipeline. Difference is Earth minus Moon, against the pipeline's own tolerance for
+          that measurement. Relief here is the 5th to 95th percentile height range, so it is lower than the patch page's
+          highest-minus-lowest relief.
+        </p>
       </section>
 
       <section className="card" aria-labelledby="pair-terrain-title">

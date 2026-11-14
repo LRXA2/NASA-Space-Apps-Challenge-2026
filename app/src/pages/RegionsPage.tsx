@@ -8,6 +8,7 @@ import { PolarOverview } from "../components/PolarOverview";
 import { SkyPanel } from "../components/SkyPanel";
 import { ToneIcon } from "../components/StatusBadge";
 import {
+  bestFit,
   candidateOf,
   checksWithin,
   loadEarthTerrain,
@@ -286,14 +287,6 @@ function slopeOf(channels: TerrainChannel[]): TerrainChannel {
   const found = channels.find((entry) => entry.name === "slope_deg");
   if (!found) throw new DataError("The terrain file does not hold slope.");
   return found;
-}
-
-/** The match with the most physical checks in band. Ties go to the better rank. */
-function bestFit(matches: AnalogMatch[]): AnalogMatch | undefined {
-  return matches.reduce<AnalogMatch | undefined>(
-    (best, match) => (!best || checksWithin(match) > checksWithin(best) ? match : best),
-    undefined,
-  );
 }
 
 function PairTiles({ base, first, fit }: { base: PatchAnalogs; first: AnalogMatch; fit: AnalogMatch }) {

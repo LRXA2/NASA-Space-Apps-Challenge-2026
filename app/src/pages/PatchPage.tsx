@@ -8,7 +8,7 @@ import { StatusBadge, classLabel } from "../components/StatusBadge";
 import { TerrainCanvas } from "../components/TerrainCanvas";
 import { CheckCount } from "../components/CheckCount";
 import { AssessmentBadge, FinalScore, gatesOff } from "../components/AssessmentView";
-import { candidateOf, checksWithin, loadPatchAnalogs, poolLabel, siteName } from "../data/analogs";
+import { bestFit, candidateOf, checksWithin, loadPatchAnalogs, poolLabel, siteName } from "../data/analogs";
 import { DataError, decodePatch, loadEnvironment, loadGridFile } from "../data/loaders";
 import type { PatchRecord, PatchesDocument, RoverClass, TerrainChannel, WalkingClass } from "../data/types";
 import { useData } from "../data/useData";
@@ -37,28 +37,90 @@ async function loadTerrain(document: PatchesDocument, record: PatchRecord): Prom
   return decodePatch(await loadGridFile(document.grid), document.grid, record.grid_offset);
 }
 
-/** The best Earth match and a link to all of them. Similarity is a separate question from the classes above. */
-function AnalogSummary({ region, patch }: { region: string; patch: string }) {
+/**
+ * "Closest Earth terrain by shape": the rank 1 match, its cosine and its physical checks, with a warning when none
+ * of the checks is in band and the better physical fit when another match has more checks in band.
+ */
+function AnalogBanner({ region, patch }: { region: string; patch: string }) {
   const loaded = useData(`analogs:${region}/${patch}`, () => loadPatchAnalogs(region, patch));
-  if (loaded.status === "loading") return <p role="status">Loading Earth analogs…</p>;
-  if (loaded.status === "error") return <p className="inline-error" role="alert">{loaded.message}</p>;
+  if (loaded.status === "loading") {
+    return (
+      <section className="card analog-banner" aria-label="Closest Earth terrain by shape">
+        <p role="status">Loading Earth analogs…</p>
+      </section>
+    );
+  }
+  if (loaded.status === "error") {
+    return (
+      <p className="inline-error" role="alert">
+        {loaded.message}
+      </p>
+    );
+  }
   const { tile, earth, analogs } = loaded.data;
-  if (!tile) return <p className="muted">No Earth search was run for this patch.</p>;
-  const best = tile.matches[0];
-  const candidate = candidateOf(earth, best);
+  if (!tile || tile.matches.length === 0) {
+    return (
+      <section className="card analog-banner" aria-labelledby="analog-banner-title">
+        <h2 id="analog-banner-title">Closest Earth terrain by shape</h2>
+        <p className="muted">No Earth search was run for this patch.</p>
+      </section>
+    );
+  }
+  const first = tile.matches[0];
+  const within = checksWithin(first);
+  const total = first.within.length;
+  const fit = bestFit(tile.matches);
+  const betterFit = fit && checksWithin(fit) > within ? fit : undefined;
+  const count = tile.matches.length;
   return (
-    <>
-      <p>
-        Closest match: <strong>{siteName(earth, candidate.site)}</strong>, cosine {best.cosine.toFixed(3)},{" "}
-        <CheckCount within={checksWithin(best)} total={best.within.length} /> physical checks in band.
-      </p>
-      <p className="muted">
-        Searched {poolLabel(analogs, earth)}. Cosine is a similarity measure, not a percentage.
-      </p>
-      <p>
-        <a href={links.analogs(region, patch)}>See all {tile.matches.length} Earth matches and the map</a>
-      </p>
-    </>
+    <section className="card analog-banner" aria-labelledby="analog-banner-title">
+      <div className="panel-head">
+        <h2 id="analog-banner-title">
+          Closest Earth terrain by shape:{" "}
+          <span className="text-earth">{siteName(earth, candidateOf(earth, first).site)}</span>
+        </h2>
+        <span className="chip">
+          Similarity rank {first.overall_rank} of {count}
+        </span>
+      </div>
+      <div className="analog-banner-body">
+        <div>
+          <p className="analog-banner-facts">
+            Cosine <span className="data">{first.cosine.toFixed(3)}</span>, rank {first.overall_rank} of {count}.{" "}
+            <CheckCount within={within} total={total} /> physical checks in band.
+            {betterFit && (
+              <>
+                {" "}
+                Rank {betterFit.overall_rank}, {siteName(earth, candidateOf(earth, betterFit).site)}, has{" "}
+                {checksWithin(betterFit)} of {total} in band and fits this patch better.
+              </>
+            )}
+          </p>
+          {within === 0 && (
+            <p className="gates-note">
+              None of the {total} physical checks is in band. This terrain looks alike to the model but measures
+              different: read the checks before using it as an analog.
+            </p>
+          )}
+          <p className="muted">
+            Searched {poolLabel(analogs, earth)}. Cosine is a shape similarity, not a percentage or a suitability
+            rating.
+          </p>
+        </div>
+        <a className="button" href={links.analogs(region, patch)}>
+          Compare all {count} Earth matches
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+            <path
+              d="M3 9h11M10 4.6L14.4 9 10 13.4"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </a>
+      </div>
+    </section>
   );
 }
 
@@ -130,7 +192,8 @@ function Terrain({ document, record }: { document: PatchesDocument; record: Patc
 
 export function PatchPage({ region, patch }: { region: string; patch: string }) {
   const loaded = useData(`patch:${region}/${patch}`, () => loadPatch(region, patch));
-  const title = loaded.status === "ready" ? `Patch ${loaded.data.record.slug} · ${loaded.data.document.region.name}` : "Patch";
+  const title =
+    loaded.status === "ready" ? `Patch ${loaded.data.record.slug} · ${loaded.data.document.region.name}` : "Patch";
   useEffect(() => {
     document.title = `${title} · Lunar Analog Finder`;
   }, [title]);
@@ -169,7 +232,11 @@ export function PatchPage({ region, patch }: { region: string; patch: string }) 
           <ProbabilityBars
             caption="Model probability for each rover class"
             predicted={record.rover.class}
-            rows={ROVER_ORDER.map((key) => ({ key, label: classLabel(key), probability: record.rover.probabilities[key] }))}
+            rows={ROVER_ORDER.map((key) => ({
+              key,
+              label: classLabel(key),
+              probability: record.rover.probabilities[key],
+            }))}
           />
         </section>
         <section className="card" aria-labelledby="walking-title">
@@ -195,16 +262,12 @@ export function PatchPage({ region, patch }: { region: string; patch: string }) 
         </section>
       </div>
 
-      <div className="cards">
-        <section className="card" aria-labelledby="analogs-title">
-          <h2 id="analogs-title">Earth analogs</h2>
-          <AnalogSummary region={patches.region.slug} patch={record.slug} />
-        </section>
-        <section className="card" aria-labelledby="environment-title">
-          <h2 id="environment-title">Environment</h2>
-          <EnvironmentSummary regionSourceId={patches.region.source_id} />
-        </section>
-      </div>
+      <AnalogBanner region={patches.region.slug} patch={record.slug} />
+
+      <section className="card" aria-labelledby="environment-title">
+        <h2 id="environment-title">Region environment</h2>
+        <EnvironmentSummary regionSourceId={patches.region.source_id} />
+      </section>
 
       <section className="card" aria-labelledby="measured-title">
         <h2 id="measured-title">Measured from the terrain grid</h2>

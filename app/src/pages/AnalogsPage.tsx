@@ -5,7 +5,8 @@ import type { EarthMarker } from "../components/EarthMap";
 import { Limitations } from "../components/Limitations";
 import { Loading, PageMessage } from "../components/PageState";
 import { CheckCount } from "../components/CheckCount";
-import { candidateOf, checksWithin, loadPatchAnalogs, poolLabel, siteName } from "../data/analogs";
+import { bestFit, candidateOf, checksWithin, loadPatchAnalogs, poolLabel, siteName } from "../data/analogs";
+import type { AnalogMatch, EarthCandidate, EarthDocument } from "../data/types";
 import { useData } from "../data/useData";
 import { links } from "../router";
 
@@ -17,6 +18,40 @@ const LIMITS = [
   "The Earth simulation-readiness score (climate, land cover, access) has not been computed.",
 ];
 
+type Sort = "shape" | "fit";
+
+const SORTS: { value: Sort; label: string; caption: string }[] = [
+  { value: "shape", label: "Shape similarity", caption: "in rank order (cosine similarity)" },
+  { value: "fit", label: "Physical fit", caption: "by physical checks in band, then by rank" },
+];
+
+// The chosen order stays while the user moves between patches. It is not part of the URL.
+let chosenSort: Sort = "shape";
+
+/** "Most similar shape" (rank 1) or "Best physical fit" (most checks in band): a link to that pair. */
+function Callout(props: {
+  kind: "shape" | "fit";
+  match: AnalogMatch;
+  candidate: EarthCandidate;
+  earth: EarthDocument;
+  href: string;
+}) {
+  const { kind, match, candidate, earth } = props;
+  return (
+    <a className={`callout callout-${kind}`} href={props.href}>
+      <span className="callout-label">
+        {kind === "shape" ? "Most similar shape" : "Best physical fit"} · rank {match.overall_rank}
+      </span>
+      <span className="callout-site">
+        {siteName(earth, candidate.site)} <span className="data callout-cosine">{match.cosine.toFixed(3)}</span>
+      </span>
+      <span className="callout-checks">
+        <CheckCount within={checksWithin(match)} total={match.within.length} /> physical checks in band
+      </span>
+    </a>
+  );
+}
+
 function formatCoordinate(value: number, positive: string, negative: string): string {
   return `${Math.abs(value).toFixed(3)}° ${value >= 0 ? positive : negative}`;
 }
@@ -24,6 +59,7 @@ function formatCoordinate(value: number, positive: string, negative: string): st
 export function AnalogsPage({ region, patch }: { region: string; patch: string }) {
   const loaded = useData(`analogs:${region}/${patch}`, () => loadPatchAnalogs(region, patch));
   const [active, setActive] = useState<string | null>(null);
+  const [sort, setSort] = useState<Sort>(chosenSort);
   const onActive = useCallback((key: string | null) => setActive(key), []);
   const title =
     loaded.status === "ready" ? `Earth analogs · Patch ${patch} · ${loaded.data.patches.region.name}` : "Earth analogs";
@@ -36,6 +72,15 @@ export function AnalogsPage({ region, patch }: { region: string; patch: string }
     const { earth, tile } = loaded.data;
     return tile.matches.map((match) => ({ match, candidate: candidateOf(earth, match) }));
   }, [loaded]);
+  const ordered = useMemo(
+    () =>
+      sort === "shape"
+        ? rows
+        : [...rows].sort(
+            (a, b) => checksWithin(b.match) - checksWithin(a.match) || a.match.overall_rank - b.match.overall_rank,
+          ),
+    [rows, sort],
+  );
 
   const markers: EarthMarker[] = useMemo(
     () =>
@@ -59,6 +104,10 @@ export function AnalogsPage({ region, patch }: { region: string; patch: string }
     );
   }
   const { patches, record, analogs, tile, earth } = loaded.data;
+  const first = rows[0];
+  const fitMatch = bestFit(rows.map((row) => row.match));
+  const fit = rows.find((row) => row.match === fitMatch);
+  const showFit = fit && first && fit !== first;
   const point = (event: SyntheticEvent) => setActive((event.target as HTMLElement).closest("tr")?.dataset.key ?? null);
 
   return (
@@ -84,6 +133,30 @@ export function AnalogsPage({ region, patch }: { region: string; patch: string }
         </PageMessage>
       ) : (
         <>
+          {first && (
+            <div className={`callouts${showFit ? " has-fit" : ""}`}>
+              <Callout
+                kind="shape"
+                match={first.match}
+                candidate={first.candidate}
+                earth={earth}
+                href={links.pair(patches.region.slug, record.slug, first.candidate.id)}
+              />
+              {showFit && (
+                <Callout
+                  kind="fit"
+                  match={fit.match}
+                  candidate={fit.candidate}
+                  earth={earth}
+                  href={links.pair(patches.region.slug, record.slug, fit.candidate.id)}
+                />
+              )}
+              <p className="callout-note">
+                Cosine says the model sees a similar shape; it is not a percentage. The {first.match.within.length}{" "}
+                physical checks say whether slope, relief and roughness actually match. Read both.
+              </p>
+            </div>
+          )}
           <section className="card" aria-labelledby="map-title">
             <h2 id="map-title">Where the matches are</h2>
             <EarthMap
@@ -94,10 +167,33 @@ export function AnalogsPage({ region, patch }: { region: string; patch: string }
             />
           </section>
 
+          <div className="sort-bar">
+            <span className="map-mode-label" id="sort-label">
+              Sort by
+            </span>
+            <div className="segmented" role="radiogroup" aria-labelledby="sort-label">
+              {SORTS.map((option) => (
+                <label key={option.value}>
+                  <input
+                    type="radio"
+                    name="analog-sort"
+                    value={option.value}
+                    checked={sort === option.value}
+                    onChange={() => {
+                      chosenSort = option.value;
+                      setSort(option.value);
+                    }}
+                  />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </div>
           <div className="table-scroll">
             <table className="patch-table">
-              <caption>
-                All {rows.length} matches in rank order. Every match is shown, including weak ones.
+              <caption aria-live="polite">
+                All {rows.length} matches, {SORTS.find((option) => option.value === sort)!.caption}. Every match is
+                shown, including weak ones.
               </caption>
               <thead>
                 <tr>
@@ -112,8 +208,13 @@ export function AnalogsPage({ region, patch }: { region: string; patch: string }
                   <th scope="col">Location</th>
                 </tr>
               </thead>
-              <tbody onMouseOver={point} onFocus={point} onMouseLeave={() => setActive(null)} onBlur={() => setActive(null)}>
-                {rows.map(({ match, candidate }) => (
+              <tbody
+                onMouseOver={point}
+                onFocus={point}
+                onMouseLeave={() => setActive(null)}
+                onBlur={() => setActive(null)}
+              >
+                {ordered.map(({ match, candidate }) => (
                   <tr
                     key={candidate.id}
                     data-key={candidate.id}
@@ -125,13 +226,16 @@ export function AnalogsPage({ region, patch }: { region: string; patch: string }
                         {siteName(earth, candidate.site)}
                       </a>
                       <span className="muted"> · #{match.site_rank} at this site</span>
+                      {match === first?.match && <span className="row-tag tag-shape">Most similar shape</span>}
+                      {showFit && match === fit.match && <span className="row-tag tag-fit">Best physical fit</span>}
                     </th>
                     <td className="number">{match.cosine.toFixed(3)}</td>
                     <td>
                       <CheckCount within={checksWithin(match)} total={match.within.length} />
                     </td>
                     <td>
-                      {formatCoordinate(candidate.latitude, "N", "S")}, {formatCoordinate(candidate.longitude, "E", "W")}
+                      {formatCoordinate(candidate.latitude, "N", "S")},{" "}
+                      {formatCoordinate(candidate.longitude, "E", "W")}
                     </td>
                   </tr>
                 ))}

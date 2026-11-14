@@ -85,3 +85,16 @@ export function findMatch(earth: EarthDocument, matches: AnalogMatch[], id: stri
 export function checksWithin(match: AnalogMatch): number {
   return match.within.filter(Boolean).length;
 }
+
+/** The match with the most physical checks in band. Ties go to the better (lower) rank. */
+export function bestFit(matches: AnalogMatch[]): AnalogMatch | undefined {
+  return matches.reduce<AnalogMatch | undefined>(
+    (best, match) => (!best || checksWithin(match) > checksWithin(best) ? match : best),
+    undefined,
+  );
+}
+
+/** A site's short name for buttons and tiles: "Atacama (San Pedro), Chile" gives "Atacama". */
+export function shortSiteName(earth: EarthDocument, site: string): string {
+  return siteName(earth, site).split(/[,(]/)[0].trim();
+}

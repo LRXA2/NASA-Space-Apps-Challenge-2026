@@ -11,7 +11,7 @@ import {
 import { Limitations } from "../components/Limitations";
 import { Loading, PageMessage } from "../components/PageState";
 import { DataError, dataUrl, loadEnvironment, loadRegions } from "../data/loaders";
-import type { RegionEntry, Scenario } from "../data/types";
+import type { AssessmentName, AssessmentStatus, EnvironmentDocument, RegionEntry, Scenario } from "../data/types";
 import { useData } from "../data/useData";
 import { links } from "../router";
 
@@ -28,13 +28,73 @@ const LIMITS = [
 async function loadCatalogue() {
   const [environment, regions] = await Promise.all([loadEnvironment(), loadRegions()]);
   const terrain = new Map<string, RegionEntry>(regions.regions.map((entry) => [entry.source_id, entry]));
-  return { environment, terrain };
+  // Region numbers match the home page's cards and polar map.
+  const numbers = new Map<string, number>(regions.regions.map((entry, index) => [entry.source_id, index + 1]));
+  return { environment, terrain, numbers };
 }
 
 function TerrainLink({ scenario, terrain }: { scenario: Scenario; terrain: Map<string, RegionEntry> }) {
   const entry = scenario.terrain_region ? terrain.get(scenario.terrain_region) : undefined;
   if (!entry) return <span className="muted">No terrain data</span>;
   return <a href={links.region(entry.slug)}>{entry.exported_patch_count} terrain patches</a>;
+}
+
+const STATUSES: AssessmentStatus[] = ["Pass", "Fail", "Unknown"];
+
+/**
+ * Pass, Fail and Unknown counts for each assessment, side by side and never combined, plus what the Fails share.
+ */
+function Summary({ scenarios, environment }: { scenarios: Scenario[]; environment: EnvironmentDocument }) {
+  const anyGates = environment.hard_gates?.operations || environment.hard_gates?.survival;
+  // Which gates the Fails come from, by check label, when the per-check evidence is in this build.
+  const failGates = (name: AssessmentName) => {
+    const failed = scenarios.filter((scenario) => scenario[name].status === "Fail");
+    if (failed.length === 0 || failed.some((scenario) => scenario[name].gates == null)) return null;
+    const labels = new Set(
+      failed.flatMap((scenario) =>
+        (scenario[name].gates ?? []).filter((check) => check.status === "Fail").map((check) => check.label),
+      ),
+    );
+    return { count: failed.length, labels: [...labels] };
+  };
+  const notes = (["operations", "survival"] as const).flatMap((name) => {
+    const fails = failGates(name);
+    if (!fails) return [];
+    const which =
+      fails.labels.length === 1
+        ? `one gate, ${fails.labels[0].toLowerCase()}`
+        : `${fails.labels.length} gates: ${fails.labels.join(", ").toLowerCase()}`;
+    const all = fails.count === 1 ? "The" : fails.count === 2 ? "Both" : `All ${fails.count}`;
+    return [`${all} ${ASSESSMENT_TITLES[name]} ${fails.count === 1 ? "Fail comes" : "Fails come"} from ${which}.`];
+  });
+  return (
+    <section className="card env-summary" aria-label="Summary">
+      <dl className="env-counts">
+        {(["operations", "survival"] as const).map((name) => (
+          <div key={name}>
+            <dt>{ASSESSMENT_TITLES[name]}</dt>
+            <dd>
+              {STATUSES.map((status) => {
+                const count = scenarios.filter((scenario) => scenario[name].status === status).length;
+                return count === 0 ? null : (
+                  <span key={status} className="env-count">
+                    <AssessmentBadge status={status} gatesOff={gatesOff(environment, name)} />
+                    <span className="data">{count}</span>
+                  </span>
+                );
+              })}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p className="env-summary-note">
+        {anyGates
+          ? "Hard gates are on. A region must pass every gate before it gets a score; a Fail or Unknown shows no score. "
+          : ""}
+        {notes.join(" ")} <strong>Gate thresholds are project test values, not NASA limits.</strong>
+      </p>
+    </section>
+  );
 }
 
 function SampleDownload({ file }: { file: string }) {
@@ -61,22 +121,34 @@ export function EnvironmentPage() {
       </PageMessage>
     );
   }
-  const { environment, terrain } = loaded.data;
-  const shown = environment.scenarios.filter((scenario) => scenario.kind === "artemis" || (SHOW_APOLLO && scenario.kind === "apollo"));
-  const groups: { title: string; scenarios: Scenario[] }[] = [
-    { title: "Artemis III candidate regions", scenarios: shown.filter((scenario) => scenario.kind === "artemis") },
-    { title: "Apollo reference scenarios", scenarios: shown.filter((scenario) => scenario.kind === "apollo") },
+  const { environment, terrain, numbers } = loaded.data;
+  const shown = environment.scenarios.filter(
+    (scenario) => scenario.kind === "artemis" || (SHOW_APOLLO && scenario.kind === "apollo"),
+  );
+  const artemis = shown.filter((scenario) => scenario.kind === "artemis");
+  const hasTerrain = (scenario: Scenario) => scenario.terrain_region != null && terrain.has(scenario.terrain_region);
+  const withTerrain = artemis.filter(hasTerrain);
+  const environmentOnly = artemis.filter((scenario) => !hasTerrain(scenario));
+  const groups: { title: string; scenarios: Scenario[]; terrainColumn: boolean }[] = [
+    { title: `${withTerrain.length} with terrain patches`, scenarios: withTerrain, terrainColumn: true },
+    { title: `${environmentOnly.length} with environment data only`, scenarios: environmentOnly, terrainColumn: false },
+    {
+      title: "Apollo reference scenarios",
+      scenarios: shown.filter((scenario) => scenario.kind === "apollo"),
+      terrainColumn: false,
+    },
   ].filter((group) => group.scenarios.length > 0);
   return (
     <>
       <nav className="crumbs" aria-label="Breadcrumb">
         <a href={links.regions()}>Regions</a> › Environment
       </nav>
-      <h1>Environment assessments</h1>
+      <h1>Environment checks for {artemis.length} candidate regions</h1>
       <p className="lede">
-        Two separate assessments per region from the team's environment scorer: Operations (can a mission work here) and
-        Survival (can a crew stay alive here).
+        Two separate assessments per region from the team's environment scorer, each 0–100: Operations (can a mission
+        work here) and Survival (can a crew stay alive here). They are never combined.
       </p>
+      <Summary scenarios={artemis} environment={environment} />
       {(gatesOff(environment, "operations") || gatesOff(environment, "survival")) && (
         <p className="gates-note">{GATES_OFF_NOTE}</p>
       )}
@@ -84,21 +156,24 @@ export function EnvironmentPage() {
       {groups.map((group) => (
         <div className="table-scroll" key={group.title}>
           <table className="patch-table">
-            <caption>
-              {group.title} ({group.scenarios.length})
-            </caption>
+            <caption>{group.title}</caption>
             <thead>
               <tr>
                 <th scope="col">Region</th>
                 <th scope="col">Operations</th>
                 <th scope="col">Survival</th>
-                <th scope="col">Terrain</th>
+                {group.terrainColumn && <th scope="col">Terrain</th>}
               </tr>
             </thead>
             <tbody>
               {group.scenarios.map((scenario) => (
                 <tr key={scenario.id}>
                   <th scope="row">
+                    {group.terrainColumn && scenario.terrain_region && numbers.has(scenario.terrain_region) && (
+                      <span className="region-number" aria-hidden="true">
+                        {numbers.get(scenario.terrain_region)}
+                      </span>
+                    )}
                     <a href={links.scenario(scenario.id)}>{scenario.name}</a>
                     <span className="muted"> · {scenario.id}</span>
                   </th>
@@ -108,9 +183,11 @@ export function EnvironmentPage() {
                       <FinalScore assessment={scenario[name]} />
                     </td>
                   ))}
-                  <td>
-                    <TerrainLink scenario={scenario} terrain={terrain} />
-                  </td>
+                  {group.terrainColumn && (
+                    <td>
+                      <TerrainLink scenario={scenario} terrain={terrain} />
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

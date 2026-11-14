@@ -6,7 +6,7 @@ Updated 2026-11-14 (late evening). It replaces Ian's 13 Nov status file, which w
 
 ## Where things stand
 
-- **Branch:** `gareth/exploration-theme`, made from `gareth/app` at `f8820ed`. The theme work below is **not committed yet**; nothing has been pushed or merged.
+- **Branch:** `gareth/exploration-theme`, made from `gareth/app` at `f8820ed`. Phases 1–4 are committed (`f002345`); phase 5 is **not committed yet**. Nothing has been pushed or merged.
 - **Pipeline run in the app:** `moon_pipeline/20261114T081013177916Z_da70aa`, region scope, Darrel's gated config. Its terrain and Earth matches are identical to earlier runs; only the environment results changed.
 - **Teammate answers:** Darrel D1–D5, Aarron A1–A4 and Hanxi H1–H3 are all answered and recorded word for word. The whole-team questions T1–T7 are still open.
 
@@ -28,6 +28,7 @@ Updated 2026-11-14 (late evening). It replaces Ian's 13 Nov status file, which w
 | ONNX | Both CNNs export and match the saved outputs (2.2e-7 and 5.4e-7, no class changes). Both scalers are applied outside the ONNX models, so they ship as separate files (A2, H1). Not used by the app yet |
 | Tests | Integration 19 (1 skipped), app scripts 29, notebooks 79. Type-check and build pass. Scorer parity: 83 rows identical |
 | Exploration theme, phases 1–4 | Built to [ui-theme-implementation.md](ui-theme-implementation.md). Dark only (the light theme and `useColorScheme` are gone). Tokens from DESIGN.md; fonts self-hosted with `@fontsource` (Space Grotesk, Inter, IBM Plex Mono: three new dependencies). Starry page background. New shell: brand, section pills, the four-step demo path (`app/src/demo.ts`) and a footer with the run IDs. Panels, pill buttons and badges, segmented map toggle, themed tables and Limits panel ("Limits of this page"). Class fills (solid, 135° and 45° stripes). Magma slope and navy-to-white height ramps on the existing fitted, shared domain. OSM tiles darkened with a CSS filter. Polar map redrawn as nodes over dashed true-extent squares, with selected and Operations-Fail styles. New home page: hero with stats, sky panel, polar map, seven region cards, "Looks alike, measures different" and limits |
+| Exploration theme, phase 5 | Items 1–4 built. Patch page: "Closest Earth terrain by shape" banner (cosine, rank, checks in band, a warning when none is in band, the better physical fit when there is one, button to all matches). Analogs page: "Most similar shape" and "Best physical fit" callouts, a cosine note, a Shape similarity / Physical fit sort toggle and row tags. Pair page: links to this match, rank 1 (or the best fit) and all matches; Moon name in silver and Earth name in gold; the five checks drawn as bands, numbers written out beside each. Environment page: Pass/Fail counts per assessment with what the Fails share (computed from the gate evidence), then regions with terrain (numbered as on the home page) and environment-only regions as two groups. The mockup's Operations-against-Survival scatter plot was not in the phase list and is not built |
 | Owner decisions (14 Nov) | Self-host fonts; CSS filter on the OSM tiles; keep the nav label "Try your own data"; keep the fitted, shared slope domain (only the colours changed) |
 | Export | `regions.json` entries now carry `rover_class_counts`, `patch_size_m` and `spacing_m` (2 new tests). Re-exported: only `regions.json` changed. `app/public/data/sky.json` (473 stars to magnitude 5 in the panel's frame, plus Canopus and Sirius) was trimmed from `design/exploration-theme/sky/sky.json`; it is not made by the export |
 | Accessibility | axe-core: no violations on all 8 routes at 1440 px and 375 px, and on the upload results with every row expanded. No horizontal scroll at either width. Tab reaches the header, demo path, map nodes, toggles, grids and pager with a visible ring; the arrow keys move the shared cursor on all four pair grids. Contrast checked by calculation: every text colour is at least 4.7:1 on the lightest panel fill. Not tried with a real screen reader (NVDA) |
@@ -39,7 +40,7 @@ Updated 2026-11-14 (late evening). It replaces Ian's 13 Nov status file, which w
 - **Apollo rows:** exported, hidden until T3 (`SHOW_APOLLO` in `app/src/pages/EnvironmentPage.tsx`). With gates on, all six Apollo rows pass both assessments.
 - **Per-tile environment:** needs the 4 LOLA maps and a `run_all` rerun (T4).
 - **Darrel's status counts don't fully match ours.** He reported Operations 60/21/2 (matches) and Survival 68 Pass, 11 Fail, 4 Unknown. With the committed config and input we get Survival 70/11/2 (Unknown: dummy_003, dummy_007). Ask him which 4 IDs are Unknown; his run may have used an uncommitted input or config.
-- **Exploration theme, phase 5** (per-screen additions, in this order, after the owner has seen phases 1–4): patch-page "Closest Earth terrain by shape" banner; analogs callouts and sort toggle; pair rank tabs, two-colour heading and check bands; environment page split into terrain and environment-only groups; region page "Five patches to start with" (blocked on T6). Terrain upload (screen 9) is not to be built (T1).
+- **Exploration theme, phase 5 item 5:** the region page's "Five patches to start with" waits on T6 (featured tiles). Terrain upload (screen 9) is not to be built (T1).
 - **Theme gaps:** the home page loads the whole Earth grid file (9.1 MB) to draw two slope tiles, the same file the pair page loads. The region page has no Limits panel (it never had one). The demo path's "Best match" step is a fixed candidate ID in `demo.ts`; the home page computes the best physical fit from the data, and the two agree for this run.
 - **Not checked:** a pass with a real screen reader.
 
@@ -49,7 +50,7 @@ Updated 2026-11-14 (late evening). It replaces Ian's 13 Nov status file, which w
 2. Ask Darrel about the Survival Unknown count (above).
 3. Host decision (T2), then deploy and check the hosted walkthrough.
 4. Choose featured tiles for the demo (T6) from [featured-tiles.md](featured-tiles.md).
-5. Review and commit the theme (phases 1–4), then phase 5 of [ui-theme-implementation.md](ui-theme-implementation.md).
+5. Review and commit phase 5 items 1–4. Item 5 after T6.
 6. If T1 says yes: terrain upload with ONNX and the `.asc` template.
 7. Submission: demo script, project page, and delete this file.
 
