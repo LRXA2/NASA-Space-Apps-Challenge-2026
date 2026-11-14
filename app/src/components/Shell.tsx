@@ -1,6 +1,6 @@
 import { loadRegions } from "../data/loaders";
 import { useData } from "../data/useData";
-import { DEMO } from "../demo";
+import { DEMO, useDemoAvailable } from "../demo";
 import { links } from "../router";
 import type { Route } from "../router";
 
@@ -103,6 +103,7 @@ export function DemoPath({ route }: { route: Route }) {
 
 export function Header({ route }: { route: Route }) {
   const section = sectionOf(route);
+  const demo = useDemoAvailable();
   const nav: { key: Section; label: string; href: string }[] = [
     { key: "regions", label: "Regions", href: links.regions() },
     { key: "environment", label: "Environment", href: links.environment() },
@@ -124,7 +125,7 @@ export function Header({ route }: { route: Route }) {
           </a>
         ))}
       </nav>
-      <DemoPath route={route} />
+      {demo && <DemoPath route={route} />}
     </header>
   );
 }

@@ -66,9 +66,9 @@ function Hero(props: {
   artemis: number | null;
   sites: number;
   perPatch: number;
-  demoName: string;
+  start: RegionEntry;
 }) {
-  const { entries, artemis, sites, perPatch, demoName } = props;
+  const { entries, artemis, sites, perPatch, start } = props;
   const total = entries.reduce((sum, entry) => sum + entry.exported_patch_count, 0);
   const size = entries[0]?.patch_size_m;
   const spacing = entries[0]?.spacing_m;
@@ -85,8 +85,8 @@ function Hero(props: {
           resembles it, and where the analogy breaks.
         </p>
         <div className="cta">
-          <a className="button" href={links.region(DEMO.region)}>
-            Start at {demoName} <Arrow />
+          <a className="button" href={links.region(start.slug)}>
+            Start at {start.name} <Arrow />
           </a>
           {artemis !== null && (
             <a className="button-secondary" href={links.environment()}>
@@ -438,7 +438,8 @@ export function RegionsPage() {
     artemis?.filter((scenario) => !scenario.terrain_region || !withTerrain.has(scenario.terrain_region)).length ?? 0;
   const total = entries.reduce((sum, entry) => sum + entry.exported_patch_count, 0);
   const sites = regions.pipeline.earth_sites.length;
-  const demoName = entries.find((entry) => entry.slug === DEMO.region)?.name ?? entries[0].name;
+  // The demo region, or the first region when this export does not hold it.
+  const demo = entries.find((entry) => entry.slug === DEMO.region);
 
   return (
     <>
@@ -447,7 +448,7 @@ export function RegionsPage() {
         artemis={artemis?.length ?? null}
         sites={sites}
         perPatch={sites * regions.pipeline.top_k_per_site}
-        demoName={demoName}
+        start={demo ?? entries[0]}
       />
 
       <div className="sky-row">
@@ -459,7 +460,7 @@ export function RegionsPage() {
               <p className="panel-sub">South polar view · 0° toward Earth</p>
             </div>
           </div>
-          <PolarOverview regions={entries} selected={DEMO.region} failed={failed} />
+          <PolarOverview regions={entries} selected={demo?.slug} failed={failed} />
         </section>
       </div>
 
@@ -505,7 +506,7 @@ export function RegionsPage() {
         </ul>
       </section>
 
-      <LooksAlike />
+      {demo && <LooksAlike />}
 
       <Limitations points={LIMITS} />
       <p className="muted source-line">

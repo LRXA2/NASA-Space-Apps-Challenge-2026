@@ -208,10 +208,10 @@ export function ScenarioPage({ scenario: scenarioId }: { scenario: string }) {
     }
     return { ...catalogue, scenario };
   });
-  const name = loaded.status === "ready" ? loaded.data.scenario.name : "Environment";
+  const title = loaded.status === "ready" ? `${loaded.data.scenario.name} · Environment` : "Environment";
   useEffect(() => {
-    document.title = `${name} · Environment · Lunar Analog Finder`;
-  }, [name]);
+    document.title = `${title} · Lunar Analog Finder`;
+  }, [title]);
   if (loaded.status === "loading") return <Loading what="environment results" />;
   if (loaded.status === "error") {
     return (
