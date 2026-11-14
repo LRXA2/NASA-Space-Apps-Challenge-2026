@@ -8,6 +8,14 @@
 
 html {
   scrollbar-color: var(--line-strong) transparent;
+  /* The header is sticky above 640 px: keep focused and linked-to items clear of it. */
+  scroll-padding-top: 96px;
+}
+
+@media (max-width: 640px) {
+  html {
+    scroll-padding-top: 16px;
+  }
 }
 
 body {
@@ -2613,4 +2621,14 @@ h1.display {
   width: 24px;
   height: 24px;
   font-size: 11px;
+}
+
+.checks-table summary {
+  color: var(--link);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.checks-table[open] summary {
+  margin-bottom: 8px;
 }

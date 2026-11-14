@@ -299,6 +299,53 @@ export function PairPage({ region, patch, candidate }: { region: string; patch: 
           that measurement. Relief here is the 5th to 95th percentile height range, so it is lower than the patch page's
           highest-minus-lowest relief.
         </p>
+        <details className="checks-table">
+          <summary>Show the checks as a table</summary>
+          {/* Focusable so the table can be scrolled by keyboard on a narrow screen. */}
+          <div className="table-scroll" tabIndex={0} role="region" aria-label="Physical checks table, scrolls sideways">
+            <table className="patch-table">
+              <caption>
+                The same {earth.checks.length} checks as the bands above. Difference is Earth minus Moon.
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Measurement</th>
+                  <th scope="col" className="number">
+                    Moon
+                  </th>
+                  <th scope="col" className="number">
+                    Earth
+                  </th>
+                  <th scope="col" className="number">
+                    Difference
+                  </th>
+                  <th scope="col" className="number">
+                    Tolerance
+                  </th>
+                  <th scope="col">Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                {earth.checks.map((check, index) => {
+                  const moonValue = tile?.moon_checks[index] ?? Number.NaN;
+                  const earthValue = pair.candidate.checks[index];
+                  return (
+                    <tr key={check.name}>
+                      <th scope="row">{checkLabel(check)}</th>
+                      <td className="number">{format(moonValue)}</td>
+                      <td className="number">{format(earthValue)}</td>
+                      <td className="number">{signed(earthValue - moonValue)}</td>
+                      <td className="number">±{format(match.bands[index])}</td>
+                      <td>
+                        <InBand within={match.within[index]} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </details>
       </section>
 
       <section className="card" aria-labelledby="pair-terrain-title">
