@@ -8,41 +8,36 @@ Updated 2026-11-14. It replaces `design/docs/STATUS.md` (Ian, 13 Nov), which is 
 
 | Area | State |
 | --- | --- |
-| Branch | `main` merged into `gareth/app` (`668bf7c`) and pushed. The branch is 0 commits behind `main` |
-| Python setup | `.venv` with Python 3.12, repo requirements, CPU PyTorch and onnxruntime, on Gareth's Windows machine. All 106 tests pass (17 integration, 10 app export, 79 notebooks) |
-| Teammate data | Hanxi's inference run and Aarron's dataset, model and embedding cache copied into `data/processed/`. Model weights copied into `notebooks/modeling/terrain_similarity/weights/` |
-| Integration | `python -m integration.run_all --environment-scope region` runs in about 90 seconds. Output: `data/processed/moon_pipeline/20261114T014850261930Z_7de0f3/` |
-| Tile join | All 2,910 lunar tiles have both an Aarron patch and a Hanxi patch. Their Moon grids agree to within 0.0002 m |
-| Earth matches | Every tile matched against all 5 Earth sites, top 3 each (43,650 rows) |
-| Environment | Darrel's new Operations/Survival format is produced by `run_all`. Joined by region, because the LOLA maps aren't downloaded |
-| ONNX | Both CNNs exported and checked against the saved Python outputs: largest differences 2.2e-7 (similarity) and 5.4e-7 (walkability), no class changes. The check script is in a scratch folder, not the repo yet |
-| App, schema v1 | Ian's app (on `gareth/app`) shows all 7 regions and 2,910 patches: region list, Leaflet patch map, patch page with rover and on-foot predictions, crossing directions, slope and elevation grids. It still reads Hanxi's run only |
-| Docs | `docs/` created: architecture, team blockers, this status |
+| Branch | `main` merged into `gareth/app` (`668bf7c`) and pushed. Today's work is **not committed yet** |
+| Python setup | `.venv` with Python 3.12, repo requirements, CPU PyTorch and onnxruntime, on Gareth's Windows machine |
+| Teammate data | Hanxi's inference run and Aarron's dataset, model and embedding cache copied into `data/processed/`. Weights copied into `notebooks/modeling/terrain_similarity/weights/` |
+| Integration | `run_all` fixes G1–G3 (caveat follows the scope, `physical_comparison.csv` copied, POSIX paths). Current run: `moon_pipeline/20261114T023547307090Z_39a681`, region scope |
+| Tile join | All 2,910 tiles have both an Aarron and a Hanxi patch. Their Moon grids agree |
+| Export v2 | `app/scripts/export_data.py` reads the pipeline run. Writes patches with `tile_id`, Moon grids, analogs, Earth candidates and grids, environment, and scorer files (31 MB) |
+| App pages | Region list, region map, patch page (plus best Earth match and region environment), **Earth analogs** (table and OpenStreetMap map), **Moon–Earth pair** (5 checks, 4 grids on shared scales), **environment** list and scenario pages, **environment upload** |
+| Environment upload | Darrel's unmodified scorer in Pyodide 0.28.3 in a Web Worker. Output identical to the CLI for all 83 sample rows. Upload and an invalid file checked in headless Chrome |
+| ONNX | Both CNNs export and match the saved outputs (2.2e-7 and 5.4e-7, no class changes). `app/scripts/check_onnx_parity.py`. Not used by the app yet |
+| Tests | Integration 18 (1 skipped smoke test), app scripts 18, notebooks 79. App type-check and build pass |
+| Docs | `docs/` architecture, team blockers and this status. `app/README.md` updated for schema v2 |
 
-## In progress
+## Not done
 
-Nothing. Waiting for the go-ahead on the plan below.
+- **Deploy:** waiting on the host (T2).
+- **Terrain upload (ONNX):** waiting on the upload scope (T1).
+- **Apollo rows:** exported, but hidden until T3 is answered (`SHOW_APOLLO` in `app/src/pages/EnvironmentPage.tsx`).
+- **Per-tile environment:** needs the 4 LOLA maps and a `run_all` rerun (T4).
+- **Per-check environment evidence:** waiting on D2 (`--detailed`).
+- **Not checked yet:** a linked crosshair across the four pair grids, slope and height distribution charts, a polar overview map of all 7 regions, and keyboard and screen-reader testing of the new pages.
+- **Visual design:** placeholder styles only. Gareth is refining the design separately.
 
 ## Next, in order
 
-1. **Export v2.** Read `moon_pipeline/<run>/`: add `tile_id` to patches, plus analogs, Earth candidates and Earth grids, and environment. Add tests.
-2. **Earth analogs.** Analog page with a ranked table and an Earth map. Link every patch page to its analogs.
-3. **Deploy.** Needs the host decision (T2). Redeploy after each later step.
-4. **Environment tab.** Operations and Survival sections, plus the sample input download.
-5. **Pair comparison.** Moon and Earth grids on one scale, and the 5 physical checks.
-6. **Stretch: environment upload** (Pyodide).
-7. **Stretch: CNN upload** (ONNX plus an elevation grid template). Depends on T1.
-8. **Submission.** Demo script, project page, and delete this file.
-
-## Waiting on decisions
-
-See [team-blockers.md](team-blockers.md). The ones that block the plan:
-
-- **T2, host:** blocks step 3.
-- **T1, upload scope:** blocks step 7.
-- **T3, Apollo rows:** affects step 4.
-- **T4, environment per region or per tile:** affects step 4.
-- **D1, hard gates:** affects step 4.
+1. Review and commit today's work on `gareth/app`.
+2. Host decision (T2), then deploy and check the hosted walkthrough.
+3. Choose featured tiles for the demo (T6). Strong candidate: Leibnitz Beta Plateau `r480-c64`, rank 1 Atacama, cosine 0.966, 0 of 5 checks in band.
+4. Apply the visual design.
+5. If T1 says yes: terrain upload with ONNX and an `.asc` elevation template.
+6. Submission: demo script, project page, and delete this file.
 
 ## Stale elsewhere
 

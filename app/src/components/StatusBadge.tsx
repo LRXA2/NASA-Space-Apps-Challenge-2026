@@ -20,7 +20,7 @@ export function classTone(value: RoverClass | WalkingClass): Tone {
 }
 
 // Each tone has its own shape, so the class reads without colour.
-function ToneIcon({ tone }: { tone: Tone }) {
+export function ToneIcon({ tone }: { tone: Tone }) {
   return (
     <svg className={`tone-icon tone-${tone}`} viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
       {tone === "good" && (

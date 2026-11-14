@@ -37,7 +37,7 @@ Options: leave them out; show them as a small reference strip on the environment
 | D1 | Do hard gates stay off for the demo? With them off, all 83 rows pass and no score is ever blank | |
 | D2 | Does `--detailed` (`*_details` JSON) include each check's value, threshold and Pass/Fail/Unknown status? The environment tab wants per-check evidence | |
 | D3 | Confirm the region mapping `eda_001`–`eda_017` (now hard-coded in `integration/moon_sites.py`) | |
-| D4 | Is it OK to run `env_pipeline.py` and `config.yml` unchanged in the browser (Pyodide) for the upload, and to point users at `sample_input.csv` as the template? | |
+| D4 | Is it OK to run `env_pipeline.py` and `config.yml` unchanged in the browser (Pyodide) for the upload, and to point users at `sample_input.csv` as the template? It is built: output is identical to the CLI for all 83 sample rows | |
 | D5 | Which input columns could an outside user realistically fill in? This decides how the upload page is worded | |
 
 ## Aarron (similarity CNN)
@@ -63,14 +63,6 @@ Options: leave them out; show them as a small reference strip on the environment
 | --- | --- | --- |
 | I2 | Parts of `design/docs/specs/app/earth-analogs.md` are obsolete: keying on Aarron's query IDs, starting from notebook 36, and the footprint task. The shared `tile_id` covers all 2,910 tiles. Update the spec or mark it superseded by [architecture.md](architecture.md)? | |
 
-## Integration code (`integration/`)
-
-| # | Item | Answer |
-| --- | --- | --- |
-| G1 | `CAVEAT` in `run_all.py` always claims per-tile LOLA values, even in region scope. Make it depend on `environment_scope` | |
-| G2 | `physical_comparison.csv` isn't copied into `moon_pipeline/<run>/`. Copy it, so the export reads one folder | |
-| G3 | `summary.json` → `stage_runs` paths use Windows backslashes. Write POSIX paths | |
-
 ## Resolved
 
 | Item | How | Date |
@@ -82,3 +74,6 @@ Options: leave them out; show them as a small reference strip on the environment
 | Darrel's new Operations/Survival format | On `main`, produced by `run_all` | 2026-11-14 |
 | Windows setup | `.venv` built. All tests pass, and `run_all` runs on Windows | 2026-11-14 |
 | `main` merged into `gareth/app` | Merge `668bf7c`, pushed | 2026-11-14 |
+| G1: `run_all` caveat always claimed per-tile values | `caveat()` now follows `environment_scope` | 2026-11-14 |
+| G2: `physical_comparison.csv` missing from `moon_pipeline/<run>/` | `run_all` now copies it | 2026-11-14 |
+| G3: `stage_runs` paths used backslashes | Written as POSIX paths | 2026-11-14 |

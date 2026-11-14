@@ -28,17 +28,17 @@ The app is a static website. Three teammate pipelines run on our own machines, o
    data/processed/moon_pipeline/<run>/                 ← exists (gitignored)
                 │
                 ▼
-   app/scripts/export_data.py                          ← exists (v1), v2 planned
+   app/scripts/export_data.py                          ← exists (schema v2)
                 │
                 ▼
    app/public/data/   (committed to git)
                 │
                 ▼  npm run build
-   app/dist/  →  static host                           ← planned
+   app/dist/  →  static host                           ← planned (host open, T2)
                 │
                 ▼
    Browser: React app reads JSON and binary files.
-   Optional upload: Web Workers run Pyodide (environment) and ONNX models (terrain).
+   Optional upload: a Web Worker runs Pyodide (environment, exists). ONNX models (terrain) are not built (T1).
 ```
 
 ## Pipelines
@@ -92,9 +92,10 @@ Configured by `integration/run_all.json`. It needs the runs listed in [`data/REA
 | `earth_matches.csv` | 43,650 | 2,910 tiles × 5 Earth sites × top 3. `site_rank`, `overall_rank`, `cosine_similarity`, lat/lon, relief and slope differences, `physical_checks_within_band` |
 | `environment.csv` | 83 | Darrel's compact output (see below) |
 | `environment_sites.csv`, `tile_support.csv` | | Tile scope only: scorer input per tile, and which tiles were measured |
-| `summary.json`, `summary_by_region.csv` | | Counts, best Earth site per region, stage run paths |
+| `physical_comparison.csv` | 218,250 | The five physical checks behind every match: Moon value, Earth value, tolerance band, in band |
+| `summary.json`, `summary_by_region.csv` | | Counts, best Earth site per region, stage run paths (POSIX), a caveat worded for the environment scope |
 
-Each stage also keeps its own run folder under `data/processed/` (`moon_tiles/`, `moon_sites/`, `terrain_similarity_tile_matches/`). `summary.json` → `stage_runs` points to them. The per-check physical comparison (`physical_comparison.csv`) is only in the `terrain_similarity_tile_matches` run.
+Each stage also keeps its own run folder under `data/processed/` (`moon_tiles/`, `moon_sites/`, `terrain_similarity_tile_matches/`). `summary.json` → `stage_runs` points to them.
 
 ### Environment output format
 
@@ -104,32 +105,22 @@ Read domain columns by prefix, because the domain list has changed before. `--de
 
 The 83 rows are 17 Artemis regions (`eda_001`–`eda_017`), 6 Apollo references, and 60 test rows (`synthetic_*`, `dummy_*`). The app never shows the test rows. Only `eda_001`–`eda_007` have terrain. Most input values are assumptions, not measurements (Darrel's README).
 
-## App data files
+## App data files (schema v2, exists)
 
-### Schema v1 (exists, Hanxi's data only)
+Written by `app/scripts/export_data.py` from one `moon_pipeline/<run>/` folder, plus the two runs it names (Hanxi's run for Moon grids, Aarron's dataset for Earth grids). 31 MB in total, committed under `app/public/data/`. The full format is in [`app/README.md`](../app/README.md#data-files-schema-version-2).
 
-| File | Content |
-| --- | --- |
-| `regions.json` | Exported regions, source run ID, claim boundary |
-| `patches/<region>.json` | One record per patch: classes, probabilities, crossings, measurements, grid position, `grid_offset` |
-| `grids/<region>.bin` | Relative elevation and slope, Int16 × 10, little-endian, 4,096 bytes per patch |
-
-About 16 MB in total. The format is described in [`app/README.md`](../app/README.md).
-
-### Schema v2 (planned, reads `moon_pipeline/<run>/`)
-
-| File | Change | Estimated size |
+| File | Content | Size |
 | --- | --- | --- |
-| `regions.json` | Add the pipeline run ID and the environment scope | small |
-| `patches/<region>.json` | Add `tile_id` and the similarity patch ID to each record. Keep the Hanxi ID and the `r<row>-c<col>` route name | +5% |
-| `grids/<region>.bin` | Unchanged | 12 MB |
-| `analogs/<region>.json` | Per tile: 15 matches (5 sites × top 3) as compact arrays, keyed by `tile_id` | ~4 MB total |
-| `earth/candidates.json` | The 2,222 Earth patches that appear in any match: site, lat/lon, 5 physical features | ~0.5 MB |
-| `earth/grids.bin` | Those patches' relative elevation and slope from Aarron's dataset tensors, in the same Int16 × 10 format | ~9 MB |
-| `environment.json` | 17 Artemis rows (and Apollo, if kept): both assessments, domains by prefix, status, fail reasons, evidence labels | small |
-| `upload/` | Only if uploads ship: ONNX models, Earth embedding bank, scalers, Darrel's scorer files and template | ~3 MB |
+| `regions.json` | Regions, pipeline run and caveat, terrain run and claim boundary | small |
+| `patches/<region>.json` | Hanxi's classes and probabilities per patch, plus `tile_id` and the similarity patch ID | 1.6 MB |
+| `grids/<region>.bin` | Moon relative elevation and slope, Int16 × 10 | 12 MB |
+| `analogs/<region>.json` | Per patch: Moon check values and 15 matches (rank, cosine, bands, in-band flags) | 6.6 MB |
+| `earth/candidates.json` | The 2,222 Earth patches used in any match: site, lat/lon, check values | 0.4 MB |
+| `earth/grids.bin` | Their relative elevation and slope, same format, from Aarron's dataset | 9.1 MB |
+| `environment.json` | 17 Artemis and 6 Apollo scenarios (test rows left out): both assessments, domains read by prefix | small |
+| `environment/` | `sample_input.csv` and the scorer files for the upload, copied unchanged with SHA-256 hashes | small |
 
-The export still opens Hanxi's run for tensor locations and grid rows and columns, because `moon_sites.csv` doesn't keep them. Paths in `summary.json` use Windows backslashes. Normalise them.
+Moon grids from Hanxi's and Aarron's tensors agree (checked 2026-11-14), so Moon and Earth grids share one scale on the pair page.
 
 ## App structure (exists, extended as planned)
 
@@ -144,26 +135,26 @@ app/
     data/loaders.ts           Fetch, check schema version, decode grids
     pages/                    One component per route
     components/               PatchMap (Leaflet CRS.Simple), TerrainCanvas, StatusBadge, …
-    workers/                  Planned: upload workers (Pyodide, ONNX)
+    workers/                  environmentWorker.ts (Pyodide). ONNX worker not built
 ```
 
 | Route | Page | Status |
 | --- | --- | --- |
 | `#/` | Region list | exists |
 | `#/region/<region>` | Patch map and list | exists |
-| `#/region/<region>/patch/<patch>` | Patch terrain and predictions | exists |
-| `#/region/<region>/patch/<patch>/analogs` | Ranked Earth matches and Earth map | planned |
-| `#/region/<region>/patch/<patch>/analogs/<candidate>` | Moon–Earth pair comparison | planned |
-| `#/environment/<region>` or a tab | Operations and Survival | planned |
-| `#/upload` | Upload your own data | planned, scope open |
+| `#/region/<region>/patch/<patch>` | Patch terrain, predictions, best Earth match, region environment | exists |
+| `#/region/<region>/patch/<patch>/analogs` | Ranked Earth matches and Earth map | exists |
+| `#/region/<region>/patch/<patch>/analogs/<earth patch ID>` | Moon–Earth pair comparison | exists |
+| `#/environment`, `#/environment/<scenario>` | Operations and Survival per region | exists |
+| `#/upload` | Score your own environment CSV | exists (environment only) |
 
 Maps: Leaflet without react-leaflet. The Moon uses `L.CRS.Simple` in grid cells per region (not north-up, no basemap). The Earth map uses a normal lat/lon basemap with attribution. Terrain grids are drawn on `<canvas>` with a shared colour scale. The chart library is not chosen yet (Observable Plot or Recharts; Plotly is too heavy).
 
-## Upload in the browser (planned, scope open)
+## Upload in the browser (environment exists, terrain open)
 
 | Pipeline | Runs as | Template | Status |
 | --- | --- | --- | --- |
-| Environment | Darrel's unmodified `env_pipeline.py` and `config.yml` in Pyodide (stdlib + PyYAML), in a Web Worker | Darrel's `sample_input.csv` | Not yet run in Pyodide |
+| Environment | Darrel's unmodified `env_pipeline.py` and `config.yml` in Pyodide 0.28.3 (stdlib + PyYAML), in a Web Worker | Darrel's `sample_input.csv` | **Exists.** Output identical to the CLI for all 83 sample rows (`npm --prefix app run check:scorer`). Upload checked in headless Chrome |
 | Similarity CNN | ONNX model in onnxruntime-web, 8 orientations, cosine against the shipped Earth embedding bank (5,693 × 64) | Elevation grid (below) | ONNX export checked |
 | Walkability CNN | ONNX model in onnxruntime-web, softmax and sigmoid built into the model | Same elevation grid | ONNX export checked |
 
@@ -172,7 +163,7 @@ Maps: Leaflet without react-leaflet. The Moon uses `L.CRS.Simple` in grid cells 
 - Similarity model, 393 KB: largest difference from `embeddings.npz` over 8,603 patches is 2.2e-7. The top Earth match is identical for all 2,910 Moon tiles.
 - Walkability model, 363 KB: largest probability difference from `predictions.csv` over 2,910 patches is 5.4e-7, with 0 class changes.
 
-The check script is not in the repo yet.
+Rerun with `app/scripts/check_onnx_parity.py`.
 
 **Terrain template (proposed):** Esri ASCII grid (`.asc`, which QGIS can export), 42 × 42 cells at 30 m in a projected metric grid. That is the 32 × 32 tile plus a 5-cell margin, because the 330 m window needs it. A TypeScript port computes the channels exactly as `processing.py:terrain` does. To test the port without a DEM, rebuild the elevation from Hanxi's relative-elevation channel (elevation minus a constant), recompute the other channels, and compare them inside the tile.
 
@@ -195,20 +186,19 @@ The build is fully static: `npm --prefix app run build` → `app/dist/`. Hash ro
 | Vite + React + TypeScript, Leaflet without react-leaflet, canvas terrain | Decided |
 | Int16 × 10 binary grids per region | Decided |
 | Hash routes, relative base path | Decided (Ian) |
-| Integration output (`moon_pipeline/<run>/`) is the only export input | Decided 2026-11-14 |
+| Integration output (`moon_pipeline/<run>/`) is the only export input | Decided and built 2026-11-14 |
 | `tile_id` is the join key across all three pipelines | Decided 2026-11-14 |
 | Pair URLs use the Earth candidate ID, not the rank | Decided (Ian) |
 | Host | **Open** |
 | Upload scope: environment only, or environment plus both CNNs | **Open, team input** |
 | Environment per region, or per tile with the LOLA maps | **Open** |
 | Show the Apollo reference rows | **Open, team input** |
-| Chart library | Open, pick when needed |
+| Chart library | Open. No chart needs one yet (bars and grids are hand-drawn) |
 
 Questions for teammates are in [team-blockers.md](team-blockers.md).
 
 ## Known caveats
 
-- `integration/run_all.py` `CAVEAT` always says environment values are per tile, even when the run used region scope. Use `summary.json` → `environment_scope` instead.
 - Hard gates are off in Darrel's config, so all 83 rows are `Pass` and no score is blank.
 - Atacama is the best match for about 88% of tiles. It also has 3,078 of the 5,693 Earth patches.
 - 193 match rows have cosine above 0.95 with 0 of 5 physical checks in band. Keep these visible: they show why physical checks matter.

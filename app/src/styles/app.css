@@ -623,3 +623,93 @@ h2 {
 .limits li + li {
   margin-top: 6px;
 }
+
+/* Section links in the top bar */
+.topbar-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 0.9375rem;
+}
+
+/* Smaller badge for tables and inline counts */
+.badge-small,
+.patch-table .badge-small {
+  gap: 6px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+.badge-small .tone-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.patch-table tr.is-active {
+  background: var(--bar-track);
+}
+
+.subhead {
+  margin: 12px 0 4px;
+  font-size: 0.9375rem;
+}
+
+/* Earth map */
+.earth-map {
+  height: min(60vh, 420px);
+  border: 1px solid var(--border);
+  isolation: isolate;
+}
+
+.earth-map.leaflet-container {
+  font: inherit;
+}
+
+.earth-marker span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--surface-card);
+  border-radius: 50%;
+  background: var(--text-primary);
+  color: var(--surface-card);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.earth-marker.is-active span {
+  outline: 3px solid var(--focus);
+  transform: scale(1.2);
+}
+
+/* Moon–Earth pair: Moon left, Earth right, one row per measurement */
+.pair-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 640px) {
+  .pair-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Upload steps */
+.steps {
+  padding-left: 20px;
+}
+
+.steps li + li {
+  margin-top: 8px;
+}
+
+details.card > summary {
+  cursor: pointer;
+}
+
+details.card[open] > summary {
+  margin-bottom: 12px;
+}

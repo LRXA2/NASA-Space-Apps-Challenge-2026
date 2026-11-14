@@ -1,5 +1,13 @@
 import { SCHEMA_VERSION } from "./types";
-import type { GridFormat, PatchesDocument, RegionsDocument, TerrainChannel } from "./types";
+import type {
+  AnalogsDocument,
+  EarthDocument,
+  EnvironmentDocument,
+  GridFormat,
+  PatchesDocument,
+  RegionsDocument,
+  TerrainChannel,
+} from "./types";
 
 /** A data problem with a message that is safe to show to the user. */
 export class DataError extends Error {}
@@ -54,6 +62,26 @@ export function loadRegions(): Promise<RegionsDocument> {
 
 export function loadPatches(file: string): Promise<PatchesDocument> {
   return cached(file, () => loadJson<PatchesDocument>(file));
+}
+
+export function loadAnalogs(file: string): Promise<AnalogsDocument> {
+  return cached(file, () => loadJson<AnalogsDocument>(file));
+}
+
+export async function loadEarth(): Promise<EarthDocument> {
+  const { earth_file } = await loadRegions();
+  return cached(earth_file, () => loadJson<EarthDocument>(earth_file));
+}
+
+export async function loadEnvironment(): Promise<EnvironmentDocument> {
+  const { environment_file } = await loadRegions();
+  if (!environment_file) throw new DataError("This build has no environment results.");
+  return cached(environment_file, () => loadJson<EnvironmentDocument>(environment_file));
+}
+
+/** A URL for a file in the data folder, such as the environment sample input. */
+export function dataUrl(file: string): string {
+  return DATA_ROOT + file;
 }
 
 export function loadGridFile(grid: GridFormat): Promise<ArrayBuffer> {

@@ -24,7 +24,8 @@ export function RegionsPage() {
     <>
       <h1>Lunar south-pole regions</h1>
       <p className="lede">
-        Terrain patches near the lunar south pole, with rover and on-foot predictions for each patch. Choose a region.
+        Terrain patches near the lunar south pole, with rover and on-foot predictions and the closest Earth terrain for
+        each patch. Choose a region.
       </p>
       <p className="lede">
         This build holds {entries.length} {entries.length === 1 ? "region" : "regions"} and {total.toLocaleString("en")}{" "}
@@ -44,8 +45,13 @@ export function RegionsPage() {
           ))}
         </ul>
       )}
+      <p>
+        <a href={links.environment()}>Environment assessments for all 17 Artemis candidate regions</a>, including the ten
+        without terrain data.
+      </p>
       <p className="muted source-line">
-        Source: inference run <code>{source.run_id}</code>. {source.claim_boundary}.
+        Source: inference run <code>{source.run_id}</code>. {source.claim_boundary}. Pipeline run{" "}
+        <code>{regions.data.pipeline.run_id}</code>: {regions.data.pipeline.caveat}
       </p>
     </>
   );
