@@ -59,7 +59,7 @@ npm --prefix app run check:scorer -- ../data/processed/moon_pipeline/<run>/envir
 
 | File | Content |
 | --- | --- |
-| `regions.json` | Regions, the pipeline run and its caveat, the terrain run and its claim boundary |
+| `regions.json` | Regions, the pipeline run and its caveat, the terrain run and its claim boundary. Each region's `extent_m` holds the outer edges of its tiles in the lunar south polar stereographic CRS (`+proj=stere +lat_0=-90 +lon_0=0 +R=1737400`) |
 | `patches/<region>.json` | One record per patch: Hanxi ID, shared `tile_id`, similarity patch ID, grid position, classes, probabilities, crossings, measurements, `grid_offset` |
 | `grids/<region>.bin` | Moon terrain grids for every patch in that region |
 | `analogs/<region>.json` | Per patch slug: the tile's five Moon check values and its matches (candidate index, overall and per-site rank, cosine, tolerance bands, in-band flags) |

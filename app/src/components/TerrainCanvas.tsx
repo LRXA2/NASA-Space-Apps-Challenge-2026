@@ -11,6 +11,11 @@ export interface TerrainScale {
   max: number;
 }
 
+export interface Cell {
+  row: number;
+  col: number;
+}
+
 export function formatValue(value: number, unit: string): string {
   const text = value.toFixed(1).replace("-", "−");
   return unit === "deg" ? `${text}°` : `${text} ${unit}`;
@@ -26,12 +31,22 @@ export function TerrainCanvas(props: {
   scale: TerrainScale;
   /** How to read the colours. The ramp direction depends on the colour scheme. */
   scaleNote: (scheme: Scheme) => string;
+  /** Pass both to share the selected cell with other grids of the same shape. Otherwise the canvas keeps its own. */
+  cell?: Cell | null;
+  onCellChange?: (cell: Cell | null) => void;
+  /** Extra help, for example that the cursor is linked to other grids. */
+  linkNote?: string;
 }) {
   const { channel, scale } = props;
   const { rows, cols, values, unit } = channel;
   const scheme = useColorScheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [cell, setCell] = useState<{ row: number; col: number } | null>(null);
+  const [ownCell, setOwnCell] = useState<Cell | null>(null);
+  const shared = props.onCellChange !== undefined;
+  const cell = shared ? (props.cell ?? null) : ownCell;
+  const setCell = shared ? props.onCellChange! : setOwnCell;
+  // Linked grids all move together; only the focused one announces, so a key press is read out once.
+  const [focused, setFocused] = useState(false);
   const titleId = useId();
   const helpId = useId();
 
@@ -64,13 +79,14 @@ export function TerrainCanvas(props: {
     const move = moves[event.key];
     if (!move) return;
     event.preventDefault();
-    setCell((current) => {
-      if (!current) return { row: 0, col: 0 };
-      return {
-        row: Math.max(0, Math.min(rows - 1, current.row + move[0])),
-        col: Math.max(0, Math.min(cols - 1, current.col + move[1])),
-      };
-    });
+    setCell(
+      cell
+        ? {
+            row: Math.max(0, Math.min(rows - 1, cell.row + move[0])),
+            col: Math.max(0, Math.min(cols - 1, cell.col + move[1])),
+          }
+        : { row: 0, col: 0 },
+    );
   }
 
   const middle = (scale.min + scale.max) / 2;
@@ -86,6 +102,8 @@ export function TerrainCanvas(props: {
         onPointerMove={onPointerMove}
         onPointerLeave={() => setCell(null)}
         onKeyDown={onKeyDown}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
       >
         <canvas ref={canvasRef} width={cols} height={rows} />
         {cell && (
@@ -100,7 +118,7 @@ export function TerrainCanvas(props: {
           />
         )}
       </div>
-      <p className="terrain-readout" aria-live="polite">
+      <p className="terrain-readout" aria-live={!shared || focused ? "polite" : "off"}>
         {cell
           ? `Row ${cell.row}, column ${cell.col}: ${formatValue(values[cell.row * cols + cell.col], unit)}`
           : "Point at a cell to read its value."}
@@ -118,7 +136,7 @@ export function TerrainCanvas(props: {
       </div>
       <p className="terrain-note" id={helpId}>
         {props.scaleNote(scheme)} Row 0 is at the top and column 0 is at the left, as stored in the source grid. Each cell is
-        30 m wide. Use the arrow keys to move between cells.
+        30 m wide. Use the arrow keys to move between cells.{props.linkNote ? ` ${props.linkNote}` : ""}
       </p>
       <details className="terrain-table">
         <summary>Show all {rows * cols} values as a table</summary>

@@ -1,6 +1,7 @@
 """Checks for app/scripts/export_data.py on a small synthetic pipeline run."""
 
 import csv
+import hashlib
 import json
 import struct
 import sys
@@ -198,6 +199,14 @@ class MetadataTests(ExportCase):
         self.assertEqual(patch["crossing"]["east_west"], {"predicted": True, "probability": 0.9})
         self.assertEqual(patch["physical"]["relative_relief_m"], 180.06)
 
+    def test_region_extent_covers_every_tile(self) -> None:
+        extent = self.export()["regions"][0]["extent_m"]
+        patches = self.patches()["patches"]
+        xs = [patch["center_x_m"] for patch in patches]
+        ys = [patch["center_y_m"] for patch in patches]
+        self.assertEqual(extent, {"xmin": min(xs) - 480, "xmax": max(xs) + 480, "ymin": min(ys) - 480, "ymax": max(ys) + 480})
+        self.assertLess(extent["xmin"], extent["xmax"])
+
     def test_patch_selection_exports_only_that_patch(self) -> None:
         regions = self.export(region_slugs=[SLUG], patch_ids=[f"{REGION}:960:32:32"])
         self.assertEqual(regions["regions"][0]["exported_patch_count"], 1)
@@ -335,11 +344,29 @@ class EnvironmentTests(ExportCase):
         self.assertEqual((unknown["terrain_region"], unknown["evidence"]), (None, "assumed"))
         self.assertEqual((apollo["kind"], apollo["name"]), ("apollo", "Apollo 11 · Mare Tranquillitatis"))
 
-    def test_sample_input_is_copied_byte_for_byte(self) -> None:
+    def test_sample_input_is_copied_with_lf_endings_and_its_hash(self) -> None:
+        # The source has CRLF, as in a Windows checkout. The copy must match what a clean clone holds.
         self.export()
         sample = self.read("environment.json")["sample_input"]
-        self.assertEqual((self.output_dir / sample["file"]).read_bytes(),
-                         (self.root / "env" / "sample_input.csv").read_bytes())
+        written = (self.output_dir / sample["file"]).read_bytes()
+        self.assertEqual(written, (self.root / "env" / "sample_input.csv").read_bytes().replace(b"\r\n", b"\n"))
+        self.assertEqual(sample["sha256"], hashlib.sha256(written).hexdigest())
+
+    def test_scorer_hashes_match_the_published_files(self) -> None:
+        scorer = self.root / export_data.SCORER
+        scorer.parent.mkdir(parents=True, exist_ok=True)
+        scorer.write_bytes(b"print('scorer')\r\n")
+        config = self.root / export_data.DEFAULT_SCORER_CONFIG
+        config.parent.mkdir(parents=True, exist_ok=True)
+        config.write_bytes(b"hard_gates: false\r\n")
+        self.export()
+        files = self.read("environment.json")["upload_files"]
+        self.assertEqual([entry["name"] for entry in files],
+                         ["env_pipeline.py", "config.yml", "environment_data.py", "score_upload.py"])
+        for entry in files:
+            written = (self.output_dir / entry["file"]).read_bytes()
+            self.assertNotIn(b"\r\n", written, entry["name"])
+            self.assertEqual(entry["sha256"], hashlib.sha256(written).hexdigest(), entry["name"])
 
     def test_old_format_and_unknown_ids_are_rejected(self) -> None:
         self.write_environment([{"ID": "eda_001", "final_habitability_score": "50"}],

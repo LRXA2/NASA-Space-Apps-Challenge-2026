@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { InBand, CheckCount } from "../components/CheckCount";
 import { niceCeiling } from "../components/colorScales";
+import { DistributionChart } from "../components/DistributionChart";
 import { Limitations } from "../components/Limitations";
 import { Loading, PageMessage } from "../components/PageState";
 import { TerrainCanvas } from "../components/TerrainCanvas";
+import type { Cell } from "../components/TerrainCanvas";
 import { candidateOf, checksWithin, loadEarthTerrain, loadMoonTerrain, loadPatchAnalogs, siteName } from "../data/analogs";
 import type { PatchAnalogs } from "../data/analogs";
 import { DataError } from "../data/loaders";
@@ -39,6 +41,8 @@ function channel(channels: TerrainChannel[], name: string): TerrainChannel {
 
 function Grids({ pair }: { pair: Pair }) {
   const key = `pair-terrain:${pair.record.tile_id}:${pair.candidate.id}`;
+  // One cursor for all four grids. They are all 32 × 32, so a cell means the same position in each.
+  const [cell, setCell] = useState<Cell | null>(null);
   const terrain = useData(key, async () => {
     const [moon, earth] = await Promise.all([
       loadMoonTerrain(pair.patches, pair.record),
@@ -70,22 +74,40 @@ function Grids({ pair }: { pair: Pair }) {
   const slopeNote = () => "Moon and Earth share this slope scale.";
   const elevationNote = () => "Height above (red) or below (blue) the patch's own reference. Moon and Earth share this scale.";
   return (
-    <div className="pair-grid">
-      <TerrainCanvas title="Moon · slope" channel={grids.moonSlope} scale={slopeScale} scaleNote={slopeNote} />
-      <TerrainCanvas title="Earth · slope" channel={grids.earthSlope} scale={slopeScale} scaleNote={slopeNote} />
-      <TerrainCanvas
-        title="Moon · relative elevation"
-        channel={grids.moonElevation}
-        scale={elevationScale}
-        scaleNote={elevationNote}
-      />
-      <TerrainCanvas
-        title="Earth · relative elevation"
-        channel={grids.earthElevation}
-        scale={elevationScale}
-        scaleNote={elevationNote}
-      />
-    </div>
+    <>
+      <div className="pair-grid">
+        {(
+          [
+            ["Moon · slope", grids.moonSlope, slopeScale, slopeNote],
+            ["Earth · slope", grids.earthSlope, slopeScale, slopeNote],
+            ["Moon · relative elevation", grids.moonElevation, elevationScale, elevationNote],
+            ["Earth · relative elevation", grids.earthElevation, elevationScale, elevationNote],
+          ] as const
+        ).map(([title, values, scale, note]) => (
+          <TerrainCanvas
+            key={title}
+            title={title}
+            channel={values}
+            scale={scale}
+            scaleNote={note}
+            cell={cell}
+            onCellChange={setCell}
+            linkNote="The cursor is linked: the same cell is marked on all four grids."
+          />
+        ))}
+      </div>
+      <h3 className="pair-subtitle">How the values are spread</h3>
+      <div className="pair-grid">
+        <DistributionChart measurement="Slope" moon={grids.moonSlope} earth={grids.earthSlope} min={0} max={slopeMax} />
+        <DistributionChart
+          measurement="Relative elevation"
+          moon={grids.moonElevation}
+          earth={grids.earthElevation}
+          min={-elevationMax}
+          max={elevationMax}
+        />
+      </div>
+    </>
   );
 }
 

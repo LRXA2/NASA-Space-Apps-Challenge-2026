@@ -1,0 +1,7 @@
+# Exported app data is served byte for byte, and the browser upload checks the scorer files' SHA-256.
+# Keep LF in every checkout so the bytes on disk, in git and on the host are identical.
+app/public/data/**/*.json text eol=lf
+app/public/data/**/*.csv text eol=lf
+app/public/data/**/*.py text eol=lf
+app/public/data/**/*.yml text eol=lf
+app/public/data/**/*.bin binary

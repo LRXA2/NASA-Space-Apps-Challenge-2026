@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Loading, PageMessage } from "../components/PageState";
+import { PolarOverview } from "../components/PolarOverview";
 import { loadRegions } from "../data/loaders";
 import { useData } from "../data/useData";
 import { links } from "../router";
@@ -19,6 +20,7 @@ export function RegionsPage() {
     );
   }
   const { source, regions: entries } = regions.data;
+  const hasMap = entries.some((entry) => entry.extent_m != null);
   const total = entries.reduce((sum, entry) => sum + entry.exported_patch_count, 0);
   return (
     <>
@@ -34,16 +36,23 @@ export function RegionsPage() {
       {entries.length === 0 ? (
         <p>No regions have been exported yet.</p>
       ) : (
+        <>
+          <PolarOverview regions={entries} />
+
         <ul className="link-list">
-          {entries.map((entry) => (
+          {entries.map((entry, index) => (
             <li key={entry.slug}>
-              <a href={links.region(entry.slug)}>{entry.name}</a>
+              <a href={links.region(entry.slug)}>
+                {hasMap && <span className="region-number">{index + 1}</span>}
+                {entry.name}
+              </a>
               <span className="muted">
                 {entry.exported_patch_count} of {entry.source_patch_count} terrain patches in this build
               </span>
             </li>
           ))}
         </ul>
+        </>
       )}
       <p>
         <a href={links.environment()}>Environment assessments for all 17 Artemis candidate regions</a>, including the ten

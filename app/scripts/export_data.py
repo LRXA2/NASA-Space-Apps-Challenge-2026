@@ -128,10 +128,6 @@ def read_json(path: Path) -> dict:
         raise ExportError(f"Cannot read {path}") from error
 
 
-def sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
 def inside(root: Path, relative: str, what: str) -> Path:
     """Resolve a path named by a run's provenance and keep it inside the repository."""
     path = (root / PurePosixPath(relative.replace("\\", "/"))).resolve()
@@ -459,9 +455,10 @@ def environment_document(root: Path, pipeline_run: Path, run_id: str, scope: str
         source = inside(root, input_relative, "environment scorer input")
         target = output_dir / "environment" / "sample_input.csv"
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(source.read_bytes())
+        data = lf_bytes(source)
+        target.write_bytes(data)
         sample = {"file": "environment/sample_input.csv", "source": input_relative.replace("\\", "/"),
-                  "sha256": sha256(source)}
+                  "sha256": hashlib.sha256(data).hexdigest()}
     return {
         "schema_version": SCHEMA_VERSION,
         "pipeline_run": run_id,
@@ -490,9 +487,19 @@ def copy_scorer(root: Path, config_relative: str | None, output_dir: Path) -> li
     folder.mkdir(parents=True, exist_ok=True)
     files = []
     for name, source in sources.items():
-        (folder / name).write_bytes(source.read_bytes())
-        files.append({"name": name, "file": f"environment/scorer/{name}", "sha256": sha256(source)})
+        data = lf_bytes(source)
+        (folder / name).write_bytes(data)
+        files.append({"name": name, "file": f"environment/scorer/{name}", "sha256": hashlib.sha256(data).hexdigest()})
     return files
+
+
+def lf_bytes(path: Path) -> bytes:
+    """A text file's bytes with LF line endings, the form git stores.
+
+    A Windows checkout (core.autocrlf) holds CRLF copies. Hashing those would publish hashes that no clean clone
+    matches, and the browser upload refuses a scorer file whose hash differs. Only line endings change.
+    """
+    return path.read_bytes().replace(b"\r\n", b"\n")
 
 
 # ---------- top level ----------
@@ -603,6 +610,9 @@ def run_export(
         })
         analogs = analog_document(run_id, region_id, records, matches, checks["moon"], index, pool)
         write_json(output_dir / analogs_file, analogs)
+        half = _whole(first, "size_m") / 2
+        xs = [record["center_x_m"] for record in records]
+        ys = [record["center_y_m"] for record in records]
         entries.append({
             "slug": slug,
             "source_id": region_id,
@@ -613,6 +623,8 @@ def run_export(
             "exported_patch_count": len(records),
             "source_patch_count": source_counts[region_id],
             "patches_with_analogs": len(analogs["tiles"]),
+            # Outer edges of the exported tiles, in metres in the common lunar south polar stereographic CRS.
+            "extent_m": {"xmin": min(xs) - half, "xmax": max(xs) + half, "ymin": min(ys) - half, "ymax": max(ys) + half},
         })
 
     earth_items = [(by_id[c["id"]]["shard"], _whole(by_id[c["id"]], "tensor_index", c["id"]), c["id"]) for c in ordered]

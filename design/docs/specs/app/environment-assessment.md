@@ -70,11 +70,11 @@ npm --prefix app run preview
 
 ## Tasks
 
-- [ ] Adopt the source-linked 17-region mapping and evidence labels. Record its review status and reject unknown mappings without attaching them to a guessed region.
-- [ ] Add compact environment export for the `operations_*` and `survival_*` columns, with explicit missing-value handling. Verify row filtering, numeric zero, a blank final score, and source identity with focused tests.
-- [ ] Reject old-format files (`final_habitability_score`) and unrecognized score columns with a readable error. Preserve blank values.
+- [x] Adopt the source-linked 17-region mapping and evidence labels. Record its review status and reject unknown mappings without attaching them to a guessed region.
+- [x] Add compact environment export for the `operations_*` and `survival_*` columns, with explicit missing-value handling. Verify row filtering, numeric zero, a blank final score, and source identity with focused tests.
+- [x] Reject old-format files (`final_habitability_score`) and unrecognized score columns with a readable error. Preserve blank values.
 - [ ] Add optional detailed-check adaptation when its source is available, plus an explicit unavailable state when it is absent. Verify that scores never create invented gate outcomes.
-- [ ] Publish the environment catalogue and render its region score summaries with evidence labels. Verify 17 scenario entries and seven preserved terrain associations.
-- [ ] Add the environment tab with separate Operations and Survival sections: domain rows, status, readable failure reasons, and final score. Compare passing and blank-score scenarios with the source CSV.
-- [ ] Add the sample input download: copy `sample_input.csv` from `dar_dev` into `app/public/` with its source commit, and add the labelled button. Verify the downloaded file matches the source byte-for-byte.
-- [ ] Add environment-only and blocked-score region states. Verify ten disabled terrain selections, continued terrain access for a region with a blank score, and the complete production walkthrough.
+- [x] Publish the environment catalogue and render its region score summaries with evidence labels. Verify 17 scenario entries and seven preserved terrain associations.
+- [x] Add the environment tab with separate Operations and Survival sections: domain rows, status, readable failure reasons, and final score. Compare passing and blank-score scenarios with the source CSV. Note, 14 Nov: no Artemis scenario fails or has a blank score in the current run, so only passing scenarios were compared.
+- [x] Add the sample input download: copy `sample_input.csv` from `dar_dev` into `app/public/` with its source commit, and add the labelled button. Verify the downloaded file matches the source byte-for-byte. Note, 14 Nov: the source is `env_algo_task/env_pipeline/sample_input.csv` on `main`. The export records its SHA-256, not a commit.
+- [x] Add environment-only and blocked-score region states. Verify ten disabled terrain selections, continued terrain access for a region with a blank score, and the complete production walkthrough. Note, 14 Nov: ten regions show "No terrain data" on the preview. No region has a blank score in the current run, so that state was not seen.

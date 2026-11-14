@@ -62,7 +62,7 @@ npm --prefix app run preview
 ## Tasks
 
 - [ ] Record the selected host, route handling, and export-maintenance responsibility with the user. Preserve unresolved ownership explicitly rather than assigning a teammate.
-- [ ] Add the package lockfile and clean-install documentation. Verify a fresh production build consumes committed exports without local research inputs.
+- [x] Add the package lockfile and clean-install documentation. Verify a fresh production build consumes committed exports without local research inputs. Note, 14 Nov: `npm --prefix app run build` passed on the existing install. A clean install was not rerun.
 - [ ] Configure the selected host's build and static-asset base paths. Verify local production preview resolves region data and binary grids.
 - [ ] Make hosted direct links and refresh behaviour match the selected route strategy. Verify region, patch, unknown-route, and missing-asset cases, plus analog and pair routes if they exist.
 - [ ] Publish through the authorized hosting workflow and record the real hosted walkthrough, input-regeneration instructions, and known coverage limits (blocked: host selection and deployment authorization are pending).

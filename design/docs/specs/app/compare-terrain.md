@@ -51,7 +51,7 @@ The page has two modes. **Figure mode** shows the pipeline's own PNG figures and
 
 ## Decisions
 
-- **Open:** Chart library remains undecided. Recharts offers familiar React components but adds a chart dependency. Observable Plot offers concise scientific plots but needs DOM lifecycle integration. Record the choice before adding the dependency.
+- **Draw the distribution curves in plain SVG, with no chart library.** Two step lines per chart do not justify a dependency in the bundle. The browser computes them from the 1,024 cells of each published grid, so no data re-export was needed. Cost: axes and ticks are hand-written, and the curves are not computed in the export, which "My calls" planned. (2026-11-14)
 - **Figure mode first.** The pair page then ships with data that exists today. Grid mode waited on a folder that has not arrived. Cost: no shared colour scale control, hover readout or crosshair until grid mode lands. (2026-11-13)
 - **Open:** Gareth asked Aarron for the `terrain_learning_readiness` folder on 13 Nov. It should hold the tensors for both bodies. Verify its channel order, units and patch IDs before grid mode uses it.
 - **Open:** Notebook 36's figures are saved inside the notebook in Git. The PNG files are on Aarron's machine. Ask for the report folder. Extract the embedded images only if it does not arrive.
@@ -64,10 +64,10 @@ The page has two modes. **Figure mode** shows the pipeline's own PNG figures and
 
 ## Tasks
 
-- [ ] Add the stable comparison route with pair loading, mode selection, and unavailable states. Verify it cannot substitute another candidate or a mismatched lunar tensor.
-- [ ] Publish the notebook 36 pair and distribution figures with their run identity, and render figure mode with the score, supplied physical values, and check count. Verify the Haworth rank 2 pair against the notebook.
-- [ ] Adopt a verified pair-grid input contract and export one actual pair with units, source identity, shape, and curve points (blocked: the `terrain_learning_readiness` folder has not arrived).
-- [ ] Render the four source grids using two shared physical scales and linked readouts. Verify known cells, orientation, units, and labelled limits.
-- [ ] Render the five supplied physical checks with accessible statuses, differences, and comparison bands. Verify the source rank stays unchanged.
-- [ ] Choose and record a chart library, then render slope and elevation distributions from real exported curves. Verify axes, sample counts, monotonicity, and accessible tabular values.
-- [ ] Add the Earth readiness placeholder and pair-specific limitations. Run the real pair comparison walkthrough and production build in figure mode, then again when grid mode lands.
+- [x] Add the stable comparison route with pair loading, mode selection, and unavailable states. Verify it cannot substitute another candidate or a mismatched lunar tensor. Note, 14 Nov: the route has no mode selection, because only grid mode exists. An unknown candidate ID shows "This comparison is unavailable" on the preview.
+- Superseded, 14 Nov: the pair page draws real grids, so no notebook figures are published. Original task: ~~Publish the notebook 36 pair and distribution figures with their run identity, and render figure mode with the score, supplied physical values, and check count. Verify the Haworth rank 2 pair against the notebook.~~
+- [x] Adopt a verified pair-grid input contract and export one actual pair with units, source identity, shape, and curve points. Note, 14 Nov: Earth and Moon grids are exported for every published match (`earth/grids.bin`). No curve points are exported.
+- [x] Render the four source grids using two shared physical scales and linked readouts. Verify known cells, orientation, units, and labelled limits.
+- [x] Render the five supplied physical checks with accessible statuses, differences, and comparison bands. Verify the source rank stays unchanged.
+- [x] Choose and record a chart library, then render slope and elevation distributions from real exported curves. Verify axes, sample counts, monotonicity, and accessible tabular values. Note, 14 Nov: no library. `DistributionChart.tsx` draws the curves in SVG from the pair's grids in the browser. On the preview, the Haworth `r32-c32` and Wadi Rum rank 2 pair gave median slopes 15.8 and 12.5 degrees and 90% slopes 18.4 and 26.7 degrees. The pipeline's checks say 15.83, 12.48, 18.40 and 26.65. Both curves rise only, end at 100%, and count 1,024 cells each.
+- [x] Add the Earth readiness placeholder and pair-specific limitations. Run the real pair comparison walkthrough and production build in figure mode, then again when grid mode lands. Note, 14 Nov: there is no figure mode. The walkthrough ran once, in grid mode, on the production preview.
