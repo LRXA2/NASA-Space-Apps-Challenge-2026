@@ -4,16 +4,16 @@
 
 All seven specs are due 2026-11-15, the end of the hackathon, which is one day away.
 Every task that does not need a host or Gareth's pipeline run is ticked. Six tasks are left: five wait on a host, and one waits on the pipeline run.
-On 14 Nov the pair page gained slope and elevation distribution charts (`app/src/components/DistributionChart.tsx`). That change is not committed.
-`gareth/app` is level with `origin/gareth/app` at `acb07e5`. `origin/main` is at `3b5937e`.
+On 14 Nov the pair page gained slope and elevation distribution charts (`b0b4641`).
+`gareth/app` is two commits ahead of `origin/gareth/app`: `b0b4641` and `1dafe09` are not pushed. `origin/main` is at `3b5937e`.
 The team's log is [docs/STATUS.md](../../docs/STATUS.md).
 
 ## Next
 
-1. Review and commit the distribution charts: `app/src/components/DistributionChart.tsx`, `app/src/pages/PairPage.tsx`, `app/src/styles/app.css`.
+1. Push `gareth/app`. It is two commits ahead of `origin/gareth/app`.
 2. Get the host decision from the team, then start `publish-demo`. The repository is private, so GitHub Pages needs an admin, such as Aarron.
 3. Ask Gareth to add per-check evidence from a `--detailed` scorer run, or copy his `data/processed/moon_pipeline/` run to this machine. The detailed output holds each check's column, unit and value.
-4. Decide whether `browse-first-patch` and `browse-regions` get a `Status: done` line. Both have every task ticked and are on `main`.
+4. Decide whether `browse-first-patch`, `browse-regions`, `compare-terrain` and `earth-analogs` get a `Status: done` line. All four have every task ticked.
 5. Review the tasks marked "Superseded, 14 Nov" in `specs/app/earth-analogs.md` and `specs/app/compare-terrain.md`. Agree, or restore them as open tasks.
 
 ## Blockers
