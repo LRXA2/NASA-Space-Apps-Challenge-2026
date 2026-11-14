@@ -1,0 +1,715 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font: 16px/1.5 var(--font);
+}
+
+a {
+  color: var(--link);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+code {
+  font: 0.875em var(--mono);
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 1.0625rem;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Shell */
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--surface-card);
+}
+
+.brand {
+  color: var(--text-primary);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.topbar-note {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.crumbs {
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.lede {
+  margin: 0 0 4px;
+  color: var(--text-secondary);
+}
+
+.source-line {
+  margin: 4px 0 20px;
+}
+
+/* Messages */
+.message {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-card);
+}
+
+.message-error {
+  background: var(--error-surface);
+}
+
+.message h1 {
+  font-size: 1.25rem;
+}
+
+.message p {
+  margin: 8px 0 0;
+}
+
+.inline-error {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--error-surface);
+}
+
+/* Lists and tables */
+.link-list {
+  margin: 20px 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-card);
+}
+
+.link-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding: 14px 16px;
+}
+
+.link-list li + li {
+  border-top: 1px solid var(--hairline);
+}
+
+.link-list a {
+  font-weight: 600;
+}
+
+.patch-table {
+  width: 100%;
+  margin: 20px 0 8px;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  background: var(--surface-card);
+}
+
+.patch-table th,
+.patch-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--hairline);
+  text-align: left;
+}
+
+.patch-table thead th {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.patch-table .number {
+  text-align: right;
+}
+
+/* Region switcher */
+.region-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+}
+
+.region-switch a {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-card);
+  text-decoration: none;
+}
+
+.region-switch a[aria-current="page"] {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  font-weight: 650;
+}
+
+/* Patch map */
+.map-mode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  margin: 16px 0 8px;
+}
+
+.map-mode-label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.map-mode label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.patch-fills {
+  position: absolute;
+}
+
+.patch-map {
+  aspect-ratio: 1;
+  max-height: min(70vh, 560px);
+  border: 1px solid var(--border);
+  isolation: isolate;
+}
+
+.patch-map.leaflet-container {
+  background: var(--surface-card);
+  font: inherit;
+}
+
+.patch-square {
+  stroke: var(--surface-card);
+  stroke-width: 1;
+}
+
+.patch-highlight {
+  stroke: var(--text-primary);
+  stroke-width: 3;
+}
+
+.patch-hatch {
+  fill: none;
+  stroke: var(--status-mark);
+  stroke-width: 1.5;
+}
+
+.patch-hatch-warning {
+  stroke: var(--status-mark-warning);
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;
+}
+
+.map-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-swatch {
+  flex: none;
+  border: 1px solid var(--border);
+}
+
+.map-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 20px;
+  min-height: 1.75em;
+  margin: 8px 0 4px;
+}
+
+.map-readout .badge {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.map-note {
+  margin: 0;
+}
+
+.patch-table caption {
+  padding: 8px 0;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+/* The page never scrolls sideways. On a very narrow screen the table scrolls inside this box. */
+.table-scroll {
+  overflow-x: auto;
+}
+
+@media (max-width: 520px) {
+  .patch-table th,
+  .patch-table td {
+    padding: 8px 4px;
+    font-size: 0.875rem;
+  }
+
+  .patch-table .badge {
+    gap: 4px;
+    font-size: 0.875rem;
+  }
+
+  .patch-table .tone-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.card {
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-card);
+}
+
+.cards .card {
+  margin-bottom: 0;
+}
+
+/* Status badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.125rem;
+  font-weight: 650;
+}
+
+.patch-table .badge {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.tone-icon {
+  flex: none;
+}
+
+.tone-good {
+  fill: var(--status-good);
+}
+
+.tone-warning {
+  fill: var(--status-warning);
+}
+
+.tone-critical {
+  fill: var(--status-critical);
+}
+
+.tone-mark {
+  fill: none;
+  stroke: var(--status-mark);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tone-warning .tone-mark {
+  stroke: var(--status-mark-warning);
+}
+
+/* Probabilities */
+.probabilities {
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.probabilities caption,
+.crossing-table caption {
+  padding-bottom: 6px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  text-align: left;
+}
+
+.probabilities th {
+  padding: 4px 8px 4px 0;
+  font-weight: 400;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.probabilities .is-predicted th,
+.probabilities .is-predicted .number {
+  font-weight: 650;
+}
+
+.predicted-tag {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+.bar-cell {
+  width: 45%;
+}
+
+.bar-track {
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--bar-track);
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: 4px;
+  background: var(--bar);
+}
+
+/* Crossing directions */
+.crossing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.crossing-diagram {
+  flex: none;
+}
+
+.crossing-frame {
+  fill: none;
+  stroke: var(--hairline);
+}
+
+.axis-yes,
+.axis-no {
+  stroke: var(--text-primary);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.axis-no {
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 5;
+}
+
+.crossing-table {
+  flex: 1 1 200px;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.crossing-table th,
+.crossing-table td {
+  padding: 4px 8px 4px 0;
+  text-align: left;
+  vertical-align: top;
+}
+
+.crossing-table thead th {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.crossing-table tbody th {
+  font-weight: 600;
+}
+
+.crossing-table .number {
+  padding-right: 0;
+  text-align: right;
+}
+
+.axis-edges {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 400;
+}
+
+/* Measurements */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 24px;
+  margin: 0;
+}
+
+.stats dt {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.stats dd {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Terrain */
+.terrain-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.terrain {
+  margin: 0;
+  max-width: 420px;
+}
+
+.terrain figcaption {
+  margin-bottom: 8px;
+  font-weight: 650;
+}
+
+.terrain-plot {
+  position: relative;
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.terrain-plot canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.terrain-cursor {
+  position: absolute;
+  outline: 2px solid var(--text-primary);
+  box-shadow: 0 0 0 4px var(--surface-card);
+  pointer-events: none;
+}
+
+.terrain-readout {
+  min-height: 1.5em;
+  margin: 8px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.legend-bar {
+  display: block;
+  height: 12px;
+  border: 1px solid var(--border);
+}
+
+.legend-ticks {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.terrain-note {
+  margin: 8px 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+.terrain-table summary {
+  color: var(--link);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.terrain-table-scroll {
+  max-height: 320px;
+  margin-top: 8px;
+  overflow: auto;
+  border: 1px solid var(--border);
+}
+
+.terrain-table table {
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.terrain-table caption {
+  padding: 4px 6px;
+  text-align: left;
+}
+
+.terrain-table th,
+.terrain-table td {
+  padding: 2px 6px;
+  border: 1px solid var(--hairline);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Limits */
+.limits ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.limits li + li {
+  margin-top: 6px;
+}
+
+/* Section links in the top bar */
+.topbar-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 0.9375rem;
+}
+
+/* Smaller badge for tables and inline counts */
+.badge-small,
+.patch-table .badge-small {
+  gap: 6px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+.badge-small .tone-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.patch-table tr.is-active {
+  background: var(--bar-track);
+}
+
+.subhead {
+  margin: 12px 0 4px;
+  font-size: 0.9375rem;
+}
+
+/* Earth map */
+.earth-map {
+  height: min(60vh, 420px);
+  border: 1px solid var(--border);
+  isolation: isolate;
+}
+
+.earth-map.leaflet-container {
+  font: inherit;
+}
+
+.earth-marker span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--surface-card);
+  border-radius: 50%;
+  background: var(--text-primary);
+  color: var(--surface-card);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.earth-marker.is-active span {
+  outline: 3px solid var(--focus);
+  transform: scale(1.2);
+}
+
+/* Moon–Earth pair: Moon left, Earth right, one row per measurement */
+.pair-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 640px) {
+  .pair-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Upload steps */
+.steps {
+  padding-left: 20px;
+}
+
+.steps li + li {
+  margin-top: 8px;
+}
+
+details.card > summary {
+  cursor: pointer;
+}
+
+details.card[open] > summary {
+  margin-bottom: 12px;
+}

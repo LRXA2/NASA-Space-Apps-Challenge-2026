@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "lunar_views_run": "data/processed/lunar_terrain_views/20261105T151647350305Z_0a2735",
+  "model_run": "data/processed/terrain_operability_model/20261112T101835245712Z_7944f6",
+  "view": "full_context",
+  "patch_size_m": 960,
+  "spacing_m": 30,
+  "center_stride_cells": 32,
+  "batch_size": 128,
+  "direction_probability_threshold": 0.5,
+  "claim_boundary": "Earth-trained inference on unlabeled lunar terrain; predictions are unvalidated screening outputs, not measured rover safety"
+}

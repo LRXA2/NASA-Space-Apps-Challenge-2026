@@ -1,10 +1,15 @@
 ﻿# Local datasets and all generated analysis artifacts
-/data/
+# Data stays local; only the folder layout (.gitkeep) and data/README.md are tracked
+/data/**
+!/data/**/
+!/data/**/.gitkeep
+!/data/README.md
 /reports/
 /.scratch/
 /outputs/
 /artifacts/
 /checkpoints/
+/notebooks/modeling/terrain_similarity/weights/
 /runs/
 /mlruns/
 /wandb/
@@ -26,6 +31,10 @@ __pycache__/
 .tox/
 .nox/
 .cache/
+
+# App dependencies and build output
+node_modules/
+/app/dist/
 
 # Test coverage and packaging outputs
 .coverage
