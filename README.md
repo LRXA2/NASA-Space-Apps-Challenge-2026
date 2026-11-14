@@ -11,6 +11,29 @@ Broad EDA is complete across five Earth sites and seven lunar regions. [Notebook
 - [Project outline](outline.md) — intended pipeline and sources.
 - [Download instructions](download%20scripts/README.md) and [inventory](DOWNLOAD_CHECKLIST.md) — source acquisition.
 
+## Python setup
+
+Install Python 3.12 and [uv](https://docs.astral.sh/uv/), then create the
+complete development environment from the locked dependencies:
+
+```powershell
+uv sync --all-extras
+```
+
+For only the operational CNN and its tests, use the smaller environment:
+
+```powershell
+uv sync --extra processing --extra model --extra test
+```
+
+Available extras are `processing`, `model`, `download`, `environment`, and
+`test`. The shared `model` lock uses portable CPU PyTorch wheels. Run commands
+inside the managed environment with `uv run`, for example:
+
+```powershell
+uv run pytest operational_cnn/tests
+```
+
 ## Compare two prepared sites
 
 Use the saved CNN from Python, without opening Jupyter:
