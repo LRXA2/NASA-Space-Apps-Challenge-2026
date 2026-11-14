@@ -34,11 +34,11 @@ Options: leave them out; show them as a small reference strip on the environment
 
 | # | Question | Answer |
 | --- | --- | --- |
-| D1 | Do hard gates stay off for the demo? With them off, all 83 rows pass and no score is ever blank | |
-| D2 | Does `--detailed` (`*_details` JSON) include each check's value, threshold and Pass/Fail/Unknown status? The environment tab wants per-check evidence | |
-| D3 | Confirm the region mapping `eda_001`–`eda_017` (now hard-coded in `integration/moon_sites.py`) | |
-| D4 | Is it OK to run `env_pipeline.py` and `config.yml` unchanged in the browser (Pyodide) for the upload, and to point users at `sample_input.csv` as the template? It is built: output is identical to the CLI for all 83 sample rows | |
-| D5 | Which input columns could an outside user realistically fill in? This decides how the upload page is worded | |
+| D1 | Do hard gates stay off for the demo? With them off, all 83 rows previously passed without blank scores. | `[Darrel_14Nov_1130] Enable hard gates and thresholds to show Pass, Fail and Unknown, with reasons for Fail or Unknown.` <br> `[Darrel_14Nov_1500] I have updated config.yml to support this, please re-run on your end to ensure that it still works. Values are project-test thresholds, not NASA limits.` |
+| D2 | Does `--detailed` (`*_details` JSON) include each check's value, threshold and Pass/Fail/Unknown status? | `[Darrel_14Nov_1500] Yes, for enabled gates. Parse *_details, then its hard_gate_details JSON string for the value, threshold/bounds, status and reason. Display Passed/Failed as Pass/Fail. Scoring-only inputs do not have gate verdicts.` |
+| D3 | Confirm the region mapping `eda_001`-`eda_017` in the integration. | `[Darrel_14Nov_1500] Confirmed against the README. Only eda_001-eda_007 have terrain joins; eda_008-eda_017 are environment-only.` See [region mapping](../env_algo_task/env_pipeline/README.md#one-input-csv). |
+| D4 | Is it OK to run `env_pipeline.py` and `config.yml` unchanged in Pyodide, using `sample_input.csv` as the template? | `[Darrel_14Nov_1130] Please refer to the updated config.yml as i updated some logic (Qn D1). We can have 2 views: 'General' which only has Ops score and Survival score, and 'Details' which list down all the scoring matrix . Please do take note that the input values are best effort.` |
+| D5 | Which input columns could an outside user realistically fill in? | `[Darrel_14Nov_1500] Users manually enter id, start_utc and stop_utc. Other values can come from NASA data where available. Otherwise, set pipeline_mode: available_data in config.yml to allow blanks, or set enabled: false to exclude an unavailable domain. hard_gates_enabled: false only disables gate checks.` See [input guide](../env_algo_task/env_pipeline/README.md#where-and-how-to-obtain-the-input-values). |
 
 ## Aarron (similarity CNN)
 
