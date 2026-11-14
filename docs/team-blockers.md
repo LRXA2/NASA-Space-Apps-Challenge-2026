@@ -61,7 +61,7 @@ Options: leave them out; show them as a small reference strip on the environment
 
 | # | Question | Answer |
 | --- | --- | --- |
-| I2 | Parts of `design/docs/specs/app/earth-analogs.md` are obsolete: keying on Aarron's query IDs, starting from notebook 36, and the footprint task. The shared `tile_id` covers all 2,910 tiles. Update the spec or mark it superseded by [architecture.md](architecture.md)? | |
+| I2 | Parts of `docs/specs/app/earth-analogs.md` are obsolete: keying on Aarron's query IDs, starting from notebook 36, and the footprint task. The shared `tile_id` covers all 2,910 tiles. Update the spec or mark it superseded by [architecture.md](architecture.md)? | |
 
 ## Resolved
 

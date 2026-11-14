@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Moon and Atacama · Lunar Analog Finder</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#080B27}
+.app{--g:#060C16;--hd:#0A1420;--p:#0B1421;--ph:#0F1B2A;--p2:#08111C;--r:#112033;--l:#26394D;--l2:#38536C;--grid:#16263A;--t1:#E0E7F0;--t2:#A8B5C5;--t3:#8695A8;--acc:#7EABC0;--focus:#A9CDDE;--link:#8DB9CD;--linkh:#B9D6E3;--btn:#29495F;--btnh:#32576F;--btnb:#3B627B;--btn2:#132233;--btn2h:#1A2E43;--sel:rgba(126,171,192,.13);--moon:#BCC7D8;--moonh:#D6DEE9;--on:#060C16;--earth:#D99A62;--ok:#62C2AD;--warn:#E2BC5C;--bad:#E48069;--box:#4F6A82;--band:rgba(126,171,192,.13);--bandb:rgba(126,171,192,.5);--curs:#FFFFFF;--halo:#060C16;--bk:rgba(126,171,192,.6);color-scheme:dark}
+.app{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--t1);background-color:var(--g);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Ccircle cx='136.0' cy='63.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='225.1' cy='153.6' r='0.5' fill='%23CFDBEA' fill-opacity='0.40'/%3E%3Ccircle cx='90.2' cy='36.1' r='0.9' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='38.1' cy='178.3' r='0.5' fill='%23CFDBEA' fill-opacity='0.41'/%3E%3Ccircle cx='264.9' cy='244.9' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='166.6' cy='410.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.30'/%3E%3Ccircle cx='55.9' cy='176.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='235.3' cy='286.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='268.3' cy='156.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='673' height='673'%3E%3Ccircle cx='304.5' cy='376.7' r='0.9' fill='%23CFDBEA' fill-opacity='0.28'/%3E%3Ccircle cx='575.4' cy='127.8' r='0.9' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='533.7' cy='63.3' r='0.7' fill='%23CFDBEA' fill-opacity='0.20'/%3E%3Ccircle cx='362.5' cy='599.2' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='266.6' cy='304.9' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='559.7' cy='42.5' r='0.5' fill='%23CFDBEA' fill-opacity='0.21'/%3E%3Ccircle cx='162.8' cy='20.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.24'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1031' height='1031'%3E%3Ccircle cx='953.5' cy='978.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.16'/%3E%3Ccircle cx='316.3' cy='390.9' r='0.7' fill='%23CFDBEA' fill-opacity='0.19'/%3E%3Ccircle cx='197.9' cy='458.4' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='929.6' cy='109.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.27'/%3E%3Ccircle cx='528.5' cy='757.0' r='0.7' fill='%23CFDBEA' fill-opacity='0.36'/%3E%3C/svg%3E");background-size:420px 420px,673px 673px,1031px 1031px;font-size:16px;line-height:1.5;min-height:100vh}
+.app ::selection{background:var(--btn);color:var(--t1)}
+.app a{color:var(--link);text-underline-offset:3px;text-decoration-thickness:1px}
+.app a:hover{color:var(--linkh)}
+.app :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+code,.code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.92em;overflow-wrap:anywhere}
+.meta{font:500 11px/1.4 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
+.wrap{max-width:1320px;margin:0 auto;padding:0 32px;box-sizing:border-box}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:4px 24px;padding:4px 32px;border-bottom:1px solid var(--l);background:var(--hd)}
+.brand{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:var(--t1)!important;text-decoration:none;font-weight:600;font-size:16px}
+.nav{display:flex;flex-wrap:wrap;gap:2px}
+.nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--t2);text-decoration:none;font-size:15px;border-radius:2px}
+.nav a:hover{color:var(--t1);background:var(--r)}
+.nav a[aria-current]{color:var(--t1);background:var(--sel);box-shadow:inset 0 -2px 0 var(--acc);border-radius:2px 2px 0 0}
+.steps{display:flex;flex-wrap:wrap;gap:0 4px;list-style:none;margin:0 0 0 auto;padding:0;align-items:center}
+.steps li{display:flex;align-items:center}
+.steps li+li::before{content:"";width:16px;height:1px;background:var(--l2);margin-right:4px}
+.step{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 6px;font-size:14px;color:var(--t2)!important;text-decoration:none;border-radius:2px}
+.step:hover{color:var(--t1)!important}
+.dot{width:24px;height:24px;border-radius:2px;border:1px solid var(--l2);display:inline-flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;box-sizing:border-box}
+.step.done .dot{border-color:color-mix(in srgb,var(--acc) 60%,transparent);color:var(--acc)}
+.step[aria-current]{color:var(--t1)!important;font-weight:500}
+.step[aria-current] .dot{background:var(--sel);border-color:var(--acc);color:var(--t1);font-weight:500}
+main{padding:32px 0 64px;display:flex;flex-direction:column;gap:28px}
+.crumb{font-size:14px;color:var(--t3);margin:0}
+.crumb a{display:inline-block;padding:4px 0}
+h1{margin:0;font-size:40px;line-height:1.1;font-weight:600;letter-spacing:-0.015em;text-wrap:balance}
+h2{margin:0;font-size:18px;line-height:1.3;font-weight:600;letter-spacing:-0.005em}
+h3{margin:0;font-size:16px;line-height:1.35;font-weight:600}
+.sub{margin:6px 0 0;font-size:17px;color:var(--t2);text-wrap:pretty}
+.lede{margin:0;font-size:18px;line-height:1.55;color:var(--t2);max-width:62ch;text-wrap:pretty}
+.note{margin:0;font-size:14px;color:var(--t3);text-wrap:pretty}
+/* panels: navy surface, fine border, corner brackets, header strip */
+.panel{position:relative;background:var(--p);border:1px solid var(--l);border-radius:2px}
+.panel::after{content:"";position:absolute;inset:-1px;pointer-events:none;background:
+ linear-gradient(var(--bk),var(--bk)) left top/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) left top/1px 10px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) right top/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) right top/1px 10px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) left bottom/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) left bottom/1px 10px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) right bottom/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) right bottom/1px 10px no-repeat}
+.phd{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 16px;padding:10px 20px;min-height:48px;box-sizing:border-box;background:var(--ph);border-bottom:1px solid var(--l)}
+.phd h2{font-size:16px}
+.pb{padding:20px}
+/* buttons: compact rectangles, muted steel-blue */
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:0 16px;border-radius:2px;background:var(--btn);border:1px solid var(--btnb);color:var(--t1)!important;font-weight:500;text-decoration:none;font-size:15px;font-family:inherit;cursor:pointer;box-sizing:border-box}
+.btn:hover,.btn.is-hover{background:var(--btnh);border-color:var(--acc)}
+.btn.is-focus{outline:2px solid var(--focus);outline-offset:2px}
+.btn2{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:40px;padding:0 14px;border-radius:2px;border:1px solid var(--l2);color:var(--t1)!important;text-decoration:none;font-size:14px;font-weight:500;background:var(--btn2);font-family:inherit;cursor:pointer;box-sizing:border-box}
+.btn2:hover,.btn2.is-hover{background:var(--btn2h);border-color:color-mix(in srgb,var(--acc) 70%,transparent)}
+.btn2.is-focus{outline:2px solid var(--focus);outline-offset:2px}
+.btn2[disabled],.btn2[aria-disabled="true"]{color:var(--t3)!important;border-color:var(--l);border-style:dashed;cursor:not-allowed;background:transparent}
+.seg{display:inline-flex;border:1px solid var(--l);border-radius:2px;padding:2px;gap:2px;background:var(--p2)}
+.seg button{min-height:36px;padding:0 12px;border:0;border-radius:1px;background:transparent;color:var(--t2);font:inherit;font-size:14px;cursor:pointer}
+.seg button:hover{color:var(--t1);background:var(--r)}
+.seg button[aria-pressed="true"]{background:var(--sel);color:var(--t1);box-shadow:inset 0 -2px 0 var(--acc);font-weight:500}
+/* status */
+.st{display:inline-flex;align-items:center;gap:8px;font-weight:500}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.sb{display:inline-flex;align-items:center;gap:6px;padding:1px 9px 1px 6px;border-radius:2px;font-size:13px;font-weight:500;border:1px solid;line-height:1.6;white-space:nowrap}
+.sb.ok{border-color:color-mix(in srgb,var(--ok) 45%,transparent);background:color-mix(in srgb,var(--ok) 9%,transparent)}
+.sb.bad{border-color:color-mix(in srgb,var(--bad) 50%,transparent);background:color-mix(in srgb,var(--bad) 9%,transparent)}
+.sb.warn{border-color:color-mix(in srgb,var(--warn) 50%,transparent);background:color-mix(in srgb,var(--warn) 9%,transparent)}
+.sb.off{color:var(--t2);border:1px dashed var(--l2);padding:1px 9px;background:transparent}
+.gnote{margin:0;padding:10px 14px;border-left:2px solid var(--warn);background:color-mix(in srgb,var(--warn) 6%,transparent);border-radius:0 2px 2px 0;font-size:14px;color:var(--t2)}
+.blocked{color:var(--t2);font-size:16px}
+.limits{border-top:1px solid var(--l);padding-top:24px;display:flex;flex-direction:column;gap:14px}
+.limits h2{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--t1)}
+.limits h2 svg{color:var(--t3)}
+.limits ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px 40px;font-size:15px;color:var(--t2)}
+.runid{margin:0;font-size:12px;color:var(--t3)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:1px;flex:none}
+.pat-o{background:#2B7A6D}
+.pat-m{background:repeating-linear-gradient(135deg,#9A7522 0 4px,#4A3A12 4px 8px)}
+.pat-n{background:repeating-linear-gradient(45deg,#8E3B2E 0 2px,#2A1512 2px 6px),#2A1512}
+.mapimg{width:100%;aspect-ratio:1/1;display:block;image-rendering:pixelated;border-radius:1px}
+.ramp{height:10px;border-radius:1px}
+.scale{display:flex;justify-content:space-between;font-size:12px;color:var(--t2)}
+/* gate checks table */
+.gt{width:100%;border-collapse:collapse;font-size:15px}
+.gt caption{caption-side:top;text-align:left;font-size:14px;color:var(--t2);padding:0 0 10px}
+.gt th,.gt td{padding:11px 14px;border-top:1px solid var(--l);text-align:left;vertical-align:top;font-weight:400}
+.gt thead th{font:500 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);border-top:0;padding-top:4px;padding-bottom:8px;background:var(--ph)}
+.gt tbody th{font-weight:500}
+.gt .dom{display:block;font-size:13px;color:var(--t3);font-weight:400;margin-top:2px}
+.gt .val{text-align:right;white-space:nowrap}
+.gt .miss{color:var(--t3);font-style:italic;font-family:'IBM Plex Sans',sans-serif}
+.gt .why{display:block;font-size:13px;color:var(--t2);margin-top:6px;max-width:34ch}
+.gt tr.f th,.gt tr.f td{background:color-mix(in srgb,var(--bad) 6%,transparent)}
+.gt tr.u th,.gt tr.u td{background:color-mix(in srgb,var(--warn) 6%,transparent)}
+.disc{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--t2)}
+.disc li{display:flex;gap:8px;align-items:flex-start}
+.disc li svg{color:var(--t3);margin-top:2px}
+@media (max-width:640px){
+  .gt thead{display:none}
+  .gt caption{display:block}
+  .gt,.gt tbody{display:block}
+  .gt tr{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding:12px 0;border-top:1px solid var(--l)}
+  .gt th,.gt td{border:0;padding:0;background:none!important}
+  .gt tbody th{grid-column:1/-1}
+  .gt td.val{text-align:left}
+  .gt td.val::before{content:"Value ";color:var(--t3);font-family:'IBM Plex Sans',sans-serif}
+  .gt td.rule{grid-column:1}
+  .gt td.rule::before{content:"Rule ";color:var(--t3)}
+  .gt td.res{grid-column:1;margin-top:4px}
+}
+.dbar{display:grid;grid-template-columns:150px minmax(0,1fr) 64px;gap:14px;align-items:center;font-size:15px}
+.trk{position:relative;height:10px;border-radius:1px;background:var(--r)}
+.trk b{position:absolute;inset:2px auto 2px 0;background:var(--moon);border-radius:1px}
+@media (max-width:820px){.steps{margin:0;width:100%}.top{padding:4px 16px}}
+@media (max-width:640px){.wrap{padding:0 16px}h1{font-size:30px}.lede{font-size:17px}main{padding-top:20px;gap:22px}.step .lbl{display:none}.step[aria-current] .lbl{display:inline}.dbar{grid-template-columns:104px minmax(0,1fr) 64px;font-size:14px}.phd{padding:10px 16px}.pb{padding:16px}}
+
+.app{--g:#07101C;--hd:#08121F;--p:#0B1726;--ph:#0B1726;--p2:#081220;--r:#10223A;--l:#1C3148;--l2:#2A4560;--grid:#132538;--t1:#EAF1F7;--t2:#A9B9CA;--t3:#8396AB;--acc:#38BDF8;--focus:#BAE6FD;--link:#7DD3FC;--linkh:#BAE6FD;--btn:#38BDF8;--btnh:#7DD3FC;--btnb:#38BDF8;--btn2:transparent;--btn2h:rgba(56,189,248,.08);--sel:rgba(56,189,248,.09);--moon:#C3CEDD;--earth:#F4AE5B;--ok:#62C2AD;--warn:#E2BC5C;--bad:#E48069;--box:#4A6A86;--band:rgba(56,189,248,.10);--bandb:rgba(56,189,248,.45);--bk:rgba(56,189,248,.5)}
+.app{background-image:radial-gradient(1100px 520px at 75% -120px,rgba(56,189,248,.07),transparent 70%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Ccircle cx='136.0' cy='63.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='225.1' cy='153.6' r='0.5' fill='%23CFDBEA' fill-opacity='0.40'/%3E%3Ccircle cx='90.2' cy='36.1' r='0.9' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='38.1' cy='178.3' r='0.5' fill='%23CFDBEA' fill-opacity='0.41'/%3E%3Ccircle cx='264.9' cy='244.9' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='166.6' cy='410.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.30'/%3E%3Ccircle cx='55.9' cy='176.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='235.3' cy='286.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='268.3' cy='156.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='673' height='673'%3E%3Ccircle cx='304.5' cy='376.7' r='0.9' fill='%23CFDBEA' fill-opacity='0.28'/%3E%3Ccircle cx='575.4' cy='127.8' r='0.9' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='533.7' cy='63.3' r='0.7' fill='%23CFDBEA' fill-opacity='0.20'/%3E%3Ccircle cx='362.5' cy='599.2' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='266.6' cy='304.9' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='559.7' cy='42.5' r='0.5' fill='%23CFDBEA' fill-opacity='0.21'/%3E%3Ccircle cx='162.8' cy='20.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.24'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1031' height='1031'%3E%3Ccircle cx='953.5' cy='978.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.16'/%3E%3Ccircle cx='316.3' cy='390.9' r='0.7' fill='%23CFDBEA' fill-opacity='0.19'/%3E%3Ccircle cx='197.9' cy='458.4' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='929.6' cy='109.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.27'/%3E%3Ccircle cx='528.5' cy='757.0' r='0.7' fill='%23CFDBEA' fill-opacity='0.36'/%3E%3C/svg%3E");background-size:auto,420px 420px,673px 673px,1031px 1031px}
+.app h1,.app h2,.app h3,.brand{font-family:'Space Grotesk','IBM Plex Sans',sans-serif}
+h1{font-size:46px;font-weight:700;letter-spacing:-0.025em;line-height:1.06}
+.app :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.app a{color:var(--link)}
+.chip,.meta{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border:1px solid var(--bandb);border-radius:4px;background:var(--sel);color:var(--acc);font:500 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+/* header */
+.top{gap:10px 18px;padding:12px 32px;background:rgba(7,16,28,.88);border-bottom:1px solid var(--l)}
+.brand{gap:12px;text-transform:uppercase;letter-spacing:.08em;font-size:15px;font-weight:700}
+.bn{display:flex;flex-direction:column;gap:3px;line-height:1.1}.bs{font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--acc)}
+.top .steps{margin-left:auto}.hcopy .chip{white-space:normal}
+.logo{width:40px;height:40px;border:1px solid var(--bandb);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:var(--sel);flex:none}
+.nav{border:1px solid var(--l);border-radius:8px;padding:4px;gap:4px;background:var(--p2)}
+.nav a{min-height:38px;padding:0 14px;font:500 13px 'IBM Plex Mono',monospace;border-radius:6px;border:1px solid transparent}
+.nav a[aria-current]{color:var(--acc);background:var(--sel);border-color:var(--bandb);box-shadow:none;border-radius:6px}
+.nav a[aria-current]::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--acc);margin-right:8px}
+.steps{border:1px solid var(--l);border-radius:8px;padding:2px 10px;background:var(--p2)}
+.step{font:500 13px 'IBM Plex Mono',monospace;min-height:40px}
+.dot{width:auto;min-width:28px;height:24px;padding:0 4px;border-radius:4px;font-size:12px}
+.step[aria-current]{color:var(--acc)!important}
+.step[aria-current] .dot{background:var(--sel);border-color:var(--acc);color:var(--acc)}
+.step.done .dot{color:var(--acc);border-color:var(--bandb)}
+/* panels */
+.panel{border-radius:10px;background:linear-gradient(180deg,#0C1A2B,#0A1524)}
+.panel::after{inset:-1px;border-radius:10px}
+.phd{background:transparent;padding:16px 22px;min-height:56px}
+.phd h2,.card .k{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.panel h2{font-size:14px!important;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.phs{margin:3px 0 0;font:400 12px/1.4 'IBM Plex Mono',monospace;color:var(--t3)}
+.pb{padding:22px}
+.card .k{background:transparent;font-family:'Space Grotesk',sans-serif}
+/* buttons */
+.btn{min-height:46px;padding:0 20px;border-radius:4px;background:var(--btn);border-color:var(--btn);color:#04121F!important;font:600 13px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.btn:hover,.btn.is-hover{background:var(--btnh);border-color:var(--btnh);box-shadow:0 0 0 4px rgba(56,189,248,.14)}
+.btn2{border-radius:4px;font:500 13px 'IBM Plex Mono',monospace;background:transparent}
+.btn2:hover,.btn2.is-hover{background:var(--btn2h);border-color:var(--bandb)}
+.seg{border-radius:6px;padding:3px}
+.seg button{border-radius:4px;font:500 13px 'IBM Plex Mono',monospace;border:1px solid transparent}
+.seg button[aria-pressed="true"]{background:var(--sel);color:var(--acc);border-color:var(--bandb);box-shadow:none}
+/* status */
+.sb{border-radius:4px;font:600 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px 2px 6px}
+.sb.off{text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px}
+.pat-o{background:#1FB89F}
+.pat-m{background:repeating-linear-gradient(135deg,#D98A2B 0 3px,#6B4214 3px 6px)}
+.pat-n{background:repeating-linear-gradient(45deg,#E2545B 0 4px,#B83C43 4px 6px)}
+/* limits as a panel */
+.limits{border:1px solid var(--l);border-radius:10px;padding:22px 24px;background:rgba(11,23,38,.7)}
+.limits h2{font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--warn)}
+.limits h2 svg{color:var(--warn)}
+.limits ul{font-size:14px}
+@media (max-width:640px){h1{font-size:32px}.top{padding:10px 16px}.phd{padding:14px 16px}.pb{padding:16px}.nav{width:100%}.steps{width:100%;box-sizing:border-box}}
+
+.app{--g:#080B27;--hd:rgba(8,11,39,.8);--p:#12163A;--ph:#12163A;--p2:#0C0F2E;--r:#1A1F4A;--l:#252B57;--l2:#363E78;--grid:#1C2150;--t1:#E6E8FF;--t2:#B3B9DA;--t3:#8E95BD;--acc:#38BDF8;--focus:#BAE6FD;--link:#7DD3FC;--linkh:#BAE6FD;--btn:#38BDF8;--btnh:#7DD3FC;--btnb:#38BDF8;--btn2:rgba(56,189,248,.06);--btn2h:rgba(129,140,248,.16);--sel:rgba(56,189,248,.12);--moon:#C3C9EE;--earth:#F4AE5B;--ok:#62C2AD;--warn:#E2BC5C;--bad:#E48069;--box:#5A63A0;--band:rgba(56,189,248,.10);--bandb:rgba(56,189,248,.42);--bk:transparent;--vio:#818CF8;--hair:rgba(129,140,248,.16)}
+.app{font-family:'Inter','IBM Plex Sans',system-ui,sans-serif;background-image:radial-gradient(900px 620px at 10% -6%,rgba(76,29,149,.30),transparent 70%),radial-gradient(1000px 640px at 94% 2%,rgba(56,189,248,.10),transparent 70%),radial-gradient(1300px 820px at 50% 112%,rgba(46,16,101,.32),transparent 70%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Ccircle cx='136.0' cy='63.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='225.1' cy='153.6' r='0.5' fill='%23CFDBEA' fill-opacity='0.40'/%3E%3Ccircle cx='90.2' cy='36.1' r='0.9' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='38.1' cy='178.3' r='0.5' fill='%23CFDBEA' fill-opacity='0.41'/%3E%3Ccircle cx='264.9' cy='244.9' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='166.6' cy='410.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.30'/%3E%3Ccircle cx='55.9' cy='176.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='235.3' cy='286.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='268.3' cy='156.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='673' height='673'%3E%3Ccircle cx='304.5' cy='376.7' r='0.9' fill='%23CFDBEA' fill-opacity='0.28'/%3E%3Ccircle cx='575.4' cy='127.8' r='0.9' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='533.7' cy='63.3' r='0.7' fill='%23CFDBEA' fill-opacity='0.20'/%3E%3Ccircle cx='362.5' cy='599.2' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='266.6' cy='304.9' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='559.7' cy='42.5' r='0.5' fill='%23CFDBEA' fill-opacity='0.21'/%3E%3Ccircle cx='162.8' cy='20.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.24'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1031' height='1031'%3E%3Ccircle cx='953.5' cy='978.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.16'/%3E%3Ccircle cx='316.3' cy='390.9' r='0.7' fill='%23CFDBEA' fill-opacity='0.19'/%3E%3Ccircle cx='197.9' cy='458.4' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='929.6' cy='109.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.27'/%3E%3Ccircle cx='528.5' cy='757.0' r='0.7' fill='%23CFDBEA' fill-opacity='0.36'/%3E%3C/svg%3E");background-size:auto,auto,auto,420px 420px,673px 673px,1031px 1031px}
+.app ::selection{background:rgba(56,189,248,.35);color:#fff}
+.app *{scrollbar-color:#363E78 transparent}
+.app :focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:8px}
+h1{font-size:50px;font-weight:700;letter-spacing:-0.025em;line-height:1.06}
+.sub,.lede{color:var(--t2)}
+/* header */
+.top{gap:10px 28px;padding:14px 32px;background:rgba(8,11,39,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
+.brand{font-size:17px;letter-spacing:.06em}
+.bs{color:var(--earth);font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.12em}
+.logo{border-radius:50%;border-color:rgba(56,189,248,.45);background:radial-gradient(circle at 50% 40%,rgba(56,189,248,.22),rgba(8,11,39,.9) 72%);box-shadow:0 4px 18px -4px rgba(56,189,248,.45)}
+.nav{border:0;background:transparent;padding:0;gap:4px}
+.nav a{min-height:40px;padding:0 16px;font:500 14px 'Space Grotesk',sans-serif;letter-spacing:.02em;color:var(--t2);border-radius:999px}
+.nav a:hover{background:rgba(129,140,248,.10);color:var(--t1)}
+.nav a[aria-current]{color:var(--t1);background:rgba(56,189,248,.10);border-color:rgba(56,189,248,.35);border-radius:999px}
+.steps{border:1px solid var(--hair);border-radius:999px;padding:3px 16px;background:rgba(12,15,46,.8)}
+.steps li+li::before{width:14px;background:var(--l2)}
+.step{font:600 11px 'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;min-height:40px}
+.dot{min-width:22px;width:22px;height:22px;padding:0;border-radius:50%;font:600 11px 'IBM Plex Mono',monospace}
+.step[aria-current]{color:var(--t1)!important}
+.step[aria-current] .dot{background:var(--acc);color:#04121F;border-color:var(--acc);box-shadow:0 2px 10px -2px rgba(56,189,248,.7)}
+.step.done .dot{color:var(--acc);border-color:rgba(56,189,248,.5)}
+/* panels: one elevation, a hairline border on an indigo gradient */
+.panel{border-radius:16px;border:1px solid var(--hair);background:linear-gradient(160deg,rgba(27,32,74,.9),rgba(14,17,48,.92) 62%)}
+.panel::after{display:none}
+.phd{padding:20px 24px 10px;min-height:0;border-bottom:0;background:transparent}
+.phd h2,.panel h2,.card .k{font:600 19px/1.3 'Space Grotesk',sans-serif!important;letter-spacing:-0.005em!important;text-transform:none!important}
+.phs{font:400 13px/1.45 'Inter',sans-serif;color:var(--t3)}
+.pb{padding:16px 24px 24px}
+.chip,.meta{border-radius:999px;padding:4px 11px;border:1px solid rgba(56,189,248,.32);background:rgba(11,15,42,.7);color:var(--link);font:600 11px/1.3 'Space Grotesk',sans-serif;letter-spacing:.1em}
+/* buttons */
+.btn{border-radius:999px;background:var(--acc);border-color:var(--acc);color:#04121F!important;font:600 15px 'Space Grotesk',sans-serif;letter-spacing:.01em;text-transform:none;min-height:46px;padding:0 22px;box-shadow:0 6px 20px -8px rgba(56,189,248,.6)}
+.btn:hover,.btn.is-hover{background:#7DD3FC;border-color:#7DD3FC;box-shadow:0 8px 26px -8px rgba(56,189,248,.8)}
+.btn2{border-radius:999px;border:1px solid rgba(56,189,248,.38);background:var(--btn2);font:500 14px 'Space Grotesk',sans-serif;color:var(--t1)!important}
+.btn2:hover,.btn2.is-hover{border-color:var(--vio);background:var(--btn2h)}
+.seg{border-radius:999px;padding:3px;background:rgba(12,15,46,.8);border-color:var(--hair)}
+.seg button{border-radius:999px;font:500 13px 'Space Grotesk',sans-serif;padding:0 14px}
+.seg button[aria-pressed="true"]{background:var(--acc);color:#04121F;border-color:var(--acc)}
+/* status */
+.sb{border-radius:999px;font:600 12px/1.5 'Space Grotesk',sans-serif;letter-spacing:.02em;text-transform:none;padding:2px 10px 2px 7px}
+.pat-o{background:#3FB8A0}
+.pat-m{background:repeating-linear-gradient(135deg,#E2BC5C 0 3px,#7A5F1C 3px 6px)}
+.pat-n{background:repeating-linear-gradient(45deg,#E48069 0 4px,#9E4636 4px 6px)}
+.tbl thead th,.gt thead th{background:transparent;font:600 11px/1.4 'Space Grotesk',sans-serif;letter-spacing:.1em}
+.gnote{border-left-width:1px;border-radius:12px;border:1px solid rgba(226,188,92,.35)}
+.ptab{border-radius:12px}
+/* limits: one panel, items marked with a short amber rule (no nested cards) */
+.limits{border:1px solid var(--hair);border-radius:16px;background:rgba(14,17,48,.65);padding:24px 28px}
+.limits h2{font:600 19px 'Space Grotesk',sans-serif;letter-spacing:0;text-transform:none;color:var(--t1)}
+.limits h2 svg{color:var(--warn)}
+.limits ul{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px 32px;font-size:14px}
+.limits li{position:relative;padding-top:14px}
+.limits li::before{content:"";position:absolute;top:0;left:0;width:28px;height:2px;border-radius:2px;background:rgba(226,188,92,.7)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px;border-top:1px solid var(--hair);padding:20px 0 0;font:12px 'IBM Plex Mono',monospace;color:var(--t3)}
+.foot .fb{display:inline-flex;align-items:center;gap:10px;font:600 13px 'Space Grotesk',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--t2)}
+@media (max-width:640px){h1{font-size:34px}.top{padding:10px 16px}.phd{padding:16px 16px 8px}.pb{padding:14px 16px 18px}.limits{padding:20px}.nav{width:100%}.steps{width:100%;box-sizing:border-box;border-radius:16px}}
+
+.ptab{display:flex;flex-direction:column;gap:2px;padding:10px 18px;min-height:44px;border-radius:2px;border:1px solid var(--l2);text-decoration:none;color:var(--t2)!important}
+.ptab:hover{background:var(--r)}
+.ptab[aria-current]{background:var(--sel);border-color:var(--acc);box-shadow:inset 0 -2px 0 var(--acc);color:var(--t1)!important;font-weight:500}
+.src{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px 24px;margin:0;padding:14px 18px;border:1px solid var(--l);border-radius:2px;background:var(--p2)}
+.src div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.src dt{font-size:13px;color:var(--t3)}
+.src dd{margin:0;font-size:14px;color:var(--t1);overflow-wrap:anywhere}
+.src dd small{display:block;font-size:13px;color:var(--t2);font-family:'IBM Plex Sans',sans-serif}
+.mgrid{display:grid;grid-template-columns:72px repeat(2,minmax(0,1fr));gap:12px 16px;align-items:center}
+.rowlab{margin:0;font-size:15px;color:var(--t2)}
+.cm{position:relative}
+.curs{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.curs .c1{fill:none;stroke:var(--halo);stroke-width:.5}
+.curs .c2{fill:none;stroke:var(--curs);stroke-width:.22}
+.cv{position:absolute;right:6px;bottom:6px;padding:2px 8px;border-radius:2px;background:rgba(7,10,20,.82);color:#ECEAE4;font-size:13px}
+.cdf{width:100%;max-width:460px;height:auto;overflow:visible}
+.cdf .gl{stroke:var(--grid)}.cdf .ax{stroke:var(--l2)}
+.cdf .tk{fill:var(--t3);font:12px 'IBM Plex Mono',monospace}
+.lm{fill:none;stroke:var(--moon);stroke-width:2.2}
+.le{fill:none;stroke:var(--earth);stroke-width:2.2;stroke-dasharray:6 3}
+.qd summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--link);font-size:15px}
+.tbl2{border-collapse:collapse;font-size:14px}.tbl2 th,.tbl2 td{padding:6px 16px 6px 0;text-align:left;font-weight:400;border-top:1px solid var(--l)}.tbl2 thead th{color:var(--t3);border-top:0}
+@media (max-width:640px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.mgrid .rowlab{grid-column:span 2}.mgrid .sp{display:none}.cv{font-size:11px;right:3px;bottom:3px;padding:1px 5px}}
+</style>
+</helmet>
+<div class="app">
+<header class="top"><a class="brand" href="X-01-Regions.dc.html"><span class="logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" style="color:var(--t1)"><path d="M2 19.5h24" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M10.6 19.5a3.4 3.4 0 016.8 0z" fill="var(--earth)"/><circle cx="7" cy="7" r="1.3" fill="currentColor"/><circle cx="20.5" cy="5" r="0.9" fill="currentColor"/><circle cx="23" cy="12" r="0.7" fill="currentColor" opacity=".7"/></svg></span><span class="bn">Lunar Analog Finder<span class="bs">NASA Space Apps 2026</span></span></a><nav class="nav" aria-label="Sections"><a href="X-01-Regions.dc.html" aria-current="page">Regions</a><a href="X-06-Environment.dc.html">Environment</a><a href="X-08-Upload.dc.html">Score your own data</a></nav><ol class="steps" aria-label="Demo path"><li><a class="step done" href="X-02-Region.dc.html"><span class="dot"><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M4.5 9.4l3 3 6-6.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lbl">Region</span></a></li><li><a class="step done" href="X-03-Patch.dc.html"><span class="dot"><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M4.5 9.4l3 3 6-6.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lbl">Patch</span></a></li><li><a class="step done" href="X-04-Analogs.dc.html"><span class="dot"><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M4.5 9.4l3 3 6-6.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lbl">Earth analogs</span></a></li><li><a class="step" href="X-05-Pair.dc.html" aria-current="step"><span class="dot">04</span><span class="lbl">Best match</span></a></li></ol></header>
+<div class="wrap"><main>
+  <p class="crumb"><a href="X-01-Regions.dc.html">Regions</a> / <a href="X-02-Region.dc.html">Leibnitz Beta Plateau</a> / <a href="X-03-Patch.dc.html">r192-c192</a> / <a href="X-04-Analogs.dc.html">Earth analogs</a> / Rank 5</p>
+  <nav aria-label="Compare with" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:-12px"><a class="ptab" aria-current="page" href="X-05-Pair.dc.html"><span>Rank 5 · Atacama</span><span class="st ok" style="font-size:14px"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>4 of 5</span></a><a class="ptab" href="X-05b-Pair-WadiRum.dc.html"><span>Rank 1 · Wadi Rum</span><span class="st bad" style="font-size:14px"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>0 of 5</span></a><a class="ptab" href="X-04-Analogs.dc.html" style="justify-content:center">All 15 matches</a></nav>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <h1><span style="color:var(--moon)">Leibnitz Beta Plateau</span> and <span style="color:var(--earth)">Atacama (San Pedro), Chile</span></h1>
+    <p class="sub" style="display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:0">Rank 5 of 15 · cosine <span class="mono" style="color:var(--t1)">0.952</span> <span class="st ok"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>4 of 5 physical checks in band</span></p>
+    <p class="lede">The closest physical fit for this patch. Slope, relief and roughness all land inside their bands; only plane fit is just outside (+0.109 against ±0.100).</p>
+    <dl class="src" aria-label="Where these tiles come from">
+      <div><dt>Moon patch name</dt><dd class="mono">r192-c192<small>Top-left cell of the 32 × 32 tile</small></dd></div>
+      <div><dt>Shared tile ID</dt><dd class="mono">A3CLR22_10_Leibnitz_Beta_Plateau:71220:119760<small>Centre in metres, polar stereographic</small></dd></div>
+      <div><dt>Similarity query ID</dt><dd class="mono">…:full_context:208:208:960<small>Centre cell: 16 more than the name. Same terrain.</small></dd></div>
+      <div><dt>Earth patch</dt><dd class="mono">atacama_san_pedro:natural_screen:528:880:960<small>At −22.7421, −68.3443</small></dd></div>
+    </dl>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+    <section class="panel" aria-labelledby="maps-h" style="flex:1.2 1 540px;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 id="maps-h" style="font-size:18px">Terrain on shared scales, one cursor</h2>
+        <p class="mono" aria-live="polite" style="margin:0;font-size:14px;color:var(--t1)">Row 14, column 17 · Moon slope 8.1°, height −29.9 m · Earth slope 2.0°, height −21.7 m</p>
+      </div>
+      <div class="mgrid">
+        <span class="sp"></span>
+        <p style="margin:0;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--moon)"><span style="width:10px;height:10px;border-radius:50%;background:var(--moon)"></span>Moon · r192-c192</p>
+        <p style="margin:0;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--earth)"><span style="width:10px;height:10px;transform:rotate(45deg);background:var(--earth)"></span>Earth · Atacama</p>
+        <p class="rowlab">Slope</p>
+        <div class="cm"><img class="mapimg" src="/_blob/da2997395c18fa6ea6edd98acf6b8bef" alt="Moon slope, 0.4° to 17.2°"><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">8.1°</span></div>
+        <div class="cm"><img class="mapimg" src="/_blob/675df627e4d55df1256b81a6e0fcfe9b" alt="Atacama slope, 0.9° to 18.8°"><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">2.0°</span></div>
+        <span class="sp"></span>
+        <div style="grid-column:span 2;display:flex;flex-direction:column;gap:4px"><div class="ramp" style="background:linear-gradient(90deg,#000004,#3b0f70 20%,#8c2981 40%,#de4968 60%,#fe9f6d 80%,#fcfdbf)"></div><div class="scale mono"><span>0°</span><span>10°</span><span>20°</span></div></div>
+        <p class="rowlab">Height</p>
+        <div class="cm"><img class="mapimg" src="/_blob/0eff8edf0680ac45acce0739b4b01b5a" alt="Moon relative elevation, −37.6 m to +50.2 m"><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">−29.9 m</span></div>
+        <div class="cm"><img class="mapimg" src="/_blob/072f7753c5fdc06d3948bfdbff13ab32" alt="Atacama relative elevation, −43.2 m to +54.2 m"><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">−21.7 m</span></div>
+        <span class="sp"></span>
+        <div style="grid-column:span 2;display:flex;flex-direction:column;gap:4px"><div class="ramp" style="background:linear-gradient(90deg,#070A14,#23305A 30%,#56648F 50%,#A7B3D3 70%,#F2F4FA)"></div><div class="scale mono"><span>−100 m</span><span>0</span><span>+100 m</span></div></div>
+      </div>
+      <p class="note">Point at or arrow-key through any grid: the same cell is marked on all four, and each shows its own value. Grids are drawn as stored; neither is turned to north.</p>
+    </section>
+    <section class="panel" aria-labelledby="chk-h" style="flex:1 1 400px;padding:24px;display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h2 id="chk-h" style="font-size:18px">Physical checks</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--t2)">
+          <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:50%;background:var(--moon)"></span>Moon</span>
+          <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:11px;height:11px;transform:rotate(45deg);background:var(--earth)"></span>Earth</span>
+          <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:20px;height:12px;border-radius:2px;background:var(--band);border:1px solid var(--bandb);box-sizing:border-box"></span>Allowed band around the Moon</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:500">Median slope</span><span class="st ok" style="font-size:14px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>In band</span></div>
+  <div style="position:relative;height:28px" role="img" aria-label="Median slope: Moon 6.62°, Earth 7.50°, allowed ±1.00, in band">
+    <div style="position:absolute;left:0;right:0;top:13px;height:2px;background:var(--l)"></div>
+    <div style="position:absolute;top:4px;height:20px;left:11.54%;width:76.92%;background:var(--band);border:1px solid var(--bandb);border-radius:3px;box-sizing:border-box"></div>
+    <div style="position:absolute;top:7px;left:50.00%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--moon)"></div>
+    <div style="position:absolute;top:8px;left:84.01%;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);background:var(--earth)"></div>
+  </div>
+  <div class="mono" style="display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--t2)"><span>Moon <span style="color:var(--t1)">6.62°</span></span><span>Earth <span style="color:var(--earth)">7.50°</span></span><span>+0.88 of ±1.00</span></div>
+</div><div style="display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:500">P90 slope</span><span class="st ok" style="font-size:14px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>In band</span></div>
+  <div style="position:relative;height:28px" role="img" aria-label="P90 slope: Moon 10.88°, Earth 12.84°, allowed ±2.00, in band">
+    <div style="position:absolute;left:0;right:0;top:13px;height:2px;background:var(--l)"></div>
+    <div style="position:absolute;top:4px;height:20px;left:11.54%;width:76.92%;background:var(--band);border:1px solid var(--bandb);border-radius:3px;box-sizing:border-box"></div>
+    <div style="position:absolute;top:7px;left:50.00%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--moon)"></div>
+    <div style="position:absolute;top:8px;left:87.72%;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);background:var(--earth)"></div>
+  </div>
+  <div class="mono" style="display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--t2)"><span>Moon <span style="color:var(--t1)">10.88°</span></span><span>Earth <span style="color:var(--earth)">12.84°</span></span><span>+1.96 of ±2.00</span></div>
+</div><div style="display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:500">Relief, 5th to 95th percentile (m)</span><span class="st ok" style="font-size:14px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>In band</span></div>
+  <div style="position:relative;height:28px" role="img" aria-label="Relief, 5th to 95th percentile: Moon 64.94 m, Earth 71.11 m, allowed ±6.49, in band">
+    <div style="position:absolute;left:0;right:0;top:13px;height:2px;background:var(--l)"></div>
+    <div style="position:absolute;top:4px;height:20px;left:11.54%;width:76.92%;background:var(--band);border:1px solid var(--bandb);border-radius:3px;box-sizing:border-box"></div>
+    <div style="position:absolute;top:7px;left:50.00%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--moon)"></div>
+    <div style="position:absolute;top:8px;left:86.53%;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);background:var(--earth)"></div>
+  </div>
+  <div class="mono" style="display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--t2)"><span>Moon <span style="color:var(--t1)">64.94 m</span></span><span>Earth <span style="color:var(--earth)">71.11 m</span></span><span>+6.17 of ±6.49</span></div>
+</div><div style="display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:500">Plane fit (residual)</span><span class="st bad" style="font-size:14px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Out of band</span></div>
+  <div style="position:relative;height:28px" role="img" aria-label="Plane fit (residual): Moon 0.760, Earth 0.869, allowed ±0.100, out of band">
+    <div style="position:absolute;left:0;right:0;top:13px;height:2px;background:var(--l)"></div>
+    <div style="position:absolute;top:4px;height:20px;left:11.54%;width:73.68%;background:var(--band);border:1px solid var(--bandb);border-radius:3px;box-sizing:border-box"></div>
+    <div style="position:absolute;top:7px;left:48.38%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--moon)"></div>
+    <div style="position:absolute;top:8px;left:88.46%;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);background:var(--earth)"></div>
+  </div>
+  <div class="mono" style="display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--t2)"><span>Moon <span style="color:var(--t1)">0.760</span></span><span>Earth <span style="color:var(--earth)">0.869</span></span><span>+0.109 of ±0.100</span></div>
+</div><div style="display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:500">Local roughness (median SD)</span><span class="st ok" style="font-size:14px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>In band</span></div>
+  <div style="position:relative;height:28px" role="img" aria-label="Local roughness (median SD): Moon 11.10 m, Earth 11.42 m, allowed ±1.11, in band">
+    <div style="position:absolute;left:0;right:0;top:13px;height:2px;background:var(--l)"></div>
+    <div style="position:absolute;top:4px;height:20px;left:11.54%;width:76.92%;background:var(--band);border:1px solid var(--bandb);border-radius:3px;box-sizing:border-box"></div>
+    <div style="position:absolute;top:7px;left:50.00%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--moon)"></div>
+    <div style="position:absolute;top:8px;left:60.95%;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);background:var(--earth)"></div>
+  </div>
+  <div class="mono" style="display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--t2)"><span>Moon <span style="color:var(--t1)">11.10 m</span></span><span>Earth <span style="color:var(--earth)">11.42 m</span></span><span>+0.32 of ±1.11</span></div>
+</div>
+      <p class="note">Relief here is the 5th to 95th percentile height range (64.9 m for the Moon), so it is lower than the patch page's highest-minus-lowest relief (87.9 m). Both come from the same grid.</p>
+    </section>
+  </div>
+  <section class="panel" aria-labelledby="dist-h" style="padding:24px;display:flex;flex-direction:column;gap:16px">
+    <h2 id="dist-h" style="font-size:18px">How the values are spread</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:32px"><figure style="flex:1 1 340px;margin:0;display:flex;flex-direction:column;gap:8px;min-width:0">
+  <figcaption style="font-weight:500">Slope: share of cells at or below each value</figcaption>
+  <svg class="cdf" viewBox="0 0 340 214" role="img" aria-label="Slope cumulative distribution for the Moon patch and Atacama. Medians: Moon 6.6 °, Earth 7.5 °.">
+    <path d="M46 184.0H326" class="gl"/><text class="tk" x="38" y="188.0" text-anchor="end">0%</text><path d="M46 140.5H326" class="gl"/><text class="tk" x="38" y="144.5" text-anchor="end">25%</text><path d="M46 97.0H326" class="gl"/><text class="tk" x="38" y="101.0" text-anchor="end">50%</text><path d="M46 53.5H326" class="gl"/><text class="tk" x="38" y="57.5" text-anchor="end">75%</text><path d="M46 10.0H326" class="gl"/><text class="tk" x="38" y="14.0" text-anchor="end">100%</text><path d="M46 184H326" class="ax"/><path d="M46.0 184v5" class="ax"/><text class="tk" x="46.0" y="204" text-anchor="middle">0</text><path d="M116.0 184v5" class="ax"/><text class="tk" x="116.0" y="204" text-anchor="middle">5</text><path d="M186.0 184v5" class="ax"/><text class="tk" x="186.0" y="204" text-anchor="middle">10</text><path d="M256.0 184v5" class="ax"/><text class="tk" x="256.0" y="204" text-anchor="middle">15</text><path d="M326.0 184v5" class="ax"/><text class="tk" x="326.0" y="204" text-anchor="middle">20</text>
+    <path d="M51.6,184.0H51.6V183.8H55.8V183.7H60.0V183.5H61.4V183.2H62.8V183.0H64.2V182.6H65.6V181.8H68.4V181.5H71.2V180.1H72.6V179.6H74.0V178.9H75.4V178.1H76.8V177.5H78.2V177.2H79.6V176.0H81.0V174.3H82.4V173.0H83.8V171.6H85.2V170.2H86.6V168.7H88.0V167.9H89.4V165.5H90.8V163.8H92.2V163.1H93.6V161.7H95.0V159.7H96.4V157.2H97.8V155.3H99.2V153.1H100.6V150.2H102.0V146.8H103.4V145.8H104.8V143.0H106.2V141.3H107.6V140.0H109.0V136.8H110.4V134.7H111.8V132.7H113.2V130.0H114.6V127.1H116.0V124.0H117.4V121.5H118.8V119.1H120.2V116.9H121.6V114.5H123.0V112.8H124.4V110.3H125.8V108.7H127.2V107.0H128.6V105.5H130.0V104.3H131.4V102.9H132.8V101.6H134.2V99.9H135.6V98.5H137.0V97.7H138.4V96.3H139.8V94.3H141.2V92.9H142.6V91.9H144.0V90.9H145.4V89.4H146.8V88.2H148.2V86.6H149.6V85.1H151.0V83.7H152.4V82.4H153.8V81.2H155.2V79.5H156.6V77.8H158.0V76.3H159.4V74.9H160.8V73.2H162.2V72.4H163.6V71.0H165.0V69.6H166.4V68.5H167.8V65.9H169.2V63.9H170.6V62.5H172.0V60.3H173.4V59.6H174.8V58.6H176.2V56.6H177.6V54.5H179.0V52.3H180.4V50.8H181.8V48.2H183.2V46.9H184.6V45.3H186.0V42.8H187.4V42.3H188.8V40.2H190.2V38.0H191.6V36.5H193.0V34.0H194.4V32.3H195.8V30.6H197.2V28.2H198.6V26.1H200.0V25.6H201.4V24.4H202.8V23.1H204.2V21.6H205.6V20.2H207.0V19.0H208.4V18.2H209.8V17.3H211.2V17.1H212.6V16.3H214.0V15.4H215.4V15.3H216.8V15.1H218.2V14.9H219.6V14.6H226.6V14.4H228.0V14.2H229.4V14.1H230.8V13.9H236.4V13.7H237.8V13.6H239.2V13.1H240.6V12.9H243.4V12.7H244.8V12.5H246.2V12.4H249.0V12.2H250.4V12.0H254.6V11.9H257.4V11.7H258.8V11.5H263.0V11.4H264.4V10.8H268.6V10.7H270.0V10.5H277.0V10.3H284.0V10.2H286.8V10.0" class="lm"/><path d="M58.6,184.0H58.6V183.8H68.4V183.0H69.8V182.5H71.2V180.6H72.6V179.2H74.0V176.9H75.4V174.8H76.8V172.6H78.2V170.6H79.6V168.9H81.0V167.7H82.4V166.7H83.8V165.8H85.2V164.8H86.6V163.1H88.0V162.2H89.4V160.7H90.8V160.0H92.2V159.2H93.6V157.7H95.0V157.0H96.4V156.3H97.8V155.5H99.2V154.1H100.6V151.9H102.0V150.9H103.4V149.8H104.8V149.0H106.2V147.5H107.6V146.1H109.0V144.2H110.4V143.0H111.8V140.8H113.2V139.0H114.6V136.9H116.0V134.7H117.4V133.4H118.8V131.2H120.2V129.1H121.6V127.8H123.0V126.9H124.4V124.9H125.8V122.3H127.2V120.4H128.6V119.3H130.0V118.2H131.4V116.5H132.8V115.2H134.2V114.0H135.6V112.0H137.0V110.3H138.4V109.4H139.8V107.7H141.2V106.0H142.6V105.0H144.0V102.9H145.4V101.8H146.8V101.2H148.2V100.1H149.6V97.8H151.0V96.7H152.4V95.6H153.8V93.6H155.2V91.9H156.6V89.5H158.0V88.3H159.4V87.1H160.8V84.9H162.2V83.6H163.6V82.6H165.0V81.0H166.4V80.2H167.8V79.2H169.2V77.8H170.6V76.8H172.0V74.7H173.4V73.7H174.8V71.9H176.2V70.7H177.6V69.5H179.0V68.5H180.4V66.8H181.8V65.9H183.2V64.4H184.6V62.7H186.0V61.7H187.4V60.1H188.8V58.8H190.2V57.2H191.6V54.9H193.0V54.0H194.4V52.1H195.8V51.1H197.2V50.4H198.6V49.8H200.0V47.9H201.4V46.4H202.8V44.5H204.2V42.8H205.6V42.1H207.0V41.3H208.4V39.7H209.8V38.7H211.2V38.0H212.6V36.8H214.0V35.3H215.4V34.3H216.8V33.6H218.2V32.8H219.6V31.8H221.0V30.7H222.4V29.2H223.8V28.4H225.2V27.3H226.6V26.8H228.0V26.1H229.4V25.0H230.8V24.6H232.2V24.1H233.6V23.4H235.0V22.2H236.4V21.7H237.8V21.0H239.2V20.4H240.6V19.9H242.0V19.3H243.4V18.5H244.8V17.8H246.2V17.6H247.6V17.0H249.0V16.5H250.4V15.8H251.8V15.6H254.6V15.3H256.0V14.9H257.4V14.4H258.8V14.2H260.2V13.9H261.6V13.7H264.4V13.4H265.8V12.9H267.2V12.2H272.8V11.9H274.2V11.7H275.6V11.4H278.4V11.2H281.2V11.0H282.6V10.8H285.4V10.7H286.8V10.5H305.0V10.3H309.2V10.0" class="le"/>
+  </svg>
+  <div style="display:flex;gap:16px;font-size:14px;color:var(--t2)"><span style="display:inline-flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><path d="M0 4H22" class="lm"/></svg>Moon</span><span style="display:inline-flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><path d="M0 4H22" class="le"/></svg>Earth · Atacama</span></div>
+  <details class="qd"><summary>Quantiles as a table</summary><table class="tbl2"><thead><tr><th scope="col"></th><th scope="col">Moon</th><th scope="col">Earth</th></tr></thead><tbody><tr><th scope="row">Minimum</th><td class="mono">0.4 °</td><td class="mono">0.9 °</td></tr><tr><th scope="row">10%</th><td class="mono">3.1 °</td><td class="mono">2.7 °</td></tr><tr><th scope="row">25%</th><td class="mono">4.4 °</td><td class="mono">4.8 °</td></tr><tr><th scope="row">Median</th><td class="mono">6.6 °</td><td class="mono">7.5 °</td></tr><tr><th scope="row">75%</th><td class="mono">9.5 °</td><td class="mono">10.6 °</td></tr><tr><th scope="row">90%</th><td class="mono">10.9 °</td><td class="mono">12.8 °</td></tr><tr><th scope="row">Maximum</th><td class="mono">17.2 °</td><td class="mono">18.8 °</td></tr></tbody></table></details>
+</figure><figure style="flex:1 1 340px;margin:0;display:flex;flex-direction:column;gap:8px;min-width:0">
+  <figcaption style="font-weight:500">Relative elevation: share of cells at or below each value</figcaption>
+  <svg class="cdf" viewBox="0 0 340 214" role="img" aria-label="Relative elevation cumulative distribution for the Moon patch and Atacama. Medians: Moon −3.8 m, Earth −1.3 m.">
+    <path d="M46 184.0H326" class="gl"/><text class="tk" x="38" y="188.0" text-anchor="end">0%</text><path d="M46 140.5H326" class="gl"/><text class="tk" x="38" y="144.5" text-anchor="end">25%</text><path d="M46 97.0H326" class="gl"/><text class="tk" x="38" y="101.0" text-anchor="end">50%</text><path d="M46 53.5H326" class="gl"/><text class="tk" x="38" y="57.5" text-anchor="end">75%</text><path d="M46 10.0H326" class="gl"/><text class="tk" x="38" y="14.0" text-anchor="end">100%</text><path d="M46 184H326" class="ax"/><path d="M46.0 184v5" class="ax"/><text class="tk" x="46.0" y="204" text-anchor="middle">−50</text><path d="M109.6 184v5" class="ax"/><text class="tk" x="109.6" y="204" text-anchor="middle">−25</text><path d="M173.3 184v5" class="ax"/><text class="tk" x="173.3" y="204" text-anchor="middle">0</text><path d="M236.9 184v5" class="ax"/><text class="tk" x="236.9" y="204" text-anchor="middle">25</text><path d="M300.5 184v5" class="ax"/><text class="tk" x="300.5" y="204" text-anchor="middle">50</text>
+    <path d="M77.6,184.0H77.6V183.8H78.1V183.7H78.3V183.3H79.1V183.2H80.1V183.0H80.4V182.6H80.6V182.3H81.1V182.1H81.9V182.0H82.1V181.6H82.9V181.5H83.7V181.3H83.9V181.1H84.4V180.9H84.9V180.8H85.2V180.6H85.7V180.4H86.2V180.1H87.0V179.9H87.2V179.8H88.0V179.6H88.5V179.4H88.8V179.2H89.0V178.9H89.3V178.7H89.5V178.6H89.8V178.4H90.0V178.2H90.3V177.9H91.3V177.5H91.8V177.4H92.1V177.0H92.3V176.9H92.8V176.7H93.6V176.4H93.9V176.2H94.4V175.8H94.6V175.5H94.9V175.3H95.1V175.2H95.6V175.0H95.9V174.8H96.1V174.5H96.4V174.3H97.2V174.1H97.4V173.8H97.7V173.6H97.9V173.3H98.2V172.6H98.7V172.4H98.9V172.1H99.5V171.8H100.0V171.4H100.2V170.9H100.5V170.7H100.7V170.4H101.0V170.2H101.2V170.1H101.5V169.7H102.3V169.2H102.5V169.0H102.8V168.9H103.0V168.7H103.5V168.5H103.8V168.0H104.0V167.9H104.3V167.7H104.5V167.5H105.3V167.3H105.6V167.2H106.1V166.8H106.3V166.7H106.6V166.2H107.3V166.0H107.9V165.5H108.1V165.1H108.4V165.0H108.6V164.8H108.9V164.1H109.1V163.8H109.4V162.9H109.6V162.8H109.9V162.6H110.1V162.4H111.4V162.1H111.9V161.7H112.2V161.2H112.4V160.9H112.7V160.6H113.2V160.4H114.0V159.9H114.2V159.7H114.5V159.4H114.7V159.2H115.0V158.9H115.2V158.7H115.5V158.5H115.7V158.3H116.0V158.0H116.8V157.8H117.0V156.8H117.3V156.0H117.5V155.8H117.8V155.6H118.0V155.5H118.8V154.8H119.3V154.4H119.6V154.3H119.8V153.9H120.1V153.8H120.3V153.6H120.8V153.4H121.1V153.2H121.3V152.7H121.6V152.6H121.9V152.2H122.1V151.9H122.4V151.2H122.6V150.7H122.9V150.0H123.1V149.5H123.4V149.2H123.9V148.5H124.1V148.0H124.4V147.8H124.7V147.6H124.9V147.3H125.2V147.1H125.7V146.6H125.9V145.9H126.2V145.6H126.7V145.3H126.9V145.1H127.5V144.7H127.7V144.1H128.0V143.4H128.2V143.0H128.5V142.9H128.7V142.7H129.0V142.0H129.2V141.7H129.5V141.2H129.7V140.5H130.0V140.0H130.3V139.5H130.5V138.8H130.8V138.6H131.0V138.5H131.3V137.6H131.5V137.3H131.8V137.1H132.0V136.9H132.3V136.4H132.5V135.9H132.8V135.7H133.1V135.4H133.3V135.2H133.6V134.9H134.1V134.6H134.6V134.0H134.8V133.7H135.1V133.0H135.3V132.3H135.6V132.2H135.9V131.8H136.1V131.2H136.4V131.0H136.6V130.6H136.9V130.3H137.1V130.0H137.4V129.5H137.6V128.8H137.9V128.6H138.1V128.4H138.4V127.9H138.7V127.8H138.9V127.1H139.2V126.9H139.4V126.7H139.7V126.2H139.9V126.1H140.2V125.7H140.4V125.5H140.7V125.4H140.9V125.0H141.2V124.4H141.5V124.2H141.7V123.7H142.0V123.2H142.2V122.1H142.5V122.0H142.7V121.5H143.2V121.1H143.5V121.0H143.7V119.9H144.3V119.8H144.5V119.4H144.8V119.1H145.0V118.9H145.3V118.8H145.5V118.4H146.0V118.2H146.3V117.9H146.5V117.6H146.8V117.4H147.1V116.9H147.3V116.5H147.6V116.2H147.8V115.4H148.1V115.2H148.6V114.7H148.8V114.3H149.1V114.0H149.3V113.3H149.6V112.6H149.9V112.3H150.1V112.1H150.4V112.0H150.6V111.6H150.9V111.4H151.1V111.1H151.4V110.9H151.6V110.6H151.9V110.1H152.1V109.9H152.4V109.7H152.9V109.2H153.2V108.9H153.4V108.0H153.7V107.5H153.9V106.7H154.2V106.5H154.4V105.8H154.7V105.3H154.9V104.8H155.2V104.6H155.5V104.3H155.7V104.0H156.0V103.8H156.2V103.3H156.5V102.8H156.7V102.4H157.5V102.3H157.7V101.8H158.0V101.4H158.3V101.2H158.5V100.9H158.8V100.7H159.0V100.6H159.3V100.4H159.8V99.7H160.3V99.5H160.5V99.4H160.8V99.0H161.1V98.5H161.3V98.2H161.6V98.0H162.1V97.8H162.3V97.7H162.8V97.3H163.1V97.2H163.6V97.0H163.9V96.7H164.1V96.5H164.4V96.3H164.9V96.0H165.1V95.6H165.4V95.3H165.6V95.1H166.1V94.8H166.4V94.6H167.2V94.5H167.4V93.9H167.7V93.8H167.9V93.4H168.4V93.1H168.9V92.9H169.2V92.8H169.7V92.6H170.2V92.4H170.5V92.2H170.7V92.1H171.0V91.7H171.2V91.4H172.3V91.2H172.8V91.1H173.0V90.9H173.3V90.7H173.8V90.5H174.0V90.4H174.5V90.2H175.1V90.0H175.3V89.7H176.1V89.5H176.3V89.2H176.6V89.0H176.8V88.8H177.1V88.5H177.3V88.0H177.9V87.8H178.4V87.5H178.9V87.3H179.1V87.1H179.4V86.8H179.6V86.6H179.9V86.1H180.1V86.0H180.7V85.8H180.9V85.4H181.4V85.3H181.7V84.8H182.7V84.4H183.2V84.3H183.5V84.1H183.7V83.7H185.0V83.6H185.2V83.4H185.5V83.2H185.7V82.9H186.0V82.7H186.3V82.0H186.5V81.9H187.3V81.7H187.5V81.5H188.5V81.4H189.1V81.2H189.6V81.0H189.8V80.9H190.1V80.5H190.6V80.2H190.8V79.7H191.3V79.2H191.6V78.6H192.1V78.1H192.6V77.8H192.9V77.6H193.1V77.5H193.6V76.6H193.9V76.1H194.4V75.8H194.7V75.6H195.2V75.2H195.9V74.9H196.2V74.7H196.4V74.4H196.7V74.2H196.9V73.9H197.2V73.7H197.5V73.6H198.0V73.4H198.2V73.2H198.5V73.0H199.0V72.9H199.2V72.7H200.0V72.4H200.3V72.2H200.5V72.0H200.8V71.7H201.0V71.3H201.3V71.2H201.5V71.0H202.0V70.8H202.3V70.7H202.5V70.5H202.8V70.3H203.1V70.2H203.3V70.0H203.6V69.6H204.1V68.8H204.3V68.6H204.6V67.9H204.8V67.6H205.1V66.9H205.3V66.6H205.9V66.4H206.4V66.2H206.6V66.1H207.1V65.6H207.6V65.1H207.9V64.5H208.1V64.4H208.4V64.0H208.9V63.9H209.4V63.5H209.7V63.4H209.9V62.8H210.2V62.7H210.7V62.3H210.9V62.0H211.2V61.7H211.5V61.3H211.7V61.0H212.0V60.6H212.2V60.3H212.5V60.0H212.7V59.8H213.0V59.1H213.2V58.6H213.7V58.1H214.0V57.9H214.5V57.6H214.8V57.2H215.3V56.9H215.5V56.7H215.8V56.2H216.0V55.7H216.8V54.7H217.1V54.5H217.3V54.3H217.6V53.8H217.8V53.5H218.1V53.0H218.3V52.8H218.8V52.5H219.1V52.1H219.3V52.0H219.6V51.8H220.4V51.6H220.6V50.8H220.9V50.6H221.1V50.3H221.4V49.3H221.6V49.1H221.9V48.7H222.1V48.4H222.4V48.1H222.7V47.9H222.9V47.4H223.2V47.0H223.4V46.7H223.7V46.0H223.9V45.5H224.9V45.3H225.2V45.0H225.5V44.8H225.7V44.2H226.0V43.6H226.2V43.5H226.5V43.1H226.7V43.0H227.0V42.8H227.5V42.3H228.3V41.8H228.5V41.4H228.8V41.3H229.3V40.8H229.8V40.4H230.0V40.1H230.3V39.7H230.5V39.6H230.8V39.1H231.3V38.9H231.8V38.5H232.1V38.2H232.3V37.9H232.6V37.7H232.8V37.5H233.1V37.2H233.3V37.0H233.9V36.2H234.4V36.0H234.6V35.5H235.1V34.8H235.4V34.6H235.6V34.3H236.4V34.0H236.7V33.8H236.9V33.4H237.7V33.3H237.9V32.9H238.2V32.8H238.4V32.1H239.2V31.8H239.5V31.6H239.7V31.4H240.0V30.9H240.2V30.7H240.7V30.6H241.0V29.9H241.7V29.7H242.5V29.5H242.8V29.4H243.3V28.9H244.0V28.4H244.3V28.2H244.8V28.0H245.1V27.7H245.3V27.3H245.8V27.2H246.1V27.0H246.3V26.8H246.8V26.7H247.3V26.1H247.9V25.6H248.1V25.3H248.4V25.1H248.6V24.8H249.1V24.6H249.4V24.4H249.9V24.1H250.1V23.8H250.4V23.4H251.2V23.3H251.4V22.7H251.9V22.6H252.4V22.2H252.7V22.1H253.5V21.9H253.7V21.7H254.7V21.6H255.0V21.4H255.2V21.2H255.7V20.7H256.0V20.5H256.8V20.2H257.0V20.0H258.3V19.7H258.8V19.5H259.3V19.3H260.3V18.8H260.6V18.7H261.1V18.2H261.3V18.0H261.9V17.8H262.1V17.6H262.6V17.5H262.9V17.3H263.1V17.1H263.6V17.0H264.1V16.8H264.4V16.6H264.7V16.5H265.4V16.3H266.9V16.1H268.2V15.9H270.5V15.8H271.3V15.6H271.5V15.4H272.3V15.1H272.5V14.9H273.3V14.8H273.6V14.4H274.1V14.1H276.1V13.9H278.1V13.7H278.9V13.6H282.2V13.4H282.7V13.2H283.0V13.1H283.5V12.9H284.0V12.7H284.8V12.5H285.3V12.4H285.8V12.2H287.1V12.0H287.6V11.9H287.8V11.7H289.9V11.5H292.7V11.4H295.2V11.2H296.7V11.0H297.2V10.8H298.5V10.7H298.8V10.5H299.0V10.2H301.1V10.0" class="lm"/><path d="M63.3,184.0H63.3V183.8H64.1V183.7H64.6V183.3H66.4V183.2H67.1V182.8H67.4V182.6H68.7V182.5H68.9V182.3H69.2V182.1H69.9V182.0H70.4V181.8H70.7V181.3H71.5V181.1H73.0V180.9H73.2V180.8H73.7V180.4H74.3V180.3H74.5V180.1H74.8V179.9H75.5V179.8H75.8V179.6H76.3V179.2H76.5V179.1H77.1V178.7H78.1V178.6H78.3V178.4H79.3V178.2H79.6V178.1H80.1V177.9H80.4V177.7H80.9V177.4H81.6V177.2H82.7V177.0H82.9V176.9H83.2V176.7H83.4V176.2H84.2V176.0H84.7V175.7H84.9V175.3H86.0V175.2H86.5V174.8H86.7V174.7H88.0V174.3H88.8V174.1H89.0V174.0H89.5V173.8H90.0V173.6H90.5V173.5H90.8V173.1H91.3V173.0H91.8V172.8H92.3V172.4H92.6V172.3H92.8V171.9H93.3V171.6H93.9V171.4H94.4V171.3H94.6V170.9H94.9V170.7H95.4V170.6H96.1V170.4H96.4V170.1H96.7V169.9H97.7V169.7H97.9V169.6H98.2V169.4H98.4V169.0H98.7V168.7H98.9V168.2H99.5V167.9H100.0V167.5H100.2V167.0H101.0V166.8H101.2V166.7H101.5V166.5H101.7V166.3H102.8V166.2H103.0V166.0H103.3V165.8H103.5V165.5H103.8V165.3H104.5V164.8H104.8V164.6H105.3V164.3H105.6V163.9H106.1V163.8H106.3V163.3H106.6V163.1H106.8V162.9H107.1V162.4H107.6V162.2H107.9V162.1H108.6V161.2H108.9V161.1H109.4V160.7H109.9V160.6H110.1V160.4H110.4V160.0H110.9V159.7H111.2V159.5H111.4V159.2H111.7V158.7H111.9V158.3H112.2V158.0H112.7V157.8H113.2V157.5H113.7V157.3H114.2V156.8H114.5V156.3H114.7V156.0H115.0V155.8H115.7V155.5H116.0V155.1H116.3V154.8H116.5V154.3H116.8V153.8H117.0V153.6H117.3V153.4H118.0V152.9H118.3V152.7H118.5V152.4H119.6V152.1H119.8V151.9H120.1V151.5H120.3V151.0H120.6V150.9H120.8V150.5H121.1V150.4H121.6V150.2H121.9V149.5H122.1V149.3H122.4V149.2H122.6V149.0H122.9V148.8H123.1V148.3H123.4V148.1H123.6V147.8H123.9V147.6H124.4V147.3H124.7V147.0H124.9V146.4H125.2V145.9H125.4V145.6H125.7V145.4H125.9V145.1H126.2V144.7H126.9V144.6H127.2V144.2H127.5V143.7H127.7V143.6H128.2V143.0H128.7V142.9H129.0V142.4H129.2V142.0H129.5V141.9H129.7V141.2H130.3V140.8H130.5V140.3H130.8V140.0H131.0V139.8H131.3V139.7H131.5V139.5H131.8V139.3H132.5V139.0H132.8V138.5H133.1V138.1H133.3V138.0H133.8V137.4H134.1V136.9H134.3V136.8H134.6V136.4H134.8V136.3H135.1V135.9H135.9V135.7H136.1V135.1H136.4V134.7H136.9V134.6H137.4V133.9H137.6V133.4H137.9V133.2H138.1V132.9H138.9V132.5H139.2V132.0H139.4V131.8H139.7V131.7H139.9V131.0H140.2V130.5H140.4V130.3H140.9V130.1H141.2V130.0H141.7V129.8H142.0V129.3H142.5V128.8H143.0V128.4H143.2V128.3H144.0V128.1H144.3V127.2H144.5V126.6H144.8V126.4H145.5V126.1H145.8V125.7H146.0V125.0H146.3V124.9H146.5V124.7H146.8V124.4H147.1V124.0H147.3V123.7H147.6V122.8H147.8V122.5H148.3V122.3H148.6V122.1H148.8V122.0H149.1V121.6H149.3V121.3H149.6V121.0H149.9V120.8H150.1V120.6H150.4V120.3H150.6V119.9H151.1V119.8H151.4V119.1H152.1V118.4H152.7V118.1H152.9V117.6H153.2V117.4H153.4V116.9H153.7V116.4H153.9V116.2H154.2V116.0H154.4V115.5H154.7V115.4H154.9V115.0H155.2V114.8H155.5V114.7H156.0V114.5H156.2V114.0H156.5V113.8H157.5V113.7H157.7V112.8H158.0V112.0H158.3V111.8H158.5V111.3H158.8V111.1H159.0V110.9H159.3V110.8H159.5V110.1H159.8V109.2H160.0V108.7H160.3V108.6H160.8V108.4H161.3V107.9H161.6V107.7H161.8V107.5H162.1V107.4H162.3V107.2H162.6V106.9H162.8V106.7H163.1V106.2H163.3V106.0H163.6V105.5H163.9V105.0H164.1V104.6H164.4V104.1H164.6V103.8H164.9V103.6H165.1V103.1H165.4V102.3H165.6V101.9H165.9V101.6H166.1V101.4H166.4V101.2H166.7V101.1H166.9V100.9H167.2V100.1H167.4V99.5H167.7V99.0H167.9V98.9H168.2V98.5H168.7V98.2H168.9V97.8H169.2V97.3H169.5V97.2H170.0V97.0H170.2V96.5H170.5V96.0H170.7V95.6H171.0V95.3H171.2V95.1H171.5V94.8H171.7V94.3H172.0V93.9H172.3V93.3H172.5V92.8H172.8V92.4H173.0V92.1H173.3V91.7H174.0V91.2H174.3V91.1H174.5V90.4H174.8V90.2H175.1V90.0H175.3V89.7H175.8V89.2H176.1V88.8H176.3V88.5H176.6V88.3H176.8V88.0H177.3V87.7H177.6V87.1H177.9V86.6H178.1V86.3H178.4V85.6H178.6V85.4H179.4V85.3H179.9V84.8H180.1V84.6H180.7V84.4H180.9V83.7H181.2V83.6H181.4V83.4H181.7V83.2H181.9V82.7H182.2V82.4H182.4V82.2H182.7V82.0H182.9V81.9H183.2V81.7H183.5V81.4H183.7V80.7H184.0V80.0H184.2V79.8H184.5V79.5H185.2V79.3H185.5V79.0H185.7V78.6H186.0V78.3H186.3V78.1H186.5V78.0H186.8V77.5H187.3V76.9H187.8V76.6H188.0V76.4H188.8V76.3H189.1V76.1H189.3V75.9H189.6V75.4H189.8V75.1H190.1V74.6H190.3V74.4H190.6V73.7H190.8V73.6H191.1V73.4H191.3V73.0H191.6V72.7H192.1V72.5H192.6V72.2H193.4V71.9H193.6V71.7H193.9V71.2H194.4V70.8H194.7V70.5H194.9V70.3H195.2V70.2H195.4V69.8H195.7V69.6H196.2V69.5H196.4V69.0H196.7V68.5H196.9V67.9H197.5V67.8H197.7V67.6H198.0V67.1H198.2V66.4H198.5V66.2H198.7V65.9H199.0V65.7H199.2V65.2H199.7V65.1H200.0V64.9H200.5V64.5H200.8V64.2H201.0V63.5H202.3V63.4H202.5V63.2H203.1V62.8H203.3V62.3H203.6V61.8H204.1V61.3H204.3V61.0H204.8V60.8H205.3V60.5H205.6V60.3H205.9V60.0H206.4V59.8H207.4V59.4H207.6V58.9H207.9V58.8H208.1V57.9H208.4V57.7H208.7V57.4H209.2V57.1H209.4V56.9H209.9V56.6H210.2V56.4H210.4V56.2H210.7V56.0H211.2V55.5H211.7V55.4H212.0V55.2H212.2V54.5H212.5V54.0H212.7V53.7H213.5V53.5H214.3V53.3H214.5V53.0H215.0V52.8H215.3V52.3H215.5V52.0H216.0V51.8H216.3V51.6H216.8V51.3H217.1V51.1H217.3V51.0H217.8V50.8H218.1V50.3H218.3V49.9H218.8V49.6H219.9V49.4H220.1V49.1H220.6V48.6H220.9V48.1H221.1V47.9H221.4V47.4H221.9V46.9H222.1V46.5H222.7V46.0H223.2V45.7H223.4V45.5H223.9V45.3H224.2V45.2H224.4V45.0H224.7V44.7H225.2V44.5H225.5V44.3H225.7V44.2H227.0V44.0H227.2V43.5H227.5V43.3H228.3V43.1H228.5V42.8H228.8V42.5H229.0V42.1H229.3V41.9H229.5V41.8H229.8V41.4H230.3V40.9H230.5V40.4H230.8V40.2H231.1V39.7H231.6V39.4H231.8V39.2H232.1V39.1H232.3V38.7H233.6V38.0H234.1V37.9H234.6V37.7H235.1V37.5H235.4V37.2H235.6V36.8H235.9V36.7H236.1V36.5H236.4V36.0H237.2V35.8H237.7V35.5H237.9V35.3H238.2V35.1H238.4V34.8H238.7V34.6H239.5V34.5H239.7V34.1H240.0V34.0H240.2V33.6H241.2V33.4H241.5V33.3H242.0V32.8H242.3V32.6H242.5V32.4H243.0V32.3H243.3V31.8H243.8V31.6H244.0V31.4H244.5V30.9H244.8V30.4H245.3V30.1H245.6V29.7H246.1V29.5H247.1V29.0H247.3V28.9H247.9V28.4H248.1V28.0H248.9V27.7H249.4V27.5H249.6V27.2H249.9V27.0H250.4V26.7H250.7V26.5H251.2V26.1H251.4V26.0H251.9V25.8H252.2V25.5H252.4V25.3H252.7V25.1H252.9V25.0H254.0V24.6H254.2V24.4H254.5V24.3H254.7V23.9H255.0V23.6H256.3V23.4H256.5V22.9H258.0V22.6H258.8V22.4H259.3V22.2H259.6V22.1H260.3V21.9H260.8V21.7H261.1V21.4H261.3V21.2H261.9V21.0H262.1V20.9H262.4V20.4H263.1V20.2H263.4V20.0H264.1V19.7H264.9V19.5H265.9V19.3H266.2V19.2H266.4V19.0H266.9V18.8H267.2V18.5H267.7V18.3H268.2V18.2H268.7V18.0H270.0V17.8H271.0V17.6H271.5V17.5H272.0V17.3H272.3V17.0H272.5V16.8H272.8V16.6H273.1V16.3H273.3V16.1H273.8V15.8H274.1V15.6H275.6V15.4H275.9V15.3H278.1V15.1H278.7V14.9H279.9V14.8H280.2V14.2H280.7V14.1H282.0V13.9H282.2V13.7H282.7V13.6H283.2V13.4H284.5V13.1H284.8V12.9H285.3V12.7H286.3V12.5H286.8V12.4H290.4V12.2H290.9V12.0H293.9V11.9H297.0V11.7H297.2V11.5H300.0V11.4H303.1V11.2H303.6V11.0H304.6V10.8H305.6V10.7H306.7V10.5H309.7V10.3H310.2V10.2H311.2V10.0" class="le"/>
+  </svg>
+  <div style="display:flex;gap:16px;font-size:14px;color:var(--t2)"><span style="display:inline-flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><path d="M0 4H22" class="lm"/></svg>Moon</span><span style="display:inline-flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><path d="M0 4H22" class="le"/></svg>Earth · Atacama</span></div>
+  <details class="qd"><summary>Quantiles as a table</summary><table class="tbl2"><thead><tr><th scope="col"></th><th scope="col">Moon</th><th scope="col">Earth</th></tr></thead><tbody><tr><th scope="row">Minimum</th><td class="mono">−37.6 m</td><td class="mono">−43.2 m</td></tr><tr><th scope="row">10%</th><td class="mono">−26.2 m</td><td class="mono">−28.2 m</td></tr><tr><th scope="row">25%</th><td class="mono">−17.1 m</td><td class="mono">−16.8 m</td></tr><tr><th scope="row">Median</th><td class="mono">−3.8 m</td><td class="mono">−1.3 m</td></tr><tr><th scope="row">75%</th><td class="mono">17.5 m</td><td class="mono">15.8 m</td></tr><tr><th scope="row">90%</th><td class="mono">28.3 m</td><td class="mono">30 m</td></tr><tr><th scope="row">Maximum</th><td class="mono">50.2 m</td><td class="mono">54.2 m</td></tr></tbody></table></details>
+</figure></div>
+  </section>
+  <section class="limits" aria-labelledby="lim-h"><h2 id="lim-h"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M9 2.2l7.2 12.6H1.8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.2v3.4M9 12.7v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Limits of this page</h2><ul><li>Matching terrain shape doesn't make Atacama lunar: gravity is six times stronger, there is air and weather, and the surface is soil and rock.</li><li>Features smaller than about 30 m, such as boulders and small craters, are invisible in both grids.</li><li>The tolerances are the similarity pipeline's comparison bands, not mission requirements.</li><li>Whether a crew could actually rehearse at Atacama (climate, land cover, access) has not been scored.</li></ul></section>
+<footer class="foot"><span class="fb">Lunar Analog Finder · NASA Space Apps Challenge 2026</span><span>Inference run 20261112T120422201915Z_101366 · pipeline run 20261114T081013177916Z_da70aa</span></footer>
+</main></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2300}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

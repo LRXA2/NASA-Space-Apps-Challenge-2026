@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Moon and Wadi Rum · Lunar Analog Finder</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#080B27}
+.app{--g:#060C16;--hd:#0A1420;--p:#0B1421;--ph:#0F1B2A;--p2:#08111C;--r:#112033;--l:#26394D;--l2:#38536C;--grid:#16263A;--t1:#E0E7F0;--t2:#A8B5C5;--t3:#8695A8;--acc:#7EABC0;--focus:#A9CDDE;--link:#8DB9CD;--linkh:#B9D6E3;--btn:#29495F;--btnh:#32576F;--btnb:#3B627B;--btn2:#132233;--btn2h:#1A2E43;--sel:rgba(126,171,192,.13);--moon:#BCC7D8;--moonh:#D6DEE9;--on:#060C16;--earth:#D99A62;--ok:#62C2AD;--warn:#E2BC5C;--bad:#E48069;--box:#4F6A82;--band:rgba(126,171,192,.13);--bandb:rgba(126,171,192,.5);--curs:#FFFFFF;--halo:#060C16;--bk:rgba(126,171,192,.6);color-scheme:dark}
+.app{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--t1);background-color:var(--g);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Ccircle cx='136.0' cy='63.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='225.1' cy='153.6' r='0.5' fill='%23CFDBEA' fill-opacity='0.40'/%3E%3Ccircle cx='90.2' cy='36.1' r='0.9' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='38.1' cy='178.3' r='0.5' fill='%23CFDBEA' fill-opacity='0.41'/%3E%3Ccircle cx='264.9' cy='244.9' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='166.6' cy='410.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.30'/%3E%3Ccircle cx='55.9' cy='176.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='235.3' cy='286.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='268.3' cy='156.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='673' height='673'%3E%3Ccircle cx='304.5' cy='376.7' r='0.9' fill='%23CFDBEA' fill-opacity='0.28'/%3E%3Ccircle cx='575.4' cy='127.8' r='0.9' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='533.7' cy='63.3' r='0.7' fill='%23CFDBEA' fill-opacity='0.20'/%3E%3Ccircle cx='362.5' cy='599.2' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='266.6' cy='304.9' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='559.7' cy='42.5' r='0.5' fill='%23CFDBEA' fill-opacity='0.21'/%3E%3Ccircle cx='162.8' cy='20.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.24'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1031' height='1031'%3E%3Ccircle cx='953.5' cy='978.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.16'/%3E%3Ccircle cx='316.3' cy='390.9' r='0.7' fill='%23CFDBEA' fill-opacity='0.19'/%3E%3Ccircle cx='197.9' cy='458.4' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='929.6' cy='109.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.27'/%3E%3Ccircle cx='528.5' cy='757.0' r='0.7' fill='%23CFDBEA' fill-opacity='0.36'/%3E%3C/svg%3E");background-size:420px 420px,673px 673px,1031px 1031px;font-size:16px;line-height:1.5;min-height:100vh}
+.app ::selection{background:var(--btn);color:var(--t1)}
+.app a{color:var(--link);text-underline-offset:3px;text-decoration-thickness:1px}
+.app a:hover{color:var(--linkh)}
+.app :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+code,.code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.92em;overflow-wrap:anywhere}
+.meta{font:500 11px/1.4 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
+.wrap{max-width:1320px;margin:0 auto;padding:0 32px;box-sizing:border-box}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:4px 24px;padding:4px 32px;border-bottom:1px solid var(--l);background:var(--hd)}
+.brand{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:var(--t1)!important;text-decoration:none;font-weight:600;font-size:16px}
+.nav{display:flex;flex-wrap:wrap;gap:2px}
+.nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--t2);text-decoration:none;font-size:15px;border-radius:2px}
+.nav a:hover{color:var(--t1);background:var(--r)}
+.nav a[aria-current]{color:var(--t1);background:var(--sel);box-shadow:inset 0 -2px 0 var(--acc);border-radius:2px 2px 0 0}
+.steps{display:flex;flex-wrap:wrap;gap:0 4px;list-style:none;margin:0 0 0 auto;padding:0;align-items:center}
+.steps li{display:flex;align-items:center}
+.steps li+li::before{content:"";width:16px;height:1px;background:var(--l2);margin-right:4px}
+.step{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 6px;font-size:14px;color:var(--t2)!important;text-decoration:none;border-radius:2px}
+.step:hover{color:var(--t1)!important}
+.dot{width:24px;height:24px;border-radius:2px;border:1px solid var(--l2);display:inline-flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;box-sizing:border-box}
+.step.done .dot{border-color:color-mix(in srgb,var(--acc) 60%,transparent);color:var(--acc)}
+.step[aria-current]{color:var(--t1)!important;font-weight:500}
+.step[aria-current] .dot{background:var(--sel);border-color:var(--acc);color:var(--t1);font-weight:500}
+main{padding:32px 0 64px;display:flex;flex-direction:column;gap:28px}
+.crumb{font-size:14px;color:var(--t3);margin:0}
+.crumb a{display:inline-block;padding:4px 0}
+h1{margin:0;font-size:40px;line-height:1.1;font-weight:600;letter-spacing:-0.015em;text-wrap:balance}
+h2{margin:0;font-size:18px;line-height:1.3;font-weight:600;letter-spacing:-0.005em}
+h3{margin:0;font-size:16px;line-height:1.35;font-weight:600}
+.sub{margin:6px 0 0;font-size:17px;color:var(--t2);text-wrap:pretty}
+.lede{margin:0;font-size:18px;line-height:1.55;color:var(--t2);max-width:62ch;text-wrap:pretty}
+.note{margin:0;font-size:14px;color:var(--t3);text-wrap:pretty}
+/* panels: navy surface, fine border, corner brackets, header strip */
+.panel{position:relative;background:var(--p);border:1px solid var(--l);border-radius:2px}
+.panel::after{content:"";position:absolute;inset:-1px;pointer-events:none;background:
+ linear-gradient(var(--bk),var(--bk)) left top/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) left top/1px 10px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) right top/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) right top/1px 10px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) left bottom/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) left bottom/1px 10px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) right bottom/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) right bottom/1px 10px no-repeat}
+.phd{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 16px;padding:10px 20px;min-height:48px;box-sizing:border-box;background:var(--ph);border-bottom:1px solid var(--l)}
+.phd h2{font-size:16px}
+.pb{padding:20px}
+/* buttons: compact rectangles, muted steel-blue */
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:0 16px;border-radius:2px;background:var(--btn);border:1px solid var(--btnb);color:var(--t1)!important;font-weight:500;text-decoration:none;font-size:15px;font-family:inherit;cursor:pointer;box-sizing:border-box}
+.btn:hover,.btn.is-hover{background:var(--btnh);border-color:var(--acc)}
+.btn.is-focus{outline:2px solid var(--focus);outline-offset:2px}
+.btn2{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:40px;padding:0 14px;border-radius:2px;border:1px solid var(--l2);color:var(--t1)!important;text-decoration:none;font-size:14px;font-weight:500;background:var(--btn2);font-family:inherit;cursor:pointer;box-sizing:border-box}
+.btn2:hover,.btn2.is-hover{background:var(--btn2h);border-color:color-mix(in srgb,var(--acc) 70%,transparent)}
+.btn2.is-focus{outline:2px solid var(--focus);outline-offset:2px}
+.btn2[disabled],.btn2[aria-disabled="true"]{color:var(--t3)!important;border-color:var(--l);border-style:dashed;cursor:not-allowed;background:transparent}
+.seg{display:inline-flex;border:1px solid var(--l);border-radius:2px;padding:2px;gap:2px;background:var(--p2)}
+.seg button{min-height:36px;padding:0 12px;border:0;border-radius:1px;background:transparent;color:var(--t2);font:inherit;font-size:14px;cursor:pointer}
+.seg button:hover{color:var(--t1);background:var(--r)}
+.seg button[aria-pressed="true"]{background:var(--sel);color:var(--t1);box-shadow:inset 0 -2px 0 var(--acc);font-weight:500}
+/* status */
+.st{display:inline-flex;align-items:center;gap:8px;font-weight:500}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.sb{display:inline-flex;align-items:center;gap:6px;padding:1px 9px 1px 6px;border-radius:2px;font-size:13px;font-weight:500;border:1px solid;line-height:1.6;white-space:nowrap}
+.sb.ok{border-color:color-mix(in srgb,var(--ok) 45%,transparent);background:color-mix(in srgb,var(--ok) 9%,transparent)}
+.sb.bad{border-color:color-mix(in srgb,var(--bad) 50%,transparent);background:color-mix(in srgb,var(--bad) 9%,transparent)}
+.sb.warn{border-color:color-mix(in srgb,var(--warn) 50%,transparent);background:color-mix(in srgb,var(--warn) 9%,transparent)}
+.sb.off{color:var(--t2);border:1px dashed var(--l2);padding:1px 9px;background:transparent}
+.gnote{margin:0;padding:10px 14px;border-left:2px solid var(--warn);background:color-mix(in srgb,var(--warn) 6%,transparent);border-radius:0 2px 2px 0;font-size:14px;color:var(--t2)}
+.blocked{color:var(--t2);font-size:16px}
+.limits{border-top:1px solid var(--l);padding-top:24px;display:flex;flex-direction:column;gap:14px}
+.limits h2{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--t1)}
+.limits h2 svg{color:var(--t3)}
+.limits ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px 40px;font-size:15px;color:var(--t2)}
+.runid{margin:0;font-size:12px;color:var(--t3)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:1px;flex:none}
+.pat-o{background:#2B7A6D}
+.pat-m{background:repeating-linear-gradient(135deg,#9A7522 0 4px,#4A3A12 4px 8px)}
+.pat-n{background:repeating-linear-gradient(45deg,#8E3B2E 0 2px,#2A1512 2px 6px),#2A1512}
+.mapimg{width:100%;aspect-ratio:1/1;display:block;image-rendering:pixelated;border-radius:1px}
+.ramp{height:10px;border-radius:1px}
+.scale{display:flex;justify-content:space-between;font-size:12px;color:var(--t2)}
+/* gate checks table */
+.gt{width:100%;border-collapse:collapse;font-size:15px}
+.gt caption{caption-side:top;text-align:left;font-size:14px;color:var(--t2);padding:0 0 10px}
+.gt th,.gt td{padding:11px 14px;border-top:1px solid var(--l);text-align:left;vertical-align:top;font-weight:400}
+.gt thead th{font:500 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);border-top:0;padding-top:4px;padding-bottom:8px;background:var(--ph)}
+.gt tbody th{font-weight:500}
+.gt .dom{display:block;font-size:13px;color:var(--t3);font-weight:400;margin-top:2px}
+.gt .val{text-align:right;white-space:nowrap}
+.gt .miss{color:var(--t3);font-style:italic;font-family:'IBM Plex Sans',sans-serif}
+.gt .why{display:block;font-size:13px;color:var(--t2);margin-top:6px;max-width:34ch}
+.gt tr.f th,.gt tr.f td{background:color-mix(in srgb,var(--bad) 6%,transparent)}
+.gt tr.u th,.gt tr.u td{background:color-mix(in srgb,var(--warn) 6%,transparent)}
+.disc{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--t2)}
+.disc li{display:flex;gap:8px;align-items:flex-start}
+.disc li svg{color:var(--t3);margin-top:2px}
+@media (max-width:640px){
+  .gt thead{display:none}
+  .gt caption{display:block}
+  .gt,.gt tbody{display:block}
+  .gt tr{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding:12px 0;border-top:1px solid var(--l)}
+  .gt th,.gt td{border:0;padding:0;background:none!important}
+  .gt tbody th{grid-column:1/-1}
+  .gt td.val{text-align:left}
+  .gt td.val::before{content:"Value ";color:var(--t3);font-family:'IBM Plex Sans',sans-serif}
+  .gt td.rule{grid-column:1}
+  .gt td.rule::before{content:"Rule ";color:var(--t3)}
+  .gt td.res{grid-column:1;margin-top:4px}
+}
+.dbar{display:grid;grid-template-columns:150px minmax(0,1fr) 64px;gap:14px;align-items:center;font-size:15px}
+.trk{position:relative;height:10px;border-radius:1px;background:var(--r)}
+.trk b{position:absolute;inset:2px auto 2px 0;background:var(--moon);border-radius:1px}
+@media (max-width:820px){.steps{margin:0;width:100%}.top{padding:4px 16px}}
+@media (max-width:640px){.wrap{padding:0 16px}h1{font-size:30px}.lede{font-size:17px}main{padding-top:20px;gap:22px}.step .lbl{display:none}.step[aria-current] .lbl{display:inline}.dbar{grid-template-columns:104px minmax(0,1fr) 64px;font-size:14px}.phd{padding:10px 16px}.pb{padding:16px}}
+
+.app{--g:#07101C;--hd:#08121F;--p:#0B1726;--ph:#0B1726;--p2:#081220;--r:#10223A;--l:#1C3148;--l2:#2A4560;--grid:#132538;--t1:#EAF1F7;--t2:#A9B9CA;--t3:#8396AB;--acc:#38BDF8;--focus:#BAE6FD;--link:#7DD3FC;--linkh:#BAE6FD;--btn:#38BDF8;--btnh:#7DD3FC;--btnb:#38BDF8;--btn2:transparent;--btn2h:rgba(56,189,248,.08);--sel:rgba(56,189,248,.09);--moon:#C3CEDD;--earth:#F4AE5B;--ok:#62C2AD;--warn:#E2BC5C;--bad:#E48069;--box:#4A6A86;--band:rgba(56,189,248,.10);--bandb:rgba(56,189,248,.45);--bk:rgba(56,189,248,.5)}
+.app{background-image:radial-gradient(1100px 520px at 75% -120px,rgba(56,189,248,.07),transparent 70%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Ccircle cx='136.0' cy='63.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='225.1' cy='153.6' r='0.5' fill='%23CFDBEA' fill-opacity='0.40'/%3E%3Ccircle cx='90.2' cy='36.1' r='0.9' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='38.1' cy='178.3' r='0.5' fill='%23CFDBEA' fill-opacity='0.41'/%3E%3Ccircle cx='264.9' cy='244.9' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='166.6' cy='410.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.30'/%3E%3Ccircle cx='55.9' cy='176.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='235.3' cy='286.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='268.3' cy='156.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='673' height='673'%3E%3Ccircle cx='304.5' cy='376.7' r='0.9' fill='%23CFDBEA' fill-opacity='0.28'/%3E%3Ccircle cx='575.4' cy='127.8' r='0.9' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='533.7' cy='63.3' r='0.7' fill='%23CFDBEA' fill-opacity='0.20'/%3E%3Ccircle cx='362.5' cy='599.2' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='266.6' cy='304.9' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='559.7' cy='42.5' r='0.5' fill='%23CFDBEA' fill-opacity='0.21'/%3E%3Ccircle cx='162.8' cy='20.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.24'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1031' height='1031'%3E%3Ccircle cx='953.5' cy='978.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.16'/%3E%3Ccircle cx='316.3' cy='390.9' r='0.7' fill='%23CFDBEA' fill-opacity='0.19'/%3E%3Ccircle cx='197.9' cy='458.4' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='929.6' cy='109.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.27'/%3E%3Ccircle cx='528.5' cy='757.0' r='0.7' fill='%23CFDBEA' fill-opacity='0.36'/%3E%3C/svg%3E");background-size:auto,420px 420px,673px 673px,1031px 1031px}
+.app h1,.app h2,.app h3,.brand{font-family:'Space Grotesk','IBM Plex Sans',sans-serif}
+h1{font-size:46px;font-weight:700;letter-spacing:-0.025em;line-height:1.06}
+.app :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.app a{color:var(--link)}
+.chip,.meta{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border:1px solid var(--bandb);border-radius:4px;background:var(--sel);color:var(--acc);font:500 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+/* header */
+.top{gap:10px 18px;padding:12px 32px;background:rgba(7,16,28,.88);border-bottom:1px solid var(--l)}
+.brand{gap:12px;text-transform:uppercase;letter-spacing:.08em;font-size:15px;font-weight:700}
+.bn{display:flex;flex-direction:column;gap:3px;line-height:1.1}.bs{font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--acc)}
+.top .steps{margin-left:auto}.hcopy .chip{white-space:normal}
+.logo{width:40px;height:40px;border:1px solid var(--bandb);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:var(--sel);flex:none}
+.nav{border:1px solid var(--l);border-radius:8px;padding:4px;gap:4px;background:var(--p2)}
+.nav a{min-height:38px;padding:0 14px;font:500 13px 'IBM Plex Mono',monospace;border-radius:6px;border:1px solid transparent}
+.nav a[aria-current]{color:var(--acc);background:var(--sel);border-color:var(--bandb);box-shadow:none;border-radius:6px}
+.nav a[aria-current]::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--acc);margin-right:8px}
+.steps{border:1px solid var(--l);border-radius:8px;padding:2px 10px;background:var(--p2)}
+.step{font:500 13px 'IBM Plex Mono',monospace;min-height:40px}
+.dot{width:auto;min-width:28px;height:24px;padding:0 4px;border-radius:4px;font-size:12px}
+.step[aria-current]{color:var(--acc)!important}
+.step[aria-current] .dot{background:var(--sel);border-color:var(--acc);color:var(--acc)}
+.step.done .dot{color:var(--acc);border-color:var(--bandb)}
+/* panels */
+.panel{border-radius:10px;background:linear-gradient(180deg,#0C1A2B,#0A1524)}
+.panel::after{inset:-1px;border-radius:10px}
+.phd{background:transparent;padding:16px 22px;min-height:56px}
+.phd h2,.card .k{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.panel h2{font-size:14px!important;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.phs{margin:3px 0 0;font:400 12px/1.4 'IBM Plex Mono',monospace;color:var(--t3)}
+.pb{padding:22px}
+.card .k{background:transparent;font-family:'Space Grotesk',sans-serif}
+/* buttons */
+.btn{min-height:46px;padding:0 20px;border-radius:4px;background:var(--btn);border-color:var(--btn);color:#04121F!important;font:600 13px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.btn:hover,.btn.is-hover{background:var(--btnh);border-color:var(--btnh);box-shadow:0 0 0 4px rgba(56,189,248,.14)}
+.btn2{border-radius:4px;font:500 13px 'IBM Plex Mono',monospace;background:transparent}
+.btn2:hover,.btn2.is-hover{background:var(--btn2h);border-color:var(--bandb)}
+.seg{border-radius:6px;padding:3px}
+.seg button{border-radius:4px;font:500 13px 'IBM Plex Mono',monospace;border:1px solid transparent}
+.seg button[aria-pressed="true"]{background:var(--sel);color:var(--acc);border-color:var(--bandb);box-shadow:none}
+/* status */
+.sb{border-radius:4px;font:600 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px 2px 6px}
+.sb.off{text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px}
+.pat-o{background:#1FB89F}
+.pat-m{background:repeating-linear-gradient(135deg,#D98A2B 0 3px,#6B4214 3px 6px)}
+.pat-n{background:repeating-linear-gradient(45deg,#E2545B 0 4px,#B83C43 4px 6px)}
+/* limits as a panel */
+.limits{border:1px solid var(--l);border-radius:10px;padding:22px 24px;background:rgba(11,23,38,.7)}
+.limits h2{font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--warn)}
+.limits h2 svg{color:var(--warn)}
+.limits ul{font-size:14px}
+@media (max-width:640px){h1{font-size:32px}.top{padding:10px 16px}.phd{padding:14px 16px}.pb{padding:16px}.nav{width:100%}.steps{width:100%;box-sizing:border-box}}
+
+.app{--g:#080B27;--hd:rgba(8,11,39,.8);--p:#12163A;--ph:#12163A;--p2:#0C0F2E;--r:#1A1F4A;--l:#252B57;--l2:#363E78;--grid:#1C2150;--t1:#E6E8FF;--t2:#B3B9DA;--t3:#8E95BD;--acc:#38BDF8;--focus:#BAE6FD;--link:#7DD3FC;--linkh:#BAE6FD;--btn:#38BDF8;--btnh:#7DD3FC;--btnb:#38BDF8;--btn2:rgba(56,189,248,.06);--btn2h:rgba(129,140,248,.16);--sel:rgba(56,189,248,.12);--moon:#C3C9EE;--earth:#F4AE5B;--ok:#62C2AD;--warn:#E2BC5C;--bad:#E48069;--box:#5A63A0;--band:rgba(56,189,248,.10);--bandb:rgba(56,189,248,.42);--bk:transparent;--vio:#818CF8;--hair:rgba(129,140,248,.16)}
+.app{font-family:'Inter','IBM Plex Sans',system-ui,sans-serif;background-image:radial-gradient(900px 620px at 10% -6%,rgba(76,29,149,.30),transparent 70%),radial-gradient(1000px 640px at 94% 2%,rgba(56,189,248,.10),transparent 70%),radial-gradient(1300px 820px at 50% 112%,rgba(46,16,101,.32),transparent 70%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Ccircle cx='136.0' cy='63.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='225.1' cy='153.6' r='0.5' fill='%23CFDBEA' fill-opacity='0.40'/%3E%3Ccircle cx='90.2' cy='36.1' r='0.9' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='38.1' cy='178.3' r='0.5' fill='%23CFDBEA' fill-opacity='0.41'/%3E%3Ccircle cx='264.9' cy='244.9' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='166.6' cy='410.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.30'/%3E%3Ccircle cx='55.9' cy='176.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='235.3' cy='286.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='268.3' cy='156.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='673' height='673'%3E%3Ccircle cx='304.5' cy='376.7' r='0.9' fill='%23CFDBEA' fill-opacity='0.28'/%3E%3Ccircle cx='575.4' cy='127.8' r='0.9' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='533.7' cy='63.3' r='0.7' fill='%23CFDBEA' fill-opacity='0.20'/%3E%3Ccircle cx='362.5' cy='599.2' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='266.6' cy='304.9' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='559.7' cy='42.5' r='0.5' fill='%23CFDBEA' fill-opacity='0.21'/%3E%3Ccircle cx='162.8' cy='20.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.24'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1031' height='1031'%3E%3Ccircle cx='953.5' cy='978.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.16'/%3E%3Ccircle cx='316.3' cy='390.9' r='0.7' fill='%23CFDBEA' fill-opacity='0.19'/%3E%3Ccircle cx='197.9' cy='458.4' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='929.6' cy='109.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.27'/%3E%3Ccircle cx='528.5' cy='757.0' r='0.7' fill='%23CFDBEA' fill-opacity='0.36'/%3E%3C/svg%3E");background-size:auto,auto,auto,420px 420px,673px 673px,1031px 1031px}
+.app ::selection{background:rgba(56,189,248,.35);color:#fff}
+.app *{scrollbar-color:#363E78 transparent}
+.app :focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:8px}
+h1{font-size:50px;font-weight:700;letter-spacing:-0.025em;line-height:1.06}
+.sub,.lede{color:var(--t2)}
+/* header */
+.top{gap:10px 28px;padding:14px 32px;background:rgba(8,11,39,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
+.brand{font-size:17px;letter-spacing:.06em}
+.bs{color:var(--earth);font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.12em}
+.logo{border-radius:50%;border-color:rgba(56,189,248,.45);background:radial-gradient(circle at 50% 40%,rgba(56,189,248,.22),rgba(8,11,39,.9) 72%);box-shadow:0 4px 18px -4px rgba(56,189,248,.45)}
+.nav{border:0;background:transparent;padding:0;gap:4px}
+.nav a{min-height:40px;padding:0 16px;font:500 14px 'Space Grotesk',sans-serif;letter-spacing:.02em;color:var(--t2);border-radius:999px}
+.nav a:hover{background:rgba(129,140,248,.10);color:var(--t1)}
+.nav a[aria-current]{color:var(--t1);background:rgba(56,189,248,.10);border-color:rgba(56,189,248,.35);border-radius:999px}
+.steps{border:1px solid var(--hair);border-radius:999px;padding:3px 16px;background:rgba(12,15,46,.8)}
+.steps li+li::before{width:14px;background:var(--l2)}
+.step{font:600 11px 'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;min-height:40px}
+.dot{min-width:22px;width:22px;height:22px;padding:0;border-radius:50%;font:600 11px 'IBM Plex Mono',monospace}
+.step[aria-current]{color:var(--t1)!important}
+.step[aria-current] .dot{background:var(--acc);color:#04121F;border-color:var(--acc);box-shadow:0 2px 10px -2px rgba(56,189,248,.7)}
+.step.done .dot{color:var(--acc);border-color:rgba(56,189,248,.5)}
+/* panels: one elevation, a hairline border on an indigo gradient */
+.panel{border-radius:16px;border:1px solid var(--hair);background:linear-gradient(160deg,rgba(27,32,74,.9),rgba(14,17,48,.92) 62%)}
+.panel::after{display:none}
+.phd{padding:20px 24px 10px;min-height:0;border-bottom:0;background:transparent}
+.phd h2,.panel h2,.card .k{font:600 19px/1.3 'Space Grotesk',sans-serif!important;letter-spacing:-0.005em!important;text-transform:none!important}
+.phs{font:400 13px/1.45 'Inter',sans-serif;color:var(--t3)}
+.pb{padding:16px 24px 24px}
+.chip,.meta{border-radius:999px;padding:4px 11px;border:1px solid rgba(56,189,248,.32);background:rgba(11,15,42,.7);color:var(--link);font:600 11px/1.3 'Space Grotesk',sans-serif;letter-spacing:.1em}
+/* buttons */
+.btn{border-radius:999px;background:var(--acc);border-color:var(--acc);color:#04121F!important;font:600 15px 'Space Grotesk',sans-serif;letter-spacing:.01em;text-transform:none;min-height:46px;padding:0 22px;box-shadow:0 6px 20px -8px rgba(56,189,248,.6)}
+.btn:hover,.btn.is-hover{background:#7DD3FC;border-color:#7DD3FC;box-shadow:0 8px 26px -8px rgba(56,189,248,.8)}
+.btn2{border-radius:999px;border:1px solid rgba(56,189,248,.38);background:var(--btn2);font:500 14px 'Space Grotesk',sans-serif;color:var(--t1)!important}
+.btn2:hover,.btn2.is-hover{border-color:var(--vio);background:var(--btn2h)}
+.seg{border-radius:999px;padding:3px;background:rgba(12,15,46,.8);border-color:var(--hair)}
+.seg button{border-radius:999px;font:500 13px 'Space Grotesk',sans-serif;padding:0 14px}
+.seg button[aria-pressed="true"]{background:var(--acc);color:#04121F;border-color:var(--acc)}
+/* status */
+.sb{border-radius:999px;font:600 12px/1.5 'Space Grotesk',sans-serif;letter-spacing:.02em;text-transform:none;padding:2px 10px 2px 7px}
+.pat-o{background:#3FB8A0}
+.pat-m{background:repeating-linear-gradient(135deg,#E2BC5C 0 3px,#7A5F1C 3px 6px)}
+.pat-n{background:repeating-linear-gradient(45deg,#E48069 0 4px,#9E4636 4px 6px)}
+.tbl thead th,.gt thead th{background:transparent;font:600 11px/1.4 'Space Grotesk',sans-serif;letter-spacing:.1em}
+.gnote{border-left-width:1px;border-radius:12px;border:1px solid rgba(226,188,92,.35)}
+.ptab{border-radius:12px}
+/* limits: one panel, items marked with a short amber rule (no nested cards) */
+.limits{border:1px solid var(--hair);border-radius:16px;background:rgba(14,17,48,.65);padding:24px 28px}
+.limits h2{font:600 19px 'Space Grotesk',sans-serif;letter-spacing:0;text-transform:none;color:var(--t1)}
+.limits h2 svg{color:var(--warn)}
+.limits ul{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px 32px;font-size:14px}
+.limits li{position:relative;padding-top:14px}
+.limits li::before{content:"";position:absolute;top:0;left:0;width:28px;height:2px;border-radius:2px;background:rgba(226,188,92,.7)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px;border-top:1px solid var(--hair);padding:20px 0 0;font:12px 'IBM Plex Mono',monospace;color:var(--t3)}
+.foot .fb{display:inline-flex;align-items:center;gap:10px;font:600 13px 'Space Grotesk',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--t2)}
+@media (max-width:640px){h1{font-size:34px}.top{padding:10px 16px}.phd{padding:16px 16px 8px}.pb{padding:14px 16px 18px}.limits{padding:20px}.nav{width:100%}.steps{width:100%;box-sizing:border-box;border-radius:16px}}
+
+.ptab{display:flex;flex-direction:column;gap:2px;padding:10px 18px;min-height:44px;border-radius:2px;border:1px solid var(--l2);text-decoration:none;color:var(--t2)!important}
+.ptab:hover{background:var(--r)}
+.ptab[aria-current]{background:var(--sel);border-color:var(--acc);box-shadow:inset 0 -2px 0 var(--acc);color:var(--t1)!important;font-weight:500}
+.src{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px 24px;margin:0;padding:14px 18px;border:1px solid var(--l);border-radius:2px;background:var(--p2)}
+.src div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.src dt{font-size:13px;color:var(--t3)}
+.src dd{margin:0;font-size:14px;color:var(--t1);overflow-wrap:anywhere}
+.src dd small{display:block;font-size:13px;color:var(--t2);font-family:'IBM Plex Sans',sans-serif}
+.mgrid{display:grid;grid-template-columns:72px repeat(2,minmax(0,1fr));gap:12px 16px;align-items:center}
+.rowlab{margin:0;font-size:15px;color:var(--t2)}
+.cm{position:relative}
+.curs{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.curs .c1{fill:none;stroke:var(--halo);stroke-width:.5}
+.curs .c2{fill:none;stroke:var(--curs);stroke-width:.22}
+.cv{position:absolute;right:6px;bottom:6px;padding:2px 8px;border-radius:2px;background:rgba(7,10,20,.82);color:#ECEAE4;font-size:13px}
+.cdf{width:100%;max-width:460px;height:auto;overflow:visible}
+.cdf .gl{stroke:var(--grid)}.cdf .ax{stroke:var(--l2)}
+.cdf .tk{fill:var(--t3);font:12px 'IBM Plex Mono',monospace}
+.lm{fill:none;stroke:var(--moon);stroke-width:2.2}
+.le{fill:none;stroke:var(--earth);stroke-width:2.2;stroke-dasharray:6 3}
+.qd summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--link);font-size:15px}
+.tbl2{border-collapse:collapse;font-size:14px}.tbl2 th,.tbl2 td{padding:6px 16px 6px 0;text-align:left;font-weight:400;border-top:1px solid var(--l)}.tbl2 thead th{color:var(--t3);border-top:0}
+@media (max-width:640px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.mgrid .rowlab{grid-column:span 2}.mgrid .sp{display:none}.cv{font-size:11px;right:3px;bottom:3px;padding:1px 5px}}
+</style>
+</helmet>
+<div class="app">
+<header class="top"><a class="brand" href="X-01-Regions.dc.html"><span class="logo"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" style="color:var(--t1)"><path d="M2 19.5h24" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M10.6 19.5a3.4 3.4 0 016.8 0z" fill="var(--earth)"/><circle cx="7" cy="7" r="1.3" fill="currentColor"/><circle cx="20.5" cy="5" r="0.9" fill="currentColor"/><circle cx="23" cy="12" r="0.7" fill="currentColor" opacity=".7"/></svg></span><span class="bn">Lunar Analog Finder<span class="bs">NASA Space Apps 2026</span></span></a><nav class="nav" aria-label="Sections"><a href="X-01-Regions.dc.html" aria-current="page">Regions</a><a href="X-06-Environment.dc.html">Environment</a><a href="X-08-Upload.dc.html">Score your own data</a></nav><ol class="steps" aria-label="Demo path"><li><a class="step done" href="X-02-Region.dc.html"><span class="dot"><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M4.5 9.4l3 3 6-6.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lbl">Region</span></a></li><li><a class="step done" href="X-03-Patch.dc.html"><span class="dot"><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M4.5 9.4l3 3 6-6.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lbl">Patch</span></a></li><li><a class="step" href="X-04-Analogs.dc.html" aria-current="step"><span class="dot">03</span><span class="lbl">Earth analogs</span></a></li><li><a class="step" href="X-05-Pair.dc.html"><span class="dot">04</span><span class="lbl">Best match</span></a></li></ol></header>
+<div class="wrap"><main>
+  <p class="crumb"><a href="X-01-Regions.dc.html">Regions</a> / <a href="X-02-Region.dc.html">Leibnitz Beta Plateau</a> / <a href="X-03-Patch.dc.html">r192-c192</a> / <a href="X-04-Analogs.dc.html">Earth analogs</a> / Rank 1</p>
+  <nav aria-label="Compare with" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:-12px"><a class="ptab" href="X-05-Pair.dc.html"><span>Rank 5 · Atacama</span><span class="st ok" style="font-size:14px"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>4 of 5</span></a><a class="ptab" aria-current="page" href="X-05b-Pair-WadiRum.dc.html"><span>Rank 1 · Wadi Rum</span><span class="st bad" style="font-size:14px"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>0 of 5</span></a><a class="ptab" href="X-04-Analogs.dc.html" style="justify-content:center">All 15 matches</a></nav>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <h1><span style="color:var(--moon)">Leibnitz Beta Plateau</span> and <span style="color:var(--earth)">Wadi Rum, Jordan</span></h1>
+    <p class="sub" style="display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:0">Rank 1 of 15 · cosine <span class="mono" style="color:var(--t1)">0.969</span> <span class="st bad"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>0 of 5 physical checks in band</span></p>
+    <p class="lede">The most similar shape, yet every check is out of band: this Wadi Rum patch is gentler, lower and smoother than the lunar one.</p>
+    <dl class="src" aria-label="Where these tiles come from">
+      <div><dt>Moon patch name</dt><dd class="mono">r192-c192<small>Top-left cell of the 32 × 32 tile</small></dd></div>
+      <div><dt>Shared tile ID</dt><dd class="mono">A3CLR22_10_Leibnitz_Beta_Plateau:71220:119760<small>Centre in metres, polar stereographic</small></dd></div>
+      <div><dt>Similarity query ID</dt><dd class="mono">…:full_context:208:208:960<small>Centre cell: 16 more than the name. Same terrain.</small></dd></div>
+      <div><dt>Earth patch</dt><dd class="mono">wadi_rum:natural_screen:1296:112:960<small>At 29.4571, 35.2270</small></dd></div>
+    </dl>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+    <section class="panel" aria-labelledby="maps-h" style="flex:1.2 1 540px;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h2 id="maps-h" style="font-size:18px">Terrain on shared scales, one cursor</h2>
+        <p class="mono" aria-live="polite" style="margin:0;font-size:14px;color:var(--t1)">Row 14, column 17 · Moon slope 8.1°, height −29.9 m · Earth slope 3.1°, height −11.2 m</p>
+      </div>
+      <div class="mgrid">
+        <span class="sp"></span>
+        <p style="margin:0;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--moon)"><span style="width:10px;height:10px;border-radius:50%;background:var(--moon)"></span>Moon · r192-c192</p>
+        <p style="margin:0;display:flex;align-items:center;gap:8px;font-weight:600;color:var(--earth)"><span style="width:10px;height:10px;transform:rotate(45deg);background:var(--earth)"></span>Earth · Wadi Rum</p>
+        <p class="rowlab">Slope</p>
+        <div class="cm"><img class="mapimg" src="/_blob/da2997395c18fa6ea6edd98acf6b8bef" alt="Moon slope, 0.4° to 17.2°"><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">8.1°</span></div>
+        <div class="cm"><img class="mapimg" src="/_blob/a3a3862b75185631a05c30be5d6ed36b" alt="Wadi Rum slope, 2.0° to 15.8°"><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">3.1°</span></div>
+        <span class="sp"></span>
+        <div style="grid-column:span 2;display:flex;flex-direction:column;gap:4px"><div class="ramp" style="background:linear-gradient(90deg,#000004,#3b0f70 20%,#8c2981 40%,#de4968 60%,#fe9f6d 80%,#fcfdbf)"></div><div class="scale mono"><span>0°</span><span>10°</span><span>20°</span></div></div>
+        <p class="rowlab">Height</p>
+        <div class="cm"><img class="mapimg" src="/_blob/0eff8edf0680ac45acce0739b4b01b5a" alt="Moon relative elevation, −37.6 m to +50.2 m"><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">−29.9 m</span></div>
+        <div class="cm"><img class="mapimg" src="/_blob/d688a903169ec0756e911dbacb758a74" alt="Wadi Rum relative elevation, −35.6 m to +47.8 m"><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">−11.2 m</span></div>
+        <span class="sp"></span>
+        <div style="grid-column:span 2;display:flex;flex-direction:column;gap:4px"><div class="ramp" style="background:linear-gradient(90deg,#070A14,#23305A 30%,#56648F 50%,#A7B3D3 70%,#F2F4FA)"></div><div class="scale mono"><span>−100 m</span><span>0</span><span>+100 m</span></div></div>
+      </div>
+      <p class="note">Point at or arrow-key through any grid: the same cell is marked on all four, and each shows its own value. Grids are drawn as stored; neither is turned to north.</p>
+    </section>
+    <section class="panel" aria-labelledby="chk-h" style="flex:1 1 400px;padding:24px;display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h2 id="chk-h" style="font-size:18px">Physical checks</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--t2)">
+          <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:12px;height:12px;border-radius:50%;background:var(--moon)"></span>Moon</span>
+          <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:11px;height:11px;transform:rotate(45deg);background:var(--earth)"></span>Earth</span>
+          <span style="display:inline-flex;align-items:center;gap:6px"><span style="width:20px;height:12px;border-radius:2px;background:var(--band);border:1px solid var(--bandb);box-sizing:border-box"></span>Allowed band around the Moon</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:500">Median slope</span><span class="st bad" style="font-size:14px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Out of band</span></div>
+  <div style="position:relative;height:28px" role="img" aria-label="Median slope: Moon 6.62°, Earth 4.75°, allowed ±1.00, out of band">
+    <div style="position:absolute;left:0;right:0;top:13px;height:2px;background:var(--l)"></div>
+    <div style="position:absolute;top:4px;height:20px;left:34.75%;width:53.71%;background:var(--band);border:1px solid var(--bandb);border-radius:3px;box-sizing:border-box"></div>
+    <div style="position:absolute;top:7px;left:61.61%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--moon)"></div>
+    <div style="position:absolute;top:8px;left:11.54%;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);background:var(--earth)"></div>
+  </div>
+  <div class="mono" style="display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--t2)"><span>Moon <span style="color:var(--t1)">6.62°</span></span><span>Earth <span style="color:var(--earth)">4.75°</span></span><span>−1.86 of ±1.00</span></div>
+</div><div style="display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:500">P90 slope</span><span class="st bad" style="font-size:14px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Out of band</span></div>
+  <div style="position:relative;height:28px" role="img" aria-label="P90 slope: Moon 10.88°, Earth 8.67°, allowed ±2.00, out of band">
+    <div style="position:absolute;left:0;right:0;top:13px;height:2px;background:var(--l)"></div>
+    <div style="position:absolute;top:4px;height:20px;left:15.36%;width:73.10%;background:var(--band);border:1px solid var(--bandb);border-radius:3px;box-sizing:border-box"></div>
+    <div style="position:absolute;top:7px;left:51.91%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--moon)"></div>
+    <div style="position:absolute;top:8px;left:11.54%;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);background:var(--earth)"></div>
+  </div>
+  <div class="mono" style="display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--t2)"><span>Moon <span style="color:var(--t1)">10.88°</span></span><span>Earth <span style="color:var(--earth)">8.67°</span></span><span>−2.21 of ±2.00</span></div>
+</div><div style="display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:500">Relief, 5th to 95th percentile (m)</span><span class="st bad" style="font-size:14px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Out of band</span></div>
+  <div style="position:relative;height:28px" role="img" aria-label="Relief, 5th to 95th percentile: Moon 64.94 m, Earth 56.33 m, allowed ±5.63, out of band">
+    <div style="position:absolute;left:0;right:0;top:13px;height:2px;background:var(--l)"></div>
+    <div style="position:absolute;top:4px;height:20px;left:27.62%;width:60.84%;background:var(--band);border:1px solid var(--bandb);border-radius:3px;box-sizing:border-box"></div>
+    <div style="position:absolute;top:7px;left:58.04%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--moon)"></div>
+    <div style="position:absolute;top:8px;left:11.54%;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);background:var(--earth)"></div>
+  </div>
+  <div class="mono" style="display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--t2)"><span>Moon <span style="color:var(--t1)">64.94 m</span></span><span>Earth <span style="color:var(--earth)">56.33 m</span></span><span>−8.61 of ±5.63</span></div>
+</div><div style="display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:500">Plane fit (residual)</span><span class="st bad" style="font-size:14px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Out of band</span></div>
+  <div style="position:relative;height:28px" role="img" aria-label="Plane fit (residual): Moon 0.760, Earth 0.607, allowed ±0.100, out of band">
+    <div style="position:absolute;left:0;right:0;top:13px;height:2px;background:var(--l)"></div>
+    <div style="position:absolute;top:4px;height:20px;left:27.68%;width:60.78%;background:var(--band);border:1px solid var(--bandb);border-radius:3px;box-sizing:border-box"></div>
+    <div style="position:absolute;top:7px;left:58.07%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--moon)"></div>
+    <div style="position:absolute;top:8px;left:11.54%;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);background:var(--earth)"></div>
+  </div>
+  <div class="mono" style="display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--t2)"><span>Moon <span style="color:var(--t1)">0.760</span></span><span>Earth <span style="color:var(--earth)">0.607</span></span><span>−0.153 of ±0.100</span></div>
+</div><div style="display:flex;flex-direction:column;gap:6px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline"><span style="font-weight:500">Local roughness (median SD)</span><span class="st bad" style="font-size:14px;white-space:nowrap"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Out of band</span></div>
+  <div style="position:relative;height:28px" role="img" aria-label="Local roughness (median SD): Moon 11.10 m, Earth 7.67 m, allowed ±1.00, out of band">
+    <div style="position:absolute;left:0;right:0;top:13px;height:2px;background:var(--l)"></div>
+    <div style="position:absolute;top:4px;height:20px;left:53.75%;width:34.71%;background:var(--band);border:1px solid var(--bandb);border-radius:3px;box-sizing:border-box"></div>
+    <div style="position:absolute;top:7px;left:71.11%;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--moon)"></div>
+    <div style="position:absolute;top:8px;left:11.54%;width:12px;height:12px;margin-left:-6px;transform:rotate(45deg);background:var(--earth)"></div>
+  </div>
+  <div class="mono" style="display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--t2)"><span>Moon <span style="color:var(--t1)">11.10 m</span></span><span>Earth <span style="color:var(--earth)">7.67 m</span></span><span>−3.43 of ±1.00</span></div>
+</div>
+      <p class="note">Relief here is the 5th to 95th percentile height range (64.9 m for the Moon), so it is lower than the patch page's highest-minus-lowest relief (87.9 m). Both come from the same grid.</p>
+    </section>
+  </div>
+  <section class="panel" aria-labelledby="dist-h" style="padding:24px;display:flex;flex-direction:column;gap:16px">
+    <h2 id="dist-h" style="font-size:18px">How the values are spread</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:32px"><figure style="flex:1 1 340px;margin:0;display:flex;flex-direction:column;gap:8px;min-width:0">
+  <figcaption style="font-weight:500">Slope: share of cells at or below each value</figcaption>
+  <svg class="cdf" viewBox="0 0 340 214" role="img" aria-label="Slope cumulative distribution for the Moon patch and Wadi Rum. Medians: Moon 6.6 °, Earth 4.8 °.">
+    <path d="M46 184.0H326" class="gl"/><text class="tk" x="38" y="188.0" text-anchor="end">0%</text><path d="M46 140.5H326" class="gl"/><text class="tk" x="38" y="144.5" text-anchor="end">25%</text><path d="M46 97.0H326" class="gl"/><text class="tk" x="38" y="101.0" text-anchor="end">50%</text><path d="M46 53.5H326" class="gl"/><text class="tk" x="38" y="57.5" text-anchor="end">75%</text><path d="M46 10.0H326" class="gl"/><text class="tk" x="38" y="14.0" text-anchor="end">100%</text><path d="M46 184H326" class="ax"/><path d="M46.0 184v5" class="ax"/><text class="tk" x="46.0" y="204" text-anchor="middle">0</text><path d="M116.0 184v5" class="ax"/><text class="tk" x="116.0" y="204" text-anchor="middle">5</text><path d="M186.0 184v5" class="ax"/><text class="tk" x="186.0" y="204" text-anchor="middle">10</text><path d="M256.0 184v5" class="ax"/><text class="tk" x="256.0" y="204" text-anchor="middle">15</text><path d="M326.0 184v5" class="ax"/><text class="tk" x="326.0" y="204" text-anchor="middle">20</text>
+    <path d="M51.6,184.0H51.6V183.8H55.8V183.7H60.0V183.5H61.4V183.2H62.8V183.0H64.2V182.6H65.6V181.8H68.4V181.5H71.2V180.1H72.6V179.6H74.0V178.9H75.4V178.1H76.8V177.5H78.2V177.2H79.6V176.0H81.0V174.3H82.4V173.0H83.8V171.6H85.2V170.2H86.6V168.7H88.0V167.9H89.4V165.5H90.8V163.8H92.2V163.1H93.6V161.7H95.0V159.7H96.4V157.2H97.8V155.3H99.2V153.1H100.6V150.2H102.0V146.8H103.4V145.8H104.8V143.0H106.2V141.3H107.6V140.0H109.0V136.8H110.4V134.7H111.8V132.7H113.2V130.0H114.6V127.1H116.0V124.0H117.4V121.5H118.8V119.1H120.2V116.9H121.6V114.5H123.0V112.8H124.4V110.3H125.8V108.7H127.2V107.0H128.6V105.5H130.0V104.3H131.4V102.9H132.8V101.6H134.2V99.9H135.6V98.5H137.0V97.7H138.4V96.3H139.8V94.3H141.2V92.9H142.6V91.9H144.0V90.9H145.4V89.4H146.8V88.2H148.2V86.6H149.6V85.1H151.0V83.7H152.4V82.4H153.8V81.2H155.2V79.5H156.6V77.8H158.0V76.3H159.4V74.9H160.8V73.2H162.2V72.4H163.6V71.0H165.0V69.6H166.4V68.5H167.8V65.9H169.2V63.9H170.6V62.5H172.0V60.3H173.4V59.6H174.8V58.6H176.2V56.6H177.6V54.5H179.0V52.3H180.4V50.8H181.8V48.2H183.2V46.9H184.6V45.3H186.0V42.8H187.4V42.3H188.8V40.2H190.2V38.0H191.6V36.5H193.0V34.0H194.4V32.3H195.8V30.6H197.2V28.2H198.6V26.1H200.0V25.6H201.4V24.4H202.8V23.1H204.2V21.6H205.6V20.2H207.0V19.0H208.4V18.2H209.8V17.3H211.2V17.1H212.6V16.3H214.0V15.4H215.4V15.3H216.8V15.1H218.2V14.9H219.6V14.6H226.6V14.4H228.0V14.2H229.4V14.1H230.8V13.9H236.4V13.7H237.8V13.6H239.2V13.1H240.6V12.9H243.4V12.7H244.8V12.5H246.2V12.4H249.0V12.2H250.4V12.0H254.6V11.9H257.4V11.7H258.8V11.5H263.0V11.4H264.4V10.8H268.6V10.7H270.0V10.5H277.0V10.3H284.0V10.2H286.8V10.0" class="lm"/><path d="M74.0,184.0H74.0V183.7H75.4V183.0H76.8V180.4H78.2V176.7H79.6V173.1H81.0V166.2H82.4V163.3H83.8V161.2H85.2V160.6H86.6V158.9H88.0V158.0H89.4V155.6H90.8V152.7H92.2V151.7H93.6V148.7H95.0V144.6H96.4V139.8H97.8V135.4H99.2V130.1H100.6V123.8H102.0V119.3H103.4V115.7H104.8V110.4H106.2V107.4H107.6V105.2H109.0V101.8H110.4V98.9H111.8V97.2H113.2V94.3H114.6V92.8H116.0V90.4H117.4V89.5H118.8V87.3H120.2V84.6H121.6V82.2H123.0V79.7H124.4V76.9H125.8V73.6H127.2V70.5H128.6V68.3H130.0V65.7H131.4V63.5H132.8V62.2H134.2V60.8H135.6V59.1H137.0V57.4H138.4V55.5H139.8V53.7H141.2V51.8H142.6V49.3H144.0V47.7H145.4V45.5H146.8V42.6H148.2V40.1H149.6V38.5H151.0V37.5H152.4V36.5H153.8V35.5H155.2V34.8H156.6V34.5H158.0V33.1H159.4V32.1H160.8V31.4H162.2V30.1H163.6V28.9H165.0V28.7H166.4V28.0H167.8V26.5H169.2V25.6H170.6V25.1H172.0V25.0H173.4V23.8H174.8V23.3H176.2V22.4H177.6V22.2H179.0V22.1H180.4V21.7H181.8V20.9H183.2V20.4H184.6V20.0H186.0V19.5H187.4V18.8H188.8V18.3H190.2V17.1H191.6V17.0H193.0V16.6H194.4V16.3H197.2V15.9H200.0V15.4H201.4V15.1H204.2V14.8H207.0V14.6H208.4V14.4H209.8V13.9H212.6V13.4H215.4V13.1H216.8V12.9H225.2V12.7H229.4V12.4H235.0V12.2H236.4V11.9H237.8V11.5H239.2V11.4H242.0V11.2H243.4V11.0H251.8V10.7H256.0V10.5H261.6V10.3H265.8V10.2H267.2V10.0" class="le"/>
+  </svg>
+  <div style="display:flex;gap:16px;font-size:14px;color:var(--t2)"><span style="display:inline-flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><path d="M0 4H22" class="lm"/></svg>Moon</span><span style="display:inline-flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><path d="M0 4H22" class="le"/></svg>Earth · Wadi Rum</span></div>
+  <details class="qd"><summary>Quantiles as a table</summary><table class="tbl2"><thead><tr><th scope="col"></th><th scope="col">Moon</th><th scope="col">Earth</th></tr></thead><tbody><tr><th scope="row">Minimum</th><td class="mono">0.4 °</td><td class="mono">2 °</td></tr><tr><th scope="row">10%</th><td class="mono">3.1 °</td><td class="mono">2.5 °</td></tr><tr><th scope="row">25%</th><td class="mono">4.4 °</td><td class="mono">3.6 °</td></tr><tr><th scope="row">Median</th><td class="mono">6.6 °</td><td class="mono">4.8 °</td></tr><tr><th scope="row">75%</th><td class="mono">9.5 °</td><td class="mono">6.8 °</td></tr><tr><th scope="row">90%</th><td class="mono">10.9 °</td><td class="mono">8.7 °</td></tr><tr><th scope="row">Maximum</th><td class="mono">17.2 °</td><td class="mono">15.8 °</td></tr></tbody></table></details>
+</figure><figure style="flex:1 1 340px;margin:0;display:flex;flex-direction:column;gap:8px;min-width:0">
+  <figcaption style="font-weight:500">Relative elevation: share of cells at or below each value</figcaption>
+  <svg class="cdf" viewBox="0 0 340 214" role="img" aria-label="Relative elevation cumulative distribution for the Moon patch and Wadi Rum. Medians: Moon −3.8 m, Earth 1 m.">
+    <path d="M46 184.0H326" class="gl"/><text class="tk" x="38" y="188.0" text-anchor="end">0%</text><path d="M46 140.5H326" class="gl"/><text class="tk" x="38" y="144.5" text-anchor="end">25%</text><path d="M46 97.0H326" class="gl"/><text class="tk" x="38" y="101.0" text-anchor="end">50%</text><path d="M46 53.5H326" class="gl"/><text class="tk" x="38" y="57.5" text-anchor="end">75%</text><path d="M46 10.0H326" class="gl"/><text class="tk" x="38" y="14.0" text-anchor="end">100%</text><path d="M46 184H326" class="ax"/><path d="M88.0 184v5" class="ax"/><text class="tk" x="88.0" y="204" text-anchor="middle">−25</text><path d="M158.0 184v5" class="ax"/><text class="tk" x="158.0" y="204" text-anchor="middle">0</text><path d="M228.0 184v5" class="ax"/><text class="tk" x="228.0" y="204" text-anchor="middle">25</text><path d="M298.0 184v5" class="ax"/><text class="tk" x="298.0" y="204" text-anchor="middle">50</text>
+    <path d="M52.7,184.0H52.7V183.8H53.3V183.7H53.6V183.3H54.4V183.2H55.5V183.0H55.8V182.6H56.1V182.3H56.6V182.1H57.5V182.0H57.8V181.6H58.6V181.5H59.4V181.3H59.7V181.1H60.3V180.9H60.8V180.8H61.1V180.6H61.7V180.4H62.2V180.1H63.1V179.9H63.4V179.8H64.2V179.6H64.8V179.4H65.0V179.2H65.3V178.9H65.6V178.7H65.9V178.6H66.2V178.4H66.4V178.2H66.7V177.9H67.8V177.5H68.4V177.4H68.7V177.0H69.0V176.9H69.5V176.7H70.4V176.4H70.6V176.2H71.2V175.8H71.5V175.5H71.8V175.3H72.0V175.2H72.6V175.0H72.9V174.8H73.2V174.5H73.4V174.3H74.3V174.1H74.6V173.8H74.8V173.6H75.1V173.3H75.4V172.6H76.0V172.4H76.2V172.1H76.8V171.8H77.4V171.4H77.6V170.9H77.9V170.7H78.2V170.4H78.5V170.2H78.8V170.1H79.0V169.7H79.9V169.2H80.2V169.0H80.4V168.9H80.7V168.7H81.3V168.5H81.6V168.0H81.8V167.9H82.1V167.7H82.4V167.5H83.2V167.3H83.5V167.2H84.1V166.8H84.4V166.7H84.6V166.2H85.5V166.0H86.0V165.5H86.3V165.1H86.6V165.0H86.9V164.8H87.2V164.1H87.4V163.8H87.7V162.9H88.0V162.8H88.3V162.6H88.6V162.4H90.0V162.1H90.5V161.7H90.8V161.2H91.1V160.9H91.4V160.6H91.9V160.4H92.8V159.9H93.0V159.7H93.3V159.4H93.6V159.2H93.9V158.9H94.2V158.7H94.4V158.5H94.7V158.3H95.0V158.0H95.8V157.8H96.1V156.8H96.4V156.0H96.7V155.8H97.0V155.6H97.2V155.5H98.1V154.8H98.6V154.4H98.9V154.3H99.2V153.9H99.5V153.8H99.8V153.6H100.3V153.4H100.6V153.2H100.9V152.7H101.2V152.6H101.4V152.2H101.7V151.9H102.0V151.2H102.3V150.7H102.6V150.0H102.8V149.5H103.1V149.2H103.7V148.5H104.0V148.0H104.2V147.8H104.5V147.6H104.8V147.3H105.1V147.1H105.6V146.6H105.9V145.9H106.2V145.6H106.8V145.3H107.0V145.1H107.6V144.7H107.9V144.1H108.2V143.4H108.4V143.0H108.7V142.9H109.0V142.7H109.3V142.0H109.6V141.7H109.8V141.2H110.1V140.5H110.4V140.0H110.7V139.5H111.0V138.8H111.2V138.6H111.5V138.5H111.8V137.6H112.1V137.3H112.4V137.1H112.6V136.9H112.9V136.4H113.2V135.9H113.5V135.7H113.8V135.4H114.0V135.2H114.3V134.9H114.9V134.6H115.4V134.0H115.7V133.7H116.0V133.0H116.3V132.3H116.6V132.2H116.8V131.8H117.1V131.2H117.4V131.0H117.7V130.6H118.0V130.3H118.2V130.0H118.5V129.5H118.8V128.8H119.1V128.6H119.4V128.4H119.6V127.9H119.9V127.8H120.2V127.1H120.5V126.9H120.8V126.7H121.0V126.2H121.3V126.1H121.6V125.7H121.9V125.5H122.2V125.4H122.4V125.0H122.7V124.4H123.0V124.2H123.3V123.7H123.6V123.2H123.8V122.1H124.1V122.0H124.4V121.5H125.0V121.1H125.2V121.0H125.5V119.9H126.1V119.8H126.4V119.4H126.6V119.1H126.9V118.9H127.2V118.8H127.5V118.4H128.0V118.2H128.3V117.9H128.6V117.6H128.9V117.4H129.2V116.9H129.4V116.5H129.7V116.2H130.0V115.4H130.3V115.2H130.8V114.7H131.1V114.3H131.4V114.0H131.7V113.3H132.0V112.6H132.2V112.3H132.5V112.1H132.8V112.0H133.1V111.6H133.4V111.4H133.6V111.1H133.9V110.9H134.2V110.6H134.5V110.1H134.8V109.9H135.0V109.7H135.6V109.2H135.9V108.9H136.2V108.0H136.4V107.5H136.7V106.7H137.0V106.5H137.3V105.8H137.6V105.3H137.8V104.8H138.1V104.6H138.4V104.3H138.7V104.0H139.0V103.8H139.2V103.3H139.5V102.8H139.8V102.4H140.6V102.3H140.9V101.8H141.2V101.4H141.5V101.2H141.8V100.9H142.0V100.7H142.3V100.6H142.6V100.4H143.2V99.7H143.7V99.5H144.0V99.4H144.3V99.0H144.6V98.5H144.8V98.2H145.1V98.0H145.7V97.8H146.0V97.7H146.5V97.3H146.8V97.2H147.4V97.0H147.6V96.7H147.9V96.5H148.2V96.3H148.8V96.0H149.0V95.6H149.3V95.3H149.6V95.1H150.2V94.8H150.4V94.6H151.3V94.5H151.6V93.9H151.8V93.8H152.1V93.4H152.7V93.1H153.2V92.9H153.5V92.8H154.1V92.6H154.6V92.4H154.9V92.2H155.2V92.1H155.5V91.7H155.8V91.4H156.9V91.2H157.4V91.1H157.7V90.9H158.0V90.7H158.6V90.5H158.8V90.4H159.4V90.2H160.0V90.0H160.2V89.7H161.1V89.5H161.4V89.2H161.6V89.0H161.9V88.8H162.2V88.5H162.5V88.0H163.0V87.8H163.6V87.5H164.2V87.3H164.4V87.1H164.7V86.8H165.0V86.6H165.3V86.1H165.6V86.0H166.1V85.8H166.4V85.4H167.0V85.3H167.2V84.8H168.4V84.4H168.9V84.3H169.2V84.1H169.5V83.7H170.9V83.6H171.2V83.4H171.4V83.2H171.7V82.9H172.0V82.7H172.3V82.0H172.6V81.9H173.4V81.7H173.7V81.5H174.8V81.4H175.4V81.2H175.9V81.0H176.2V80.9H176.5V80.5H177.0V80.2H177.3V79.7H177.9V79.2H178.2V78.6H178.7V78.1H179.3V77.8H179.6V77.6H179.8V77.5H180.4V76.6H180.7V76.1H181.2V75.8H181.5V75.6H182.1V75.2H182.9V74.9H183.2V74.7H183.5V74.4H183.8V74.2H184.0V73.9H184.3V73.7H184.6V73.6H185.2V73.4H185.4V73.2H185.7V73.0H186.3V72.9H186.6V72.7H187.4V72.4H187.7V72.2H188.0V72.0H188.2V71.7H188.5V71.3H188.8V71.2H189.1V71.0H189.6V70.8H189.9V70.7H190.2V70.5H190.5V70.3H190.8V70.2H191.0V70.0H191.3V69.6H191.9V68.8H192.2V68.6H192.4V67.9H192.7V67.6H193.0V66.9H193.3V66.6H193.8V66.4H194.4V66.2H194.7V66.1H195.2V65.6H195.8V65.1H196.1V64.5H196.4V64.4H196.6V64.0H197.2V63.9H197.8V63.5H198.0V63.4H198.3V62.8H198.6V62.7H199.2V62.3H199.4V62.0H199.7V61.7H200.0V61.3H200.3V61.0H200.6V60.6H200.8V60.3H201.1V60.0H201.4V59.8H201.7V59.1H202.0V58.6H202.5V58.1H202.8V57.9H203.4V57.6H203.6V57.2H204.2V56.9H204.5V56.7H204.8V56.2H205.0V55.7H205.9V54.7H206.2V54.5H206.4V54.3H206.7V53.8H207.0V53.5H207.3V53.0H207.6V52.8H208.1V52.5H208.4V52.1H208.7V52.0H209.0V51.8H209.8V51.6H210.1V50.8H210.4V50.6H210.6V50.3H210.9V49.3H211.2V49.1H211.5V48.7H211.8V48.4H212.0V48.1H212.3V47.9H212.6V47.4H212.9V47.0H213.2V46.7H213.4V46.0H213.7V45.5H214.8V45.3H215.1V45.0H215.4V44.8H215.7V44.2H216.0V43.6H216.2V43.5H216.5V43.1H216.8V43.0H217.1V42.8H217.6V42.3H218.5V41.8H218.8V41.4H219.0V41.3H219.6V40.8H220.2V40.4H220.4V40.1H220.7V39.7H221.0V39.6H221.3V39.1H221.8V38.9H222.4V38.5H222.7V38.2H223.0V37.9H223.2V37.7H223.5V37.5H223.8V37.2H224.1V37.0H224.6V36.2H225.2V36.0H225.5V35.5H226.0V34.8H226.3V34.6H226.6V34.3H227.4V34.0H227.7V33.8H228.0V33.4H228.8V33.3H229.1V32.9H229.4V32.8H229.7V32.1H230.5V31.8H230.8V31.6H231.1V31.4H231.4V30.9H231.6V30.7H232.2V30.6H232.5V29.9H233.3V29.7H234.2V29.5H234.4V29.4H235.0V28.9H235.8V28.4H236.1V28.2H236.7V28.0H237.0V27.7H237.2V27.3H237.8V27.2H238.1V27.0H238.4V26.8H238.9V26.7H239.5V26.1H240.0V25.6H240.3V25.3H240.6V25.1H240.9V24.8H241.4V24.6H241.7V24.4H242.3V24.1H242.6V23.8H242.8V23.4H243.7V23.3H244.0V22.7H244.5V22.6H245.1V22.2H245.4V22.1H246.2V21.9H246.5V21.7H247.6V21.6H247.9V21.4H248.2V21.2H248.7V20.7H249.0V20.5H249.8V20.2H250.1V20.0H251.5V19.7H252.1V19.5H252.6V19.3H253.8V18.8H254.0V18.7H254.6V18.2H254.9V18.0H255.4V17.8H255.7V17.6H256.3V17.5H256.6V17.3H256.8V17.1H257.4V17.0H258.0V16.8H258.2V16.6H258.5V16.5H259.4V16.3H261.0V16.1H262.4V15.9H265.0V15.8H265.8V15.6H266.1V15.4H266.9V15.1H267.2V14.9H268.0V14.8H268.3V14.4H268.9V14.1H271.1V13.9H273.4V13.7H274.2V13.6H277.8V13.4H278.4V13.2H278.7V13.1H279.2V12.9H279.8V12.7H280.6V12.5H281.2V12.4H281.8V12.2H283.2V12.0H283.7V11.9H284.0V11.7H286.2V11.5H289.3V11.4H292.1V11.2H293.8V11.0H294.4V10.8H295.8V10.7H296.0V10.5H296.3V10.2H298.6V10.0" class="lm"/><path d="M58.3,184.0H58.3V183.8H58.6V183.5H58.9V183.2H60.3V183.0H61.4V182.8H63.1V182.5H63.4V182.1H63.9V181.8H64.2V181.5H64.5V181.3H65.9V181.1H66.2V180.9H67.0V180.6H67.8V180.4H68.1V180.1H68.4V179.9H69.2V179.8H69.5V179.6H70.1V179.2H70.4V178.9H70.6V178.7H70.9V178.6H71.5V178.2H71.8V178.1H72.0V177.9H72.6V177.7H72.9V177.5H73.2V177.4H73.7V177.2H74.0V176.9H74.6V176.7H74.8V176.5H75.1V176.4H75.4V176.2H75.7V175.8H76.0V175.7H76.5V175.0H76.8V174.8H77.1V174.3H77.6V174.1H77.9V173.8H78.2V173.6H78.8V173.5H79.0V173.3H79.6V173.0H79.9V172.6H80.4V172.4H80.7V172.3H81.0V171.8H81.3V171.4H81.6V171.1H82.4V170.7H82.7V170.1H83.0V169.7H83.2V169.6H83.5V169.4H84.4V169.0H84.6V168.7H84.9V168.5H85.8V168.4H86.3V167.7H86.6V167.5H87.2V167.3H87.4V166.7H87.7V166.5H88.0V166.0H88.8V165.5H89.1V164.6H89.4V164.3H90.5V163.6H90.8V163.4H91.4V163.3H91.6V162.9H91.9V162.6H92.5V162.1H93.3V161.7H93.6V161.2H94.2V161.1H94.4V160.9H94.7V160.6H95.0V160.4H95.3V159.9H95.6V159.5H96.1V159.2H96.7V159.0H97.0V158.5H97.5V158.0H97.8V157.7H98.1V156.8H99.2V156.6H99.5V156.3H99.8V156.0H100.0V155.8H100.6V155.6H100.9V155.5H101.4V155.3H102.0V154.9H102.3V154.8H102.6V154.3H102.8V153.2H103.1V153.1H103.7V152.7H104.0V152.6H104.5V151.9H104.8V151.5H105.6V151.4H105.9V150.7H106.8V150.4H107.0V150.2H107.6V149.8H107.9V149.5H108.4V148.8H108.7V148.5H109.0V148.1H109.3V148.0H109.6V147.8H110.1V147.6H110.7V147.1H111.2V147.0H112.1V146.6H112.4V146.1H112.6V145.9H112.9V145.3H113.2V145.1H113.5V144.6H113.8V144.1H114.0V143.9H114.3V143.4H114.9V143.2H115.2V143.0H115.4V142.7H115.7V142.5H116.0V142.4H116.3V142.0H116.6V141.9H116.8V141.5H117.4V141.3H117.7V141.2H118.2V141.0H118.5V140.8H118.8V140.5H119.1V140.2H119.4V139.7H119.6V139.0H119.9V138.8H120.2V138.3H120.8V137.8H121.0V137.6H121.3V137.3H121.6V136.9H121.9V136.8H122.4V136.4H122.7V136.3H123.0V136.1H123.3V135.6H123.6V135.1H123.8V134.9H124.4V134.7H125.0V134.4H125.2V133.9H125.5V133.4H125.8V132.7H126.1V132.3H126.4V132.2H126.6V131.5H126.9V131.0H127.8V130.5H128.0V130.1H128.3V130.0H128.9V129.5H129.4V129.3H129.7V128.8H130.0V128.6H130.3V128.3H130.6V127.9H131.1V127.6H131.4V127.2H131.7V126.9H132.0V126.6H132.2V126.4H132.5V126.2H132.8V125.7H133.1V125.2H133.4V125.0H133.6V124.7H134.2V124.5H134.5V124.0H134.8V123.8H135.0V123.5H135.3V123.0H135.6V122.5H135.9V122.3H136.4V122.0H136.7V121.8H137.0V121.6H137.3V121.5H137.6V121.0H137.8V120.8H138.1V120.4H138.4V120.3H139.0V120.1H139.2V119.3H139.5V119.1H140.1V118.8H140.4V118.2H140.6V117.9H140.9V117.7H141.2V117.4H141.8V117.2H142.0V117.1H142.3V116.2H142.6V116.0H142.9V115.5H143.4V115.4H143.7V115.0H144.0V114.5H144.3V114.0H144.6V113.7H144.8V113.3H145.1V112.8H145.4V112.6H145.7V112.1H146.0V111.8H146.2V111.6H146.8V110.9H147.1V110.8H147.4V110.4H147.6V110.3H148.2V110.1H148.5V109.9H149.0V109.2H149.3V108.7H149.6V108.2H150.2V107.9H150.7V107.2H151.0V107.0H151.3V106.9H151.8V106.5H152.1V106.3H153.0V106.0H153.2V105.7H153.5V105.5H154.1V104.8H154.4V104.3H154.6V104.1H154.9V104.0H155.2V103.1H155.5V102.9H155.8V102.6H156.0V102.3H156.3V101.9H156.6V101.8H156.9V100.4H157.2V100.1H157.4V99.7H158.0V99.2H158.6V99.0H158.8V98.7H159.1V98.4H159.4V98.0H160.0V97.8H160.2V97.5H160.5V97.3H160.8V96.8H161.1V96.2H161.6V96.0H161.9V95.8H162.2V95.3H162.5V95.1H162.8V94.8H163.0V94.5H163.3V94.3H163.6V93.8H164.2V93.3H164.4V93.1H165.0V92.8H165.6V91.9H165.8V91.6H166.1V90.9H166.4V90.2H167.0V89.9H167.5V89.5H167.8V89.2H168.1V88.3H168.4V88.0H168.6V87.5H168.9V87.1H169.5V86.5H169.8V86.3H170.0V86.1H170.3V86.0H170.6V85.4H170.9V84.9H171.2V84.3H171.4V84.1H172.0V83.7H172.6V83.4H172.8V83.2H173.1V82.9H173.4V82.6H173.7V81.9H174.0V81.7H174.2V81.4H174.8V81.0H175.1V80.5H175.4V80.2H175.6V80.0H175.9V79.7H176.2V79.0H176.5V78.8H176.8V78.5H177.0V78.3H177.3V77.8H177.6V77.3H177.9V76.9H178.2V76.6H178.4V76.1H178.7V75.8H179.0V75.4H179.6V74.9H179.8V74.6H180.1V74.4H180.4V73.9H180.7V73.0H181.0V72.7H181.2V72.5H181.5V72.0H181.8V71.9H182.1V71.5H182.4V71.2H182.6V70.7H182.9V70.5H183.2V69.8H183.5V69.3H183.8V68.8H184.0V68.5H184.3V67.9H184.6V67.6H185.2V67.3H185.4V66.2H185.7V66.1H186.3V65.7H186.6V65.4H186.8V65.2H187.1V64.5H187.4V64.2H188.0V63.9H188.2V63.7H188.8V63.0H189.1V62.3H189.4V61.3H189.6V60.6H190.2V60.5H190.5V60.1H191.0V59.6H191.9V59.4H192.2V58.8H192.4V58.4H192.7V58.3H193.0V57.7H193.3V57.6H193.6V57.4H193.8V57.1H194.1V56.6H194.4V56.4H195.2V55.4H195.5V55.2H195.8V54.9H196.1V54.0H196.4V53.2H196.6V52.8H196.9V52.3H197.2V52.0H197.5V51.6H197.8V51.3H198.3V51.0H198.6V50.1H198.9V49.9H199.2V49.4H199.4V49.1H199.7V48.6H200.3V48.4H200.6V47.9H201.1V47.6H201.4V47.2H201.7V46.5H202.2V46.4H202.5V45.7H203.6V45.5H203.9V45.2H204.2V45.0H204.5V44.8H204.8V44.5H205.0V44.3H205.3V44.2H205.6V44.0H206.4V43.5H206.7V43.0H207.0V42.5H207.3V42.1H207.6V41.9H207.8V41.8H208.1V40.9H208.4V40.8H208.7V40.2H209.0V39.9H209.2V39.6H209.5V39.1H209.8V38.9H210.1V38.4H210.4V37.7H210.9V37.2H211.2V36.8H211.5V36.0H212.0V35.5H212.3V35.3H212.6V34.5H213.4V34.3H213.7V34.0H214.0V33.8H214.3V33.6H215.1V33.4H215.4V33.1H215.7V32.9H216.0V32.8H216.2V32.4H216.8V32.3H217.1V32.1H217.4V31.8H217.6V31.6H217.9V31.4H218.2V30.7H218.5V30.2H218.8V30.1H219.0V29.5H219.3V29.4H219.6V29.0H220.4V28.5H220.7V28.4H221.0V28.2H221.3V28.0H221.6V27.7H221.8V27.5H222.1V27.3H222.4V26.7H223.2V26.5H223.5V26.3H224.1V26.0H224.6V25.8H224.9V25.5H225.5V25.1H226.0V24.6H227.2V24.4H227.4V24.1H228.0V23.9H228.3V23.6H228.6V23.4H228.8V23.1H229.4V22.6H229.7V21.9H230.5V21.4H230.8V21.0H231.1V20.7H231.4V20.4H231.6V20.2H232.5V19.7H232.8V19.5H233.0V19.2H233.9V18.8H234.4V18.7H235.0V18.5H236.1V18.3H236.7V18.2H237.8V18.0H238.1V17.8H238.4V17.5H238.9V17.0H239.5V16.8H240.3V16.6H240.6V16.5H241.4V16.3H241.7V15.9H242.0V15.8H242.8V15.6H243.1V15.4H243.4V14.9H243.7V14.8H244.0V14.6H244.2V14.4H244.8V14.2H246.2V14.1H247.3V13.9H249.3V13.7H249.6V13.6H251.0V13.4H252.6V13.2H253.2V13.1H253.5V12.9H253.8V12.7H254.6V12.5H258.8V12.4H260.2V12.0H263.6V11.9H264.4V11.7H268.9V11.5H269.7V11.4H270.8V11.2H271.4V11.0H274.2V10.8H274.8V10.7H282.0V10.5H285.7V10.2H291.8V10.0" class="le"/>
+  </svg>
+  <div style="display:flex;gap:16px;font-size:14px;color:var(--t2)"><span style="display:inline-flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><path d="M0 4H22" class="lm"/></svg>Moon</span><span style="display:inline-flex;align-items:center;gap:6px"><svg width="22" height="8" aria-hidden="true"><path d="M0 4H22" class="le"/></svg>Earth · Wadi Rum</span></div>
+  <details class="qd"><summary>Quantiles as a table</summary><table class="tbl2"><thead><tr><th scope="col"></th><th scope="col">Moon</th><th scope="col">Earth</th></tr></thead><tbody><tr><th scope="row">Minimum</th><td class="mono">−37.6 m</td><td class="mono">−35.6 m</td></tr><tr><th scope="row">10%</th><td class="mono">−26.2 m</td><td class="mono">−25.1 m</td></tr><tr><th scope="row">25%</th><td class="mono">−17.1 m</td><td class="mono">−14 m</td></tr><tr><th scope="row">Median</th><td class="mono">−3.8 m</td><td class="mono">1 m</td></tr><tr><th scope="row">75%</th><td class="mono">17.5 m</td><td class="mono">13.7 m</td></tr><tr><th scope="row">90%</th><td class="mono">28.3 m</td><td class="mono">22.9 m</td></tr><tr><th scope="row">Maximum</th><td class="mono">50.2 m</td><td class="mono">47.8 m</td></tr></tbody></table></details>
+</figure></div>
+  </section>
+  <section class="limits" aria-labelledby="lim-h"><h2 id="lim-h"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M9 2.2l7.2 12.6H1.8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.2v3.4M9 12.7v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Limits of this page</h2><ul><li>Matching terrain shape doesn't make Wadi Rum lunar: gravity is six times stronger, there is air and weather, and the surface is soil and rock.</li><li>Features smaller than about 30 m, such as boulders and small craters, are invisible in both grids.</li><li>The tolerances are the similarity pipeline's comparison bands, not mission requirements.</li><li>Whether a crew could actually rehearse at Wadi Rum (climate, land cover, access) has not been scored.</li></ul></section>
+<footer class="foot"><span class="fb">Lunar Analog Finder · NASA Space Apps Challenge 2026</span><span>Inference run 20261112T120422201915Z_101366 · pipeline run 20261114T081013177916Z_da70aa</span></footer>
+</main></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2300}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

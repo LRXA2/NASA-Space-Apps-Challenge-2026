@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Components · South sky</title><script src="./support.js"></script></head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap" rel="stylesheet"><style>body{margin:0;background:#1B2531}
+.app{--g:#060C16;--hd:#0A1420;--p:#0B1421;--ph:#0F1B2A;--p2:#08111C;--r:#112033;--l:#26394D;--l2:#38536C;--grid:#16263A;--t1:#E0E7F0;--t2:#A8B5C5;--t3:#8695A8;--acc:#7EABC0;--focus:#A9CDDE;--link:#8DB9CD;--linkh:#B9D6E3;--btn:#29495F;--btnh:#32576F;--btnb:#3B627B;--btn2:#132233;--btn2h:#1A2E43;--sel:rgba(126,171,192,.13);--moon:#BCC7D8;--moonh:#D6DEE9;--on:#060C16;--earth:#D99A62;--ok:#62C2AD;--warn:#E2BC5C;--bad:#E48069;--box:#4F6A82;--band:rgba(126,171,192,.13);--bandb:rgba(126,171,192,.5);--curs:#FFFFFF;--halo:#060C16;--bk:rgba(126,171,192,.6);color-scheme:dark}
+.app{font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--t1);background-color:var(--g);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Ccircle cx='136.0' cy='63.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='225.1' cy='153.6' r='0.5' fill='%23CFDBEA' fill-opacity='0.40'/%3E%3Ccircle cx='90.2' cy='36.1' r='0.9' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='38.1' cy='178.3' r='0.5' fill='%23CFDBEA' fill-opacity='0.41'/%3E%3Ccircle cx='264.9' cy='244.9' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='166.6' cy='410.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.30'/%3E%3Ccircle cx='55.9' cy='176.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='235.3' cy='286.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='268.3' cy='156.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='673' height='673'%3E%3Ccircle cx='304.5' cy='376.7' r='0.9' fill='%23CFDBEA' fill-opacity='0.28'/%3E%3Ccircle cx='575.4' cy='127.8' r='0.9' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='533.7' cy='63.3' r='0.7' fill='%23CFDBEA' fill-opacity='0.20'/%3E%3Ccircle cx='362.5' cy='599.2' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='266.6' cy='304.9' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='559.7' cy='42.5' r='0.5' fill='%23CFDBEA' fill-opacity='0.21'/%3E%3Ccircle cx='162.8' cy='20.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.24'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1031' height='1031'%3E%3Ccircle cx='953.5' cy='978.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.16'/%3E%3Ccircle cx='316.3' cy='390.9' r='0.7' fill='%23CFDBEA' fill-opacity='0.19'/%3E%3Ccircle cx='197.9' cy='458.4' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='929.6' cy='109.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.27'/%3E%3Ccircle cx='528.5' cy='757.0' r='0.7' fill='%23CFDBEA' fill-opacity='0.36'/%3E%3C/svg%3E");background-size:420px 420px,673px 673px,1031px 1031px;font-size:16px;line-height:1.5;min-height:100vh}
+.app ::selection{background:var(--btn);color:var(--t1)}
+.app a{color:var(--link);text-underline-offset:3px;text-decoration-thickness:1px}
+.app a:hover{color:var(--linkh)}
+.app :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:2px}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+code,.code{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:.92em;overflow-wrap:anywhere}
+.meta{font:500 11px/1.4 'IBM Plex Mono',ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)}
+.wrap{max-width:1320px;margin:0 auto;padding:0 32px;box-sizing:border-box}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:4px 24px;padding:4px 32px;border-bottom:1px solid var(--l);background:var(--hd)}
+.brand{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:var(--t1)!important;text-decoration:none;font-weight:600;font-size:16px}
+.nav{display:flex;flex-wrap:wrap;gap:2px}
+.nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;color:var(--t2);text-decoration:none;font-size:15px;border-radius:2px}
+.nav a:hover{color:var(--t1);background:var(--r)}
+.nav a[aria-current]{color:var(--t1);background:var(--sel);box-shadow:inset 0 -2px 0 var(--acc);border-radius:2px 2px 0 0}
+.steps{display:flex;flex-wrap:wrap;gap:0 4px;list-style:none;margin:0 0 0 auto;padding:0;align-items:center}
+.steps li{display:flex;align-items:center}
+.steps li+li::before{content:"";width:16px;height:1px;background:var(--l2);margin-right:4px}
+.step{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 6px;font-size:14px;color:var(--t2)!important;text-decoration:none;border-radius:2px}
+.step:hover{color:var(--t1)!important}
+.dot{width:24px;height:24px;border-radius:2px;border:1px solid var(--l2);display:inline-flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;box-sizing:border-box}
+.step.done .dot{border-color:color-mix(in srgb,var(--acc) 60%,transparent);color:var(--acc)}
+.step[aria-current]{color:var(--t1)!important;font-weight:500}
+.step[aria-current] .dot{background:var(--sel);border-color:var(--acc);color:var(--t1);font-weight:500}
+main{padding:32px 0 64px;display:flex;flex-direction:column;gap:28px}
+.crumb{font-size:14px;color:var(--t3);margin:0}
+.crumb a{display:inline-block;padding:4px 0}
+h1{margin:0;font-size:40px;line-height:1.1;font-weight:600;letter-spacing:-0.015em;text-wrap:balance}
+h2{margin:0;font-size:18px;line-height:1.3;font-weight:600;letter-spacing:-0.005em}
+h3{margin:0;font-size:16px;line-height:1.35;font-weight:600}
+.sub{margin:6px 0 0;font-size:17px;color:var(--t2);text-wrap:pretty}
+.lede{margin:0;font-size:18px;line-height:1.55;color:var(--t2);max-width:62ch;text-wrap:pretty}
+.note{margin:0;font-size:14px;color:var(--t3);text-wrap:pretty}
+/* panels: navy surface, fine border, corner brackets, header strip */
+.panel{position:relative;background:var(--p);border:1px solid var(--l);border-radius:2px}
+.panel::after{content:"";position:absolute;inset:-1px;pointer-events:none;background:
+ linear-gradient(var(--bk),var(--bk)) left top/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) left top/1px 10px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) right top/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) right top/1px 10px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) left bottom/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) left bottom/1px 10px no-repeat,
+ linear-gradient(var(--bk),var(--bk)) right bottom/10px 1px no-repeat,linear-gradient(var(--bk),var(--bk)) right bottom/1px 10px no-repeat}
+.phd{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 16px;padding:10px 20px;min-height:48px;box-sizing:border-box;background:var(--ph);border-bottom:1px solid var(--l)}
+.phd h2{font-size:16px}
+.pb{padding:20px}
+/* buttons: compact rectangles, muted steel-blue */
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:0 16px;border-radius:2px;background:var(--btn);border:1px solid var(--btnb);color:var(--t1)!important;font-weight:500;text-decoration:none;font-size:15px;font-family:inherit;cursor:pointer;box-sizing:border-box}
+.btn:hover,.btn.is-hover{background:var(--btnh);border-color:var(--acc)}
+.btn.is-focus{outline:2px solid var(--focus);outline-offset:2px}
+.btn2{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:40px;padding:0 14px;border-radius:2px;border:1px solid var(--l2);color:var(--t1)!important;text-decoration:none;font-size:14px;font-weight:500;background:var(--btn2);font-family:inherit;cursor:pointer;box-sizing:border-box}
+.btn2:hover,.btn2.is-hover{background:var(--btn2h);border-color:color-mix(in srgb,var(--acc) 70%,transparent)}
+.btn2.is-focus{outline:2px solid var(--focus);outline-offset:2px}
+.btn2[disabled],.btn2[aria-disabled="true"]{color:var(--t3)!important;border-color:var(--l);border-style:dashed;cursor:not-allowed;background:transparent}
+.seg{display:inline-flex;border:1px solid var(--l);border-radius:2px;padding:2px;gap:2px;background:var(--p2)}
+.seg button{min-height:36px;padding:0 12px;border:0;border-radius:1px;background:transparent;color:var(--t2);font:inherit;font-size:14px;cursor:pointer}
+.seg button:hover{color:var(--t1);background:var(--r)}
+.seg button[aria-pressed="true"]{background:var(--sel);color:var(--t1);box-shadow:inset 0 -2px 0 var(--acc);font-weight:500}
+/* status */
+.st{display:inline-flex;align-items:center;gap:8px;font-weight:500}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.sb{display:inline-flex;align-items:center;gap:6px;padding:1px 9px 1px 6px;border-radius:2px;font-size:13px;font-weight:500;border:1px solid;line-height:1.6;white-space:nowrap}
+.sb.ok{border-color:color-mix(in srgb,var(--ok) 45%,transparent);background:color-mix(in srgb,var(--ok) 9%,transparent)}
+.sb.bad{border-color:color-mix(in srgb,var(--bad) 50%,transparent);background:color-mix(in srgb,var(--bad) 9%,transparent)}
+.sb.warn{border-color:color-mix(in srgb,var(--warn) 50%,transparent);background:color-mix(in srgb,var(--warn) 9%,transparent)}
+.sb.off{color:var(--t2);border:1px dashed var(--l2);padding:1px 9px;background:transparent}
+.gnote{margin:0;padding:10px 14px;border-left:2px solid var(--warn);background:color-mix(in srgb,var(--warn) 6%,transparent);border-radius:0 2px 2px 0;font-size:14px;color:var(--t2)}
+.blocked{color:var(--t2);font-size:16px}
+.limits{border-top:1px solid var(--l);padding-top:24px;display:flex;flex-direction:column;gap:14px}
+.limits h2{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--t1)}
+.limits h2 svg{color:var(--t3)}
+.limits ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px 40px;font-size:15px;color:var(--t2)}
+.runid{margin:0;font-size:12px;color:var(--t3)}
+.sw{display:inline-block;width:14px;height:14px;border-radius:1px;flex:none}
+.pat-o{background:#2B7A6D}
+.pat-m{background:repeating-linear-gradient(135deg,#9A7522 0 4px,#4A3A12 4px 8px)}
+.pat-n{background:repeating-linear-gradient(45deg,#8E3B2E 0 2px,#2A1512 2px 6px),#2A1512}
+.mapimg{width:100%;aspect-ratio:1/1;display:block;image-rendering:pixelated;border-radius:1px}
+.ramp{height:10px;border-radius:1px}
+.scale{display:flex;justify-content:space-between;font-size:12px;color:var(--t2)}
+/* gate checks table */
+.gt{width:100%;border-collapse:collapse;font-size:15px}
+.gt caption{caption-side:top;text-align:left;font-size:14px;color:var(--t2);padding:0 0 10px}
+.gt th,.gt td{padding:11px 14px;border-top:1px solid var(--l);text-align:left;vertical-align:top;font-weight:400}
+.gt thead th{font:500 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);border-top:0;padding-top:4px;padding-bottom:8px;background:var(--ph)}
+.gt tbody th{font-weight:500}
+.gt .dom{display:block;font-size:13px;color:var(--t3);font-weight:400;margin-top:2px}
+.gt .val{text-align:right;white-space:nowrap}
+.gt .miss{color:var(--t3);font-style:italic;font-family:'IBM Plex Sans',sans-serif}
+.gt .why{display:block;font-size:13px;color:var(--t2);margin-top:6px;max-width:34ch}
+.gt tr.f th,.gt tr.f td{background:color-mix(in srgb,var(--bad) 6%,transparent)}
+.gt tr.u th,.gt tr.u td{background:color-mix(in srgb,var(--warn) 6%,transparent)}
+.disc{margin:10px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--t2)}
+.disc li{display:flex;gap:8px;align-items:flex-start}
+.disc li svg{color:var(--t3);margin-top:2px}
+@media (max-width:640px){
+  .gt thead{display:none}
+  .gt caption{display:block}
+  .gt,.gt tbody{display:block}
+  .gt tr{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding:12px 0;border-top:1px solid var(--l)}
+  .gt th,.gt td{border:0;padding:0;background:none!important}
+  .gt tbody th{grid-column:1/-1}
+  .gt td.val{text-align:left}
+  .gt td.val::before{content:"Value ";color:var(--t3);font-family:'IBM Plex Sans',sans-serif}
+  .gt td.rule{grid-column:1}
+  .gt td.rule::before{content:"Rule ";color:var(--t3)}
+  .gt td.res{grid-column:1;margin-top:4px}
+}
+.dbar{display:grid;grid-template-columns:150px minmax(0,1fr) 64px;gap:14px;align-items:center;font-size:15px}
+.trk{position:relative;height:10px;border-radius:1px;background:var(--r)}
+.trk b{position:absolute;inset:2px auto 2px 0;background:var(--moon);border-radius:1px}
+@media (max-width:820px){.steps{margin:0;width:100%}.top{padding:4px 16px}}
+@media (max-width:640px){.wrap{padding:0 16px}h1{font-size:30px}.lede{font-size:17px}main{padding-top:20px;gap:22px}.step .lbl{display:none}.step[aria-current] .lbl{display:inline}.dbar{grid-template-columns:104px minmax(0,1fr) 64px;font-size:14px}.phd{padding:10px 16px}.pb{padding:16px}}
+
+.app{--g:#07101C;--hd:#08121F;--p:#0B1726;--ph:#0B1726;--p2:#081220;--r:#10223A;--l:#1C3148;--l2:#2A4560;--grid:#132538;--t1:#EAF1F7;--t2:#A9B9CA;--t3:#8396AB;--acc:#38BDF8;--focus:#BAE6FD;--link:#7DD3FC;--linkh:#BAE6FD;--btn:#38BDF8;--btnh:#7DD3FC;--btnb:#38BDF8;--btn2:transparent;--btn2h:rgba(56,189,248,.08);--sel:rgba(56,189,248,.09);--moon:#C3CEDD;--earth:#F4AE5B;--ok:#62C2AD;--warn:#E2BC5C;--bad:#E48069;--box:#4A6A86;--band:rgba(56,189,248,.10);--bandb:rgba(56,189,248,.45);--bk:rgba(56,189,248,.5)}
+.app{background-image:radial-gradient(1100px 520px at 75% -120px,rgba(56,189,248,.07),transparent 70%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Ccircle cx='136.0' cy='63.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='225.1' cy='153.6' r='0.5' fill='%23CFDBEA' fill-opacity='0.40'/%3E%3Ccircle cx='90.2' cy='36.1' r='0.9' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='38.1' cy='178.3' r='0.5' fill='%23CFDBEA' fill-opacity='0.41'/%3E%3Ccircle cx='264.9' cy='244.9' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='166.6' cy='410.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.30'/%3E%3Ccircle cx='55.9' cy='176.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='235.3' cy='286.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='268.3' cy='156.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='673' height='673'%3E%3Ccircle cx='304.5' cy='376.7' r='0.9' fill='%23CFDBEA' fill-opacity='0.28'/%3E%3Ccircle cx='575.4' cy='127.8' r='0.9' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='533.7' cy='63.3' r='0.7' fill='%23CFDBEA' fill-opacity='0.20'/%3E%3Ccircle cx='362.5' cy='599.2' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='266.6' cy='304.9' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='559.7' cy='42.5' r='0.5' fill='%23CFDBEA' fill-opacity='0.21'/%3E%3Ccircle cx='162.8' cy='20.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.24'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1031' height='1031'%3E%3Ccircle cx='953.5' cy='978.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.16'/%3E%3Ccircle cx='316.3' cy='390.9' r='0.7' fill='%23CFDBEA' fill-opacity='0.19'/%3E%3Ccircle cx='197.9' cy='458.4' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='929.6' cy='109.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.27'/%3E%3Ccircle cx='528.5' cy='757.0' r='0.7' fill='%23CFDBEA' fill-opacity='0.36'/%3E%3C/svg%3E");background-size:auto,420px 420px,673px 673px,1031px 1031px}
+.app h1,.app h2,.app h3,.brand{font-family:'Space Grotesk','IBM Plex Sans',sans-serif}
+h1{font-size:46px;font-weight:700;letter-spacing:-0.025em;line-height:1.06}
+.app :focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.app a{color:var(--link)}
+.chip,.meta{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border:1px solid var(--bandb);border-radius:4px;background:var(--sel);color:var(--acc);font:500 11px/1.4 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+/* header */
+.top{gap:10px 18px;padding:12px 32px;background:rgba(7,16,28,.88);border-bottom:1px solid var(--l)}
+.brand{gap:12px;text-transform:uppercase;letter-spacing:.08em;font-size:15px;font-weight:700}
+.bn{display:flex;flex-direction:column;gap:3px;line-height:1.1}.bs{font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--acc)}
+.top .steps{margin-left:auto}.hcopy .chip{white-space:normal}
+.logo{width:40px;height:40px;border:1px solid var(--bandb);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:var(--sel);flex:none}
+.nav{border:1px solid var(--l);border-radius:8px;padding:4px;gap:4px;background:var(--p2)}
+.nav a{min-height:38px;padding:0 14px;font:500 13px 'IBM Plex Mono',monospace;border-radius:6px;border:1px solid transparent}
+.nav a[aria-current]{color:var(--acc);background:var(--sel);border-color:var(--bandb);box-shadow:none;border-radius:6px}
+.nav a[aria-current]::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--acc);margin-right:8px}
+.steps{border:1px solid var(--l);border-radius:8px;padding:2px 10px;background:var(--p2)}
+.step{font:500 13px 'IBM Plex Mono',monospace;min-height:40px}
+.dot{width:auto;min-width:28px;height:24px;padding:0 4px;border-radius:4px;font-size:12px}
+.step[aria-current]{color:var(--acc)!important}
+.step[aria-current] .dot{background:var(--sel);border-color:var(--acc);color:var(--acc)}
+.step.done .dot{color:var(--acc);border-color:var(--bandb)}
+/* panels */
+.panel{border-radius:10px;background:linear-gradient(180deg,#0C1A2B,#0A1524)}
+.panel::after{inset:-1px;border-radius:10px}
+.phd{background:transparent;padding:16px 22px;min-height:56px}
+.phd h2,.card .k{font-size:14px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.panel h2{font-size:14px!important;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.phs{margin:3px 0 0;font:400 12px/1.4 'IBM Plex Mono',monospace;color:var(--t3)}
+.pb{padding:22px}
+.card .k{background:transparent;font-family:'Space Grotesk',sans-serif}
+/* buttons */
+.btn{min-height:46px;padding:0 20px;border-radius:4px;background:var(--btn);border-color:var(--btn);color:#04121F!important;font:600 13px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+.btn:hover,.btn.is-hover{background:var(--btnh);border-color:var(--btnh);box-shadow:0 0 0 4px rgba(56,189,248,.14)}
+.btn2{border-radius:4px;font:500 13px 'IBM Plex Mono',monospace;background:transparent}
+.btn2:hover,.btn2.is-hover{background:var(--btn2h);border-color:var(--bandb)}
+.seg{border-radius:6px;padding:3px}
+.seg button{border-radius:4px;font:500 13px 'IBM Plex Mono',monospace;border:1px solid transparent}
+.seg button[aria-pressed="true"]{background:var(--sel);color:var(--acc);border-color:var(--bandb);box-shadow:none}
+/* status */
+.sb{border-radius:4px;font:600 11px/1.6 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px 2px 6px}
+.sb.off{text-transform:none;letter-spacing:0;font-family:'IBM Plex Sans',sans-serif;font-size:13px}
+.pat-o{background:#1FB89F}
+.pat-m{background:repeating-linear-gradient(135deg,#D98A2B 0 3px,#6B4214 3px 6px)}
+.pat-n{background:repeating-linear-gradient(45deg,#E2545B 0 4px,#B83C43 4px 6px)}
+/* limits as a panel */
+.limits{border:1px solid var(--l);border-radius:10px;padding:22px 24px;background:rgba(11,23,38,.7)}
+.limits h2{font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--warn)}
+.limits h2 svg{color:var(--warn)}
+.limits ul{font-size:14px}
+@media (max-width:640px){h1{font-size:32px}.top{padding:10px 16px}.phd{padding:14px 16px}.pb{padding:16px}.nav{width:100%}.steps{width:100%;box-sizing:border-box}}
+
+.app{--g:#080B27;--hd:rgba(8,11,39,.8);--p:#12163A;--ph:#12163A;--p2:#0C0F2E;--r:#1A1F4A;--l:#252B57;--l2:#363E78;--grid:#1C2150;--t1:#E6E8FF;--t2:#B3B9DA;--t3:#8E95BD;--acc:#38BDF8;--focus:#BAE6FD;--link:#7DD3FC;--linkh:#BAE6FD;--btn:#38BDF8;--btnh:#7DD3FC;--btnb:#38BDF8;--btn2:rgba(56,189,248,.06);--btn2h:rgba(129,140,248,.16);--sel:rgba(56,189,248,.12);--moon:#C3C9EE;--earth:#F4AE5B;--ok:#62C2AD;--warn:#E2BC5C;--bad:#E48069;--box:#5A63A0;--band:rgba(56,189,248,.10);--bandb:rgba(56,189,248,.42);--bk:transparent;--vio:#818CF8;--hair:rgba(129,140,248,.16)}
+.app{font-family:'Inter','IBM Plex Sans',system-ui,sans-serif;background-image:radial-gradient(900px 620px at 10% -6%,rgba(76,29,149,.30),transparent 70%),radial-gradient(1000px 640px at 94% 2%,rgba(56,189,248,.10),transparent 70%),radial-gradient(1300px 820px at 50% 112%,rgba(46,16,101,.32),transparent 70%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Ccircle cx='136.0' cy='63.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='225.1' cy='153.6' r='0.5' fill='%23CFDBEA' fill-opacity='0.40'/%3E%3Ccircle cx='90.2' cy='36.1' r='0.9' fill='%23CFDBEA' fill-opacity='0.18'/%3E%3Ccircle cx='38.1' cy='178.3' r='0.5' fill='%23CFDBEA' fill-opacity='0.41'/%3E%3Ccircle cx='264.9' cy='244.9' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='166.6' cy='410.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.30'/%3E%3Ccircle cx='55.9' cy='176.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='235.3' cy='286.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='268.3' cy='156.4' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='673' height='673'%3E%3Ccircle cx='304.5' cy='376.7' r='0.9' fill='%23CFDBEA' fill-opacity='0.28'/%3E%3Ccircle cx='575.4' cy='127.8' r='0.9' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='533.7' cy='63.3' r='0.7' fill='%23CFDBEA' fill-opacity='0.20'/%3E%3Ccircle cx='362.5' cy='599.2' r='0.5' fill='%23CFDBEA' fill-opacity='0.31'/%3E%3Ccircle cx='266.6' cy='304.9' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='559.7' cy='42.5' r='0.5' fill='%23CFDBEA' fill-opacity='0.21'/%3E%3Ccircle cx='162.8' cy='20.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.24'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1031' height='1031'%3E%3Ccircle cx='953.5' cy='978.0' r='0.5' fill='%23CFDBEA' fill-opacity='0.16'/%3E%3Ccircle cx='316.3' cy='390.9' r='0.7' fill='%23CFDBEA' fill-opacity='0.19'/%3E%3Ccircle cx='197.9' cy='458.4' r='0.6' fill='%23CFDBEA' fill-opacity='0.32'/%3E%3Ccircle cx='929.6' cy='109.2' r='0.9' fill='%23CFDBEA' fill-opacity='0.27'/%3E%3Ccircle cx='528.5' cy='757.0' r='0.7' fill='%23CFDBEA' fill-opacity='0.36'/%3E%3C/svg%3E");background-size:auto,auto,auto,420px 420px,673px 673px,1031px 1031px}
+.app ::selection{background:rgba(56,189,248,.35);color:#fff}
+.app *{scrollbar-color:#363E78 transparent}
+.app :focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:8px}
+h1{font-size:50px;font-weight:700;letter-spacing:-0.025em;line-height:1.06}
+.sub,.lede{color:var(--t2)}
+/* header */
+.top{gap:10px 28px;padding:14px 32px;background:rgba(8,11,39,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
+.brand{font-size:17px;letter-spacing:.06em}
+.bs{color:var(--earth);font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.12em}
+.logo{border-radius:50%;border-color:rgba(56,189,248,.45);background:radial-gradient(circle at 50% 40%,rgba(56,189,248,.22),rgba(8,11,39,.9) 72%);box-shadow:0 4px 18px -4px rgba(56,189,248,.45)}
+.nav{border:0;background:transparent;padding:0;gap:4px}
+.nav a{min-height:40px;padding:0 16px;font:500 14px 'Space Grotesk',sans-serif;letter-spacing:.02em;color:var(--t2);border-radius:999px}
+.nav a:hover{background:rgba(129,140,248,.10);color:var(--t1)}
+.nav a[aria-current]{color:var(--t1);background:rgba(56,189,248,.10);border-color:rgba(56,189,248,.35);border-radius:999px}
+.steps{border:1px solid var(--hair);border-radius:999px;padding:3px 16px;background:rgba(12,15,46,.8)}
+.steps li+li::before{width:14px;background:var(--l2)}
+.step{font:600 11px 'Space Grotesk',sans-serif;letter-spacing:.1em;text-transform:uppercase;min-height:40px}
+.dot{min-width:22px;width:22px;height:22px;padding:0;border-radius:50%;font:600 11px 'IBM Plex Mono',monospace}
+.step[aria-current]{color:var(--t1)!important}
+.step[aria-current] .dot{background:var(--acc);color:#04121F;border-color:var(--acc);box-shadow:0 2px 10px -2px rgba(56,189,248,.7)}
+.step.done .dot{color:var(--acc);border-color:rgba(56,189,248,.5)}
+/* panels: one elevation, a hairline border on an indigo gradient */
+.panel{border-radius:16px;border:1px solid var(--hair);background:linear-gradient(160deg,rgba(27,32,74,.9),rgba(14,17,48,.92) 62%)}
+.panel::after{display:none}
+.phd{padding:20px 24px 10px;min-height:0;border-bottom:0;background:transparent}
+.phd h2,.panel h2,.card .k{font:600 19px/1.3 'Space Grotesk',sans-serif!important;letter-spacing:-0.005em!important;text-transform:none!important}
+.phs{font:400 13px/1.45 'Inter',sans-serif;color:var(--t3)}
+.pb{padding:16px 24px 24px}
+.chip,.meta{border-radius:999px;padding:4px 11px;border:1px solid rgba(56,189,248,.32);background:rgba(11,15,42,.7);color:var(--link);font:600 11px/1.3 'Space Grotesk',sans-serif;letter-spacing:.1em}
+/* buttons */
+.btn{border-radius:999px;background:var(--acc);border-color:var(--acc);color:#04121F!important;font:600 15px 'Space Grotesk',sans-serif;letter-spacing:.01em;text-transform:none;min-height:46px;padding:0 22px;box-shadow:0 6px 20px -8px rgba(56,189,248,.6)}
+.btn:hover,.btn.is-hover{background:#7DD3FC;border-color:#7DD3FC;box-shadow:0 8px 26px -8px rgba(56,189,248,.8)}
+.btn2{border-radius:999px;border:1px solid rgba(56,189,248,.38);background:var(--btn2);font:500 14px 'Space Grotesk',sans-serif;color:var(--t1)!important}
+.btn2:hover,.btn2.is-hover{border-color:var(--vio);background:var(--btn2h)}
+.seg{border-radius:999px;padding:3px;background:rgba(12,15,46,.8);border-color:var(--hair)}
+.seg button{border-radius:999px;font:500 13px 'Space Grotesk',sans-serif;padding:0 14px}
+.seg button[aria-pressed="true"]{background:var(--acc);color:#04121F;border-color:var(--acc)}
+/* status */
+.sb{border-radius:999px;font:600 12px/1.5 'Space Grotesk',sans-serif;letter-spacing:.02em;text-transform:none;padding:2px 10px 2px 7px}
+.pat-o{background:#3FB8A0}
+.pat-m{background:repeating-linear-gradient(135deg,#E2BC5C 0 3px,#7A5F1C 3px 6px)}
+.pat-n{background:repeating-linear-gradient(45deg,#E48069 0 4px,#9E4636 4px 6px)}
+.tbl thead th,.gt thead th{background:transparent;font:600 11px/1.4 'Space Grotesk',sans-serif;letter-spacing:.1em}
+.gnote{border-left-width:1px;border-radius:12px;border:1px solid rgba(226,188,92,.35)}
+.ptab{border-radius:12px}
+/* limits: one panel, items marked with a short amber rule (no nested cards) */
+.limits{border:1px solid var(--hair);border-radius:16px;background:rgba(14,17,48,.65);padding:24px 28px}
+.limits h2{font:600 19px 'Space Grotesk',sans-serif;letter-spacing:0;text-transform:none;color:var(--t1)}
+.limits h2 svg{color:var(--warn)}
+.limits ul{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px 32px;font-size:14px}
+.limits li{position:relative;padding-top:14px}
+.limits li::before{content:"";position:absolute;top:0;left:0;width:28px;height:2px;border-radius:2px;background:rgba(226,188,92,.7)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px;border-top:1px solid var(--hair);padding:20px 0 0;font:12px 'IBM Plex Mono',monospace;color:var(--t3)}
+.foot .fb{display:inline-flex;align-items:center;gap:10px;font:600 13px 'Space Grotesk',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--t2)}
+@media (max-width:640px){h1{font-size:34px}.top{padding:10px 16px}.phd{padding:16px 16px 8px}.pb{padding:14px 16px 18px}.limits{padding:20px}.nav{width:100%}.steps{width:100%;box-sizing:border-box;border-radius:16px}}
+
+.cm{position:relative}.curs{position:absolute;inset:0;width:100%;height:100%}.curs .c1{fill:none;stroke:var(--halo);stroke-width:.5}.curs .c2{fill:none;stroke:var(--curs);stroke-width:.22}
+.cv{position:absolute;right:4px;bottom:4px;padding:1px 6px;border-radius:2px;background:rgba(7,10,20,.82);color:#ECEAE4;font-size:12px}
+.src{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 24px;margin:0;padding:14px 18px;border:1px solid var(--l);border-radius:2px;background:var(--p2)}
+.src div{display:flex;flex-direction:column;gap:2px;min-width:0}.src dt{font-size:13px;color:var(--t3)}.src dd{margin:0;font-size:14px;color:var(--t1);overflow-wrap:anywhere}.src dd small{display:block;font-size:13px;color:var(--t2);font-family:'IBM Plex Sans',sans-serif}
+
+.scope{background:radial-gradient(circle at 50% 50%,rgba(56,189,248,.08),transparent 62%),#070A24;border:1px solid var(--l);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.pol{width:100%;max-width:520px;height:auto;align-self:center;overflow:visible}
+.pol .ring{fill:none;stroke:#2A3166;stroke-dasharray:2 5}.pol .outer{fill:none;stroke:#353E78}
+.pol .spoke{stroke:#2A3166;stroke-dasharray:2 5}
+.pol .lab{fill:var(--t3);font:13px 'IBM Plex Mono',monospace}.pol .labe{fill:var(--earth);font:600 13px 'IBM Plex Mono',monospace}
+.pol .pole{fill:var(--acc)}.pol .polel{fill:var(--acc);font:600 12px 'IBM Plex Mono',monospace}
+.pol .ext{fill:rgba(56,189,248,.04);stroke:#3A4482;stroke-dasharray:3 3}
+.pol .nd{fill:#0B1726;stroke:#7D86C0;stroke-width:1.5;transition:fill .12s,stroke .12s}
+.pol .rn{fill:var(--t1);font:600 14px 'IBM Plex Mono',monospace;text-anchor:middle;pointer-events:none}
+.pol a.fail .nd{stroke:var(--bad)}.pol a.fail .rn{fill:var(--bad)}
+.pol a:hover .nd,.pol a.is-hover .nd{stroke:var(--acc);fill:#13264F}
+.pol a.is-sel .nd{stroke:var(--acc);stroke-width:2.4;fill:#123058}.pol a.is-sel .rn{fill:var(--acc)}
+.pol .glow{fill:var(--acc);opacity:0}.pol a.is-sel .glow{opacity:.18}
+.pol a:focus{outline:none}.pol .ring2{fill:none;stroke:none}.pol a:focus-visible .ring2,.pol a.is-focus .ring2{stroke:var(--focus);stroke-width:2.5}
+.pol .earthtick{fill:var(--earth)}
+.plg{display:flex;flex-wrap:wrap;gap:8px 16px;font:12px 'IBM Plex Mono',monospace;color:var(--t2)}
+.plg span{display:inline-flex;align-items:center;gap:6px}
+.plg i{display:inline-block;width:12px;height:12px;border-radius:50%;border:1.5px solid #7D86C0;box-sizing:border-box}
+@media (max-width:640px){.pol .lab,.pol .labe,.pol .polel{font-size:22px}.pol .rn{font-size:22px}}
+.numb{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--box);display:inline-flex;align-items:center;justify-content:center;font:600 13px 'IBM Plex Mono',monospace;color:var(--t1);flex:none;box-sizing:border-box}
+</style></helmet>
+<div style="display:flex;flex-direction:column;gap:2px;background:#1B2531;font-family:'IBM Plex Sans',sans-serif">
+  <div style="display:flex;flex-wrap:wrap;gap:2px"><div class="app " style="min-height:0;padding:32px;display:flex;flex-direction:column;gap:32px;flex:1 1 640px;min-width:0">
+  <h2 style="font-size:24px">Components · exploration theme, dark</h2>
+  <section style="display:flex;flex-direction:column;gap:12px"><h3>Status badges</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center"><span class="sb ok"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Pass</span><span class="sb bad"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Fail</span><span class="sb warn"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M9 2.2l7.2 12.6H1.8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.2v3.4M9 12.7v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Unknown</span><span class="sb off">Pass · gates off</span></div>
+    <p class="note">Pass: circle and tick. Fail: octagon and cross. Unknown: triangle, never treated as a pass. Gates off: plain text in a dashed outline, no tick.</p>
+    <p class="gnote">Hard gates are switched off in the scorer's configuration, so nothing can fail. “Pass · gates off” only means no required input was missing. It is not a verdict on the site.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end"><div><p class="note">Final score</p><p class="mono" style="margin:0;font-size:44px;font-weight:500;line-height:1">54.9</p></div><div><p class="note">Fail or Unknown: no score</p><p class="blocked" style="margin:0">Blocked by the Fail status</p></div></div>
+  </section>
+  <section class="panel" style="padding:20px;display:flex;flex-direction:column;gap:8px"><p class="note" style="color:var(--warn)">States shown together for review; real tables come from one assessment.</p><div style="display:flex;flex-direction:column;gap:4px"><h3 id="cg-dk">Gate checks</h3><div style="overflow-x:auto"><table class="gt" aria-labelledby="cg-dk"><caption>The 4 hard gates behind the Operations status, as the scorer reported them. Evidence coverage 9/9.</caption><thead><tr><th scope="col">Check</th><th scope="col" class="val">Value</th><th scope="col">Rule</th><th scope="col">Result</th></tr></thead><tbody><tr class="f"><th scope="row">Median earth visibility fraction<span class="dom">Earth visibility</span></th><td class="val mono">0 fraction</td><td class="rule">≥ 0.3 fraction</td><td class="res"><span class="sb bad"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M5.9 1.6h6.2l4.3 4.3v6.2l-4.3 4.3H5.9l-4.3-4.3V5.9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 6.5l5 5M11.5 6.5l-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Fail</span></td></tr><tr class=""><th scope="row">Window continuous sunlight hours<span class="dom">Solar illumination</span></th><td class="val mono">21.606 h</td><td class="rule">≥ 21.606 h (24 h, capped to the 21.606 h window)</td><td class="res"><span class="sb ok"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Pass</span></td></tr><tr class="u"><th scope="row">Highest phase median temperature kelvin<span class="dom">Thermal</span></th><td class="val mono"><span class="miss">Missing</span></td><td class="rule">≤ 390 K</td><td class="res"><span class="sb warn"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M9 2.2l7.2 12.6H1.8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.2v3.4M9 12.7v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Unknown</span><span class="why">Missing required measurement or time window</span></td></tr><tr class=""><th scope="row">Median spacecraft electric potential volts<span class="dom">Plasma charging</span></th><td class="val mono">−9.213 V (All Qs)</td><td class="rule">between −15 and 10 V (All Qs)</td><td class="res"><span class="sb ok"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Pass</span></td></tr></tbody></table></div><ul class="disc" aria-label="Where these thresholds come from"><li><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M1.5 13.5h15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 13.5a4 4 0 018 0" stroke="currentColor" stroke-width="1.6"/><path d="M9 3v2.4M3.6 5.6l1.6 1.6M14.4 5.6l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Project demonstration Earth-visibility minimum; NOT an RF link or NASA requirement.</span></li><li><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M1.5 13.5h15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 13.5a4 4 0 018 0" stroke="currentColor" stroke-width="1.6"/><path d="M9 3v2.4M3.6 5.6l1.6 1.6M14.4 5.6l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Project demonstration minimum sunlight duration; NOT a NASA mission requirement.</span></li><li><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M1.5 13.5h15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 13.5a4 4 0 018 0" stroke="currentColor" stroke-width="1.6"/><path d="M9 3v2.4M3.6 5.6l1.6 1.6M14.4 5.6l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Project demonstration temperature ceiling; NOT a qualified hardware or crew limit.</span></li><li><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M1.5 13.5h15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 13.5a4 4 0 018 0" stroke="currentColor" stroke-width="1.6"/><path d="M9 3v2.4M3.6 5.6l1.6 1.6M14.4 5.6l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Project demonstration spacecraft-potential range; NOT a surface-charging or arcing limit.</span></li></ul></div></section>
+  <section style="display:flex;flex-direction:column;gap:12px"><h3>Buttons</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><a class="btn" href="#">Primary</a><a class="btn is-hover" href="#">Hover</a><a class="btn is-focus" href="#">Focus</a></div>
+    <p class="note">Primary #29495F with a #3B627B edge; hover lifts the fill and turns the edge accent blue. Secondary below: darker fill, fine border.</p>
+  </section>
+  <section class="panel" style="display:flex;flex-direction:column"><div class="phd"><h2>Panel header</h2><span class="meta">Technical label · mono</span></div><div class="pb"><p class="note">Surface #0B1421, header #0F1B2A, border #26394D, 10 px corner brackets in the accent at 60%.</p></div></section>
+  <section style="display:flex;flex-direction:column;gap:12px"><h3>Pager</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><button class="btn2" type="button">Default</button><button class="btn2 is-hover" type="button">Hover</button><button class="btn2 is-focus" type="button">Focus</button><button class="btn2" type="button" disabled aria-disabled="true">Disabled</button></div>
+    <nav aria-label="Example pager" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px"><button class="btn2" type="button">Previous 50</button><span style="font-size:15px;color:var(--t2)">Page <span class="mono" style="color:var(--t1)">9</span> of 17</span><button class="btn2" type="button">Next 50</button></nav>
+    <p class="note">Haworth: 841 patches, 17 pages; the last page says "Next 41" before it, then disables Next. Disabled is dashed and dimmed, still readable.</p>
+  </section>
+  <section style="display:flex;flex-direction:column;gap:12px"><h3>Polar overview: region boxes</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:center">
+      <div style="width:280px"><svg class="pol" viewBox="-290 -290 580 580" role="presentation" aria-label="South polar map, 0° longitude at the top, rings every degree from 89°S to 85°S. Seven numbered nodes mark the regions; dashed squares show the area each covers.">
+<circle class="outer" r="250"/><circle class="ring" r="200"/><circle class="ring" r="150"/><circle class="ring" r="100"/><circle class="ring" r="50"/><path class="spoke" d="M0 -250V250M-250 0H250"/>
+<text class="labe" x="0" y="-264" text-anchor="middle">0° · toward Earth</text><text class="lab" x="0" y="282" text-anchor="middle">180°</text><text class="lab" x="258" y="5">90°E</text><text class="lab" x="-258" y="5" text-anchor="end">90°W</text>
+<text class="lab" x="39" y="49">89°S</text><text class="lab" x="75" y="85">88°S</text><text class="lab" x="110" y="120">87°S</text><text class="lab" x="145" y="155">86°S</text><text class="lab" x="181" y="191">85°S</text><circle class="pole" r="3.5"/><text class="polel" x="8" y="-8">POLE</text>
+<path class="earthtick" d="M0 -250l-5 -9h10z"/>
+<a href="#" class="is-sel" aria-current="true" aria-label="1. Leibnitz Beta Plateau"><rect class="ext" x="105" y="-209" width="32" height="32" rx="2"/><circle class="glow" cx="121.0" cy="-193.0" r="26"/><circle class="ring2" cx="121.0" cy="-193.0" r="20"/><circle class="nd" cx="121.0" cy="-193.0" r="14"/><text class="rn" x="121.0" y="-188.0">1</text></a><a href="#" class="" aria-label="2. Malapert Massif"><rect class="ext" x="-17" y="-216" width="32" height="32" rx="2"/><circle class="glow" cx="-1.0" cy="-200.0" r="26"/><circle class="ring2" cx="-1.0" cy="-200.0" r="20"/><circle class="nd" cx="-1.0" cy="-200.0" r="14"/><text class="rn" x="-1.0" y="-195.0">2</text></a><a href="#" class="" aria-label="3. de Gerlache–Kocher Massif"><rect class="ext" x="-203" y="80" width="30" height="30" rx="2"/><circle class="glow" cx="-188.0" cy="95.0" r="26"/><circle class="ring2" cx="-188.0" cy="95.0" r="20"/><circle class="nd" cx="-188.0" cy="95.0" r="14"/><text class="rn" x="-188.0" y="100.0">3</text></a><a href="#" class="is-hover" aria-label="4. Haworth"><rect class="ext" x="-86" y="-172" width="46" height="46" rx="2"/><circle class="glow" cx="-63.0" cy="-149.0" r="26"/><circle class="ring2" cx="-63.0" cy="-149.0" r="20"/><circle class="nd" cx="-63.0" cy="-149.0" r="14"/><text class="rn" x="-63.0" y="-144.0">4</text></a><a href="#" class="" aria-label="5. Faustini Rim A"><rect class="ext" x="92" y="-14" width="30" height="30" rx="2"/><circle class="glow" cx="107.0" cy="1.0" r="26"/><circle class="ring2" cx="107.0" cy="1.0" r="20"/><circle class="nd" cx="107.0" cy="1.0" r="14"/><text class="rn" x="107.0" y="6.0">5</text></a><a href="#" class="is-focus" aria-label="6. de Gerlache Rim 2"><rect class="ext" x="-95" y="-52" width="30" height="30" rx="2"/><circle class="glow" cx="-80.0" cy="-37.0" r="26"/><circle class="ring2" cx="-80.0" cy="-37.0" r="20"/><circle class="nd" cx="-80.0" cy="-37.0" r="14"/><text class="rn" x="-80.0" y="-32.0">6</text></a><a href="#" class="fail" aria-label="7. Connecting Ridge Extension, Operations Fail"><rect class="ext" x="-63" y="-4" width="30" height="30" rx="2"/><circle class="glow" cx="-48.0" cy="11.0" r="26"/><circle class="ring2" cx="-48.0" cy="11.0" r="20"/><circle class="nd" cx="-48.0" cy="11.0" r="14"/><text class="rn" x="-48.0" y="16.0">7</text></a></svg></div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:15px">
+        <span style="display:flex;gap:10px;align-items:center"><span class="numb">2</span>Normal: outlined node over a dashed area square</span>
+        <span style="display:flex;gap:10px;align-items:center"><span class="numb" style="background:color-mix(in srgb,var(--acc) 24%,transparent);border-color:var(--acc)">4</span>Hover: cyan outline, tinted fill</span>
+        <span style="display:flex;gap:10px;align-items:center"><span class="numb" style="outline:2px solid var(--focus);outline-offset:3px">6</span>Focus: pale-cyan ring outside the node</span>
+        <span style="display:flex;gap:10px;align-items:center"><span class="numb" style="background:color-mix(in srgb,var(--acc) 22%,transparent);border-color:var(--acc)">1</span>Selected: same tint and accent on the map box and the list row</span>
+      </div></div>
+    <p class="note">Ring and spoke labels in mono; at phone width the SVG text grows so it stays about 12 px on screen.</p>
+  </section>
+  <section style="display:flex;flex-direction:column;gap:12px"><h3>Shared cursor and source line</h3>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div class="cm" style="width:110px"><img class="mapimg" src="/_blob/da2997395c18fa6ea6edd98acf6b8bef" alt=""><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">8.1°</span></div><div class="cm" style="width:110px"><img class="mapimg" src="/_blob/675df627e4d55df1256b81a6e0fcfe9b" alt=""><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">2.0°</span></div><div class="cm" style="width:110px"><img class="mapimg" src="/_blob/0eff8edf0680ac45acce0739b4b01b5a" alt=""><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">−29.9 m</span></div><div class="cm" style="width:110px"><img class="mapimg" src="/_blob/072f7753c5fdc06d3948bfdbff13ab32" alt=""><svg viewBox="0 0 32 32" aria-hidden="true" class="curs"><rect x="17" y="14" width="1" height="1" class="c1"/><rect x="17" y="14" width="1" height="1" class="c2"/></svg><span class="cv mono">−21.7 m</span></div>
+    </div>
+    <p class="note">The same cell on all four grids: a white square with a dark halo so it reads on every colour, and a value chip in each corner.</p>
+    <dl class="src"><div><dt>Shared tile ID</dt><dd class="mono">A3CLR22_10_Leibnitz_Beta_Plateau:71220:119760<small>Centre in metres</small></dd></div><div><dt>Similarity query ID</dt><dd class="mono">…:full_context:208:208:960<small>Centre cell: 16 more than the name</small></dd></div></dl>
+  </section>
+</div></div>
+  <div class="app" style="min-height:0;padding:32px;display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start"><div class="app" style="width:375px;min-height:0;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;border:1px solid #38536C;border-radius:4px">
+  <p class="note" style="color:var(--warn)">375 px · gate table reflows to stacked rows</p>
+  <style>.ph .gt thead{display:none}.ph .gt caption{display:block}.ph .gt,.ph .gt tbody{display:block}.ph .gt tr{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding:12px 0;border-top:1px solid var(--l)}.ph .gt th,.ph .gt td{border:0;padding:0;background:none!important}.ph .gt tbody th{grid-column:1/-1}.ph .gt td.val{text-align:left}.ph .gt td.val::before{content:"Value ";color:var(--t3);font-family:'IBM Plex Sans',sans-serif}.ph .gt td.rule{grid-column:1}.ph .gt td.rule::before{content:"Rule ";color:var(--t3)}.ph .gt td.res{grid-column:1;margin-top:4px}</style>
+  <div class="ph"><div style="display:flex;flex-direction:column;gap:4px"><h3 id="cg-ph">Gate checks</h3><div style="overflow-x:auto"><table class="gt" aria-labelledby="cg-ph"><caption>The 2 hard gates behind the Survival status, as the scorer reported them. Evidence coverage 4/4.</caption><thead><tr><th scope="col">Check</th><th scope="col" class="val">Value</th><th scope="col">Rule</th><th scope="col">Result</th></tr></thead><tbody><tr class="u"><th scope="row">Highest phase median temperature kelvin<span class="dom">Thermal</span></th><td class="val mono"><span class="miss">Missing</span></td><td class="rule">≤ 390 K</td><td class="res"><span class="sb warn"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M9 2.2l7.2 12.6H1.8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 7.2v3.4M9 12.7v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Unknown</span><span class="why">Missing required measurement or time window</span></td></tr><tr class=""><th scope="row">Median spacecraft electric potential volts<span class="dom">Plasma charging</span></th><td class="val mono">−9.213 V (All Qs)</td><td class="rule">between −15 and 10 V (All Qs)</td><td class="res"><span class="sb ok"><svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><circle cx="9" cy="9" r="7.6" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 9.3l2.2 2.2 4.6-4.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Pass</span></td></tr></tbody></table></div><ul class="disc" aria-label="Where these thresholds come from"><li><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M1.5 13.5h15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 13.5a4 4 0 018 0" stroke="currentColor" stroke-width="1.6"/><path d="M9 3v2.4M3.6 5.6l1.6 1.6M14.4 5.6l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Project demonstration temperature ceiling; NOT a qualified hardware or crew limit.</span></li><li><svg width="14" height="14" viewBox="0 0 18 18" fill="none" aria-hidden="true" style="flex:none"><path d="M1.5 13.5h15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 13.5a4 4 0 018 0" stroke="currentColor" stroke-width="1.6"/><path d="M9 3v2.4M3.6 5.6l1.6 1.6M14.4 5.6l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Project demonstration spacecraft-potential range; NOT a surface-charging or arcing limit.</span></li></ul></div></div>
+</div>
+    <div style="flex:1 1 400px;display:flex;flex-direction:column;gap:12px;max-width:640px"><h2>Keyboard</h2><p style="margin:0;color:var(--t2)">Every control takes a 2 px pale-blue focus ring (#A9CDDE) with a 2 px gap, so focus never looks like selection (tint plus a 2 px accent edge). Buttons are 40 px tall; nav, list rows and steps stay 44 px. Region boxes, grid cells and the shared cursor follow the arrow keys; Tab moves between groups, not through 225 cells.</p>
+    <p style="margin:0;color:var(--t2)">Tokens: every colour is a CSS variable on <span class="mono">.app</span>: panel #0B1421, header #0F1B2A, border #26394D, accent #7EABC0, primary #29495F, text #E0E7F0. The real tokens can replace them one for one.</p></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2400}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

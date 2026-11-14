@@ -25,7 +25,7 @@ If the next task waits on a teammate's data, take the next unblocked task furthe
 
 - [Product brief](../../../design/PRODUCT.md): audience, purpose, scope, and product constraints.
 - [Design handoff](../../../design/handoff/design_handoff_2026-11-13.md): layouts, routes, and interactions.
-- [Developer handoff](../../../design/handoff/developer_handoff_2026-11-13.md): data details and corrections to the design handoff.
+- [Developer handoff](../../handoff/developer_handoff_2026-11-13.md): data details and corrections to the design handoff.
 - [Wireframes](../../../design/wireframes.html): clickable HTML layouts with sample values. They are not the React implementation or scientific results.
 - [Research outline](../../../outline.md): pipeline context. Active scope is Earth and Moon only.
 - Gareth has supplied layouts. Ian's app work includes both data integration and UI implementation. Detailed ownership between Ian and Gareth remains unassigned.

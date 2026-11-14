@@ -4,15 +4,15 @@ Status as of 2026-11-13. The hackathon has about two days left. Following this f
 
 The app is planned but **no app code exists yet**. The stack is decided, the Python environment works, and two of the three teammates' outputs have arrived. Your first job is the **data export script** (see [Next steps](#next-steps)). It doesn't depend on the visual design.
 
-This file covers project status, decisions, data and blockers. For screens, routes, UI rules and the wireframes, read the design handoff: [`design_handoff_2026-11-13.md`](design_handoff_2026-11-13.md) and [`../PRODUCT.md`](../PRODUCT.md). Where the two files disagree, see [Clarifications](#clarifications).
+This file covers project status, decisions, data and blockers. For screens, routes, UI rules and the wireframes, read the design handoff: [`design_handoff_2026-11-13.md`](../../design/handoff/design_handoff_2026-11-13.md) and [`../PRODUCT.md`](../../design/PRODUCT.md). Where the two files disagree, see [Clarifications](#clarifications).
 
 ## Where things are
 
 | What | Where |
 | --- | --- |
-| Design handoff (screens, routes, UI rules) | [`design_handoff_2026-11-13.md`](design_handoff_2026-11-13.md) |
-| Product facts and constraints | [`../PRODUCT.md`](../PRODUCT.md) |
-| Low-fi wireframes (revision 3) | [`../wireframes.html`](../wireframes.html), [artifact](https://claude.ai/artifact/4iQVvpyT417jgJVm4npdY2) |
+| Design handoff (screens, routes, UI rules) | [`design_handoff_2026-11-13.md`](../../design/handoff/design_handoff_2026-11-13.md) |
+| Product facts and constraints | [`../PRODUCT.md`](../../design/PRODUCT.md) |
+| Low-fi wireframes (revision 3) | [`../wireframes.html`](../../design/wireframes.html), [artifact](https://claude.ai/artifact/4iQVvpyT417jgJVm4npdY2) |
 | Pipeline plan and data sources | [`outline.md`](../../outline.md) |
 | Notebook index | [`notebooks/README.md`](../../notebooks/README.md) |
 | Teammates' raw outputs (gitignored) | `temp/` |
@@ -148,7 +148,7 @@ It writes `retrieval.csv`, `physical_comparison.csv` and `summary.json`. **Limit
 
 Points that could trip up the next developer, including places where the design handoff and this file differ.
 
-1. **This file is the developer handoff, and [`design_handoff_2026-11-13.md`](design_handoff_2026-11-13.md) is the design handoff.** Both are current. Use the design handoff for anything about screens and UI behaviour, and this file for data, decisions and blockers.
+1. **This file is the developer handoff, and [`design_handoff_2026-11-13.md`](../../design/handoff/design_handoff_2026-11-13.md) is the design handoff.** Both are current. Use the design handoff for anything about screens and UI behaviour, and this file for data, decisions and blockers.
 2. **Environment IDs:** the design handoff says the IDs run `eda_001…eda_083`. That's wrong: 83 is the total row count. Region IDs are only `eda_001`–`eda_017`. The rest are 6 Apollo baselines and 60 test rows.
 3. **Design open question 1 (does Unknown blank the scores?): answered.** Yes. An evaluated Unknown hard gate blanks the final score, just like a Failed one.
 4. **Design open question 2 (Apollo baselines):** the 6 Apollo rows are in the current CSV. Whether they stay after the Ops/Survivability change, and whether the app shows them, is still a team decision.
