@@ -1,40 +1,11 @@
-# Operations and Survival CONDITIONS: environmental comparisons, NOT operational approval.
-# One CSV / one YAML / one output. Source files are not read at runtime.
-# Unsupported hard gates are disabled with user approval, not replaced with invented limits.
-# Pass means the configured comparison could be calculated, NOT safe for deployment.
-# Operations and Survival weights are project assumptions, not NASA percentages.
-# Core missing-data modes and independent enabled/include_in_score/hard_gates_enabled toggles remain.
-# Each assessments.<flow>.weights map allocates domains; omit a domain to exclude it from that flow.
-# Shared rules are below; assessments.<name>.metric_overrides can give overlapping inputs distinct rules.
-# Data minimum/maximum fields reject invalid data; they are not mission acceptance thresholds.
-# Radiation/UV reference p05/p95: lower-preference direction is an explicit assumption.
-# Dust: continuous reference resemblance; median 38230 is the only 100-point anchor.
-# Dust p05/p95 are zero-score reference-distance anchors, NOT harmful-current limits.
-# Signed LDEX current is NOT local dust burden or abrasion.
-# Plasma: zero-centered magnitude preference with observed p95(abs(V)) scale, NOT an arcing limit.
-# Thermal: inherited 0-300 K span scale, an explicit project assumption (not component survival).
-# Soil: inherited rounded Apollo mission-mean reference bands; no universal preferred soil.
-# orbital_radiation_counter_median: RAD_CRATER_SEC_selected_state; n=1091; p05=24.0; p95=104.5.
-# EDA source: env_algo_task/data/processed/analysis/subject_radiation_time/20261110T233725005604Z_72515a/daily_context.csv
-# SHA256: 98669a6126071795156c76be03b5618cb480dba29e40b6edc30e726cfa5c09cb
-# median_solar_far_uv_irradiance_w_m2: SEE_v012_FUV_115_180; n=1206; p05=0.021529459636; p95=0.02663851401.
-# EDA source: env_algo_task/data/processed/analysis/subject_uv/20261110T231614701627Z_e1ffa3/band_daily_context.csv
-# SHA256: 093bee223760ab1818655e4503860e61544644a31df41d2c3cd7ab65dc483cbc
-# historical_median_dust_detector_current_charges_per_second: LDEX_CURRENT; n=166; p05=14332.5; p95=100711.25.
-# EDA source: env_algo_task/data/processed/analysis/subject_dust/20261110T231630522312Z_a8ddbb/current_daily_context.csv
-# SHA256: a61857bc61e03cd56885e54d9bb39e9feb19ae86b78ba5fffb8cb01b090d09ad
-# median_spacecraft_electric_potential_volts: ESA_v01_thb_peif_sc_pot; n=1140; p05=2.188823783398; p95=32.91896944046.
-# EDA source: env_algo_task/data/processed/analysis/subject_plasma/20261110T231619494574Z_f61cb6/esa_daily_context.csv
-# SHA256: 2017268c08d387766cd16bc8447990fb8acbbafafc63e201241043173b589201
-# Soil source: Dar_057 Handbook of Lunar Soils; 168 accepted sample identities.
-# EDA source: env_algo_task/data/processed/analysis/subject_soil/20261113T053529630638Z_f65c49/soil_samples.csv
-# SHA256: 8506f2db4b782a05393ca327073d709a7c6e0e158212aa67a9879668f606030d
-# Soil p05/p95 are over rounded mission means: six missions except agglutinates (three).
-# Geometry source: https://pgda.gsfc.nasa.gov/products/69 (0-1 fraction definitions, no mission acceptance cutoff).
+# Pipeline modes: strict | available_data
+# Selected flow-specific gates are project demonstrations, not NASA or hardware limits.
+# Gate rules do not change the existing scoring curves or assessment weights.
+
 schema: 2
 body: Moon
 name: south_pole_environment_comparison
-pipeline_mode: available_data
+pipeline_mode: strict
 comparison_group_columns: []
 metadata_columns:
 - sample_type
@@ -57,7 +28,19 @@ assessments:
       thermal: 15.0
       plasma_charging: 5.0
     domain_overrides: {}
-    metric_overrides: {}
+    metric_overrides:
+      window_continuous_sunlight_hours:
+        role: gate
+        hard_gate:
+          operator: above_threshold
+          threshold: 24.0
+          cap_to_window_duration: true
+          rationale: Project demonstration minimum sunlight duration; NOT a NASA mission requirement.
+      median_earth_visibility_fraction:
+        hard_gate:
+          operator: above_threshold
+          threshold: 0.30
+          rationale: Project demonstration Earth-visibility minimum; NOT an RF link or NASA requirement.
   survival:
     weights:
       radiation: 40.0
@@ -65,11 +48,23 @@ assessments:
       plasma_charging: 15.0
       uv: 10.0
     domain_overrides: {}
-    metric_overrides: {}
+    metric_overrides:
+      highest_phase_median_temperature_kelvin:
+        role: gate
+        hard_gate:
+          operator: below_threshold
+          threshold: 390.0
+          rationale: Project demonstration temperature ceiling; NOT a qualified hardware or crew limit.
+      median_spacecraft_electric_potential_volts:
+        hard_gate:
+          operator: between
+          lower: -15.0
+          upper: 10.0
+          rationale: Project demonstration spacecraft-potential range; NOT a surface-charging or arcing limit.
 domains:
   radiation:
     enabled: true
-    hard_gates_enabled: false
+    hard_gates_enabled: True
     priority: Highest
     include_in_score: true
     multiplier: 1.0
@@ -111,7 +106,7 @@ domains:
       minimum: 0
   uv:
     enabled: true
-    hard_gates_enabled: false
+    hard_gates_enabled: true
     priority: Medium
     include_in_score: true
     multiplier: 1.0
@@ -132,7 +127,7 @@ domains:
       minimum: 0
   solar_illumination:
     enabled: true
-    hard_gates_enabled: false
+    hard_gates_enabled: true
     priority: High
     include_in_score: true
     multiplier: 1.0
@@ -194,7 +189,7 @@ domains:
       preference: null
   thermal:
     enabled: true
-    hard_gates_enabled: false
+    hard_gates_enabled: true
     priority: Highest
     include_in_score: true
     multiplier: 1.0
@@ -235,7 +230,7 @@ domains:
       minimum: 0
   plasma_charging:
     enabled: true
-    hard_gates_enabled: false
+    hard_gates_enabled: true
     priority: Medium
     include_in_score: true
     multiplier: 1.0
@@ -277,7 +272,7 @@ domains:
         or safety limit.
   dust:
     enabled: true
-    hard_gates_enabled: false
+    hard_gates_enabled: true
     priority: Medium
     include_in_score: true
     multiplier: 1.0
@@ -299,7 +294,7 @@ domains:
         or safety limit.
   seismic:
     enabled: true
-    hard_gates_enabled: false
+    hard_gates_enabled: true
     priority: Evidence-dependent
     include_in_score: false
     multiplier: 1.0
@@ -316,7 +311,7 @@ domains:
       minimum: 0
   exosphere:
     enabled: true
-    hard_gates_enabled: false
+    hard_gates_enabled: true
     priority: Context initially
     include_in_score: false
     multiplier: 1.0
@@ -333,7 +328,7 @@ domains:
       minimum: 0
   earth_visibility:
     enabled: true
-    hard_gates_enabled: false
+    hard_gates_enabled: true
     priority: High
     include_in_score: true
     multiplier: 1.0
@@ -362,7 +357,7 @@ domains:
       preference: null
   soil:
     enabled: true
-    hard_gates_enabled: false
+    hard_gates_enabled: true
     priority: Experimental
     include_in_score: true
     multiplier: 1.0
