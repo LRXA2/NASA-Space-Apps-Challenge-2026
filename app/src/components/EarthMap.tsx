@@ -49,6 +49,9 @@ export function EarthMap(props: {
       pin.on("mouseover", () => onActive(marker.key));
       pin.on("mouseout", () => onActive(null));
       pin.addTo(map);
+      const element = pin.getElement();
+      element?.addEventListener("focus", () => onActive(marker.key));
+      element?.addEventListener("blur", () => onActive(null));
       added.set(marker.key, pin);
     }
     placed.current = added;

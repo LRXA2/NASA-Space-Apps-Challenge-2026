@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "check:scorer": "node scripts/check_scorer_parity.mjs"
+    "check:scorer": "node scripts/check_scorer_parity.mjs",
+    "check:browser": "node scripts/check_browser.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
@@ -18,10 +19,12 @@
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@types/leaflet": "^1.9.22",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
+    "playwright": "1.65.1",
     "pyodide": "0.28.3",
     "typescript": "^7.0.2",
     "vite": "^8.3.8"

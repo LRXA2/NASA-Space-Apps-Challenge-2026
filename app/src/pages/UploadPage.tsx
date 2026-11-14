@@ -71,7 +71,19 @@ function Results({ scenarios, gates }: { scenarios: Scenario[]; gates: Pick<Envi
             {scenarios.map((scenario) => (
               <tr key={scenario.id}>
                 <th scope="row">
-                  <a href={`#upload-${scenario.id}`}>{scenario.id}</a>
+                  <button
+                    type="button"
+                    aria-controls={`upload-${scenario.id}`}
+                    onClick={() => {
+                      const detail = document.getElementById(`upload-${scenario.id}`);
+                      if (detail instanceof HTMLDetailsElement) {
+                        detail.open = true;
+                        detail.querySelector("summary")?.focus();
+                      }
+                    }}
+                  >
+                    {scenario.id}
+                  </button>
                 </th>
                 {(["operations", "survival"] as const).map((name) => (
                   <td key={name}>
