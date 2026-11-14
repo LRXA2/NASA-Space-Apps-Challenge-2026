@@ -34,6 +34,33 @@ inside the managed environment with `uv run`, for example:
 uv run pytest operational_cnn/tests
 ```
 
+## Prepare the hackathon demo
+
+On Windows, one command installs the locked dependencies, runs the integrated
+pipeline for Haworth, exports its validated data to the app, and builds the
+production site:
+
+```powershell
+.\scripts\prepare_demo.ps1
+```
+
+After the first successful setup, skip the Python and npm installation steps:
+
+```powershell
+.\scripts\prepare_demo.ps1 -SkipInstall
+```
+
+On macOS, Linux, or Git Bash, run the Bash version:
+
+```bash
+bash scripts/prepare_demo.sh
+bash scripts/prepare_demo.sh --skip-install
+```
+
+Use `-Region "Malapert Massif"` in PowerShell or
+`--region "Malapert Massif"` in Bash to prepare a different region. Start the
+local site after preparation with `npm run dev --prefix app`.
+
 ## Compare two prepared sites
 
 Use the saved CNN from Python, without opening Jupyter:

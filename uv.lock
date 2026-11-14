@@ -586,6 +586,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "numpy" },
     { name = "pandas" },
+    { name = "pyyaml" },
     { name = "scipy" },
 ]
 
@@ -601,7 +602,6 @@ environment = [
     { name = "netcdf4" },
     { name = "obspy" },
     { name = "pillow" },
-    { name = "pyyaml" },
     { name = "spiceypy" },
     { name = "sqlalchemy" },
 ]
@@ -646,7 +646,7 @@ requires-dist = [
     { name = "pillow", marker = "extra == 'environment'", specifier = "==13.0.0" },
     { name = "pyproj", marker = "extra == 'processing'", specifier = "==3.7.1" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8.3,<10" },
-    { name = "pyyaml", marker = "extra == 'environment'", specifier = "==6.0.3" },
+    { name = "pyyaml", specifier = "==6.0.3" },
     { name = "rasterio", marker = "extra == 'processing'", specifier = "==1.5.2" },
     { name = "requests", marker = "extra == 'download'", specifier = "==2.34.2" },
     { name = "ruff", marker = "extra == 'test'", specifier = ">=0.14,<1" },
