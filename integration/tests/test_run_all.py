@@ -11,7 +11,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from integration.moon_sites import build_moon_sites
-from integration.run_all import (DEFAULT_CONFIG, PipelineConfig, load_config, region_summary, run_all,
+from integration.run_all import (DEFAULT_CONFIG, PipelineConfig, caveat, load_config, region_summary, run_all,
                                  score_environment, select_regions)
 from integration.tests.test_moon_sites import environment_results, walkability_predictions
 from notebooks.shared.tests.test_moon_tiles import REGION
@@ -67,6 +67,13 @@ class RunAllTests(unittest.TestCase):
         self.assertAlmostEqual(row['median_best_cosine'], 0.75)
         self.assertNotIn('best_site_x', row.index)
 
+    def test_caveat_matches_the_environment_scope(self):
+        self.assertIn('per-tile LOLA', caveat('tile'))
+        self.assertNotIn('per-tile', caveat('region'))
+        self.assertIn('No environment scores', caveat(None))
+        for scope in ('tile', 'region', None):
+            self.assertIn('Cosine is not a percentage', caveat(scope))
+
     @unittest.skipUnless(os.environ.get('RUN_PIPELINE_SMOKE') == '1', 'set RUN_PIPELINE_SMOKE=1 with processed data')
     def test_haworth_end_to_end(self):
         run = run_all(ROOT, load_config(DEFAULT_CONFIG, regions=['Haworth']))
@@ -78,6 +85,9 @@ class RunAllTests(unittest.TestCase):
         self.assertTrue(sites['tile_id'].is_unique)
         self.assertEqual(set(matches['tile_id']), set(sites['tile_id']))
         self.assertEqual(len(matches), len(sites) * len(summary['earth_sites']) * summary['top_k_per_site'])
+        physical = pd.read_csv(run / 'physical_comparison.csv')
+        self.assertEqual(len(physical), len(matches) * 5)
+        self.assertTrue(all('\\' not in path for path in summary['stage_runs'].values()))
 
 
 if __name__ == '__main__':

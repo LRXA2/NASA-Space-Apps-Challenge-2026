@@ -9,6 +9,7 @@ script records them and copies the files the app export reads into one
 - `moon_tiles.csv`: one row per 960 m lunar tile and which sources cover it
 - `moon_sites.csv`: terrain classes plus region-level environment scores
 - `earth_matches.csv`: top-k Earth patches per tile for every Earth site
+- `physical_comparison.csv`: the five physical checks behind every match
 - `environment.csv`: the environment scorer's compact output, when configured
 - `environment_sites.csv` and `tile_support.csv`: the per-tile scorer input and
   which tiles had their map columns measured (`environment_scope` = "tile")
@@ -38,10 +39,21 @@ from notebooks.shared.processing import Run
 
 DEFAULT_CONFIG = Path(__file__).with_name('run_all.json')
 ENVIRONMENT_SCORER = 'env_algo_task/env_pipeline/env_pipeline.py'
-CAVEAT = ('Terrain classes are Earth-trained proxies. Environment scores use per-tile LOLA Sun, Earth, shadow '
-          "and sky values where measured; every other environment input is the region baseline's test "
-          'fixture value. Cosine is not a percentage or validated suitability.')
+CAVEAT_TERRAIN = 'Terrain classes are Earth-trained proxies.'
+CAVEAT_ENVIRONMENT = {
+    'tile': ('Environment scores use per-tile LOLA Sun, Earth, shadow and sky values where measured; every other '
+             "environment input is the region baseline's test fixture value."),
+    'region': ("Environment scores are the region baseline's (eda_001-eda_007), shared by every tile in a region; "
+               'most of its inputs are test fixture values.'),
+    None: 'No environment scores were computed.',
+}
+CAVEAT_SIMILARITY = 'Cosine is not a percentage or validated suitability.'
 SCOPES = ('tile', 'region')
+
+
+def caveat(environment_scope: str | None) -> str:
+    """The run's caveat, worded for the environment scope that was actually used."""
+    return ' '.join((CAVEAT_TERRAIN, CAVEAT_ENVIRONMENT[environment_scope], CAVEAT_SIMILARITY))
 
 
 @dataclass(frozen=True)
@@ -144,20 +156,22 @@ def run_all(root: Path, config: PipelineConfig) -> Path:
         tiles.to_csv(run.path('moon_tiles.csv'), index=False)
         sites.to_csv(run.path('moon_sites.csv'), index=False)
         shutil.copyfile(stages['earth_matches'] / 'earth_matches.csv', run.path('earth_matches.csv'))
+        shutil.copyfile(stages['earth_matches'] / 'physical_comparison.csv', run.path('physical_comparison.csv'))
         by_region = region_summary(sites, matches)
         by_region.to_csv(run.path('summary_by_region.csv'), index=False)
+        environment_scope = config.environment_scope if environment is not None else None
         summary = {
             'regions': regions,
             'tiles': int(len(sites)),
             'tiles_matched': len(tile_ids),
             'tiles_without_similarity_patch': int(len(sites) - len(tile_ids)),
             'environment_assessed_tiles': int(sites['env_assessed'].sum()),
-            'environment_scope': config.environment_scope if environment is not None else None,
+            'environment_scope': environment_scope,
             'earth_sites': sorted(matches['earth_region'].unique()),
             'top_k_per_site': config.top_k_per_site,
             'similarity_model': asdict(similarity),
-            'stage_runs': {name: str(path.relative_to(root)) for name, path in stages.items()},
-            'caveat': CAVEAT,
+            'stage_runs': {name: path.relative_to(root).as_posix() for name, path in stages.items()},
+            'caveat': caveat(environment_scope),
         }
         run.path('summary.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
         run.record['result'] = summary
