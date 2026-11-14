@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { PageMessage } from "./components/PageState";
+import { Footer, Header } from "./components/Shell";
 import { AnalogsPage } from "./pages/AnalogsPage";
 import { EnvironmentPage, ScenarioPage } from "./pages/EnvironmentPage";
 import { PairPage } from "./pages/PairPage";
@@ -17,18 +18,8 @@ export function App() {
   }, [notFound]);
   return (
     <div className="shell">
-      <header className="topbar">
-        <a className="brand" href={links.regions()}>
-          Lunar Analog Finder
-        </a>
-        <nav className="topbar-links" aria-label="Sections">
-          <a href={links.regions()}>Regions</a>
-          <a href={links.environment()}>Environment</a>
-          <a href={links.upload()}>Try your own data</a>
-        </nav>
-        <span className="topbar-note">Precomputed results · Earth and Moon only</span>
-      </header>
-      <main className="page">
+      <Header route={route} />
+      <main className={`page${route.name === "regions" ? " page-home" : ""}`}>
         {route.name === "regions" && <RegionsPage />}
         {route.name === "region" && <RegionPage key={route.region} region={route.region} />}
         {route.name === "patch" && (
@@ -54,6 +45,7 @@ export function App() {
           </PageMessage>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

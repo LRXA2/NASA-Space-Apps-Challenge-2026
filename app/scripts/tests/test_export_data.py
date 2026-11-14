@@ -225,6 +225,25 @@ class MetadataTests(ExportCase):
         self.assertEqual(extent, {"xmin": min(xs) - 480, "xmax": max(xs) + 480, "ymin": min(ys) - 480, "ymax": max(ys) + 480})
         self.assertLess(extent["xmin"], extent["xmax"])
 
+    def test_region_entry_counts_rover_classes_and_states_patch_size(self) -> None:
+        self.write_rows([
+            source_row(32, 64, 1, predicted_rover_class="non_operable"),
+            source_row(32, 32, 0),
+        ])
+        entry = self.export()["regions"][0]
+        # Every class is present, including one with no patches, and the counts add up to the exported patches.
+        self.assertEqual(entry["rover_class_counts"], {"operable": 1, "marginal": 0, "non_operable": 1})
+        self.assertEqual(sum(entry["rover_class_counts"].values()), entry["exported_patch_count"])
+        self.assertEqual((entry["patch_size_m"], entry["spacing_m"]), (960, 30))
+
+    def test_rover_class_counts_follow_the_patch_selection(self) -> None:
+        self.write_rows([
+            source_row(32, 64, 1, predicted_rover_class="marginal"),
+            source_row(32, 32, 0),
+        ])
+        entry = self.export(region_slugs=[SLUG], patch_ids=[f"{REGION}:960:32:64"])["regions"][0]
+        self.assertEqual(entry["rover_class_counts"], {"operable": 0, "marginal": 1, "non_operable": 0})
+
     def test_patch_selection_exports_only_that_patch(self) -> None:
         regions = self.export(region_slugs=[SLUG], patch_ids=[f"{REGION}:960:32:32"])
         self.assertEqual(regions["regions"][0]["exported_patch_count"], 1)

@@ -84,10 +84,10 @@ function Grids({ pair }: { pair: Pair }) {
   const elevationMax = niceCeiling(
     Math.max(...grids.moonElevation.values.map(Math.abs), ...grids.earthElevation.values.map(Math.abs)),
   );
-  const slopeScale = { kind: "sequential" as const, min: 0, max: slopeMax };
-  const elevationScale = { kind: "diverging" as const, min: -elevationMax, max: elevationMax };
-  const slopeNote = () => "Moon and Earth share this slope scale.";
-  const elevationNote = () => "Height above (red) or below (blue) the patch's own reference. Moon and Earth share this scale.";
+  const slopeScale = { kind: "slope" as const, min: 0, max: slopeMax };
+  const elevationScale = { kind: "elevation" as const, min: -elevationMax, max: elevationMax };
+  const slopeNote = "Brighter is steeper. Moon and Earth share this slope scale.";
+  const elevationNote = "Lighter is higher: height above or below the patch's own reference. Moon and Earth share this scale.";
   return (
     <>
       <div className="pair-grid">
@@ -178,7 +178,8 @@ export function PairPage({ region, patch, candidate }: { region: string; patch: 
 
       <section className="card" aria-labelledby="checks-title">
         <h2 id="checks-title">Physical checks</h2>
-        <div className="table-scroll">
+        {/* Focusable so the table can be scrolled by keyboard on a narrow screen. */}
+        <div className="table-scroll" tabIndex={0} role="region" aria-label="Physical checks table, scrolls sideways">
           <table className="patch-table">
             <caption>
               Values from the similarity pipeline. Difference is Earth minus Moon. Relief here is the 5th to 95th

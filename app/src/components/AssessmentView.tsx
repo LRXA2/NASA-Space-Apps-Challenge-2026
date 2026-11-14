@@ -1,4 +1,12 @@
-import type { Assessment, AssessmentName, AssessmentStatus, EnvironmentDocument, Evidence, GateCheck } from "../data/types";
+import { useId } from "react";
+import type {
+  Assessment,
+  AssessmentName,
+  AssessmentStatus,
+  EnvironmentDocument,
+  Evidence,
+  GateCheck,
+} from "../data/types";
 import { ToneIcon } from "./StatusBadge";
 import type { Tone } from "./StatusBadge";
 
@@ -32,7 +40,7 @@ export function AssessmentBadge({ status, gatesOff = false }: { status: Assessme
   // With no gate able to fail, Pass is not a verdict: no tick, and the label says why.
   if (status === "Pass" && gatesOff) return <span className="badge badge-small badge-plain">Pass · gates off</span>;
   return (
-    <span className="badge badge-small">
+    <span className={`badge badge-small badge-${tone}`}>
       <ToneIcon tone={tone} />
       {label}
     </span>
@@ -40,18 +48,38 @@ export function AssessmentBadge({ status, gatesOff = false }: { status: Assessme
 }
 
 /** The final score, or why there is none. A blocked score is never shown as a number. */
-export function FinalScore({ assessment }: { assessment: Assessment }) {
-  if (assessment.status !== "Pass") return <span className="muted">Blocked by the {assessment.status} status</span>;
-  if (assessment.score === null) return <span className="muted">Not given</span>;
-  return <strong>{assessment.score.toFixed(1)}</strong>;
+export function FinalScore({ assessment, explain = false }: { assessment: Assessment; explain?: boolean }) {
+  if (assessment.status !== "Pass") {
+    // The reason is always read out; on the scenario page it is also shown.
+    return (
+      <span className="no-score">
+        No score
+        <span className={explain ? "no-score-reason" : "visually-hidden"}>
+          {explain ? "" : ": "}Blocked by the {assessment.status} status
+        </span>
+      </span>
+    );
+  }
+  if (assessment.score === null) return <span className="no-score">Not given</span>;
+  return <strong className="score">{assessment.score.toFixed(1)}</strong>;
 }
 
 /** One assessment: status, final score, fail reasons and every domain score, as the scorer wrote them. */
-export function AssessmentView(props: { title: string; assessment: Assessment; gatesOff?: boolean }) {
+export function AssessmentView(props: {
+  title: string;
+  assessment: Assessment;
+  gatesOff?: boolean;
+  /** Names the scenario when several are on one page, so each section has a unique name. */
+  context?: string;
+}) {
   const { title, assessment } = props;
-  const id = `assessment-${title.toLowerCase()}`;
+  const id = useId();
   return (
-    <section className="card" aria-labelledby={id}>
+    <section
+      className="card"
+      aria-labelledby={props.context ? undefined : id}
+      aria-label={props.context ? `${title}, ${props.context}` : undefined}
+    >
       <h2 id={id}>{title}</h2>
       <dl className="stats">
         <div>
@@ -63,7 +91,7 @@ export function AssessmentView(props: { title: string; assessment: Assessment; g
         <div>
           <dt>Final score (0–100)</dt>
           <dd>
-            <FinalScore assessment={assessment} />
+            <FinalScore assessment={assessment} explain />
           </dd>
         </div>
       </dl>
@@ -96,7 +124,9 @@ export function AssessmentView(props: { title: string; assessment: Assessment; g
         </tbody>
       </table>
       {assessment.gates == null ? (
-        <p className="muted">Per-check values and thresholds are not in this build. These are the scorer's domain summaries.</p>
+        <p className="muted">
+          Per-check values and thresholds are not in this build. These are the scorer's domain summaries.
+        </p>
       ) : (
         <GateTable title={title} gates={assessment.gates} coverage={assessment.coverage ?? null} />
       )}
@@ -157,7 +187,9 @@ function GateTable({ title, gates, coverage }: { title: string; gates: GateCheck
                   {check.label}
                   <span className="muted gate-domain">{check.domain_label}</span>
                 </th>
-                <td className="number">{check.value === null ? <span className="muted">Missing</span> : quantity(check.value, check.unit)}</td>
+                <td className="number">
+                  {check.value === null ? <span className="muted">Missing</span> : quantity(check.value, check.unit)}
+                </td>
                 <td>{gateRule(check)}</td>
                 <td>
                   <AssessmentBadge status={check.status} />

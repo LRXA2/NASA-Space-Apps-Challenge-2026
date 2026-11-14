@@ -94,11 +94,13 @@ function Results({ scenarios, gates }: { scenarios: Scenario[]; gates: Pick<Envi
               title={ASSESSMENT_TITLES.operations}
               assessment={scenario.operations}
               gatesOff={gatesOff(gates, "operations")}
+              context={scenario.id}
             />
             <AssessmentView
               title={ASSESSMENT_TITLES.survival}
               assessment={scenario.survival}
               gatesOff={gatesOff(gates, "survival")}
+              context={scenario.id}
             />
           </div>
         </details>

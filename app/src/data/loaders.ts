@@ -6,6 +6,7 @@ import type {
   GridFormat,
   PatchesDocument,
   RegionsDocument,
+  SkyDocument,
   TerrainChannel,
 } from "./types";
 
@@ -77,6 +78,18 @@ export async function loadEnvironment(): Promise<EnvironmentDocument> {
   const { environment_file } = await loadRegions();
   if (!environment_file) throw new DataError("This build has no environment results.");
   return cached(environment_file, () => loadJson<EnvironmentDocument>(environment_file));
+}
+
+/** Star positions for the home page's sky panel. Not part of the pipeline export, so it has no schema version. */
+export function loadSky(): Promise<SkyDocument> {
+  return cached("sky.json", async () => {
+    const response = await request("sky.json");
+    try {
+      return (await response.json()) as SkyDocument;
+    } catch {
+      throw new DataError("The data file sky.json is not valid JSON.");
+    }
+  });
 }
 
 /** A URL for a file in the data folder, such as the environment sample input. */

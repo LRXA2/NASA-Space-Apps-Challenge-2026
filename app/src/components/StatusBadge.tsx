@@ -49,7 +49,7 @@ export function ToneIcon({ tone }: { tone: Tone }) {
 export function StatusBadge({ value }: { value: RoverClass | WalkingClass }) {
   const { label, tone } = CLASSES[value];
   return (
-    <span className="badge">
+    <span className={`badge badge-class tone-text-${tone}`}>
       <ToneIcon tone={tone} />
       {label}
     </span>

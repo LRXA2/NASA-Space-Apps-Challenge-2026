@@ -115,14 +115,14 @@ function Terrain({ document, record }: { document: PatchesDocument; record: Patc
       <TerrainCanvas
         title="Slope"
         channel={slope}
-        scale={{ kind: "sequential", min: 0, max: slopeMax }}
-        scaleNote={(scheme) => `${scheme === "dark" ? "Lighter" : "Darker"} blue is steeper. The scale is fitted to this patch.`}
+        scale={{ kind: "slope", min: 0, max: slopeMax }}
+        scaleNote="Brighter is steeper. The scale is fitted to this patch."
       />
       <TerrainCanvas
         title="Relative elevation"
         channel={elevation}
-        scale={{ kind: "diverging", min: -elevationMax, max: elevationMax }}
-        scaleNote={() => "Height above (red) or below (blue) this patch's mean height. The scale is fitted to this patch."}
+        scale={{ kind: "elevation", min: -elevationMax, max: elevationMax }}
+        scaleNote="Lighter is higher: height above or below this patch's mean height. The scale is fitted to this patch."
       />
     </div>
   );

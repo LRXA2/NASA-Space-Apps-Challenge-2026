@@ -1,9 +1,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { KeyboardEvent, PointerEvent } from "react";
 import type { TerrainChannel } from "../data/types";
-import { colorAt, scaleStops } from "./colorScales";
-import type { ScaleKind, Scheme } from "./colorScales";
-import { useColorScheme } from "./useColorScheme";
+import { colorAt, legendGradient } from "./colorScales";
+import type { ScaleKind } from "./colorScales";
 
 export interface TerrainScale {
   kind: ScaleKind;
@@ -29,8 +28,8 @@ export function TerrainCanvas(props: {
   title: string;
   channel: TerrainChannel;
   scale: TerrainScale;
-  /** How to read the colours. The ramp direction depends on the colour scheme. */
-  scaleNote: (scheme: Scheme) => string;
+  /** How to read the colours, for example "Brighter is steeper." */
+  scaleNote: string;
   /** Pass both to share the selected cell with other grids of the same shape. Otherwise the canvas keeps its own. */
   cell?: Cell | null;
   onCellChange?: (cell: Cell | null) => void;
@@ -39,7 +38,6 @@ export function TerrainCanvas(props: {
 }) {
   const { channel, scale } = props;
   const { rows, cols, values, unit } = channel;
-  const scheme = useColorScheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ownCell, setOwnCell] = useState<Cell | null>(null);
   const shared = props.onCellChange !== undefined;
@@ -56,11 +54,11 @@ export function TerrainCanvas(props: {
     const image = context.createImageData(cols, rows);
     const span = scale.max - scale.min || 1;
     for (let index = 0; index < values.length; index += 1) {
-      const [red, green, blue] = colorAt(scale.kind, scheme, (values[index] - scale.min) / span);
+      const [red, green, blue] = colorAt(scale.kind, (values[index] - scale.min) / span);
       image.data.set([red, green, blue, 255], index * 4);
     }
     context.putImageData(image, 0, 0);
-  }, [values, rows, cols, scale.kind, scale.min, scale.max, scheme]);
+  }, [values, rows, cols, scale.kind, scale.min, scale.max]);
 
   function onPointerMove(event: PointerEvent<HTMLDivElement>) {
     const box = event.currentTarget.getBoundingClientRect();
@@ -126,7 +124,7 @@ export function TerrainCanvas(props: {
       <div className="legend">
         <span
           className="legend-bar"
-          style={{ background: `linear-gradient(to right, ${scaleStops(scale.kind, scheme).join(", ")})` }}
+          style={{ background: legendGradient(scale.kind) }}
         />
         <span className="legend-ticks">
           <span>{formatValue(scale.min, unit)}</span>
@@ -135,7 +133,7 @@ export function TerrainCanvas(props: {
         </span>
       </div>
       <p className="terrain-note" id={helpId}>
-        {props.scaleNote(scheme)} Row 0 is at the top and column 0 is at the left, as stored in the source grid. Each cell is
+        {props.scaleNote} Row 0 is at the top and column 0 is at the left, as stored in the source grid. Each cell is
         30 m wide. Use the arrow keys to move between cells.{props.linkNote ? ` ${props.linkNote}` : ""}
       </p>
       <details className="terrain-table">

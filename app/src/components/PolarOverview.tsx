@@ -4,26 +4,30 @@ import { links } from "../router";
 
 // The export's CRS: +proj=stere +lat_0=-90 +lat_ts=-90 +lon_0=0 +R=1737400. +y points to 0° longitude, +x to 90°E.
 const MOON_RADIUS_KM = 1737.4;
+// The drawing is scaled so the outermost ring has this radius in SVG units, whatever its latitude.
+const OUTER = 250;
+const HALF = 290;
+const NODE = 14;
 
 /** Distance from the pole, in km, of a south latitude given as a positive number of degrees. */
 function ringRadius(latitudeSouth: number): number {
   return 2 * MOON_RADIUS_KM * Math.tan(((90 - latitudeSouth) * Math.PI) / 180 / 2);
 }
 
-const SPOKES = [
-  { lon: 0, label: "0°" },
-  { lon: 90, label: "90°E" },
-  { lon: 180, label: "180°" },
-  { lon: 270, label: "90°W" },
-];
-
 type Placed = RegionEntry & { extent_m: NonNullable<RegionEntry["extent_m"]>; number: number };
 
 /**
- * All exported regions on one south-polar map, each drawn at the true extent of its tiles.
- * Numbers match the region list on the same page.
+ * All exported regions on one south-polar map. Each region is a numbered node over a dashed square that shows the
+ * true extent of its tiles. Numbers match the region cards on the same page.
  */
-export function PolarOverview({ regions }: { regions: RegionEntry[] }) {
+export function PolarOverview(props: {
+  regions: RegionEntry[];
+  /** Slug of the region to mark as selected. */
+  selected?: string | null;
+  /** Slugs of regions whose Operations assessment is Fail. */
+  failed?: ReadonlySet<string>;
+}) {
+  const { regions, selected = null, failed = new Set<string>() } = props;
   const titleId = useId();
   const noteId = useId();
   // Numbered by position in the full list, so the numbers still match it if a region has no extent.
@@ -44,80 +48,109 @@ export function PolarOverview({ regions }: { regions: RegionEntry[] }) {
     rings.push(latitude);
     if (ringRadius(latitude) >= farthest) break;
   }
-  const outer = ringRadius(rings[rings.length - 1]);
-  const half = outer + 32; // Room for the longitude labels at phone-size text.
-  const labelAngle = (135 * Math.PI) / 180; // Ring labels run down and to the right, where no region sits.
+  const scale = OUTER / ringRadius(rings[rings.length - 1]);
+  const r = (latitude: number) => ringRadius(latitude) * scale;
+  const outerLatitude = rings[rings.length - 1];
 
   return (
     <figure className="polar-overview">
-      <svg
-        viewBox={`${-half} ${-half} ${2 * half} ${2 * half}`}
-        role="group"
-        aria-labelledby={titleId}
-        aria-describedby={noteId}
-      >
-        <title id={titleId}>Where the {placed.length} regions are around the lunar south pole</title>
-        <g className="polar-grid" aria-hidden="true">
-          {rings.map((latitude) => (
-            <circle key={latitude} cx={0} cy={0} r={ringRadius(latitude)} />
-          ))}
-          {SPOKES.map(({ lon }) => {
-            const angle = (lon * Math.PI) / 180;
-            return <line key={lon} x1={0} y1={0} x2={outer * Math.sin(angle)} y2={-outer * Math.cos(angle)} />;
-          })}
-        </g>
-        <g className="polar-labels" aria-hidden="true">
-          {rings.map((latitude) => {
-            const r = ringRadius(latitude);
+      <div className="polar-well">
+        <svg
+          viewBox={`${-HALF} ${-HALF} ${2 * HALF} ${2 * HALF}`}
+          role="group"
+          aria-labelledby={titleId}
+          aria-describedby={noteId}
+        >
+          <title id={titleId}>Where the {placed.length} regions are around the lunar south pole</title>
+          <g className="polar-grid" aria-hidden="true">
+            {rings.slice(0, -1).map((latitude) => (
+              <circle key={latitude} className="polar-ring" r={r(latitude)} />
+            ))}
+            <circle className="polar-outer" r={OUTER} />
+            <path className="polar-spoke" d={`M0 ${-OUTER}V${OUTER}M${-OUTER} 0H${OUTER}`} />
+            <path className="polar-earth-tick" d={`M0 ${-OUTER}l-5 -9h10z`} />
+          </g>
+          <g className="polar-labels" aria-hidden="true">
+            <text className="polar-earth" x={0} y={-OUTER - 14} textAnchor="middle">
+              0° · toward Earth
+            </text>
+            <text x={0} y={OUTER + 32} textAnchor="middle">
+              180°
+            </text>
+            <text x={OUTER + 8} y={5}>
+              90°E
+            </text>
+            <text x={-OUTER - 8} y={5} textAnchor="end">
+              90°W
+            </text>
+            {rings.map((latitude) => {
+              const radius = latitude === outerLatitude ? OUTER : r(latitude);
+              const offset = radius * Math.SQRT1_2;
+              return (
+                <text key={latitude} x={offset + 4} y={offset + 4}>
+                  {latitude}°S
+                </text>
+              );
+            })}
+            <circle className="polar-pole" r={3.5} />
+            <text className="polar-pole-label" x={8} y={-8}>
+              POLE
+            </text>
+          </g>
+          {placed.map((region) => {
+            const e = region.extent_m;
+            const x = km(e.xmin) * scale;
+            const y = -km(e.ymax) * scale;
+            const width = km(e.xmax - e.xmin) * scale;
+            const height = km(e.ymax - e.ymin) * scale;
+            const cx = x + width / 2;
+            const cy = y + height / 2;
+            const isSelected = region.slug === selected;
+            const isFail = failed.has(region.slug);
+            // Starts with the visible number as its own word, so voice control can use it.
+            const label = `${region.number} ${region.name}: ${region.exported_patch_count} terrain patches${isFail ? ", Operations Fail" : ""}`;
             return (
-              <text key={latitude} x={r * Math.sin(labelAngle) + 2} y={-r * Math.cos(labelAngle) - 2}>
-                {latitude}°S
-              </text>
-            );
-          })}
-          {SPOKES.map(({ lon, label }) => {
-            const angle = (lon * Math.PI) / 180;
-            const r = outer + 11;
-            return (
-              <text
-                key={lon}
-                x={r * Math.sin(angle)}
-                y={-r * Math.cos(angle)}
-                textAnchor="middle"
-                dominantBaseline="middle"
+              <a
+                key={region.slug}
+                href={links.region(region.slug)}
+                className={`polar-region${isSelected ? " is-selected" : ""}${isFail ? " is-fail" : ""}`}
+                aria-current={isSelected ? "true" : undefined}
               >
-                {label}
-              </text>
+                <title>{label}</title>
+                <rect className="polar-extent" x={x} y={y} width={width} height={height} rx={2} />
+                <circle className="polar-glow" cx={cx} cy={cy} r={NODE + 12} />
+                <circle className="polar-focus" cx={cx} cy={cy} r={NODE + 6} />
+                <circle className="polar-node" cx={cx} cy={cy} r={NODE} />
+                <text className="polar-number" x={cx} y={cy + 5}>
+                  {region.number}
+                </text>
+              </a>
             );
           })}
-          <circle className="polar-pole" cx={0} cy={0} r={1.8} />
-          <text x={4} y={-4}>
-            Pole
-          </text>
-        </g>
-        {placed.map((region) => {
-          const e = region.extent_m;
-          const x = km(e.xmin);
-          const y = -km(e.ymax);
-          const width = km(e.xmax - e.xmin);
-          const height = km(e.ymax - e.ymin);
-          return (
-            <a key={region.slug} href={links.region(region.slug)} className="polar-region">
-              <title>
-                {region.number}. {region.name}: {region.exported_patch_count} terrain patches
-              </title>
-              <rect x={x} y={y} width={width} height={height} />
-              <text x={x + width / 2} y={y + height / 2} textAnchor="middle" dominantBaseline="central">
-                {region.number}
-              </text>
-            </a>
-          );
-        })}
-      </svg>
+        </svg>
+        <ul className="polar-legend" aria-label="Map key">
+          <li>
+            <i className="key-node" aria-hidden="true" />1 node = 1 region
+          </li>
+          <li>
+            <i className="key-extent" aria-hidden="true" />
+            Area covered
+          </li>
+          <li>
+            <i className="key-fail" aria-hidden="true" />
+            Operations Fail
+          </li>
+          {selected && (
+            <li>
+              <i className="key-selected" aria-hidden="true" />
+              Selected
+            </li>
+          )}
+        </ul>
+      </div>
       <figcaption id={noteId}>
-        South polar stereographic view centred on the pole, with 0° longitude at the top. Rings mark each degree of
-        latitude (about 30 km apart). Each numbered box is the area covered by one region's terrain patches, and the
-        numbers match the list.
+        South polar view with 0° longitude, toward Earth, at the top. Rings mark each degree of latitude, about 30 km
+        apart. Node numbers match the region cards.
       </figcaption>
     </figure>
   );

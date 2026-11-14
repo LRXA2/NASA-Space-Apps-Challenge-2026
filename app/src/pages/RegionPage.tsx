@@ -137,48 +137,57 @@ export function RegionPage({ region }: { region: string }) {
         {listing.patches.length} terrain {listing.patches.length === 1 ? "patch" : "patches"} in this build. Each is{" "}
         {listing.patch_size_m} m × {listing.patch_size_m} m on a {listing.spacing_m} m grid.
       </p>
-      <div className="map-mode" role="radiogroup" aria-label="Colour the map by">
-        <span className="map-mode-label">Colour the map by</span>
-        {MODES.map((option) => (
-          <label key={option.value}>
-            <input
-              type="radio"
-              name="map-mode"
-              value={option.value}
-              checked={mode === option.value}
-              onChange={() => {
-                chosenMode = option.value;
-                setMode(option.value);
-              }}
-            />
-            {option.label}
-          </label>
-        ))}
-      </div>
-      <PatchMap region={listing.region} patches={listing.patches} mode={mode} active={active} onActive={setActive} />
-      <p className="map-readout">
-        {shown ? (
-          <>
-            <span>
-              Row {shown.top_row}, column {shown.top_col}
+      <section className="card" aria-labelledby="map-title">
+        <div className="panel-head">
+          <h2 id="map-title">{mode === "rover" ? "Rover class" : "Crew-on-foot class"} by patch</h2>
+          <div className="map-mode">
+            <span className="map-mode-label" id="map-mode-label">
+              Colour the map by
             </span>
-            <span>
-              Rover: <StatusBadge value={shown.rover.class} />
+            <div className="segmented" role="radiogroup" aria-labelledby="map-mode-label">
+              {MODES.map((option) => (
+                <label key={option.value}>
+                  <input
+                    type="radio"
+                    name="map-mode"
+                    value={option.value}
+                    checked={mode === option.value}
+                    onChange={() => {
+                      chosenMode = option.value;
+                      setMode(option.value);
+                    }}
+                  />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+        <PatchMap region={listing.region} patches={listing.patches} mode={mode} active={active} onActive={setActive} />
+        <p className="map-readout">
+          {shown ? (
+            <>
+              <span>
+                Row {shown.top_row}, column {shown.top_col}
+              </span>
+              <span>
+                Rover: <StatusBadge value={shown.rover.class} />
+              </span>
+              <span>
+                Crew on foot: <StatusBadge value={shown.walking.class} />
+              </span>
+            </>
+          ) : (
+            <span className="muted">
+              Point at a square, or move through the table, to see a patch's classes. Select a square to open the patch.
             </span>
-            <span>
-              Crew on foot: <StatusBadge value={shown.walking.class} />
-            </span>
-          </>
-        ) : (
-          <span className="muted">
-            Point at a square, or move through the table, to see a patch's classes. Select a square to open the patch.
-          </span>
-        )}
-      </p>
-      <p className="muted map-note">
-        Each square is one patch, placed by its row and column in the stored grid. Row 0 is at the top. The grid is not
-        a north-up map.
-      </p>
+          )}
+        </p>
+        <p className="muted map-note">
+          Each square is one patch, placed by its row and column in the stored grid. Row 0 is at the top. The grid is
+          not a north-up map.
+        </p>
+      </section>
       <PatchTable key={listing.region.slug} listing={listing} onActive={setActive} />
       <p className="muted source-line">
         Classes are predictions from a CNN trained on Earth terrain. They are not safety certifications.

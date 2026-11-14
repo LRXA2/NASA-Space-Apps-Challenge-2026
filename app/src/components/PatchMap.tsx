@@ -9,7 +9,6 @@ import type { Tone } from "./StatusBadge";
 export type ClassMode = "rover" | "walking";
 
 const PATCH_CELLS = 32;
-const TONES: Tone[] = ["good", "warning", "critical"];
 const CLASS_ORDER: Record<ClassMode, (RoverClass | WalkingClass)[]> = {
   rover: ["operable", "marginal", "non_operable"],
   walking: ["easy", "caution", "unsuitable"],
@@ -104,15 +103,30 @@ export function PatchMap(props: {
     <>
       <svg className="patch-fills" width="0" height="0" aria-hidden="true" focusable="false">
         <defs>
-          {TONES.map((tone) => (
-            <pattern key={tone} id={`patch-fill-${tone}`} width="8" height="8" patternUnits="userSpaceOnUse">
-              <rect className={`tone-${tone}`} width="8" height="8" />
-              {tone === "warning" && (
-                <path className="patch-hatch patch-hatch-warning" d="M-2 2l4-4M0 8l8-8M6 10l4-4" />
-              )}
-              {tone === "critical" && <path className="patch-hatch" d="M0 0l8 8M8 0l-8 8" />}
-            </pattern>
-          ))}
+          {/* The three class fills from the design: solid, 135° stripes, 45° stripes. */}
+          <pattern id="patch-fill-good" width="6" height="6" patternUnits="userSpaceOnUse">
+            <rect width="6" height="6" fill="#3fb8a0" />
+          </pattern>
+          <pattern
+            id="patch-fill-warning"
+            width="6"
+            height="6"
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(135)"
+          >
+            <rect width="6" height="6" fill="#7a5f1c" />
+            <rect width="3" height="6" fill="#e2bc5c" />
+          </pattern>
+          <pattern
+            id="patch-fill-critical"
+            width="6"
+            height="6"
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(45)"
+          >
+            <rect width="6" height="6" fill="#9e4636" />
+            <rect width="4" height="6" fill="#e48069" />
+          </pattern>
         </defs>
       </svg>
       <div

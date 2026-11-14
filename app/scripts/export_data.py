@@ -656,6 +656,12 @@ def run_export(
             "exported_patch_count": len(records),
             "source_patch_count": source_counts[region_id],
             "patches_with_analogs": len(analogs["tiles"]),
+            "patch_size_m": _whole(first, "size_m"),
+            "spacing_m": _whole(first, "spacing_m"),
+            # Exported patches per predicted rover class, so the region list can draw its mix without the patch files.
+            "rover_class_counts": {
+                value: sum(record["rover"]["class"] == value for record in records) for value in ROVER_CLASSES
+            },
             # Outer edges of the exported tiles, in metres in the common lunar south polar stereographic CRS.
             "extent_m": {"xmin": min(xs) - half, "xmax": max(xs) + half, "ymin": min(ys) - half, "ymax": max(ys) + half},
         })

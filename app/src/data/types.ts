@@ -12,6 +12,11 @@ export interface RegionEntry {
   exported_patch_count: number;
   source_patch_count: number;
   patches_with_analogs: number;
+  /** Patch edge and grid spacing in metres. Missing in exports before these fields. */
+  patch_size_m?: number;
+  spacing_m?: number;
+  /** Exported patches per predicted rover class. Missing in exports before this field. */
+  rover_class_counts?: Record<RoverClass, number>;
   /** Outer edges of the tiles, metres, lunar south polar stereographic. Missing in exports before this field. */
   extent_m?: { xmin: number; xmax: number; ymin: number; ymax: number };
 }
@@ -193,4 +198,12 @@ export interface TerrainChannel {
   rows: number;
   cols: number;
   values: Float32Array;
+}
+
+/** Sky above the lunar south pole (public/data/sky.json). Stars are [azimuth °, altitude °, magnitude, B−V or null]. */
+export interface SkyDocument {
+  date: string;
+  source: string;
+  stars: [number, number, number, number | null][];
+  named: Record<string, [number, number]>;
 }
