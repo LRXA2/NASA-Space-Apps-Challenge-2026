@@ -15,11 +15,12 @@ import type { AssessmentName, AssessmentStatus, EnvironmentDocument, RegionEntry
 import { useData } from "../data/useData";
 import { links } from "../router";
 
-// Team blocker T3: whether the app shows the six Apollo reference scenarios. Flip to true if the team agrees.
-export const SHOW_APOLLO = false;
+// Team blocker T3 (answered yes): show the six Apollo reference scenarios beside the south-pole regions.
+export const SHOW_APOLLO = true;
 
 const LIMITS = [
-  "These are scenario results from mostly assumed inputs, not measured site assessments. Only four map values for the first seven regions are measured.",
+  "The inputs are best-effort estimates, not measurements of the sites. Only four map values for the first seven regions are measured.",
+  "A Pass marks a potential site worth a closer look, not a confirmed or safe one.",
   "Every terrain patch in a region shares the region's environment scores. They do not vary across the region in this build.",
   "Thresholds are the team's test assumptions, not NASA requirements or certifications.",
   "Operations and Survival answer different questions and are never combined into one score.",
@@ -133,7 +134,8 @@ export function EnvironmentPage() {
     { title: `${withTerrain.length} with terrain patches`, scenarios: withTerrain, terrainColumn: true },
     { title: `${environmentOnly.length} with environment data only`, scenarios: environmentOnly, terrainColumn: false },
     {
-      title: "Apollo reference scenarios",
+      title:
+        "Apollo landing sites, for comparison. Equatorial, not south-pole candidates, scored from mission records, models and best-effort estimates",
       scenarios: shown.filter((scenario) => scenario.kind === "apollo"),
       terrainColumn: false,
     },
@@ -143,10 +145,15 @@ export function EnvironmentPage() {
       <nav className="crumbs" aria-label="Breadcrumb">
         <a href={links.regions()}>Regions</a> › Environment
       </nav>
-      <h1>Environment checks for {artemis.length} candidate regions</h1>
+      <h1>Environment checks for {artemis.length} potential landing regions</h1>
       <p className="lede">
         Two separate assessments per region from the team's environment scorer, each 0–100: Operations (can a mission
         work here) and Survival (can a crew stay alive here). They are never combined.
+      </p>
+      <p className="estimates-note">
+        <strong>The inputs are best-effort estimates.</strong> Few of these conditions have been measured at the sites
+        themselves, so a Pass marks a potential site, not a confirmed one. An uncrewed rover could map a potential
+        site's terrain and measure its conditions; scoring those measurements would give a much clearer picture.
       </p>
       <Summary scenarios={artemis} environment={environment} />
       {(gatesOff(environment, "operations") || gatesOff(environment, "survival")) && (

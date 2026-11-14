@@ -193,7 +193,7 @@ The build is fully static: `npm --prefix app run build` → `app/dist/`. Hash ro
 | Host | **Open** |
 | Upload scope: environment only, or environment plus both CNNs | **Open, team input** |
 | Environment per region, or per tile with the LOLA maps | **Open** |
-| Show the Apollo reference rows | **Open, team input** |
+| Show the Apollo reference rows | **Yes (T3)**, labelled as equatorial comparison sites scored from best-effort estimates |
 | Chart library | Open. No chart needs one yet (bars and grids are hand-drawn) |
 
 Questions for teammates are in [team-blockers.md](team-blockers.md).

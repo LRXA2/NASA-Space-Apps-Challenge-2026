@@ -562,7 +562,8 @@ h3 {
   background: var(--error-surface);
 }
 
-.gates-note {
+.gates-note,
+.estimates-note {
   padding: 10px 14px;
   border: 1px solid rgba(226, 188, 92, 0.35);
   border-radius: var(--radius-inner);
@@ -2631,4 +2632,63 @@ h1.display {
 
 .checks-table[open] summary {
   margin-bottom: 8px;
+}
+
+/* Upload page: how to fill in the input template. */
+.input-guide ul {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.input-guide-table th[scope="row"] code {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.input-guide-table th[scope="row"] code + code {
+  margin-top: 4px;
+}
+
+.input-guide-table td {
+  min-width: 14em;
+  vertical-align: top;
+}
+
+.input-guide-table th[scope="row"] {
+  min-width: 16em;
+  vertical-align: top;
+}
+
+/* Phones: one block per source instead of a three-column table. */
+@media (max-width: 640px) {
+  .input-guide-table caption {
+    display: block;
+  }
+
+  .input-guide-table thead {
+    display: none;
+  }
+
+  .input-guide-table,
+  .input-guide-table tbody,
+  .input-guide-table tr,
+  .input-guide-table th[scope="row"],
+  .input-guide-table td {
+    display: block;
+    min-width: 0;
+  }
+
+  .input-guide-table tr + tr {
+    border-top: 1px solid var(--border);
+  }
+
+  .input-guide-table th[scope="row"],
+  .input-guide-table td {
+    padding: 4px 0;
+    border: 0;
+  }
+
+  .input-guide-table tr {
+    padding: 10px 0;
+  }
 }

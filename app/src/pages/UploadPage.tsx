@@ -9,6 +9,7 @@ import {
   GATES_OFF_NOTE,
   gatesOff,
 } from "../components/AssessmentView";
+import { InputGuide } from "../components/InputGuide";
 import { Limitations } from "../components/Limitations";
 import { Loading, PageMessage } from "../components/PageState";
 import { dataUrl, loadEnvironment } from "../data/loaders";
@@ -173,6 +174,7 @@ export function UploadPage() {
           </label>
         </li>
       </ol>
+      <InputGuide />
       {!files && <p className="inline-error">The scorer files are missing from this build, so uploads are switched off.</p>}
       <div aria-live="polite">
         {state.stage === "loading" && (

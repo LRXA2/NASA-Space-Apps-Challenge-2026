@@ -19,9 +19,9 @@ const STATUS: Record<AssessmentStatus, { label: string; tone: Tone }> = {
 
 export const EVIDENCE_LABELS: Record<Evidence, string> = {
   measured_maps:
-    "Four map values (Sun, Earth and sky visibility, permanent shadow) come from LOLA maps. Every other input is a test assumption.",
-  assumed: "Every input is an assumed value with no measured footprint.",
-  apollo: "Combines Apollo mission records, models and test assumptions.",
+    "Four map values (Sun, Earth and sky visibility, permanent shadow) come from LOLA maps. Every other input is a best-effort estimate, not a measurement.",
+  assumed: "Every input is a best-effort estimate with no measured footprint.",
+  apollo: "A historical equatorial landing site, shown for comparison. Combines Apollo mission records, models and best-effort estimates. No terrain data.",
   uploaded: "Values you supplied. They have not been checked against any measurement.",
 };
 

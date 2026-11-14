@@ -8,7 +8,7 @@ Updated 2026-11-14 (late evening). It replaces Ian's 13 Nov status file, which w
 
 - **Branch:** `gareth/app`. The exploration theme is committed: phases 1–4 (`f002345`), phase 5 (`6144047`) and the pair page's table toggle (`61b8ed3`). `main` (CI, `pyproject.toml`/`uv.lock`, `scripts/prepare_demo`) is merged in (`5897b9d`). The bug-scan fixes below are **not committed yet**.
 - **Pipeline run in the app:** `moon_pipeline/20261114T081013177916Z_da70aa`, region scope, Darrel's gated config. Its terrain and Earth matches are identical to earlier runs; only the environment results changed.
-- **Teammate answers:** Darrel D1–D5, Aarron A1–A4 and Hanxi H1–H3 are all answered and recorded word for word. The whole-team questions T1–T7 are still open.
+- **Teammate answers:** Darrel D1–D5, Aarron A1–A4 and Hanxi H1–H3 are all answered and recorded word for word. T3 is answered (show the Apollo rows, inputs labelled best-effort estimates); the other whole-team questions (T1, T2, T4–T7) are still open.
 
 ## Done
 
@@ -20,11 +20,12 @@ Updated 2026-11-14 (late evening). It replaces Ian's 13 Nov status file, which w
 | Bug report fixes | Pair page relief and IDs: not a data bug (query ID names the centre cell; relief is p95 − p5 vs the patch page's max − min; both match the drawn grid on all 2,910 tiles). Now labelled and explained. Heading gaps fixed. Pair URLs accept the numeric candidate. Region table paged at 50 rows |
 | Scorer hashes | The export writes and hashes LF bytes and `.gitattributes` keeps `app/public/data/` text files LF, so a host building from a clean clone serves files that match their hashes |
 | Overview and pair | Polar overview map of the 7 regions on the front page. One cursor shared by the four pair grids. Slope and elevation distribution charts on the pair page (Ian's commit `b0b4641`) |
+| Apollo rows and estimates wording (T3) | The six Apollo landing sites show on the environment page as an equatorial comparison group (all Pass both assessments). The environment page says the inputs are best-effort estimates, calls the regions "potential landing regions", says a Pass marks a potential site, not a confirmed one, and suggests an uncrewed rover to map a site and measure its conditions. Evidence labels say "best-effort estimate" instead of "test assumption" |
 | Featured tiles | Draft in [featured-tiles.md](featured-tiles.md), still valid for the current run (Earth matches unchanged) |
 | Integration | `run_all` writes `environment.csv` (compact) and `environment_detailed.csv`. Fixes G1–G3 |
 | Tile join | All 2,910 tiles have both an Aarron and a Hanxi patch. Their Moon grids agree |
 | App pages | Regions (with polar map), region map and paged table, patch, Earth analogs, Moon–Earth pair, environment list and scenario, environment upload |
-| Environment upload | Darrel's unmodified scorer in Pyodide 0.28.3 in a Web Worker, detailed mode. Output identical to the CLI for all 83 sample rows (`config_sha256` differs only by line endings, so the parity check masks it) |
+| Environment upload | Darrel's unmodified scorer in Pyodide 0.28.3 in a Web Worker, detailed mode. Output identical to the CLI for all 83 sample rows (`config_sha256` differs only by line endings, so the parity check masks it). A collapsible "Where the input values come from" guide (`app/src/components/InputGuide.tsx`) shortens the scorer README's section of the same name: source and calculation for all 27 template columns, with a link to the full README. Keep the two in step |
 | ONNX | Both CNNs export and match the saved outputs (2.2e-7 and 5.4e-7, no class changes). Both scalers are applied outside the ONNX models, so they ship as separate files (A2, H1). Not used by the app yet |
 | Tests | Integration 19 (1 skipped), app scripts 29, notebooks 79. Type-check and build pass. Scorer parity: 83 rows identical |
 | Exploration theme, phases 1–4 | Built to [ui-theme-implementation.md](ui-theme-implementation.md). Dark only (the light theme and `useColorScheme` are gone). Tokens from DESIGN.md; fonts self-hosted with `@fontsource` (Space Grotesk, Inter, IBM Plex Mono: three new dependencies). Starry page background. New shell: brand, section pills, the four-step demo path (`app/src/demo.ts`) and a footer with the run IDs. Panels, pill buttons and badges, segmented map toggle, themed tables and Limits panel ("Limits of this page"). Class fills (solid, 135° and 45° stripes). Magma slope and navy-to-white height ramps on the existing fitted, shared domain. OSM tiles darkened with a CSS filter. Polar map redrawn as nodes over dashed true-extent squares, with selected and Operations-Fail styles. New home page: hero with stats, sky panel, polar map, seven region cards, "Looks alike, measures different" and limits |
@@ -38,7 +39,6 @@ Updated 2026-11-14 (late evening). It replaces Ian's 13 Nov status file, which w
 
 - **Deploy:** waiting on the host (T2).
 - **Terrain upload (ONNX):** every model question is answered (A1 format: 42 × 42 `.asc` at 30 m, metres, no gaps; A2 and H1/H2: ship both models as ONNX with their scalers and Aarron's embedding bank; H3: show the direct slope rule beside the CNN, never overwriting it). Still waiting on the team's scope decision (T1).
-- **Apollo rows:** exported, hidden until T3 (`SHOW_APOLLO` in `app/src/pages/EnvironmentPage.tsx`). With gates on, all six Apollo rows pass both assessments.
 - **Per-tile environment:** needs the 4 LOLA maps and a `run_all` rerun (T4).
 - **Darrel's status counts don't fully match ours.** He reported Operations 60/21/2 (matches) and Survival 68 Pass, 11 Fail, 4 Unknown. With the committed config and input we get Survival 70/11/2 (Unknown: dummy_003, dummy_007). Ask him which 4 IDs are Unknown; his run may have used an uncommitted input or config.
 - **Exploration theme, phase 5 item 5:** the region page's "Five patches to start with" waits on T6 (featured tiles). Terrain upload (screen 9) is not to be built (T1).

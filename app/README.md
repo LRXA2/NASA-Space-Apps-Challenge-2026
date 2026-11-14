@@ -93,7 +93,7 @@ Route names such as `haworth` and `r32-c32` are for URLs. Every record also keep
 
 URLs use a `#` so that links work on any static host without server rules. `src/router.ts` is the only file that knows the URL form. Pair URLs use the Earth patch ID, not the rank, because rank changes if the candidate pool grows.
 
-`SHOW_APOLLO` in `src/pages/EnvironmentPage.tsx` switches the six Apollo reference scenarios on (team blocker T3).
+`SHOW_APOLLO` in `src/pages/EnvironmentPage.tsx` switches the six Apollo reference scenarios on. It is on: the team said yes to T3, with every input labelled a best-effort estimate.
 
 ## Patch map
 
