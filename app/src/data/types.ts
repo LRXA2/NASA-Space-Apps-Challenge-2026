@@ -12,6 +12,8 @@ export interface RegionEntry {
   exported_patch_count: number;
   source_patch_count: number;
   patches_with_analogs: number;
+  /** Outer edges of the tiles, metres, lunar south polar stereographic. Missing in exports before this field. */
+  extent_m?: { xmin: number; xmax: number; ymin: number; ymax: number };
 }
 
 export interface PipelineInfo {

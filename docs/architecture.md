@@ -111,14 +111,14 @@ Written by `app/scripts/export_data.py` from one `moon_pipeline/<run>/` folder, 
 
 | File | Content | Size |
 | --- | --- | --- |
-| `regions.json` | Regions, pipeline run and caveat, terrain run and claim boundary | small |
+| `regions.json` | Regions with their `extent_m` (tile bounds in the lunar south polar stereographic CRS), pipeline run and caveat, terrain run and claim boundary | small |
 | `patches/<region>.json` | Hanxi's classes and probabilities per patch, plus `tile_id` and the similarity patch ID | 1.6 MB |
 | `grids/<region>.bin` | Moon relative elevation and slope, Int16 × 10 | 12 MB |
 | `analogs/<region>.json` | Per patch: Moon check values and 15 matches (rank, cosine, bands, in-band flags) | 6.6 MB |
 | `earth/candidates.json` | The 2,222 Earth patches used in any match: site, lat/lon, check values | 0.4 MB |
 | `earth/grids.bin` | Their relative elevation and slope, same format, from Aarron's dataset | 9.1 MB |
 | `environment.json` | 17 Artemis and 6 Apollo scenarios (test rows left out): both assessments, domains read by prefix | small |
-| `environment/` | `sample_input.csv` and the scorer files for the upload, copied unchanged with SHA-256 hashes | small |
+| `environment/` | `sample_input.csv` and the scorer files for the upload, copied with SHA-256 hashes. Only line endings change (to LF, as git stores them), so the hashes match on every checkout and host | small |
 
 Moon grids from Hanxi's and Aarron's tensors agree (checked 2026-11-14), so Moon and Earth grids share one scale on the pair page.
 
@@ -140,7 +140,7 @@ app/
 
 | Route | Page | Status |
 | --- | --- | --- |
-| `#/` | Region list | exists |
+| `#/` | Polar overview map and region list | exists |
 | `#/region/<region>` | Patch map and list | exists |
 | `#/region/<region>/patch/<patch>` | Patch terrain, predictions, best Earth match, region environment | exists |
 | `#/region/<region>/patch/<patch>/analogs` | Ranked Earth matches and Earth map | exists |

@@ -34,11 +34,11 @@ Options: leave them out; show them as a small reference strip on the environment
 
 | # | Question | Answer |
 | --- | --- | --- |
-| D1 | Do hard gates stay off for the demo? With them off, all 83 rows pass and no score is ever blank | |
+| D1 | Do hard gates stay off for the demo? With them off, all 83 rows pass and no score is ever blank | Darrel, 2026-11-14 11:17: "We can include all of them. Hard gates can be disabled in the config.yml which gives the team flexibility to choose what are considerations, as each mission is different." The gates are a per-mission choice made in `config.yml`. **Still to confirm with Darrel:** does "all of them" mean all the gates switched on, or all the rows shown? The demo uses `config.yml` as it is now (gates off) |
 | D2 | Does `--detailed` (`*_details` JSON) include each check's value, threshold and Pass/Fail/Unknown status? The environment tab wants per-check evidence | |
 | D3 | Confirm the region mapping `eda_001`–`eda_017` (now hard-coded in `integration/moon_sites.py`) | |
-| D4 | Is it OK to run `env_pipeline.py` and `config.yml` unchanged in the browser (Pyodide) for the upload, and to point users at `sample_input.csv` as the template? It is built: output is identical to the CLI for all 83 sample rows | |
-| D5 | Which input columns could an outside user realistically fill in? This decides how the upload page is worded | |
+| D4 | Is it OK to run `env_pipeline.py` and `config.yml` unchanged in the browser (Pyodide) for the upload, and to point users at `sample_input.csv` as the template? It is built: output is identical to the CLI for all 83 sample rows | Darrel, 2026-11-14 11:17: yes. (1) Users update the input file. (2) `config.yml` holds the hard-gate toggles and the column weights. (3) Show the ID, Operations score and Survival score, with a "see more info" for the domain scores. Point 3 is what the upload page already does. Letting users change the gates or weights in the browser is not built |
+| D5 | Which input columns could an outside user realistically fill in? This decides how the upload page is worded | Darrel, 2026-11-14, **preliminary, to be confirmed:** hard to say without knowing what data NASA has; his values come from various online datasets. For now, the upload page follows his datasets (the template columns as they are) |
 
 ## Aarron (similarity CNN)
 
