@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: Python checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install uv and Python
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: Install locked dependencies
+        run: uv sync --locked --extra processing --extra model --extra download --extra test
+
+      - name: Validate tracked JSON
+        run: uv run --locked python scripts/check_json.py
+
+      - name: Run fast project tests
+        run: >-
+          uv run --locked --extra processing --extra model --extra download --extra test
+          pytest
+          operational_cnn/tests
+          integration/tests
+          notebooks/shared/tests
+          notebooks/modeling/terrain_similarity/tests
+          app/scripts/tests
+          "download scripts/tests"
+
+  web:
+    name: Web build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install locked web dependencies
+        run: npm ci --prefix app
+
+      - name: Build web application
+        run: npm run build --prefix app
+
