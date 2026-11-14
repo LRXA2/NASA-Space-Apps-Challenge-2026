@@ -61,6 +61,27 @@ export async function loadMoonTerrain(patches: PatchesDocument, record: PatchRec
   return decodePatch(await loadGridFile(patches.grid), patches.grid, record.grid_offset);
 }
 
+// The similarity pipeline's relief is the 5th-to-95th-percentile height range. The patch page shows the full
+// range (highest minus lowest) from the walkability pipeline, so the two numbers differ for the same terrain.
+const CHECK_LABELS: Record<string, string> = {
+  central_relief_m: "Relief, 5th to 95th percentile (m)",
+};
+
+/** A physical check's label for display. Overrides labels that would be confused with another page's measure. */
+export function checkLabel(check: { name: string; label: string }): string {
+  return CHECK_LABELS[check.name] ?? check.label;
+}
+
+/**
+ * The match a pair URL names. Takes the Earth patch ID (the canonical form) or the candidate's number in
+ * earth/candidates.json, which is what the analogs file stores.
+ */
+export function findMatch(earth: EarthDocument, matches: AnalogMatch[], id: string): AnalogMatch | undefined {
+  const byId = matches.find((entry) => candidateOf(earth, entry).id === id);
+  if (byId || !/^\d+$/.test(id)) return byId;
+  return matches.find((entry) => entry.candidate === Number(id));
+}
+
 export function checksWithin(match: AnalogMatch): number {
   return match.within.filter(Boolean).length;
 }

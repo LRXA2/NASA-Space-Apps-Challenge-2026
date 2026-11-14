@@ -1,10 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent } from "react";
-import { ASSESSMENT_TITLES, AssessmentBadge, AssessmentView, EVIDENCE_LABELS, FinalScore } from "../components/AssessmentView";
+import {
+  ASSESSMENT_TITLES,
+  AssessmentBadge,
+  AssessmentView,
+  EVIDENCE_LABELS,
+  FinalScore,
+  GATES_OFF_NOTE,
+  gatesOff,
+} from "../components/AssessmentView";
 import { Limitations } from "../components/Limitations";
 import { Loading, PageMessage } from "../components/PageState";
 import { dataUrl, loadEnvironment } from "../data/loaders";
-import type { Scenario } from "../data/types";
+import type { EnvironmentDocument, Scenario } from "../data/types";
 import { useData } from "../data/useData";
 import type { ScoreReply, ScorerFile } from "../workers/environmentWorker";
 
@@ -43,9 +51,11 @@ function score(files: ScorerFile[], csv: string, onReply: (reply: ScoreReply) =>
   return () => current.removeEventListener("message", listener);
 }
 
-function Results({ scenarios }: { scenarios: Scenario[] }) {
+function Results({ scenarios, gates }: { scenarios: Scenario[]; gates: Pick<EnvironmentDocument, "hard_gates"> }) {
+  const anyOff = gatesOff(gates, "operations") || gatesOff(gates, "survival");
   return (
     <>
+      {anyOff && <p className="gates-note">{GATES_OFF_NOTE}</p>}
       <div className="table-scroll">
         <table className="patch-table">
           <caption>Your {scenarios.length} rows, scored in this browser. User-supplied, not NASA candidate sites.</caption>
@@ -64,7 +74,8 @@ function Results({ scenarios }: { scenarios: Scenario[] }) {
                 </th>
                 {(["operations", "survival"] as const).map((name) => (
                   <td key={name}>
-                    <AssessmentBadge status={scenario[name].status} /> <FinalScore assessment={scenario[name]} />
+                    <AssessmentBadge status={scenario[name].status} gatesOff={gatesOff(gates, name)} />{" "}
+                    <FinalScore assessment={scenario[name]} />
                   </td>
                 ))}
               </tr>
@@ -79,8 +90,16 @@ function Results({ scenarios }: { scenarios: Scenario[] }) {
           </summary>
           <p className="muted">{EVIDENCE_LABELS.uploaded}</p>
           <div className="cards">
-            <AssessmentView title={ASSESSMENT_TITLES.operations} assessment={scenario.operations} />
-            <AssessmentView title={ASSESSMENT_TITLES.survival} assessment={scenario.survival} />
+            <AssessmentView
+              title={ASSESSMENT_TITLES.operations}
+              assessment={scenario.operations}
+              gatesOff={gatesOff(gates, "operations")}
+            />
+            <AssessmentView
+              title={ASSESSMENT_TITLES.survival}
+              assessment={scenario.survival}
+              gatesOff={gatesOff(gates, "survival")}
+            />
           </div>
         </details>
       ))}
@@ -164,7 +183,7 @@ export function UploadPage() {
           </p>
         )}
       </div>
-      {state.stage === "done" && <Results scenarios={state.scenarios} />}
+      {state.stage === "done" && <Results scenarios={state.scenarios} gates={environment.data} />}
       <Limitations points={LIMITS} />
     </>
   );

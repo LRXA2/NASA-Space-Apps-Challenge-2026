@@ -23,6 +23,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import importlib.util
 import json
 import math
 import sys
@@ -466,8 +467,32 @@ def environment_document(root: Path, pipeline_run: Path, run_id: str, scope: str
         "scorer": f"{SCORER} --compact",
         "sample_input": sample,
         "upload_files": copy_scorer(root, config_relative, output_dir),
+        "hard_gates": hard_gates(root, config_relative),
         "scenarios": scenarios,
     }
+
+
+def hard_gates(root: Path, config_relative: str | None) -> dict[str, bool] | None:
+    """Whether each assessment can fail a hard gate under the scorer config the run used.
+
+    Read through the scorer's own load_config and assessment_config, so overrides apply exactly as when scoring.
+    With every gate off, a Pass only means no data was missing, and the app labels it that way.
+    Returns None when the scorer or its config is not in this checkout.
+    """
+    scorer, config_path = root / SCORER, root / (config_relative or DEFAULT_SCORER_CONFIG)
+    if not (scorer.is_file() and config_path.is_file()):
+        return None
+    spec = importlib.util.spec_from_file_location("env_pipeline_for_export", scorer)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    config, _ = module.load_config(config_path)
+
+    def gated(domain: dict) -> bool:
+        return (domain.get("enabled", True) and domain.get("hard_gates_enabled", True)
+                and any(metric.get("hard_gate") is not None for metric in domain["metrics"]))
+
+    return {name: any(gated(domain) for domain in module.assessment_config(config, name)["domains"].values())
+            for name in module.ASSESSMENTS}
 
 
 def copy_scorer(root: Path, config_relative: str | None, output_dir: Path) -> list[dict] | None:

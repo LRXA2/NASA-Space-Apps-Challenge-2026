@@ -1,4 +1,4 @@
-import type { Assessment, AssessmentStatus, Evidence } from "../data/types";
+import type { Assessment, AssessmentName, AssessmentStatus, EnvironmentDocument, Evidence } from "../data/types";
 import { ToneIcon } from "./StatusBadge";
 import type { Tone } from "./StatusBadge";
 
@@ -19,8 +19,18 @@ export const EVIDENCE_LABELS: Record<Evidence, string> = {
 
 export const ASSESSMENT_TITLES = { operations: "Operations", survival: "Survival" } as const;
 
-export function AssessmentBadge({ status }: { status: AssessmentStatus }) {
+/** True when the scorer config says this assessment has no hard gate that could fail. */
+export function gatesOff(environment: Pick<EnvironmentDocument, "hard_gates">, name: AssessmentName): boolean {
+  return environment.hard_gates?.[name] === false;
+}
+
+export const GATES_OFF_NOTE =
+  "Hard gates are switched off in the scorer's configuration, so nothing can fail. “Pass · gates off” only means no required input was missing. It is not a verdict on the site.";
+
+export function AssessmentBadge({ status, gatesOff = false }: { status: AssessmentStatus; gatesOff?: boolean }) {
   const { label, tone } = STATUS[status];
+  // With no gate able to fail, Pass is not a verdict: no tick, and the label says why.
+  if (status === "Pass" && gatesOff) return <span className="badge badge-small badge-plain">Pass · gates off</span>;
   return (
     <span className="badge badge-small">
       <ToneIcon tone={tone} />
@@ -37,7 +47,8 @@ export function FinalScore({ assessment }: { assessment: Assessment }) {
 }
 
 /** One assessment: status, final score, fail reasons and every domain score, as the scorer wrote them. */
-export function AssessmentView({ title, assessment }: { title: string; assessment: Assessment }) {
+export function AssessmentView(props: { title: string; assessment: Assessment; gatesOff?: boolean }) {
+  const { title, assessment } = props;
   const id = `assessment-${title.toLowerCase()}`;
   return (
     <section className="card" aria-labelledby={id}>
@@ -46,7 +57,7 @@ export function AssessmentView({ title, assessment }: { title: string; assessmen
         <div>
           <dt>Status</dt>
           <dd>
-            <AssessmentBadge status={assessment.status} />
+            <AssessmentBadge status={assessment.status} gatesOff={props.gatesOff} />
           </dd>
         </div>
         <div>

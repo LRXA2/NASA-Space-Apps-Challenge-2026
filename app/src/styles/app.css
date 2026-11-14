@@ -798,3 +798,53 @@ details.card[open] > summary {
     font-size: 15px;
   }
 }
+
+/* A Pass that no gate could have failed: plain text in a dashed outline, no status colour or tick. */
+.badge-plain {
+  padding: 1px 8px;
+  border: 1px dashed var(--border);
+  border-radius: 999px;
+  color: var(--text-secondary);
+}
+
+.gates-note {
+  padding: 10px 12px;
+  border-left: 3px solid var(--status-warning);
+  background: var(--surface-card);
+  color: var(--text-secondary);
+}
+
+/* Region patch table pages. */
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 16px;
+}
+
+.pager button {
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.pager button:disabled {
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.pager button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* A table right under a card heading: the heading's margin is enough. Its own top margin left a 32 px gap. */
+.card h2 + .table-scroll > .patch-table {
+  margin-top: 0;
+}

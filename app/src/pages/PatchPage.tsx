@@ -7,7 +7,7 @@ import { ProbabilityBars } from "../components/ProbabilityBars";
 import { StatusBadge, classLabel } from "../components/StatusBadge";
 import { TerrainCanvas } from "../components/TerrainCanvas";
 import { CheckCount } from "../components/CheckCount";
-import { AssessmentBadge, FinalScore } from "../components/AssessmentView";
+import { AssessmentBadge, FinalScore, gatesOff } from "../components/AssessmentView";
 import { candidateOf, checksWithin, loadPatchAnalogs, poolLabel, siteName } from "../data/analogs";
 import { DataError, decodePatch, loadEnvironment, loadGridFile } from "../data/loaders";
 import type { PatchRecord, PatchesDocument, RoverClass, TerrainChannel, WalkingClass } from "../data/types";
@@ -75,7 +75,8 @@ function EnvironmentSummary({ regionSourceId }: { regionSourceId: string }) {
           <div key={name}>
             <dt>{name === "operations" ? "Operations" : "Survival"}</dt>
             <dd>
-              <AssessmentBadge status={scenario[name].status} /> <FinalScore assessment={scenario[name]} />
+              <AssessmentBadge status={scenario[name].status} gatesOff={gatesOff(loaded.data, name)} />{" "}
+              <FinalScore assessment={scenario[name]} />
             </dd>
           </div>
         ))}

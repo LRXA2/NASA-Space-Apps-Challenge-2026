@@ -5,7 +5,16 @@ import { Limitations } from "../components/Limitations";
 import { Loading, PageMessage } from "../components/PageState";
 import { TerrainCanvas } from "../components/TerrainCanvas";
 import type { Cell } from "../components/TerrainCanvas";
-import { candidateOf, checksWithin, loadEarthTerrain, loadMoonTerrain, loadPatchAnalogs, siteName } from "../data/analogs";
+import {
+  candidateOf,
+  checkLabel,
+  checksWithin,
+  findMatch,
+  loadEarthTerrain,
+  loadMoonTerrain,
+  loadPatchAnalogs,
+  siteName,
+} from "../data/analogs";
 import type { PatchAnalogs } from "../data/analogs";
 import { DataError } from "../data/loaders";
 import type { AnalogMatch, EarthCandidate, TerrainChannel } from "../data/types";
@@ -27,8 +36,14 @@ interface Pair extends PatchAnalogs {
 
 async function loadPair(region: string, patch: string, candidateId: string): Promise<Pair> {
   const base = await loadPatchAnalogs(region, patch);
-  const match = base.tile?.matches.find((entry) => candidateOf(base.earth, entry).id === candidateId);
-  if (!match) throw new DataError(`Earth patch ${candidateId} is not one of this patch's matches.`);
+  const matches = base.tile?.matches ?? [];
+  const match = findMatch(base.earth, matches, candidateId);
+  if (!match) {
+    const example = matches[0] ? ` For example ${candidateOf(base.earth, matches[0]).id} (or its number, ${matches[0].candidate}).` : "";
+    throw new DataError(
+      `"${candidateId}" is not one of this patch's Earth matches. The address ends with an Earth patch ID from its match list.${example}`,
+    );
+  }
   return { ...base, match, candidate: candidateOf(base.earth, match) };
 }
 
@@ -134,15 +149,27 @@ export function PairPage({ region, patch, candidate }: { region: string; patch: 
         <CheckCount within={checksWithin(match)} total={match.within.length} /> physical checks in band.
       </p>
       <p className="muted source-line">
-        Moon tile <code>{record.tile_id}</code> · Earth patch <code>{pair.candidate.id}</code> at{" "}
-        {pair.candidate.latitude.toFixed(4)}, {pair.candidate.longitude.toFixed(4)}
+        Moon patch {record.slug}: shared tile ID <code>{record.tile_id}</code> (its centre in metres).
+        {record.similarity_patch_id && (
+          <>
+            {" "}
+            The similarity pipeline names the same 960 m square by its centre cell,{" "}
+            <code>{record.similarity_patch_id}</code>, so its row and column are 16 cells (half a tile) more than the
+            patch name's top-left corner. The checks and the Moon grids below are the same terrain.
+          </>
+        )}{" "}
+        Earth patch <code>{pair.candidate.id}</code> at {pair.candidate.latitude.toFixed(4)},{" "}
+        {pair.candidate.longitude.toFixed(4)}.
       </p>
 
       <section className="card" aria-labelledby="checks-title">
         <h2 id="checks-title">Physical checks</h2>
         <div className="table-scroll">
           <table className="patch-table">
-            <caption>Values from the similarity pipeline. Difference is Earth minus Moon.</caption>
+            <caption>
+              Values from the similarity pipeline. Difference is Earth minus Moon. Relief here is the 5th to 95th
+              percentile height range, so it is lower than the patch page's highest-minus-lowest relief.
+            </caption>
             <thead>
               <tr>
                 <th scope="col">Measurement</th>
@@ -167,7 +194,7 @@ export function PairPage({ region, patch, candidate }: { region: string; patch: 
                 const earthValue = pair.candidate.checks[index];
                 return (
                   <tr key={check.name}>
-                    <th scope="row">{check.label}</th>
+                    <th scope="row">{checkLabel(check)}</th>
                     <td className="number">{format(moonValue)}</td>
                     <td className="number">{format(earthValue)}</td>
                     <td className="number">{format(earthValue - moonValue).replace("-", "−")}</td>

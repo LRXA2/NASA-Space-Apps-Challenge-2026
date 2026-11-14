@@ -58,6 +58,24 @@ def similarity_id(row: dict[str, str]) -> str:
     return f"{REGION}:full_context:{int(row['top_row']) + 16}:{int(row['top_col']) + 16}:960"
 
 
+# Mirrors env_pipeline.py's config interface: load_config returns (config, hash), and assessment_config gives one
+# assessment's domains. Operations uses thermal and dust, survival uses radiation.
+FAKE_SCORER = """import ast
+from pathlib import Path
+
+ASSESSMENTS = ("operations", "survival")
+USES = {"operations": ("thermal", "dust"), "survival": ("radiation",)}
+
+
+def load_config(path):
+    return ast.literal_eval(Path(path).read_text()), "hash"
+
+
+def assessment_config(config, assessment):
+    return {"domains": {name: d for name, d in config["domains"].items() if name in USES[assessment]}}
+"""
+
+
 def synthetic_grids(count: int = 2, channels: int = 5) -> np.ndarray:
     """Patch p, channel c, row r, column k has a distinct value."""
     grids = np.zeros((count, channels, 32, 32), dtype=np.float32)
@@ -352,13 +370,15 @@ class EnvironmentTests(ExportCase):
         self.assertEqual(written, (self.root / "env" / "sample_input.csv").read_bytes().replace(b"\r\n", b"\n"))
         self.assertEqual(sample["sha256"], hashlib.sha256(written).hexdigest())
 
-    def test_scorer_hashes_match_the_published_files(self) -> None:
+    def write_scorer(self, domains: dict) -> None:
+        """A stand-in scorer with the real one's config interface, written with CRLF like a Windows checkout."""
         scorer = self.root / export_data.SCORER
         scorer.parent.mkdir(parents=True, exist_ok=True)
-        scorer.write_bytes(b"print('scorer')\r\n")
-        config = self.root / export_data.DEFAULT_SCORER_CONFIG
-        config.parent.mkdir(parents=True, exist_ok=True)
-        config.write_bytes(b"hard_gates: false\r\n")
+        scorer.write_bytes(FAKE_SCORER.encode().replace(b"\n", b"\r\n"))
+        (self.root / export_data.DEFAULT_SCORER_CONFIG).write_bytes(repr({"domains": domains}).encode() + b"\r\n")
+
+    def test_scorer_hashes_match_the_published_files(self) -> None:
+        self.write_scorer({})
         self.export()
         files = self.read("environment.json")["upload_files"]
         self.assertEqual([entry["name"] for entry in files],
@@ -367,6 +387,30 @@ class EnvironmentTests(ExportCase):
             written = (self.output_dir / entry["file"]).read_bytes()
             self.assertNotIn(b"\r\n", written, entry["name"])
             self.assertEqual(entry["sha256"], hashlib.sha256(written).hexdigest(), entry["name"])
+
+    def test_hard_gates_follow_the_effective_config(self) -> None:
+        gate = {"operator": "below_threshold", "threshold": 1.0}
+        self.write_scorer({
+            # Toggle on but no threshold defined: nothing can fail. Operations uses thermal and dust.
+            "thermal": {"hard_gates_enabled": True, "metrics": [{"hard_gate": None}]},
+            # Threshold defined but toggle off.
+            "dust": {"hard_gates_enabled": False, "metrics": [{"hard_gate": gate}]},
+            # Threshold defined and toggle on: survival can fail.
+            "radiation": {"hard_gates_enabled": True, "metrics": [{"hard_gate": gate}]},
+        })
+        self.export()
+        self.assertEqual(self.read("environment.json")["hard_gates"], {"operations": False, "survival": True})
+
+    def test_hard_gates_are_null_without_the_scorer(self) -> None:
+        self.export()
+        self.assertIsNone(self.read("environment.json")["hard_gates"])
+
+    def test_current_team_config_has_every_gate_off(self) -> None:
+        # Guards the "gates off" label against a config change. Update this when the team switches gates on.
+        repo = Path(__file__).resolve().parents[3]
+        if not (repo / export_data.SCORER).is_file():
+            self.skipTest("scorer not in this checkout")
+        self.assertEqual(export_data.hard_gates(repo, None), {"operations": False, "survival": False})
 
     def test_old_format_and_unknown_ids_are_rejected(self) -> None:
         self.write_environment([{"ID": "eda_001", "final_habitability_score": "50"}],

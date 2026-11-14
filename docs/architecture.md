@@ -117,7 +117,7 @@ Written by `app/scripts/export_data.py` from one `moon_pipeline/<run>/` folder, 
 | `analogs/<region>.json` | Per patch: Moon check values and 15 matches (rank, cosine, bands, in-band flags) | 6.6 MB |
 | `earth/candidates.json` | The 2,222 Earth patches used in any match: site, lat/lon, check values | 0.4 MB |
 | `earth/grids.bin` | Their relative elevation and slope, same format, from Aarron's dataset | 9.1 MB |
-| `environment.json` | 17 Artemis and 6 Apollo scenarios (test rows left out): both assessments, domains read by prefix | small |
+| `environment.json` | 17 Artemis and 6 Apollo scenarios (test rows left out): both assessments, domains read by prefix. `hard_gates` says whether each assessment can fail a gate under the scorer config; the app labels a Pass "gates off" when it can't | small |
 | `environment/` | `sample_input.csv` and the scorer files for the upload, copied with SHA-256 hashes. Only line endings change (to LF, as git stores them), so the hashes match on every checkout and host | small |
 
 Moon grids from Hanxi's and Aarron's tensors agree (checked 2026-11-14), so Moon and Earth grids share one scale on the pair page.
@@ -199,7 +199,8 @@ Questions for teammates are in [team-blockers.md](team-blockers.md).
 
 ## Known caveats
 
-- Hard gates are off in Darrel's config, so all 83 rows are `Pass` and no score is blank.
+- Hard gates are off in Darrel's config, so all 83 rows are `Pass` and no score is blank. No metric defines a gate threshold either, so switching the toggles on alone would still gate nothing. The app shows "Pass · gates off".
+- Two relief measures: the patch page shows Hanxi's max − min (`relative_relief_m`), and the physical checks use Aarron's p95 − p5 (`central_relief_m`). Both come from the same grid.
 - Atacama is the best match for about 88% of tiles. It also has 3,078 of the 5,693 Earth patches.
 - 193 match rows have cosine above 0.95 with 0 of 5 physical checks in band. Keep these visible: they show why physical checks matter.
 - The Earth simulation-readiness score does not exist. Show it as not computed.

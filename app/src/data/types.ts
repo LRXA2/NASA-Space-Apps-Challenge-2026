@@ -126,6 +126,7 @@ export interface EarthDocument {
 }
 
 export type AssessmentStatus = "Pass" | "Fail" | "Unknown";
+export type AssessmentName = "operations" | "survival";
 
 export interface Assessment {
   status: AssessmentStatus;
@@ -155,6 +156,8 @@ export interface EnvironmentDocument {
   sample_input: { file: string; source: string; sha256: string } | null;
   /** The scorer and helpers for the browser upload. Null when the scorer was not in the exporting checkout. */
   upload_files: { name: string; file: string; sha256: string }[] | null;
+  /** Whether each assessment can fail a hard gate under the scorer config. Null or missing: not known. */
+  hard_gates?: Record<AssessmentName, boolean> | null;
   scenarios: Scenario[];
 }
 

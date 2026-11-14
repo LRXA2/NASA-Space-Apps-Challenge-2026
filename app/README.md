@@ -65,7 +65,7 @@ npm --prefix app run check:scorer -- ../data/processed/moon_pipeline/<run>/envir
 | `analogs/<region>.json` | Per patch slug: the tile's five Moon check values and its matches (candidate index, overall and per-site rank, cosine, tolerance bands, in-band flags) |
 | `earth/candidates.json` | Earth sites, the five check labels, and every Earth patch used in a match (site, lat/lon, check values, `grid_offset`) |
 | `earth/grids.bin` | Earth terrain grids for those patches |
-| `environment.json` | Artemis and Apollo scenarios: Operations and Survival status, final score, fail reasons, domain scores, evidence label. Test rows are left out |
+| `environment.json` | Artemis and Apollo scenarios: Operations and Survival status, final score, fail reasons, domain scores, evidence label. Test rows are left out. `hard_gates` (`{operations, survival}` booleans, or null without the scorer) is read from the scorer config through its own `assessment_config` |
 | `environment/sample_input.csv` | The scorer's input template, copied unchanged |
 | `environment/scorer/` | `env_pipeline.py`, `config.yml` and the two upload helpers, copied unchanged with SHA-256 hashes in `environment.json` |
 

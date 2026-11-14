@@ -1,5 +1,13 @@
 import { useEffect } from "react";
-import { ASSESSMENT_TITLES, AssessmentBadge, AssessmentView, EVIDENCE_LABELS, FinalScore } from "../components/AssessmentView";
+import {
+  ASSESSMENT_TITLES,
+  AssessmentBadge,
+  AssessmentView,
+  EVIDENCE_LABELS,
+  FinalScore,
+  GATES_OFF_NOTE,
+  gatesOff,
+} from "../components/AssessmentView";
 import { Limitations } from "../components/Limitations";
 import { Loading, PageMessage } from "../components/PageState";
 import { DataError, dataUrl, loadEnvironment, loadRegions } from "../data/loaders";
@@ -14,7 +22,6 @@ const LIMITS = [
   "These are scenario results from mostly assumed inputs, not measured site assessments. Only four map values for the first seven regions are measured.",
   "Every terrain patch in a region shares the region's environment scores. They do not vary across the region in this build.",
   "Thresholds are the team's test assumptions, not NASA requirements or certifications.",
-  "Hard gates are switched off in the scorer's current configuration, so no scenario can fail a gate.",
   "Operations and Survival answer different questions and are never combined into one score.",
 ];
 
@@ -70,6 +77,9 @@ export function EnvironmentPage() {
         Two separate assessments per region from the team's environment scorer: Operations (can a mission work here) and
         Survival (can a crew stay alive here).
       </p>
+      {(gatesOff(environment, "operations") || gatesOff(environment, "survival")) && (
+        <p className="gates-note">{GATES_OFF_NOTE}</p>
+      )}
       {environment.sample_input && <SampleDownload file={environment.sample_input.file} />}
       {groups.map((group) => (
         <div className="table-scroll" key={group.title}>
@@ -94,7 +104,8 @@ export function EnvironmentPage() {
                   </th>
                   {(["operations", "survival"] as const).map((name) => (
                     <td key={name}>
-                      <AssessmentBadge status={scenario[name].status} /> <FinalScore assessment={scenario[name]} />
+                      <AssessmentBadge status={scenario[name].status} gatesOff={gatesOff(environment, name)} />{" "}
+                      <FinalScore assessment={scenario[name]} />
                     </td>
                   ))}
                   <td>
@@ -146,9 +157,20 @@ export function ScenarioPage({ scenario: scenarioId }: { scenario: string }) {
         {EVIDENCE_LABELS[scenario.evidence]} Pipeline run <code>{environment.pipeline_run}</code>.
       </p>
       <div className="cards">
-        <AssessmentView title={ASSESSMENT_TITLES.operations} assessment={scenario.operations} />
-        <AssessmentView title={ASSESSMENT_TITLES.survival} assessment={scenario.survival} />
+        <AssessmentView
+          title={ASSESSMENT_TITLES.operations}
+          assessment={scenario.operations}
+          gatesOff={gatesOff(environment, "operations")}
+        />
+        <AssessmentView
+          title={ASSESSMENT_TITLES.survival}
+          assessment={scenario.survival}
+          gatesOff={gatesOff(environment, "survival")}
+        />
       </div>
+      {(gatesOff(environment, "operations") || gatesOff(environment, "survival")) && (
+        <p className="muted">{GATES_OFF_NOTE}</p>
+      )}
       {environment.sample_input && <SampleDownload file={environment.sample_input.file} />}
       <Limitations points={LIMITS} />
     </>
