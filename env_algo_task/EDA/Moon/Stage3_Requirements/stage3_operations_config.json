@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "body": "Moon",
+  "cases_config": "stage3_operations_cases.json",
+  "pdf_pages": "data/verification/subject_eda_20261110T165541Z/operations_pdf_pages.json",
+  "resource_analysis_run": "stage3_resources_eda/20261109T143118149992Z_5552dc",
+  "scope": "Source/page-linked operational evidence and historical duration/rate decomposition; no selected equipment, modern limits or Stage 5 changes"
+}

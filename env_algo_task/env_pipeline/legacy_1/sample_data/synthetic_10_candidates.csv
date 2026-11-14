@@ -1,0 +1,11 @@
+candidate_id,scenario,data_basis,solar_visibility_median,earth_visibility_median,slope_q90_deg,available_kg,reserve_kg,generation_W,load_W,minimum_component_K,maximum_component_K,contact_available,capacity_N,demand_N,reserve_N,omit_requirement,wrong_thermal_quantity,expected_stage3_status,expected_diagnostic_status
+SYN_001,All five fixture requirements pass; higher preference,synthetic_fixture_only,0.9,0.8,5,5,1,10,5,280,300,True,1000,800,100,,False,pass,pass
+SYN_002,All five fixture requirements pass; lower preference,synthetic_fixture_only,0.7,0.7,6,5,1,10,5,280,300,True,1000,800,100,,False,pass,pass
+SYN_003,Insufficient consumable stock,synthetic_fixture_only,0.9,0.9,4,2,1,10,5,280,300,True,1000,800,100,,False,fail,pass
+SYN_004,Insufficient stored power over the operating period,synthetic_fixture_only,0.9,0.9,4,5,1,0,5,280,300,True,1000,800,100,,False,fail,pass
+SYN_005,Component response below the fixture operating limit,synthetic_fixture_only,0.4,0.8,4,5,1,10,5,260,300,True,1000,800,100,,False,fail,fail
+SYN_006,Outage exceeds the fixture allowance,synthetic_fixture_only,0.8,0.4,4,5,1,10,5,280,300,False,1000,800,100,,False,fail,fail
+SYN_007,Insufficient fixture support-load capacity,synthetic_fixture_only,0.8,0.8,9,5,1,10,5,280,300,True,500,800,100,,False,fail,fail
+SYN_008,Missing mandatory power evidence despite high proxy scores,synthetic_fixture_only,0.95,0.95,4,5,1,10,5,280,300,True,1000,800,100,power,False,unknown,pass
+SYN_009,Surface temperature is not applicable component response,synthetic_fixture_only,0.95,0.95,4,5,1,10,5,280,300,True,1000,800,100,,True,unknown,pass
+SYN_010,Known consumable failure dominates missing power evidence,synthetic_fixture_only,0.95,0.95,4,2,1,10,5,280,300,True,1000,800,100,power,False,fail,pass

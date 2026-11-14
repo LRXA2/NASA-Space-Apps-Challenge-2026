@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "lunar_views_run": "data/processed/lunar_terrain_views/20261105T151647350305Z_0a2735",
+  "model_run": "data/processed/terrain_human_walkability_model/20261112T103924450917Z_bd0fc2",
+  "view": "full_context",
+  "patch_size_m": 960,
+  "spacing_m": 30,
+  "center_stride_cells": 32,
+  "batch_size": 128,
+  "direction_probability_threshold": 0.5,
+  "claim_boundary": "Earth-trained terrain-only human walkability proxy on unlabeled lunar terrain; not measured EVA performance or human safety"
+}

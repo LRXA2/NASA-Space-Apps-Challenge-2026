@@ -12,6 +12,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import torch
+from notebooks.modeling.terrain_similarity.model_weights import save_checkpoint
 from notebooks.shared.inspection import check_input, verify_run
 from notebooks.shared.processing import MOON_CRS, Run
 from rasterio.warp import transform_bounds
@@ -251,7 +252,7 @@ def run_experiments(root: Path, config_path: Path) -> Path:
         raise ValueError('Configured CUDA is unavailable; explicitly choose CPU in the configuration if needed')
     with Run(root, 'terrain_similarity_cnn', config, 'modeling/terrain_similarity/29_similarity_cnn_experiment.ipynb') as run:
         for path in [config_path, Path(__file__), *(root / 'notebooks' / name for name in
-                     ['modeling/terrain_similarity/similarity_cnn.py', 'modeling/terrain_similarity/terrain_learning.py', 'modeling/terrain_similarity/terrain_dataset.py', 'shared/inspection.py',
+                     ['modeling/terrain_similarity/model_weights.py', 'modeling/terrain_similarity/similarity_cnn.py', 'modeling/terrain_similarity/terrain_learning.py', 'modeling/terrain_similarity/terrain_dataset.py', 'shared/inspection.py',
                       'shared/patch_analysis.py', 'shared/retrieval_analysis.py', 'requirements-modeling.txt'])]:
             run.input(path)
         revision = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root, capture_output=True, text=True, check=False)
@@ -273,8 +274,8 @@ def run_experiments(root: Path, config_path: Path) -> Path:
                 learned = embed(model, values, device)
                 history.to_csv(run.path(f'{name}/training_history.csv'), index=False)
                 exposure.to_csv(run.path(f'{name}/training_exposure.csv'), index=False)
-                checkpoint = run.path(f'{name}/model.pt')
-                torch.save({key: value.detach().cpu() for key, value in model.state_dict().items()}, checkpoint)
+                checkpoint = save_checkpoint(root, run.directory, view, mode,
+                                             {key: value.detach().cpu() for key, value in model.state_dict().items()})
                 restored = TerrainSimilarityCNN().to(device)
                 restored.load_state_dict(torch.load(checkpoint, map_location=device, weights_only=True))
                 np.testing.assert_allclose(embed(restored, values[queries[:8]], device), learned[queries[:8]], atol=1e-5, rtol=1e-5)

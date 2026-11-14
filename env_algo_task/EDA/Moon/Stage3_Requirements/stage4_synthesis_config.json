@@ -1,0 +1,146 @@
+{
+  "schema": 1,
+  "body": "Moon",
+  "scope": "Stage 4 proposed requirements/evidence specification only; no engine integration, selected mission/equipment defaults, adopted limits or weights",
+  "sources": [
+    {
+      "subject": "uv",
+      "run": "subject_uv/20261110T171338818645Z_f97fcb",
+      "proposal_table": "stage4_uv_proposals.csv",
+      "datasets": "D09 D32",
+      "kind": "solar_reference_and_historical_map",
+      "tables": [
+        "band_daily_context.csv",
+        "spectral_support.csv",
+        "lamp_native_quality.csv",
+        "lamp_time_applicability.csv"
+      ]
+    },
+    {
+      "subject": "plasma",
+      "run": "subject_plasma/20261110T172843740060Z_464803",
+      "proposal_table": "stage4_plasma_proposals.csv",
+      "datasets": "D11 D11_ESA",
+      "kind": "orbital_context",
+      "tables": [
+        "esa_series_catalog.csv",
+        "native_quality_years.csv",
+        "crosscheck_Dar044.csv"
+      ]
+    },
+    {
+      "subject": "hfe",
+      "run": "subject_hfe/20261110T173254525786Z_18cac5",
+      "proposal_table": "stage4_hfe_proposals.csv",
+      "datasets": "D28",
+      "kind": "historical_deployed_sensor",
+      "tables": [
+        "sensor_metadata.csv",
+        "file_clock_lineage.csv",
+        "native_field_statistics.csv"
+      ]
+    },
+    {
+      "subject": "dust",
+      "run": "subject_dust/20261110T173821043184Z_4dd78e",
+      "proposal_table": "stage4_dust_proposals.csv",
+      "datasets": "D10",
+      "kind": "historical_orbital_context",
+      "tables": [
+        "field_metadata.csv",
+        "mass_threshold_summary.csv",
+        "current_uncertainty_by_file.csv"
+      ]
+    },
+    {
+      "subject": "radiation",
+      "run": "subject_radiation_time/20261110T174314830488Z_b5df1a",
+      "proposal_table": "stage4_radiation_proposals.csv",
+      "datasets": "D07 D08 D31",
+      "kind": "lunar_orbit_and_Earth_orbit_space_weather_context",
+      "tables": [
+        "series_catalog.csv",
+        "solar_associations.csv",
+        "descriptive_upper_tail_thresholds.csv"
+      ]
+    },
+    {
+      "subject": "polar_thermal",
+      "run": "subject_polar_thermal/20261110T175233712798Z_118112",
+      "proposal_table": "stage4_polar_thermal_proposals.csv",
+      "datasets": "D20_PRP",
+      "kind": "static_thermal_resource_model",
+      "tables": [
+        "field_time_applicability.csv",
+        "native_model_statistics.csv",
+        "regional_support.csv"
+      ]
+    },
+    {
+      "subject": "exosphere",
+      "run": "subject_exosphere/20261110T180950163652Z_95254f",
+      "proposal_table": "stage4_exosphere_proposals.csv",
+      "datasets": "D35",
+      "kind": "historical_orbital_context",
+      "tables": [
+        "field_metadata.csv",
+        "species_clock_support.csv",
+        "clock_filter_effect_old_cohort.csv",
+        "cohort_effect_fixed_clock.csv"
+      ]
+    },
+    {
+      "subject": "neutrons",
+      "run": "subject_neutrons/20261110T180136708725Z_23f6a8",
+      "proposal_table": "stage4_neutron_proposals.csv",
+      "datasets": "D29",
+      "kind": "lunar_orbital_raw_spectra",
+      "tables": [
+        "field_metadata.csv",
+        "zero_channel_summary.csv",
+        "unit_holds.csv"
+      ]
+    },
+    {
+      "subject": "seismic",
+      "run": "subject_seismic/20261110T183033924956Z_ba610a",
+      "proposal_table": "stage4_seismic_proposals.csv",
+      "datasets": "D13 D14_PSE",
+      "kind": "historical_station_and_bounded_response_experiment",
+      "tables": [
+        "response_metadata.csv",
+        "response_experiments.csv",
+        "archived_ATT_context.csv"
+      ]
+    },
+    {
+      "subject": "terrain_time",
+      "run": "subject_terrain_time/20261110T210226961886Z_f00b81",
+      "proposal_table": "stage4_terrain_proposals.csv",
+      "datasets": "D02 D03 D04 D05 D06 D15 D19 D26 D27 D30",
+      "kind": "historical_model_and_static_image_terrain_context",
+      "tables": [
+        "geometry_periods.csv",
+        "cadence_sensitivity.csv",
+        "static_vs_point_context.csv",
+        "source_support_context.csv"
+      ]
+    },
+    {
+      "subject": "operations",
+      "run": "subject_operations/20261110T211407977377Z_3abbf8",
+      "proposal_table": "stage4_operations_proposals.csv",
+      "datasets": "retained PDFs M01-M14 S01-S03 R01-R02",
+      "kind": "historical_operational_or_reference_context",
+      "tables": [
+        "operational_cases.csv",
+        "conditional_source_comparison.csv",
+        "duration_rate_decomposition.csv",
+        "library_scope.csv"
+      ]
+    }
+  ],
+  "outline_crosswalk": "research/outline_environment_crosswalk.csv",
+  "active_register": "research/environment_rule_register.json",
+  "subject_config": "stage3_subject_config.json"
+}

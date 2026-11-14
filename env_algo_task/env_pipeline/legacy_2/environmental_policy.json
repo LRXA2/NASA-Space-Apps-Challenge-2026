@@ -1,0 +1,242 @@
+{
+  "schema": 1,
+  "id": "moon_accepted_eda_quantities_v2",
+  "body": "Moon",
+  "mode": "unconfigured",
+  "note": "Eight environmental categories only; no standalone terrain input or score. All contextual quantities retain native units and time/spatial scope. Scientific limits and weights are not adopted.",
+  "metrics": [
+    {
+      "id": "solar_visibility_median",
+      "column": "solar_visibility_median",
+      "domain": "solar_illumination",
+      "unit": "fraction",
+      "quantity": "spatial_median_sun_visibility",
+      "temporal_support": "static",
+      "evidence_family": "solar_visibility_median",
+      "usage": "candidate",
+      "minimum": 0,
+      "maximum": 1
+    },
+    {
+      "id": "geometry_sky_visible_fraction_4pi",
+      "column": "geometry_sky_visible_fraction_4pi",
+      "domain": "radiation",
+      "unit": "fraction",
+      "quantity": "visible_sky_solid_angle_divided_by_4pi",
+      "temporal_support": "static",
+      "evidence_family": "geometry_sky_visible_fraction_4pi",
+      "usage": "context"
+    },
+    {
+      "id": "geometry_psr_fraction_cells",
+      "column": "geometry_psr_fraction_cells",
+      "domain": "solar_illumination",
+      "unit": "fraction",
+      "quantity": "fraction_candidate_cells_classed_PSR",
+      "temporal_support": "static",
+      "evidence_family": "geometry_psr_fraction_cells",
+      "usage": "context",
+      "minimum": 0,
+      "maximum": 1
+    },
+    {
+      "id": "thermal_phase_median_min_K",
+      "column": "thermal_phase_median_min_K",
+      "domain": "thermal",
+      "unit": "K",
+      "quantity": "min_of_fixed_common_phase_product_medians",
+      "temporal_support": "static",
+      "evidence_family": "thermal_phase_median_min_K",
+      "usage": "context"
+    },
+    {
+      "id": "thermal_phase_median_max_K",
+      "column": "thermal_phase_median_max_K",
+      "domain": "thermal",
+      "unit": "K",
+      "quantity": "max_of_fixed_common_phase_product_medians",
+      "temporal_support": "static",
+      "evidence_family": "thermal_phase_median_max_K",
+      "usage": "context"
+    },
+    {
+      "id": "thermal_phase_median_span_K",
+      "column": "thermal_phase_median_span_K",
+      "domain": "thermal",
+      "unit": "K",
+      "quantity": "span_of_fixed_common_phase_product_medians",
+      "temporal_support": "static",
+      "evidence_family": "thermal_phase_median_span_K",
+      "usage": "context"
+    },
+    {
+      "id": "reference_region_2020_2021_sun_clear_fraction",
+      "column": "reference_region_2020_2021_sun_clear_fraction",
+      "domain": "solar_illumination",
+      "unit": "fraction",
+      "quantity": "sampled_clear_fraction",
+      "temporal_support": "window",
+      "evidence_family": "reference_region_2020_2021_sun_clear_fraction",
+      "usage": "context"
+    },
+    {
+      "id": "reference_region_2020_2021_blocked_sample_span_h",
+      "column": "reference_region_2020_2021_blocked_sample_span_h",
+      "domain": "solar_illumination",
+      "unit": "h",
+      "quantity": "longest_observed_blocked_sample_span",
+      "temporal_support": "window",
+      "evidence_family": "reference_region_2020_2021_blocked_sample_span_h",
+      "usage": "context"
+    },
+    {
+      "id": "context_crater_counter_median",
+      "column": "context_crater_counter_median",
+      "domain": "radiation",
+      "unit": "counts/SEC record",
+      "quantity": "median_of_daily_selected_state_counter_medians",
+      "temporal_support": "window",
+      "evidence_family": "context_crater_counter_median",
+      "usage": "context"
+    },
+    {
+      "id": "context_crater_reported_daily_max",
+      "column": "context_crater_reported_daily_max",
+      "domain": "radiation",
+      "unit": "counts/SEC record",
+      "quantity": "maximum_of_reported_daily_selected_state_counters",
+      "temporal_support": "window",
+      "evidence_family": "context_crater_reported_daily_max",
+      "usage": "context"
+    },
+    {
+      "id": "context_see_fuv_115_180_W_m2",
+      "column": "context_see_fuv_115_180_W_m2",
+      "domain": "uv",
+      "unit": "W/m2",
+      "quantity": "median_of_complete_daily_mean_115_180_nm_band_integrals",
+      "temporal_support": "window",
+      "evidence_family": "context_see_fuv_115_180_W_m2",
+      "usage": "context"
+    },
+    {
+      "id": "context_p1_full_ion_density_cm3",
+      "column": "context_p1_full_ion_density_cm3",
+      "domain": "plasma_charging",
+      "unit": "cm^-3 (All Qs)",
+      "quantity": "median_of_daily_P1_full_ion_density_medians",
+      "temporal_support": "window",
+      "evidence_family": "context_p1_full_ion_density_cm3",
+      "usage": "context"
+    },
+    {
+      "id": "context_p1_full_electron_density_cm3",
+      "column": "context_p1_full_electron_density_cm3",
+      "domain": "plasma_charging",
+      "unit": "cm^-3 (All Qs)",
+      "quantity": "median_of_daily_P1_full_electron_density_medians",
+      "temporal_support": "window",
+      "evidence_family": "context_p1_full_electron_density_cm3",
+      "usage": "context"
+    },
+    {
+      "id": "context_p1_spacecraft_potential_V",
+      "column": "context_p1_spacecraft_potential_V",
+      "domain": "plasma_charging",
+      "unit": "V (All Qs)",
+      "quantity": "median_of_daily_P1_full_electron_mode_spacecraft_potential_medians",
+      "temporal_support": "window",
+      "evidence_family": "context_p1_spacecraft_potential_V",
+      "usage": "context"
+    },
+    {
+      "id": "reference_ldex_current_e_per_s",
+      "column": "reference_ldex_current_e_per_s",
+      "domain": "dust",
+      "unit": "Elementary_charge_per_second",
+      "quantity": "median_of_historical_daily_signed_LDEX_current_medians",
+      "temporal_support": "window",
+      "evidence_family": "reference_ldex_current_e_per_s",
+      "usage": "context"
+    },
+    {
+      "id": "reference_apollo_s12_mhz_rms_counts",
+      "column": "reference_apollo_s12_mhz_rms_counts",
+      "domain": "seismic",
+      "unit": "counts",
+      "quantity": "median_of_historical_daily_S12_MHZ_median_centred_RMS_counts",
+      "temporal_support": "window",
+      "evidence_family": "reference_apollo_s12_mhz_rms_counts",
+      "usage": "context"
+    },
+    {
+      "id": "reference_nms_He_abundance_p_cc",
+      "column": "reference_nms_He_abundance_p_cc",
+      "domain": "exosphere",
+      "unit": "P/Cc",
+      "quantity": "median_of_historical_daily_He_abundance_medians",
+      "temporal_support": "window",
+      "evidence_family": "reference_nms_He_abundance_p_cc",
+      "usage": "context"
+    }
+  ],
+  "domains": [
+    {
+      "id": "radiation",
+      "priority": "Highest",
+      "scored": true,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "uv",
+      "priority": "Medium",
+      "scored": true,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "solar_illumination",
+      "priority": "High",
+      "scored": true,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "thermal",
+      "priority": "Highest",
+      "scored": true,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "plasma_charging",
+      "priority": "Medium",
+      "scored": true,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "dust",
+      "priority": "Medium",
+      "scored": true,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "seismic",
+      "priority": "Evidence-dependent",
+      "scored": true,
+      "weight": null,
+      "preferences": []
+    },
+    {
+      "id": "exosphere",
+      "priority": "Context initially",
+      "scored": true,
+      "weight": null,
+      "preferences": []
+    }
+  ],
+  "hard_rules": []
+}

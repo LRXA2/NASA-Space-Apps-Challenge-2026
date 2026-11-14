@@ -18,7 +18,7 @@ from rasterio.warp import reproject
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 from notebooks.exploration.candidate_analysis import terrain_band_components
 from notebooks.exploration.environment_analysis import diviner_cell_matrix
-from notebooks.shared.inspection import complete_blocks
+from notebooks.shared.inspection import check_input, complete_blocks, file_hash, verify_run
 from notebooks.preprocessing.osm_processing import extract_support
 from notebooks.shared.patch_analysis import measure_patch, measure_planarity
 from notebooks.shared.processing import (
@@ -528,6 +528,18 @@ class ProcessingTests(unittest.TestCase):
             collection = json.loads(output.read_text())
             line = next(f for f in collection["features"] if f["id"] == "way/10")
             self.assertEqual(line["geometry"]["coordinates"], [[0.0, .5], [1.0, .5]])
+
+    def test_runs_recorded_on_windows_verify_on_any_os(self):
+        with tempfile.TemporaryDirectory() as folder:
+            run = Path(folder)
+            (run / "full_context").mkdir()
+            output = run / "full_context" / "model.json"
+            output.write_text("{}")
+            (run / "provenance.json").write_text(json.dumps({"status": "complete", "outputs": [
+                {"path": "full_context\\model.json", "sha256": file_hash(output)}]}))
+            evidence: dict[str, str] = {}
+            self.assertEqual(check_input(output, verify_run(run), evidence), output)
+            self.assertEqual(list(evidence.values()), [file_hash(output)])
 
 
 if __name__ == "__main__":

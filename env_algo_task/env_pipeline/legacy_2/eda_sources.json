@@ -1,0 +1,201 @@
+{
+  "schema": 1,
+  "sources": {
+    "radiation": "..\\..\\data\\processed\\analysis\\subject_radiation_time\\20261110T174314830488Z_b5df1a",
+    "uv": "..\\..\\data\\processed\\analysis\\subject_uv\\20261110T171338818645Z_f97fcb",
+    "plasma": "..\\..\\data\\processed\\analysis\\subject_plasma\\20261110T172843740060Z_464803",
+    "dust": "..\\..\\data\\processed\\analysis\\subject_dust\\20261110T173821043184Z_4dd78e",
+    "seismic": "..\\..\\data\\processed\\analysis\\subject_seismic\\20261110T183033924956Z_ba610a",
+    "exosphere": "..\\..\\data\\processed\\analysis\\subject_exosphere\\20261110T180950163652Z_95254f",
+    "terrain_time": "..\\..\\data\\processed\\analysis\\subject_terrain_time\\20261110T210226961886Z_f00b81",
+    "candidates": "..\\..\\data\\processed\\analysis\\dar_020_candidate_environment\\20261106T175311055762Z_b68ce6",
+    "science": "..\\..\\data\\processed\\analysis\\lunar_science_indicators\\20261109T125300938144Z_2ab576"
+  },
+  "features": {
+    "solar_visibility_median": {
+      "source": "candidates",
+      "file": "candidate_static_profiles.csv",
+      "kind": "static",
+      "scope": "candidate",
+      "basis": "modeled",
+      "variable": "solar_visibility",
+      "field": "median",
+      "interpretation": "Static candidate-cell map summary; not requested-window illumination or power continuity"
+    },
+    "geometry_sky_visible_fraction_4pi": {
+      "source": "science",
+      "file": "candidate_science_profiles.csv",
+      "kind": "science_profile",
+      "scope": "candidate_geometry",
+      "basis": "modeled",
+      "field": "sky_visible_fraction_4pi",
+      "support_field": "sky_visible_sr_median_support",
+      "interpretation": "Candidate geometric sky openness only; not transported radiation dose or shielding efficiency"
+    },
+    "geometry_psr_fraction_cells": {
+      "source": "science",
+      "file": "candidate_science_profiles.csv",
+      "kind": "science_profile",
+      "scope": "candidate_geometry",
+      "basis": "modeled",
+      "field": "psr_fraction_cells",
+      "support_field": "solar_opportunity_fraction_median_support",
+      "interpretation": "Static candidate grid-cell PSR fraction; not operating-period continuous darkness"
+    },
+    "thermal_phase_median_min_K": {
+      "source": "science",
+      "file": "candidate_science_profiles.csv",
+      "kind": "science_profile",
+      "scope": "candidate_points",
+      "basis": "modeled",
+      "field": "thermal_phase_median_min_K",
+      "support_field": "thermal_minimum_centers",
+      "interpretation": "Complete fixed-common phase-product point profile only; not chronological extremes, full footprint or equipment response"
+    },
+    "thermal_phase_median_max_K": {
+      "source": "science",
+      "file": "candidate_science_profiles.csv",
+      "kind": "science_profile",
+      "scope": "candidate_points",
+      "basis": "modeled",
+      "field": "thermal_phase_median_max_K",
+      "support_field": "thermal_minimum_centers",
+      "interpretation": "Complete fixed-common phase-product point profile only; not chronological extremes, full footprint or equipment response"
+    },
+    "thermal_phase_median_span_K": {
+      "source": "science",
+      "file": "candidate_science_profiles.csv",
+      "kind": "science_profile",
+      "scope": "candidate_points",
+      "basis": "modeled",
+      "field": "thermal_phase_median_span_K",
+      "support_field": "thermal_minimum_centers",
+      "interpretation": "Complete fixed-common phase-product point profile only; not chronological extremes, full footprint or equipment response"
+    },
+    "reference_region_2020_2021_sun_clear_fraction": {
+      "source": "terrain_time",
+      "file": "geometry_periods.csv",
+      "kind": "region_geometry",
+      "scope": "regional_center",
+      "basis": "modeled",
+      "relation": "historical_reference",
+      "field": "sampled_blocked_fraction",
+      "transform": "one_minus",
+      "interpretation": "2020-2021 regional reference center, height 2m/radius 20km; not candidate association or guaranteed uninterrupted darkness; censoring retained"
+    },
+    "reference_region_2020_2021_blocked_sample_span_h": {
+      "source": "terrain_time",
+      "file": "geometry_periods.csv",
+      "kind": "region_geometry",
+      "scope": "regional_center",
+      "basis": "modeled",
+      "relation": "historical_reference",
+      "field": "longest_observed_blocked_sample_span_hours",
+      "interpretation": "2020-2021 regional reference center, height 2m/radius 20km; not candidate association or guaranteed uninterrupted darkness; censoring retained"
+    },
+    "context_crater_counter_median": {
+      "source": "radiation",
+      "file": "daily_context.csv",
+      "kind": "daily",
+      "scope": "orbital",
+      "basis": "observed",
+      "series": "RAD_CRATER_SEC_selected_state",
+      "relation": "requested_window",
+      "statistic": "median",
+      "interpretation": "Not crew dose, calibrated event rates or candidate-local flux",
+      "unit_catalog": "series_catalog.csv"
+    },
+    "context_crater_reported_daily_max": {
+      "source": "radiation",
+      "file": "daily_context.csv",
+      "kind": "daily",
+      "scope": "orbital",
+      "basis": "observed",
+      "series": "RAD_CRATER_SEC_selected_state",
+      "relation": "requested_window",
+      "statistic": "maximum_daily_max",
+      "interpretation": "Observed counter maximum, not an adopted hazard threshold",
+      "unit_catalog": "series_catalog.csv"
+    },
+    "context_see_fuv_115_180_W_m2": {
+      "source": "uv",
+      "file": "band_daily_context.csv",
+      "kind": "daily",
+      "scope": "shared_solar",
+      "basis": "modeled",
+      "series": "SEE_v012_FUV_115_180",
+      "relation": "requested_window",
+      "statistic": "median",
+      "interpretation": "Solar 1-AU model-assisted flare-removed daily means; not local incident UV/dose"
+    },
+    "context_p1_full_ion_density_cm3": {
+      "source": "plasma",
+      "file": "esa_daily_context.csv",
+      "kind": "daily",
+      "scope": "orbital",
+      "basis": "observed",
+      "series": "ESA_v01_thb_peif_density",
+      "relation": "requested_window",
+      "statistic": "median",
+      "interpretation": "P1 full-ion mode, native quality==0 selected; not surface density/voltage",
+      "unit_catalog": "esa_series_catalog.csv"
+    },
+    "context_p1_full_electron_density_cm3": {
+      "source": "plasma",
+      "file": "esa_daily_context.csv",
+      "kind": "daily",
+      "scope": "orbital",
+      "basis": "observed",
+      "series": "ESA_v01_thb_peef_density",
+      "relation": "requested_window",
+      "statistic": "median",
+      "interpretation": "P1 full-electron mode kept separate from ions; not regolith charging",
+      "unit_catalog": "esa_series_catalog.csv"
+    },
+    "context_p1_spacecraft_potential_V": {
+      "source": "plasma",
+      "file": "esa_daily_context.csv",
+      "kind": "daily",
+      "scope": "orbital",
+      "basis": "observed",
+      "series": "ESA_v01_thb_peef_sc_pot",
+      "relation": "requested_window",
+      "statistic": "median",
+      "interpretation": "Spacecraft potential, not regolith surface potential or discharge risk",
+      "unit_catalog": "esa_series_catalog.csv"
+    },
+    "reference_ldex_current_e_per_s": {
+      "source": "dust",
+      "file": "current_daily_context.csv",
+      "kind": "daily",
+      "scope": "orbital",
+      "basis": "observed",
+      "series": "LDEX_CURRENT",
+      "relation": "historical_reference",
+      "statistic": "median",
+      "interpretation": "Actual 2013-2014 history; signed background-subtracted detector current, NOT deposited dust mass, cabin burden or contemporary forecast"
+    },
+    "reference_apollo_s12_mhz_rms_counts": {
+      "source": "seismic",
+      "file": "daily_context.csv",
+      "kind": "daily",
+      "scope": "historical_station",
+      "basis": "observed",
+      "series": "PSE_XA_S12_00_MHZ_raw_daily_RMS",
+      "relation": "historical_reference",
+      "statistic": "median",
+      "interpretation": "Apollo S12 vertical-channel daily RMS counts, 1973-1974; NOT peak ground acceleration, event catalogue or polar hazard"
+    },
+    "reference_nms_He_abundance_p_cc": {
+      "source": "exosphere",
+      "file": "daily_context.csv",
+      "kind": "daily",
+      "scope": "orbital",
+      "basis": "observed",
+      "series": "NMS_He_ABUNDANCE",
+      "relation": "historical_reference",
+      "statistic": "median",
+      "interpretation": "LADEE orbital helium abundance 2013-2014; altitude/LST and clocks screened in EDA, not surface atmospheric density"
+    }
+  }
+}

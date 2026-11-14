@@ -1,0 +1,71 @@
+{
+  "D14": {
+    "scope": "One actual S11 MHZ waveform for 1969 day 202, its label and source missing-value documentation; ATT is not a seismic signal.",
+    "groups": [
+      [
+        {
+          "url": "https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-apollo_pse/data/xa/continuous_waveform/s11/1969/202/xa.s11.00.mhz.1969.202.0.mseed",
+          "relative_path": "moon/eda_support/D14/xa.s11.00.mhz.1969.202.0.mseed",
+          "size_bytes": 258048,
+          "metadata": false
+        },
+        {
+          "url": "https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-apollo_pse/data/xa/continuous_waveform/s11/1969/202/xa.s11.00.mhz.1969.202.0.xml",
+          "relative_path": "moon/eda_support/D14/xa.s11.00.mhz.1969.202.0.xml",
+          "size_bytes": 5159,
+          "metadata": true
+        },
+        {
+          "url": "https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-apollo_pse/document/apollo_pse_description.pdf",
+          "relative_path": "moon/eda_support/D14/apollo_pse_description.pdf",
+          "size_bytes": 1004329,
+          "metadata": true
+        }
+      ]
+    ]
+  },
+  "D16": {
+    "scope": "NSP1 pixel-to-wavelength calibration supplement only; existing calibrated pre-impact spectra are not replaced.",
+    "groups": [
+      [
+        {
+          "url": "https://pds-geosciences.wustl.edu/lunar/lcross-e_l-mir1-2-raw-v1/lcro_0001/calib/nsp1_cal.txt",
+          "relative_path": "moon/eda_support/D16/nsp1_cal.txt",
+          "size_bytes": 5257,
+          "metadata": false
+        },
+        {
+          "url": "https://pds-geosciences.wustl.edu/lunar/lcross-e_l-mir1-2-raw-v1/lcro_0001/calib/nsp1_cal.xml",
+          "relative_path": "moon/eda_support/D16/nsp1_cal.xml",
+          "size_bytes": 3891,
+          "metadata": true
+        }
+      ]
+    ]
+  },
+  "D28": {
+    "scope": "Published Apollo 15 probe-1 depth-series supplement plus label and bitmask/epoch documentation; not a full mission archive.",
+    "groups": [
+      [
+        {
+          "url": "https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-a15_17_hfe_concatenated/document/bundle_documentation.md",
+          "relative_path": "moon/eda_support/D28/bundle_documentation.md",
+          "size_bytes": 27250,
+          "metadata": true
+        },
+        {
+          "url": "https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-a15_17_hfe_concatenated/data/depth/a15p1_depth.tab",
+          "relative_path": "moon/eda_support/D28/a15p1_depth.tab",
+          "size_bytes": 8691572,
+          "metadata": false
+        },
+        {
+          "url": "https://pds-geosciences.wustl.edu/lunar/urn-nasa-pds-a15_17_hfe_concatenated/data/depth/a15p1_depth.xml",
+          "relative_path": "moon/eda_support/D28/a15p1_depth.xml",
+          "size_bytes": 6489,
+          "metadata": true
+        }
+      ]
+    ]
+  }
+}

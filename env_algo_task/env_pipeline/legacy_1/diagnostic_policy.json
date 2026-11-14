@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "mode": "diagnostic",
+  "top_k": 5,
+  "hard_rules": [
+    {"id": "illustrative_solar", "metric": "solar_visibility_median", "unit": "fraction", "scope": "static_map_cell_summary", "operator": "ge", "limit": 0.5, "reason": "Unapproved proxy demonstration only; not mission power continuity"},
+    {"id": "illustrative_earth", "metric": "earth_visibility_median", "unit": "fraction", "scope": "static_map_cell_summary", "operator": "ge", "limit": 0.5, "reason": "Unapproved proxy demonstration only; not a communications margin"},
+    {"id": "illustrative_slope", "metric": "slope_q90_deg", "unit": "degree", "scope": "static_map_cell_summary", "operator": "le", "limit": 8.0, "reason": "Illustrative sensitivity threshold only; not an equipment/foundation limit"}
+  ],
+  "soft_preferences": [
+    {"id": "sunlight_context", "metric": "solar_visibility_median", "unit": "fraction", "scope": "static_map_cell_summary", "direction": "higher", "lower": 0.0, "upper": 1.0, "weight": 1.0, "reason": "Equal-weight diagnostic map-visibility preference; not approved utility"},
+    {"id": "earth_context", "metric": "earth_visibility_median", "unit": "fraction", "scope": "static_map_cell_summary", "direction": "higher", "lower": 0.0, "upper": 1.0, "weight": 1.0, "reason": "Separate illustrative contact context; not link performance"}
+  ]
+}

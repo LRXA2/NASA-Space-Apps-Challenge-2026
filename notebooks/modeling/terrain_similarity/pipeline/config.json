@@ -1,0 +1,7 @@
+{
+  "model_run": "data/processed/terrain_similarity_cnn/20261101T082707986851Z_5413e6",
+  "dataset_run": "data/processed/terrain_learning_readiness/20261101T064233918547Z_4a05ac",
+  "orientation_run": "data/processed/terrain_similarity_orientation/20261102T073257899753Z_7b9c4f",
+  "view": "full_context",
+  "sampling": "region_balanced"
+}

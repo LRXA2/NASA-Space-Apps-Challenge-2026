@@ -1,0 +1,104 @@
+{
+  "comparison_policy": "diagnostic_policy.json",
+  "sources": {
+    "candidates": "processed/analysis/dar_020_candidate_environment/20261106T175311055762Z_b68ce6",
+    "shadowcam": "processed/analysis/dar_026_shadowcam_manual/20261107T183427316296Z_f95fd8",
+    "minirf": "processed/analysis/dar_027_minirf_manual/20261107T183457581811Z_bc568a"
+  },
+  "stage3_analysis": {
+    "audit": {
+      "run": "processed/analysis/golden_stage3_audit/20261107T231030266513Z_7340dd",
+      "files": [
+        "golden_input_coverage.csv",
+        "p1_dataset_audit.csv",
+        "p1_project_input_contracts.csv"
+      ]
+    },
+    "time_terrain": {
+      "run": "processed/analysis/golden_stage3_time_terrain/20261107T231040505351Z_6e96d0",
+      "files": [
+        "local_hour_season_coverage.csv",
+        "held_out_ls_cyclic_diagnostics.csv",
+        "terrain_temperature_phase_sign_support.csv",
+        "monthly_reference_geometry_summary.csv"
+      ]
+    },
+    "references": {
+      "run": "processed/analysis/golden_stage3_references/20261107T231043552019Z_584162",
+      "files": [
+        "crew_reference_rates.csv",
+        "human_system_requirement_reference_map.csv",
+        "operational_margin_input_readiness.csv"
+      ]
+    },
+    "native_support": {
+      "run": "processed/analysis/stage3_native_support/20261108T085949685187Z_d0bda9",
+      "files": [
+        "native_source_crop_checks.csv",
+        "terrain_policy_consistency.csv",
+        "terrain_environment_support.csv"
+      ]
+    },
+    "terrain_views": {
+      "run": "processed/lunar_terrain_views/20261108T090010390213Z_9fb81e",
+      "files": [
+        "terrain_view_support_summary.csv"
+      ]
+    }
+  },
+  "policy": {
+    "schema": 1,
+    "mode": "evidence_only",
+    "top_k": 5,
+    "hard_rules": [
+      {
+        "id": "thermal_operation",
+        "metric": null,
+        "reason": "Surface phase averages cannot establish equipment operating margins",
+        "missing_inputs": [
+          "mission operating period",
+          "equipment thermal response and limits"
+        ]
+      },
+      {
+        "id": "power_continuity",
+        "metric": null,
+        "reason": "Mean sunlight is not a generation/storage time series",
+        "missing_inputs": [
+          "dated terrain-aware illumination",
+          "load and generation model",
+          "usable storage and reserve"
+        ]
+      },
+      {
+        "id": "communications",
+        "metric": null,
+        "reason": "Mean Earth visibility is not a dated communications service guarantee",
+        "missing_inputs": [
+          "contact schedule and terrain-aware geometry",
+          "link and outage requirements"
+        ]
+      },
+      {
+        "id": "radiation_protection",
+        "metric": null,
+        "reason": "Reference profiles are not local crew dose",
+        "missing_inputs": [
+          "applicable exposure/transport scenario",
+          "shielding and limits"
+        ]
+      },
+      {
+        "id": "foundation_mobility",
+        "metric": null,
+        "reason": "Terrain slope and Apollo reference tests do not establish local soil capacity",
+        "missing_inputs": [
+          "local mechanical properties",
+          "selected structure/vehicle loads and limits"
+        ]
+      }
+    ],
+    "soft_preferences": []
+  },
+  "evidence_rules_manifest": "evidence_rules_manifest.json"
+}
