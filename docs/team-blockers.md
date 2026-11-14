@@ -1,22 +1,23 @@
 # Team blockers
 
-Open questions as of 2026-11-14, grouped by who can answer them. The hackathon ends 2026-11-15. When something is answered, write the answer and the date next to it. Don't delete it.
+Updated 2026-11-15. Questions are grouped by who can answer them. The hackathon ends 2026-11-15. When something is answered, write the answer and the date next to it. Don't delete it.
 
 ## Whole team
 
 | # | Question | Why it matters | Answer |
 | --- | --- | --- | --- |
 | T1 | **Upload scope.** Environment only, or environment plus both CNNs? | Environment only: users edit Darrel's input CSV and see Operations and Survival scores. Adding the CNNs lets users upload an elevation grid and get rover and on-foot classes plus their closest Earth matches. That is the "new site through all pipelines" Aarron asked for. It costs roughly one extra day | |
-| T2 | **Host.** GitHub Pages or Vercel? Who owns the account? | The repo is reported private. GitHub Pages then needs an admin (or a public repo). The Vercel CLI needs only an account | |
-| T3 | **Show the Apollo rows?** See [the six rows below](#apollo-reference-rows) | They score 95–97 (Operations) against 30–59 for the south-pole regions, which gives judges a reference point. But their inputs are partly modelled, and they are equatorial sites with no terrain data | "We can still present it from an ops/survivability standpoint, but we need to make it clear that the input values are based on best-effort estimates. We can still highlight 'potential' sites, and the NASA team can consider sending an unmanned rover to map the terrain and gather more accurate data. From there, they will have a clearer picture of the conditions." (2026-11-15) |
+| T2 | **Host.** Which host and account? | A host is needed for a public demo URL. | Deferred by Ian on 2026-11-14. Leave hosting out of this work. |
+| T3 | **Show the Apollo rows?** See [the six rows below](#apollo-reference-rows) | They score 95–97 (Operations) against 30–59 for the south-pole regions, which gives judges a reference point. But their inputs are partly modelled, and they are equatorial sites with no terrain data | "We can still present it from an ops/survivability standpoint, but we need to make it clear that the input values are based on best-effort estimates. We can still highlight 'potential' sites, and the NASA team can consider sending an unmanned rover to map the terrain and gather more accurate data. From there, they will have a clearer picture of the conditions." (Darrel, relayed by Ian on 2026-11-15; implemented by Gareth in `8769b86`) |
 | T4 | **Environment per region or per tile?** | Per tile needs 4 LOLA maps (about 116 MB). Only 4 inputs then vary by tile. The rest stay region-wide assumptions | |
 | T5 | Sign-off on the static architecture (no backend, exports committed) | Low risk, but nobody has confirmed it | |
 | T6 | Featured tiles for the demo: 3–5 per region, including one misleading high-cosine match | Makes the demo deterministic | |
 | T7 | Who reruns `integration.run_all` and the export when a model changes? | Currently Gareth | |
+| T8 | Exploration theme or mission-control theme? | Sets the visual direction without changing the data pipelines | Resolved 2026-11-14: Aarron preferred exploration because the project supports reconnaissance. Gareth confirmed at 20:12 that he would implement the exploration theme. The theme is merged in `gareth/app`; final visual review remains pending. |
 
 ### Apollo reference rows
 
-From `environment.csv` in `moon_pipeline/20261114T014850261930Z_7de0f3`, scored by Darrel's current scorer with hard gates off. The `_assumed` suffix is Darrel's: each row combines mission records, models and test assumptions, and spacecraft potential is blank (his README, "Apollo reference inputs").
+Historical scores below come from `moon_pipeline/20261114T014850261930Z_7de0f3`, before gates were enabled. They are not the current export's status record. The `_assumed` suffix identifies mixed mission records, models, and test assumptions. The current gated export contains all six references, both assessments pass, and the app presents them separately with best-effort input labels, following Darrel's T3 answer.
 
 | ID | Operations | Survival |
 | --- | --- | --- |
@@ -61,7 +62,7 @@ Options: leave them out; show them as a small reference strip on the environment
 
 | # | Question | Answer |
 | --- | --- | --- |
-| I2 | Parts of `docs/specs/app/earth-analogs.md` are obsolete: keying on Aarron's query IDs, starting from notebook 36, and the footprint task. The shared `tile_id` covers all 2,910 tiles. Update the spec or mark it superseded by [architecture.md](architecture.md)? | |
+| I2 | Parts of `docs/specs/app/earth-analogs.md` described independent query IDs and notebook-only coverage. Reconcile them with the shared `tile_id`? | Resolved 2026-11-15: specs now describe integrated exports, shared tile IDs, numeric grids, and current commands. Historical tasks and decisions remain identified. |
 
 ## Resolved
 
@@ -77,3 +78,9 @@ Options: leave them out; show them as a small reference strip on the environment
 | G1: `run_all` caveat always claimed per-tile values | `caveat()` now follows `environment_scope` | 2026-11-14 |
 | G2: `physical_comparison.csv` missing from `moon_pipeline/<run>/` | `run_all` now copies it | 2026-11-14 |
 | G3: `stage_runs` paths used backslashes | Written as POSIX paths | 2026-11-14 |
+
+## Remaining scorer reconciliation
+
+The recorded gated rerun produced Operations 60 Pass / 21 Fail / 2 Unknown and Survival 70 / 11 / 2.
+Darrel reported Survival 68 / 11 / 4. Ask which four IDs are Unknown and compare exact input/config versions.
+This does not change the committed Artemis subset: Operations 14 / 3 / 0 and Survival 17 / 0 / 0.

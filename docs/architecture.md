@@ -1,16 +1,16 @@
 # Architecture
 
-Status as of 2026-11-14. The hackathon ends 2026-11-15. Each section says whether it describes something that **exists** or something **planned**.
+Status as of 2026-11-15. The hackathon ends 2026-11-15. Each section says whether it describes something that **exists** or something **planned**.
 
 ## Summary
 
-The app is a static website. Three teammate pipelines run on our own machines, one integration command joins their outputs by lunar tile, and an export script converts the result into small files that the website reads. No server runs at any point. The only computation in the browser is the optional upload feature, which runs models as static files inside the page.
+The app is a static website with no application backend. Offline integration joins the three pipelines by lunar tile and exports browser data. Environment uploads run the scorer in a Pyodide worker. Terrain CNN uploads are not implemented. Charts derive distributions from published grids in the browser.
 
 ## Rules every part follows
 
 - **Three separate scores.** Terrain similarity (Aarron), environment (Darrel) and terrain operability (Hanxi) answer different questions. They are never combined into one number.
 - **Cosine similarity is not a percentage**, and no score is a safety rating. All terrain predictions come from models trained on Earth, and there is no lunar ground truth.
-- **Everything shown is precomputed** and traceable to a run folder with a `provenance.json`.
+- **Catalogue results are precomputed** and traceable to a run folder with `provenance.json`. Uploaded environment results are computed locally and labelled user-supplied.
 - **Unknown is not a pass.** Missing values stay missing.
 
 ## Data flow
@@ -38,7 +38,7 @@ The app is a static website. Three teammate pipelines run on our own machines, o
                 │
                 ▼
    Browser: React app reads JSON and binary files.
-   Optional upload: a Web Worker runs Pyodide (environment, exists). ONNX models (terrain) are not built (T1).
+   Optional upload: Pyodide environment scoring exists. Browser terrain inference is not built (T1).
 ```
 
 ## Pipelines
@@ -149,15 +149,15 @@ app/
 | `#/environment`, `#/environment/<scenario>` | Operations and Survival per region | exists |
 | `#/upload` | Score your own environment CSV | exists (environment only) |
 
-Maps: Leaflet without react-leaflet. The Moon uses `L.CRS.Simple` in grid cells per region (not north-up, no basemap). The Earth map uses a normal lat/lon basemap with attribution. Terrain grids are drawn on `<canvas>` with a shared colour scale. The chart library is not chosen yet (Observable Plot or Recharts; Plotly is too heavy).
+Maps use Leaflet without react-leaflet. The Moon uses `L.CRS.Simple` in stored grid cells, with no north-up basemap. Earth uses latitude/longitude tiles with attribution. Canvas terrain panels share one scale per measurement. `DistributionChart.tsx` draws cumulative distributions in plain SVG from each 1,024-cell grid. No chart library is required.
 
 ## Upload in the browser (environment exists, terrain open)
 
 | Pipeline | Runs as | Template | Status |
 | --- | --- | --- | --- |
 | Environment | Darrel's unmodified `env_pipeline.py` and `config.yml` in Pyodide 0.28.3 (stdlib + PyYAML), in a Web Worker | Darrel's `sample_input.csv` | **Exists.** Output identical to the CLI for all 83 sample rows (`npm --prefix app run check:scorer`). Upload checked in headless Chrome |
-| Similarity CNN | ONNX model in onnxruntime-web, 8 orientations, cosine against the shipped Earth embedding bank (5,693 × 64) | Elevation grid (below) | ONNX export checked |
-| Walkability CNN | ONNX model in onnxruntime-web, softmax and sigmoid built into the model | Same elevation grid | ONNX export checked |
+| Similarity CNN | Planned: ONNX inference, 8 orientations, and cosine against the Earth embedding bank (5,693 × 64) | Elevation grid (below) | Offline ONNX export checked. Browser integration is not built |
+| Walkability CNN | Planned: ONNX inference with softmax and sigmoid in the model | Same elevation grid | Offline ONNX export checked. Browser integration is not built |
 
 **ONNX check (2026-11-14).**
 
@@ -166,11 +166,11 @@ Maps: Leaflet without react-leaflet. The Moon uses `L.CRS.Simple` in grid cells 
 
 Rerun with `app/scripts/check_onnx_parity.py`.
 
-**Terrain template (proposed):** Esri ASCII grid (`.asc`, which QGIS can export), 42 × 42 cells at 30 m in a projected metric grid. That is the 32 × 32 tile plus a 5-cell margin, because the 330 m window needs it. A TypeScript port computes the channels exactly as `processing.py:terrain` does. To test the port without a DEM, rebuild the elevation from Hanxi's relative-elevation channel (elevation minus a constant), recompute the other channels, and compare them inside the tile.
+**Terrain template (confirmed by Aarron, not implemented in the UI):** a 42 × 42 `.asc` elevation grid at 30 m spacing, in metres, with no missing values. This surrounds the 32 × 32 tile with a five-cell margin. A proposed TypeScript preprocessing port would need to match `processing.py:terrain` before browser CNN results could be accepted. Models must ship with their own saved scalers. See A1–A2 and H1–H3 in the team answers.
 
 **Fallback:** a small hosted Python backend running the real code. Only if the TypeScript port can't match, because it adds a server to keep running during judging.
 
-## Hosting (planned, host open)
+## Hosting (deferred by Ian)
 
 The build is fully static: `npm --prefix app run build` → `app/dist/`. Hash routes and a relative `base` mean any static host works without rewrite rules.
 
@@ -190,11 +190,12 @@ The build is fully static: `npm --prefix app run build` → `app/dist/`. Hash ro
 | Integration output (`moon_pipeline/<run>/`) is the only export input | Decided and built 2026-11-14 |
 | `tile_id` is the join key across all three pipelines | Decided 2026-11-14 |
 | Pair URLs use the Earth candidate ID, not the rank | Decided (Ian) |
-| Host | **Open** |
+| Host | Deferred by Ian, no host selected |
 | Upload scope: environment only, or environment plus both CNNs | **Open, team input** |
 | Environment per region, or per tile with the LOLA maps | **Open** |
 | Show the Apollo reference rows | **Yes (T3)**, labelled as equatorial comparison sites scored from best-effort estimates |
-| Chart library | Open. No chart needs one yet (bars and grids are hand-drawn) |
+| Distribution charts | Built with plain SVG in `DistributionChart.tsx`, no chart dependency (`b0b4641`) |
+| Visual direction | Exploration theme selected by Gareth after Aarron's reconnaissance rationale. It is merged through `dd3503f`. See the app area decision |
 
 Questions for teammates are in [team-blockers.md](team-blockers.md).
 
@@ -205,3 +206,7 @@ Questions for teammates are in [team-blockers.md](team-blockers.md).
 - Atacama is the best match for about 88% of tiles. It also has 3,078 of the 5,693 Earth patches.
 - 193 match rows have cosine above 0.95 with 0 of 5 physical checks in band. Keep these visible: they show why physical checks matter.
 - The Earth simulation-readiness score does not exist. Show it as not computed.
+
+Gareth's exploration theme, Apollo references, and upload input guide are merged through `8769b86`. Feature specs live in `docs/specs/app/` and engineering handoffs in `docs/handoff/`. Hosting is deferred at Ian's request.
+
+The upload page includes `InputGuide.tsx`, a collapsible summary of the scorer README's input sources and preparation steps. Keep it aligned with the source guide.

@@ -5,88 +5,95 @@ Due: 2026-11-15
 
 ## Goal
 
-Open a lunar query patch's saved Earth matches and inspect their rank, physical agreement, and location.
-Show the search scope and missing coverage rather than implying every patch has validated analogs. See [shared context](area.md#shared-context).
+Inspect each lunar patch's ranked Earth matches, physical agreement, and geographic location.
+The app reads the integrated pipeline export. See [shared context](area.md#shared-context).
 
-This is the screen that answers the challenge. Build it from the first real data available, then widen coverage.
+## Data sources
 
-## Data sources, smallest first
-
-1. **Notebook 36 (exists now).** Three lunar queries, each searched against all five Earth sites, top 3 each: nine matches. The saved outputs are in Git. The files are on Aarron's machine under `reports/terrain-similarity-oriented-demo/20261104T003123532042Z/`.
-2. **One pipeline run (asked for on 13 Nov).** Gareth asked Aarron in the team chat for a finished `--moon-site Haworth --earth-site wadi_rum` run: `retrieval.csv`, `physical_comparison.csv`, `summary.json` and plots. Aarron said he would send it that evening. It covers every prepared Haworth patch against Wadi Rum only, top 3.
-3. **All Moon regions against all five Earth sites.** Gareth also asked for the three data folders named in `pipeline/config.json`. With them, we can run the remaining site pairs ourselves. This is the full coverage target, not a starting condition.
-
-The screens must work with source 1 alone. Sources 2 and 3 add queries through the same export.
+- `integration.run_all` produces `moon_tiles.csv`, `earth_matches.csv`, `physical_comparison.csv`, and provenance.
+- Every exported patch has a shared `tile_id`, a Hanxi source ID, and its matching similarity source ID.
+- All 2,910 tiles have 15 matches: top three from each of five Earth sites.
+- `app/scripts/export_data.py` writes `analogs/<region>.json`, `earth/candidates.json`, and the referenced grid files.
+- Notebook 36 was an earlier fallback. No notebook transcription or single-site-only bundle is used by the current app.
 
 ## Done when
 
-- Every published match has a traceable model/run identity, a named candidate pool, a query patch identity, and its physical-comparison records.
-- Analog pages are keyed on the similarity pipeline's own query IDs, such as `A3CLR22_2_Haworth:full_context:272:368:960`. They do not need a matching patch in Hanxi's run.
-- A region page lists its available analog queries. Each opens an analog page with a copyable URL.
-- Rover and walking predictions appear on an analog page only for a query with a confirmed footprint match to a Hanxi patch. Otherwise the page says the predictions use a different patch grid.
-- A patch page links to analogs only when its footprint match is confirmed. Otherwise it says analog results are unavailable for that patch.
-- The analog page shows every supplied match in original rank order, with Earth region, cosine score, coordinates, and physical-check counts.
-- The UI displays cosine as a similarity measure, not a percentage or safety rating. Weak physical matches remain visible.
-- A Leaflet Earth map uses supplied Earth latitude/longitude, numbered markers, visible attribution, and a list fallback if tiles fail.
-- Hovering or selecting a result links its table row and map marker. Opening a result reaches a stable pair URL, with comparison availability stated.
-- Each query names its actual candidate pool, such as "all five sites" or "Wadi Rum only", and how many queries the region has. A missing bundle produces no fake matches.
-- A production browser walkthrough checks one real query, the Haworth rank 2 match (cosine 0.974, 0 of 5 checks in band), and an unavailable patch against the source files.
+- Every published match retains the pipeline run, tile identity, similarity query, candidate pool, ranks, and physical checks.
+- A selected terrain patch opens its analog page at `#/region/<region>/patch/<patch>/analogs`.
+- Source footprints are joined through the shared tile identity. Similar-looking IDs never substitute for that join.
+- Each list shows all 15 matches, with overall and per-site rank, region, cosine, coordinates, and physical-check counts.
+- Cosine stays a similarity measure. Weak physical matches remain visible and scores are not presented as safety ratings.
+- A Leaflet Earth map uses supplied latitude/longitude, numbered markers, visible attribution, and a result-list fallback.
+- Row and marker interaction share the selected result. Pair links use candidate IDs, not unstable ranks.
+- The page identifies all five searched sites and makes unavailable data explicit. It never invents matches.
+- A production walkthrough checks a real patch, a weak match, unavailable data, copied URLs, and browser navigation.
 
 ## Out of scope
 
-- Running the similarity model in the app, retraining, changing rankings, processing uploads, or modifying a teammate's pipeline branch.
-- Earth readiness scoring, declaring global search coverage, and the detailed pair charts supplied by `compare-terrain`.
+- Live inference, retraining, reranking, uploads, and editing the pipeline teammates' model code.
+- Earth readiness scoring and the detailed pair charts supplied by `compare-terrain`.
 
 ## Constraints
 
-- Name the candidate pool on every result list. Describe results as the closest across all five sites only when the search covered all five.
-- Every pipeline run reads the one embedding cache pinned in `pipeline/config.json`, so cosine scores from different Earth-site runs are comparable. Merge per-site lists only when each run's manifest names the same model, dataset and orientation runs.
-- A merged top 3 is exact only when every per-site run kept at least 3 matches. Recompute rank after merging and keep each source rank in the record.
-- The terrain and similarity runs use different patch grids and source versions. A footprint match needs the same projection, origin, spacing and extent. Similar-looking ID strings alone are insufficient.
-- Never show the app's terrain tensor as the terrain of a different similarity query footprint.
-- Preserve candidate IDs and coordinates. Missing coordinates produce a labelled unmapped result, not a marker at zero latitude/longitude.
-- Each task changes at most three files and adds at most three functions or five test cases. Generated files in `app/public/data/` don't count toward the file limit.
+- Read one integrated run. Its model, dataset, orientation cache, and scope define the comparison.
+- Preserve `overall_rank` and `site_rank`. Do not merge unrelated runs or create a new score.
+- The exporter validates each match against the tile's similarity query and its physical records.
+- Missing coordinates produce a labelled unmapped result, not a marker at zero latitude/longitude.
+- Keep source IDs in data even when readable slugs are used in routes.
+- Each source task changes at most three files and adds at most three functions or five tests. Generated app data is excluded.
 
 ## Verify
 
-- Seam: export the available retrieval files and use the real app's analog page and Earth map.
-- Proposed CLI addition:
+- Seam: export a completed integrated run and inspect the actual analog page and Earth map.
 
 ```powershell
-.\.venv\Scripts\python.exe app\scripts\export_data.py --input-dir temp --analogs-dir "temp/<received-retrieval-run>" --output-dir app/public/data
+.\.venv\Scripts\python.exe app\scripts\export_data.py --pipeline-run data/processed/moon_pipeline/<run> --output-dir app/public/data
 .\.venv\Scripts\python.exe -m unittest discover -s app/scripts/tests -p "test_*.py"
 npm --prefix app run build
 npm --prefix app run preview
 ```
 
-- Allow `--analogs-dir` more than once, one per received run. The command is planned, not currently runnable.
-- Check an orphan comparison row, a duplicate rank, unavailable coordinates, fewer matches than the declared `top_k`, and two runs with different model identities.
-- Compare a real result row and marker with `retrieval.csv`. Check producer-supplied physical values against `physical_comparison.csv`.
-- For source 1 without its files, compare each exported row with the saved table in notebook 36.
+- Replace `<run>` with an available completed bundle. There is no `--input-dir` or `--analogs-dir` interface now.
+- Check ranks, missing physical records, candidate identity, query joins, and declared match counts against the source data.
+- Run `npm --prefix app run check:browser` for tile-failure and keyboard row/marker checks. The latest evidence is recorded under Verification, 2026-11-15.
 
 ## Decisions
 
-- Start from notebook 36 and key pages on Aarron's query IDs: see [area decisions](area.md#decisions).
-- **Open:** Do the notebook 36 files and the pipeline run share one `retrieval.csv` schema? The pipeline was built from the notebook, but compare the columns before relying on one adapter.
-- **Open:** Who runs the remaining site pairs once the three data folders arrive, and on which machine? Gareth's `.venv` has CPU PyTorch. This checkout has no environment.
+- The initial notebook-first and independent-query plans were replaced by the integrated tile join in `3b5937e`.
+- Pair URLs retain Earth candidate IDs. Numeric candidate-index URLs are also accepted for compatibility.
+- No new candidate-pool or model-policy decision is made by this records update.
 
 ## My calls
 
-- Export analog metadata per lunar region, keyed by the original query ID. Fetch it when the analog view opens.
-- Use a readable route name for a query, such as its row and column. Keep the source ID in the record.
-- Put the candidate ID in the pair URL, not the rank. Rank changes when the candidate pool grows.
-- Support partial query coverage honestly. A real declared subset can be demonstrated. Unavailable queries stay unavailable.
-- Preserve supplied physical-check definitions without recomputing or tuning a new matching score.
-- Use Haworth rank 2 from notebook 36 as the demo's misleading match. It is a real result, so the wireframe's sample rank 2 is not needed.
+- Fetch analog metadata per region when the analog view opens.
+- Keep real poor matches visible. The Haworth `r32-c32` example below belongs to the current grid, not notebook 36's query.
+- Preserve prior superseded task descriptions as history. They are not work still to perform.
 
 ## Tasks
+
 
 - Superseded, 14 Nov: the export reads the integrated pipeline run (`3b5937e`), not notebook 36. Original task: ~~Ask Aarron for the notebook 36 report folder with his other files. If it has not arrived when this task starts, transcribe the nine saved rows from the notebook into one source CSV. Record the notebook path, run ID and candidate pool. Verify every row against the notebook.~~
 - [x] Add retrieval and physical-comparison adaptation with focused rejection checks. Verify original ranks, candidate identities, candidate-pool labels, and orphan-record handling on the notebook 36 rows. Note, 14 Nov: built on the pipeline run, not the notebook 36 rows. `app/scripts/tests/test_export_data.py` covers ranks, candidates and missing checks.
 - Superseded, 14 Nov: all seven regions publish analogs for every patch (`3b5937e`), not three notebook 36 queries. Original task: ~~Publish analog metadata for the three notebook 36 queries and list them on their region pages. Leave every other query and patch unavailable.~~
 - [x] Add the analog page with a ranked table, scope labels, physical evidence, and empty/error states. Verify that Haworth rank 2 stays visible with its 0 of 5 checks. Note, 14 Nov: checked on the production preview with Haworth patch `r32-c32`. Its rank 2 match (Wadi Rum, cosine 0.944) shows 0 of 5 checks.
-- [x] Add the Leaflet Earth map with ranked markers and attribution. Verify coordinates, selected-row highlighting, and operation when the basemap is unavailable. Note, 14 Nov: markers, coordinates and attribution seen on the preview. The tile-failure fallback is in `EarthMap.tsx` but was not exercised. Row highlighting belongs to the next task and is not built.
+- [x] Add the Leaflet Earth map with ranked markers and attribution. Verify coordinates, selected-row highlighting, and operation when the basemap is unavailable. Note, 14 Nov: markers, coordinates and attribution seen on the preview. The tile-failure fallback is in `EarthMap.tsx` but was not exercised. Row highlighting was added by the following task. Keyboard linking and tile-failure behaviour still need an explicit walkthrough.
 - [x] Add linked result selection and stable pair links with explicit comparison availability. Verify direct URLs and back navigation. Note, 14 Nov: checked on the preview. Hovering a row marks its map marker, and hovering a marker marks its row. A pair link opens, and Back returns to the analog list. Keyboard focus on a row was not confirmed.
 - Superseded, 14 Nov: every patch is searched against all five Earth sites, so no Wadi Rum-only run is published. Original task: ~~Add the Haworth–Wadi Rum run through the same export, labelled "Wadi Rum only". Check its schema and run identity first~~
 - Superseded, 14 Nov: `integration/` joins the two pipelines on a shared `tile_id`, and the export rejects a match whose query is not the tile's similarity patch. Original task: ~~Compare `patches.csv` footprints (`left`, `bottom`, `right`, `top`, `crs_wkt`) with Hanxi's `center_x`/`center_y` and record which queries match a Hanxi patch exactly. Enable patch links and predictions only for those~~
 - [x] Run the production walkthrough on the published queries. Label unsearched sites and query gaps explicitly. Note, 14 Nov: ran on the preview for Haworth patch `r32-c32`. The page names the pool as all five Earth sites. Every published patch has matches, so the no-matches state was not seen.
+
+
+## Results
+
+Historical verification, 2026-11-14, against the integrated exporter and page code.
+All 27 app-script tests and the production build pass in this checkout.
+The browser notes above are prior checks. Tile-failure and keyboard-focus linking were not rerun on 14 Nov. They passed the 15 Nov check below.
+Final acceptance and `Status: done` remain for review.
+
+### Verification, 2026-11-15
+
+Checked `8769b86` plus the local interaction fixes with `npm --prefix app run check:browser`.
+The browser check verifies all 15 matches, failed Earth tiles, and keyboard linking in both directions. Marker focus now highlights the matching row. All 43,650 exported matches have valid candidates, ranks, and five checks.
+Automated accessibility and page-overflow checks pass at 1440 px and 375 px.
+The production build and all 29 app-script tests pass. These results replace earlier pending local checks above.
+Final feature acceptance remains for review.

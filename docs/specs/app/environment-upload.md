@@ -1,8 +1,8 @@
 # Score an uploaded environment CSV
 
-Needs: environment-assessment, publish-demo
+Needs: environment-assessment
 Due: 2026-11-15
-Priority: stretch. Start only when the other six specs are done. See [area decisions](area.md#decisions).
+Implementation exists. Hosted acceptance waits on `publish-demo`. See [area decisions](area.md#decisions).
 
 ## Goal
 
@@ -31,7 +31,7 @@ What stays open: Aarron asked for new lunar sites to run through all the pipelin
 
 ## Constraints
 
-- Run Darrel's files byte-for-byte. Copy them from `dar_dev` and record the source commit. Do not patch them for the browser. If something fails in Pyodide, report it to Darrel.
+- Copy Darrel's scorer logic and config from `env_algo_task/env_pipeline/`. Normalize text line endings to LF and hash the published bytes. Do not patch scoring logic for the browser.
 - The scorer imports PyYAML. Load it with Pyodide's `pyyaml` package.
 - Run Pyodide in a Web Worker, so the page stays responsive while it loads and scores.
 - Reuse the Operations/Survival display components from `environment-assessment`. Do not build a second results layout.
@@ -40,16 +40,16 @@ What stays open: Aarron asked for new lunar sites to run through all the pipelin
 ## Verify
 
 - Seam: the upload page in the browser, on the local production preview and then on the hosted site.
-- CLI reference output for the parity check, from a `dar_dev` checkout of `darrel stuff/env_pipeline/`:
+- Generate a detailed CLI reference from the scorer on the current checkout. A complete pipeline bundle is not needed:
 
 ```powershell
-.\.venv\Scripts\python.exe "darrel stuff\env_pipeline\env_pipeline.py" --input "darrel stuff\env_pipeline\sample_input.csv" --output temp\env_cli_reference.csv --overwrite
+.\.venv\Scripts\python.exe env_algo_task\env_pipeline\env_pipeline.py --input env_algo_task\env_pipeline\sample_input.csv --output temp\env_cli_reference.csv --detailed --overwrite
 node app/scripts/check_scorer_parity.mjs temp/env_cli_reference.csv
 npm --prefix app run build
 npm --prefix app run preview
 ```
 
-- `check_scorer_parity.mjs` is a proposed script. It does not exist yet. It runs the same files in Pyodide under Node and compares every value with the CLI output.
+- `check_scorer_parity.mjs` exists and runs the published files in Pyodide under Node. It compares detailed output after masking only the config hash that can differ with line endings.
 - In the browser, upload `sample_input.csv` unchanged and one invalid file per error type. Check the network panel: Pyodide loads once per visit.
 
 ## Decisions
@@ -65,8 +65,21 @@ npm --prefix app run preview
 
 ## Tasks
 
-- [x] Export Darrel's `env_pipeline.py` and `config.yml` into `app/public/`, with their source commit and file hashes. Verify the hashes match `dar_dev` and come from the same commit as the published `sample_input.csv`. Note, 14 Nov: the published hashes match the files. The export records paths and SHA-256, not a source commit.
-- [x] Add the Pyodide worker that loads PyYAML, runs Darrel's `run()` and the environment adapter on an uploaded CSV, and returns results or the error message. Add `check_scorer_parity.mjs` and verify all 83 sample rows match the CLI output. Note, 14 Nov: the 83-row comparison passed in `test_score_upload.py`. `check_scorer_parity.mjs` was not run, because no reference CSV is on this machine.
-- [x] Add the upload page with the sample download, file picker, loading state, and error display. Verify each invalid-file case shows Darrel's message and no partial results. Note, 14 Nov: checked one invalid file on the preview. It showed the scorer's message and no results.
-- [x] Render uploaded rows with the environment tab's Operations and Survival components and the user-supplied label. Verify a passing row and a blank-score row against the CLI output. Note, 14 Nov: 83 rows rendered on the preview. A blank-score row was not checked.
-- [ ] Run the upload walkthrough on the production preview and the hosted site. Verify the sample download, one upload, and that a second upload does not reload Pyodide. (blocked: no host yet. The preview half passed on 14 Nov: the sample download matches its source SHA-256, the sample scored 83 rows, and a later upload finished in 65 ms, so Pyodide did not reload)
+- [x] Export Darrel's `env_pipeline.py` and `config.yml` into `app/public/`, with their source commit and file hashes. Verify the hashes match `dar_dev` and come from the same commit as the published `sample_input.csv`. Historical note, 14 Nov: the published hashes match the files. The export records paths and SHA-256, not a source commit.
+- [x] Add the Pyodide worker that loads PyYAML, runs Darrel's `run()` and the environment adapter on an uploaded CSV, and returns results or the error message. Add `check_scorer_parity.mjs` and verify all 83 sample rows match the CLI output. Historical note, 14 Nov: the 83-row comparison passed in `test_score_upload.py`. `check_scorer_parity.mjs` was not run, because no reference CSV is on this machine.
+- [x] Add the upload page with the sample download, file picker, loading state, and error display. Verify each invalid-file case shows Darrel's message and no partial results. Historical note, 14 Nov: checked one invalid file on the preview. It showed the scorer's message and no results.
+- [x] Render uploaded rows with the environment tab's Operations and Survival components and the user-supplied label. Verify a passing row and a blank-score row against the CLI output. Historical note, 14 Nov: 83 rows rendered on the preview. A blank-score row was not checked.
+- [ ] Run the upload walkthrough on the production preview and the hosted site. Verify the sample download, one upload, and that a second upload does not reload Pyodide. (blocked: hosting deferred by Ian. Local checks passed on 15 Nov: scorer/template hashes, Pass/Fail/Unknown uploads, row navigation, five invalid files, and worker reuse. The 83-row Pyodide parity check also passed)
+
+## Results
+
+Verified on 2026-11-15 against `8769b86` plus the local upload navigation fix.
+The published scorer files and template match their SHA-256 hashes.
+Gareth's input guide remains unchanged. The browser check verifies its complete column list, expanded mobile layout, and automated accessibility.
+`npm --prefix app run check:scorer -- /tmp/nasa-app-qa/reference.csv` matches all 83 current CLI rows in Pyodide 0.28.3.
+The reference was generated with the current scorer's `--detailed` mode. See Verify above for portable commands.
+`npm --prefix app run check:browser` checks Pass, Fail, and Unknown upload rows, expanded gate evidence, and worker reuse.
+Duplicate IDs, unknown columns, out-of-range values, empty input, and ragged rows show errors and clear old results.
+Opening a result now expands and focuses its details without changing the app route. This fixes a reproduced Page not found error.
+All 29 app-script tests and the production build pass. Automated accessibility checks pass on expanded upload results.
+Hosted acceptance is deferred. Gate/weight editing and CNN terrain uploads are not implemented.

@@ -13,7 +13,7 @@ Include regions without terrain and explain missing or blocked scores. See [shar
 - The region catalogue includes the 17 Artemis-labelled scenarios. The 30 synthetic and 30 dummy cases are excluded.
 - An explicit, source-linked mapping joins `eda_001` through `eda_017` to readable regions. The first seven retain their matching terrain links.
 - An environment tab shows two separate assessments, Operations and Survival. Each shows its own domain scores, status, failure reason and final score (`operations_score`, `survival_score`). It does not introduce a terrain domain.
-- Domain rows come from the received columns, not a fixed list. In Darrel's current scorer (`dar_dev`, `eb4edbf`), Operations has thermal, solar illumination, dust, plasma charging, Earth visibility and soil. Survival has radiation, thermal, plasma charging and UV.
+- Domain rows come from the received columns, not a fixed list. Operations has six domains, including soil and Earth visibility. Survival has four domains. See the current architecture for their names.
 - A `Fail` or `Unknown` status leaves that assessment's final score blank. Missing scores remain missing. Zero is displayed only when the source supplies zero.
 - Compact input displays each assessment's status and preserved failure reasons. It identifies per-check detail as unavailable instead of deriving check outcomes from domain scores.
 - If a traceable detailed export is supplied, the view shows its actual check values, units, thresholds, and statuses. Otherwise it remains usable with the compact CSV.
@@ -41,24 +41,24 @@ Include regions without terrain and explain missing or blocked scores. See [shar
 ## Verify
 
 - Seam: export the actual environment CSV and navigate from the region catalogue to its environment tab.
-- Proposed export interface, to be added to the shared exporter:
+- Existing integrated export interface. It reads compact and matching detailed results from the selected bundle:
 
 ```powershell
-.\.venv\Scripts\python.exe app\scripts\export_data.py --input-dir temp --environment-file "temp/darrel pipeline results.csv" --output-dir app/public/data
+.\.venv\Scripts\python.exe app\scripts\export_data.py --pipeline-run data/processed/moon_pipeline/<run> --output-dir app/public/data
 .\.venv\Scripts\python.exe -m unittest discover -s app/scripts/tests -p "test_*.py"
 npm --prefix app run build
 npm --prefix app run preview
 ```
 
-- `data/app_inputs/results.csv` in this checkout uses the old format (`final_habitability_score`, nine domains). Until Darrel sends new results, test against output from his current scorer run on his `sample_input.csv`.
+- `data/app_inputs/results.csv` is an obsolete input for this exporter. Use the bundle's Operations/Survival files, or isolated test fixtures.
 - Cover empty scores, numeric zero, a `Fail` status, an unmapped ID, and an old-format file with at most five cases per test task.
 - Exercise `Fail` and `Unknown` examples as clearly labelled test fixtures. Do not add them to the shipped scenario catalogue as real results.
 
 ## Decisions
 
-- **Open:** Darrel's real results in the new format have not arrived. His current scorer disables hard gates, so all 83 sample rows pass. Ask him whether gates stay off for the demo.
-- **Open:** The README supplies a region mapping, but teammate confirmation remains pending. The mapping task must record its source and review status.
-- **Open:** Apollo display remains a team choice. This feature excludes the comparison chart and preserves the reference rows in the original input.
+- **Resolved, 2026-11-14:** Darrel enabled hard gates. The app now uses the gated Operations/Survival run and its detailed evidence.
+- **Resolved, 2026-11-14:** Darrel confirmed the 17-region mapping in D3. Only the first seven rows join to terrain.
+- **Resolved, 2026-11-15:** Darrel permits the Apollo references with best-effort input labels. Show them in a separate reference group. No comparison chart, terrain coverage, or suitability claim is added.
 
 ## My calls
 
@@ -73,8 +73,21 @@ npm --prefix app run preview
 - [x] Adopt the source-linked 17-region mapping and evidence labels. Record its review status and reject unknown mappings without attaching them to a guessed region.
 - [x] Add compact environment export for the `operations_*` and `survival_*` columns, with explicit missing-value handling. Verify row filtering, numeric zero, a blank final score, and source identity with focused tests.
 - [x] Reject old-format files (`final_habitability_score`) and unrecognized score columns with a readable error. Preserve blank values.
-- [ ] Add optional detailed-check adaptation when its source is available, plus an explicit unavailable state when it is absent. Verify that scores never create invented gate outcomes.
+- [x] Add optional detailed-check adaptation when its source is available, plus an explicit unavailable state when it is absent. Verify that scores never create invented gate outcomes. Checked 2026-11-14: the 27 app-script tests cover detailed evidence, missing evidence, malformed gates, and compact/detailed disagreement. The TypeScript and production build also pass.
 - [x] Publish the environment catalogue and render its region score summaries with evidence labels. Verify 17 scenario entries and seven preserved terrain associations.
-- [x] Add the environment tab with separate Operations and Survival sections: domain rows, status, readable failure reasons, and final score. Compare passing and blank-score scenarios with the source CSV. Note, 14 Nov: no Artemis scenario fails or has a blank score in the current run, so only passing scenarios were compared.
+- [x] Add the environment tab with separate Operations and Survival sections: domain rows, status, readable failure reasons, and final score. Compare passing and blank-score scenarios with the source CSV. Historical check: only passing scenarios were compared in the earlier gates-off run. The current export has three Operations failures and their blank scores. No fresh browser check was run in this update.
 - [x] Add the sample input download: copy `sample_input.csv` from `dar_dev` into `app/public/` with its source commit, and add the labelled button. Verify the downloaded file matches the source byte-for-byte. Note, 14 Nov: the source is `env_algo_task/env_pipeline/sample_input.csv` on `main`. The export records its SHA-256, not a commit.
-- [x] Add environment-only and blocked-score region states. Verify ten disabled terrain selections, continued terrain access for a region with a blank score, and the complete production walkthrough. Note, 14 Nov: ten regions show "No terrain data" on the preview. No region has a blank score in the current run, so that state was not seen.
+- [x] Add environment-only and blocked-score region states. Verify ten disabled terrain selections, continued terrain access for a region with a blank score, and the complete production walkthrough. Historical preview: ten regions showed "No terrain data". The earlier gates-off run had no blank score. Current source data contains failed Operations assessments, which still need a fresh browser walkthrough.
+
+## Results
+
+Reconciled on 2026-11-15 against `8769b86` and the current committed `environment.json`.
+All 23 published scenarios have per-check evidence. Operations and Survival hard gates are active.
+The 17 Artemis scenarios have Operations 14 Pass / three Fail and Survival 17 Pass.
+Darrel's T3 answer is recorded in [team-blockers.md](../../team-blockers.md).
+Gareth's `8769b86` presents six Apollo scenarios separately with best-effort input labels, including on their detail pages. The local duplicate was removed during reconciliation.
+They do not change the 17-region summary or imply measured site suitability.
+`npm --prefix app run check:browser` checks the failed `eda_007` page, environment-only `eda_008`, Apollo reference, and all 23 list entries.
+Both desktop and 375 px layouts pass automated accessibility and page-overflow checks.
+All 29 app-script tests and the production build pass.
+Final acceptance and a real screen-reader pass remain open.

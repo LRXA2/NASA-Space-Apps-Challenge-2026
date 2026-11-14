@@ -2,16 +2,16 @@
 
 A static React site (Vite + TypeScript). It reads precomputed files from `public/data/`. No server runs. The only computation in the browser is the optional environment upload, which runs the team's scorer in Pyodide inside a Web Worker.
 
-Current scope: seven lunar regions and 2,910 terrain patches. Every patch has rover and on-foot predictions, slope and relative-elevation grids, 15 Earth matches (5 sites × top 3) with physical checks, and its region's environment scenario. The environment pages cover all 17 Artemis candidate regions.
+Current scope: seven lunar regions and 2,910 terrain patches. Every patch has rover and on-foot predictions, slope and relative-elevation grids, 15 Earth matches (5 sites × top 3) with physical checks, and its region's environment scenario. The environment pages cover all 17 Artemis candidate regions and six separate Apollo reference scenarios based on best-effort estimates.
 
 How this fits with the pipelines: [`docs/architecture.md`](../docs/architecture.md).
 
 ## Run the app
 
-Run these from the repository root. You need Node 22 or newer.
+Run these from the repository root. You need Node 22.12 or newer.
 
 ```bash
-npm --prefix app install
+npm --prefix app ci
 npm --prefix app run dev
 ```
 
@@ -59,6 +59,7 @@ npm --prefix app run check:scorer -- ../data/processed/moon_pipeline/<run>/envir
 
 | File | Content |
 | --- | --- |
+| `sky.json` | Curated sky-panel stars from `design/exploration-theme/sky/sky.json`. Maintained separately from pipeline exports |
 | `regions.json` | Regions, the pipeline run and its caveat, the terrain run and its claim boundary. Each region's `extent_m` holds the outer edges of its tiles in the lunar south polar stereographic CRS (`+proj=stere +lat_0=-90 +lon_0=0 +R=1737400`) |
 | `patches/<region>.json` | One record per patch: Hanxi ID, shared `tile_id`, similarity patch ID, grid position, classes, probabilities, crossings, measurements, `grid_offset` |
 | `grids/<region>.bin` | Moon terrain grids for every patch in that region |
@@ -66,8 +67,8 @@ npm --prefix app run check:scorer -- ../data/processed/moon_pipeline/<run>/envir
 | `earth/candidates.json` | Earth sites, the five check labels, and every Earth patch used in a match (site, lat/lon, check values, `grid_offset`) |
 | `earth/grids.bin` | Earth terrain grids for those patches |
 | `environment.json` | Artemis and Apollo scenarios: Operations and Survival status, final score, fail reasons, domain scores, evidence label, and `gates` (each hard-gate check: value, rule, Pass/Fail/Unknown, reason, from `environment_detailed.csv`) with `coverage`. Test rows are left out. `hard_gates` (`{operations, survival}` booleans, or null without the scorer) is read from the scorer config through its own `assessment_config` |
-| `environment/sample_input.csv` | The scorer's input template, copied unchanged |
-| `environment/scorer/` | `env_pipeline.py`, `config.yml` and the two upload helpers, copied unchanged with SHA-256 hashes in `environment.json` |
+| `environment/sample_input.csv` | The scorer's input template, published with LF line endings and a SHA-256 hash |
+| `environment/scorer/` | Scorer, config, and upload helpers with unchanged logic, LF line endings, and SHA-256 hashes in `environment.json` |
 
 Grid file layout (both Moon and Earth):
 
@@ -86,12 +87,12 @@ Route names such as `haworth` and `r32-c32` are for URLs. Every record also keep
 | `#/region/<region>` | Patch map and patch list for one region |
 | `#/region/<region>/patch/<patch>` | One patch: classes, terrain, best Earth match, region environment |
 | `#/region/<region>/patch/<patch>/analogs` | All 15 Earth matches: ranked table and Earth map |
-| `#/region/<region>/patch/<patch>/analogs/<earth patch ID>` | Moon–Earth pair: physical checks and four grids on shared scales |
-| `#/environment` | All 17 Artemis regions' Operations and Survival results |
-| `#/environment/<scenario ID>` | One scenario's domain scores |
+| `#/region/<region>/patch/<patch>/analogs/<earth patch ID>` | Pair: five checks, four shared-scale grids, a linked crosshair, and distribution charts |
+| `#/environment` | 17 Artemis regions and six separately labelled Apollo environment references |
+| `#/environment/<scenario ID>` | One scenario's domain scores, gate values, rules, statuses, and reasons |
 | `#/upload` | Score your own environment CSV in the browser |
 
-URLs use a `#` so that links work on any static host without server rules. `src/router.ts` is the only file that knows the URL form. Pair URLs use the Earth patch ID, not the rank, because rank changes if the candidate pool grows.
+URLs use `#` so static hosts need no rewrite rules. `src/router.ts` owns the URL form. Pair links use Earth patch IDs. Numeric candidate-index URLs are accepted for compatibility, but a rank is not a candidate ID.
 
 `SHOW_APOLLO` in `src/pages/EnvironmentPage.tsx` switches the six Apollo reference scenarios on. It is on: the team said yes to T3, with every input labelled a best-effort estimate.
 
@@ -111,8 +112,48 @@ The Earth map (`src/components/EarthMap.tsx`) uses OpenStreetMap tiles with attr
 
 ## Environment upload
 
-`src/workers/environmentWorker.ts` loads Pyodide 0.28.3 from jsDelivr on the first upload, checks each scorer file's SHA-256 against `environment.json`, and runs `score_upload.py`. That runs Darrel's unmodified `env_pipeline.py --compact`, then `environment_data.py`, which is the same adapter the export uses, so uploaded and precomputed results share one format. Later uploads in the same visit reuse the loaded worker.
+`src/workers/environmentWorker.ts` loads Pyodide 0.28.3 from jsDelivr on the first upload, checks each scorer file's SHA-256 against `environment.json`, and runs `score_upload.py`. That runs Darrel's scorer in detailed mode, then the shared `environment_data.py` adapter. Uploaded and precomputed results therefore use the same domain and gate format. Later uploads in the same visit reuse the loaded worker.
+
+Gareth's collapsible `InputGuide` explains the template columns, their sources, and preparation steps. Keep it aligned with the environment scorer's README.
 
 ## Styling
 
-`src/styles/tokens.css` holds placeholder colours and fonts as CSS variables. Replace that file when the design tokens are ready. Terrain colour ramps are in `src/components/colorScales.ts`.
+Gareth's exploration theme is implemented. `src/styles/tokens.css` holds its design values. Fonts are self-hosted from the locked Fontsource packages. Terrain ramps are in `src/components/colorScales.ts`.
+
+## Distribution charts
+
+`DistributionChart.tsx` computes empirical slope and elevation distributions from the decoded grids and draws them in plain SVG.
+Each pair uses one degree axis for slope and one metre axis for elevation. No chart dependency or curve re-export is needed.
+
+The scorer parity script compares detailed CSV output after masking only the configuration SHA-256 affected by CRLF/LF line endings.
+All other output must match.
+
+## Verify a local build
+
+```bash
+npm --prefix app ci
+npm --prefix app run build
+python3 -m unittest discover -s app/scripts/tests -p 'test_*.py'
+npm --prefix app run check:browser
+```
+
+The browser check needs an installed Chrome browser. It uses Playwright to open the production build at an intercepted `/demo/` base path. It opens no listening port.
+Set `DEMO_BROWSER_CHANNEL` to another installed Playwright channel if needed. The upload check needs internet access for pinned Pyodide files from jsDelivr.
+It checks routes, refresh and history, keyboard navigation, narrow screens, automated accessibility, missing data, map-tile failure, and environment uploads.
+Automated accessibility checks do not replace a real screen-reader review.
+
+To check scorer parity without a full pipeline bundle, run the Python scorer and then compare its detailed output:
+
+```bash
+python3 env_algo_task/env_pipeline/env_pipeline.py --input env_algo_task/env_pipeline/sample_input.csv --output /tmp/environment-reference.csv --detailed --overwrite
+npm --prefix app run check:scorer -- /tmp/environment-reference.csv
+```
+
+On Windows, use `.venv\Scripts\python.exe` and a local output path instead of `/tmp/environment-reference.csv`.
+The parity script may download Pyodide's pinned YAML package on its first run.
+
+See [demo walkthrough](../docs/demo-walkthrough.md) for examples and [feature specs](../docs/specs/app/area.md) for acceptance records.
+
+Hosting is deferred. A local build does not create a public URL.
+The repository's `scripts/prepare_demo` scripts rerun research integration and default to Haworth only. They need the ignored input bundles.
+Use the Node commands above to build all seven regions from committed exports. Review a full re-export with no `--region` before replacing them.

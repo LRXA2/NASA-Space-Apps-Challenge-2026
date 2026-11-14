@@ -30,15 +30,15 @@ Expand the first working flow without adding environment or similarity results. 
 - Use one documented coordinate convention. In grid-cell units, each rectangle is 32 cells wide and high. Row growth must map downwards.
 - Do not put lunar projected metres onto an Earth latitude/longitude basemap.
 - Each task changes at most three files and adds at most three functions or five test cases. Generated files in `app/public/data/` don't count toward the file limit. Export to a temporary directory and review it before replacing published data.
-- The first feature's exporter must accept any supported region and repeated patch selection. If its interface cannot export a whole region, revise that task before starting this spec.
+- Reuse the implemented region and patch filters. Do not regenerate app data without the bundle and source datasets it references.
 
 ## Verify
 
 - Seam: export and open each actual region in the running app, using both the map and the selectable list.
-- Extend the first feature's proposed CLI so omitting `--patch-id` exports every accepted patch in `--region`, and omitting `--region` exports all seven regions.
+- The existing exporter selects a completed bundle with `--pipeline-run`. Omit `--patch-id` for a whole region, or both filters for all regions.
 
 ```powershell
-.\.venv\Scripts\python.exe app\scripts\export_data.py --input-dir temp --region leibnitz-beta-plateau --output-dir app/public/data
+.\.venv\Scripts\python.exe app\scripts\export_data.py --pipeline-run data/processed/moon_pipeline/<run> --region leibnitz-beta-plateau --output-dir app/public/data
 .\.venv\Scripts\python.exe -m unittest discover -s app/scripts/tests -p "test_*.py"
 npm --prefix app run build
 npm --prefix app run preview
@@ -51,7 +51,7 @@ npm --prefix app run preview
 
 Checked 2026-11-13 on `gareth/app`, on top of `6fdc8f8`, on this macOS checkout. Committed afterwards as `7ae9ae8` and `306e3fe`. The browser checks ran on the production preview (`npm --prefix app run preview`), build `index-DYl3hwOX.js`.
 
-- Data: `python3 docs/goals/browse-regions-check.py` prints `DATA CHECK: PASS (7 regions, 2910 patches)`. It compares every patch ID, grid position, tensor reference, class and cell with the source CSV and tensors. The largest cell error is 0.05.
+- Historical data check (now located at `design/docs/goals/browse-regions-check.py`): `python3 docs/goals/browse-regions-check.py` printed `DATA CHECK: PASS (7 regions, 2910 patches)`. It compares every patch ID, grid position, tensor reference, class and cell with the source CSV and tensors. The largest cell error is 0.05.
 - Counts: Leibnitz 225, Malapert 400, de Gerlache–Kocher 361, Haworth 841, Faustini Rim A 361, de Gerlache Rim 2 361, Connecting Ridge Extension 361.
 - Exporter tests: 10 pass. Build: `npm --prefix app run build` passes.
 - In each of the seven regions, the map draws one square per patch, and the square count equals the list link count.
@@ -68,11 +68,11 @@ Checked 2026-11-13 on `gareth/app`, on top of `6fdc8f8`, on this macOS checkout.
 
 Not done or not checked:
 
-- Gareth's Windows setup and `temp/` paths are untested.
+- This original browser check did not verify Gareth's Windows setup. Later Windows pipeline observations are recorded in `docs/architecture.md`.
 - No region has a missing patch, so "gaps remain gaps" follows from the code only: the map draws only patches in the data.
 - Pan and zoom smoothness for Haworth was not measured, only the first draw.
 - The map task changed more than three files: `package.json`, `package-lock.json`, `PatchMap.tsx`, `RegionPage.tsx`, `StatusBadge.tsx`, `app.css` and `README.md`.
-- The exported data is about 15 MB in Git.
+- This initial terrain-only export was about 15 MB. Schema v2 adds analogs and Earth grids, bringing committed app data to about 31 MB.
 
 ## Decisions
 
@@ -89,3 +89,16 @@ Not done or not checked:
 - [x] Add region switching and a selectable Leaflet patch grid using the existing metadata contract. Verify selection, class modes, keyboard fallback, and lazy loading with the first region.
 - [x] Publish all seven regions (2,910 patches) from one exporter run: patch metadata, grid binaries, and catalogue entries. Verify per-region counts, unique source IDs, binary offsets, and one cell value per region against its source tensor.
 - [x] Run the seven-region production walkthrough. Verify map orientation, gaps, map responsiveness for Haworth's 841 patches, independent region navigation, and copied patch links in each region.
+
+Current record review, 2026-11-14: the catalogue retains seven regions and 2,910 patches.
+The region table now pages at 50 rows. Historical checks above predate that pagination.
+The current production build passes. No new map or keyboard walkthrough was run.
+Final acceptance and `Status: done` remain for review.
+
+### Verification, 2026-11-15
+
+Checked `8769b86` plus the local interaction fixes with `npm --prefix app run check:browser`.
+The browser check verifies Haworth pagination, patch navigation, and narrow-screen layout. Its data audit checks all 2,910 unique tiles and binary offsets.
+Automated accessibility and page-overflow checks pass at 1440 px and 375 px.
+The production build and all 29 app-script tests pass. These results replace earlier pending local checks above.
+Final feature acceptance remains for review.

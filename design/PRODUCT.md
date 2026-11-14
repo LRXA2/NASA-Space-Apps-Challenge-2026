@@ -8,12 +8,20 @@ web
 
 ## Stack
 
-Static React site (Vite + TypeScript) reading precomputed JSON; nothing is computed live, and every view should be fast and clickable. Full visual freedom.
+Static React site (Vite + TypeScript) reading schema v2 JSON and terrain binaries. Environment uploads run locally in Pyodide. No application backend is used.
 
 - Maps: Leaflet. Earth uses a normal lat/lon basemap. The Moon uses a flat per-region grid of clickable 960 m patches in `L.CRS.Simple` (no globe).
 - Terrain slope and relative-elevation maps are drawn on canvas from 32×32 grids, which allows hover readouts and a shared colour scale between Moon and Earth.
 - Design tokens are delivered as CSS custom properties usable directly in React.
-- Each screen has its own route, so links and the back button work.
+- Each screen has its own hash route, so shared links and the back button work on static hosting.
+- Pair distribution charts use plain SVG and the published terrain grids. No chart library is needed.
+
+## Visual Direction
+
+The team selected the exploration theme from Gareth's two proposals on 2026-11-14.
+Aarron preferred it because the project supports reconnaissance. Gareth confirmed he would implement that theme.
+The lighter-blue exploration proposal replaces the darker mission-control proposal as the design target.
+Gareth's exploration theme, Apollo references, and upload input guide are merged through `8769b86`. Final visual acceptance remains for review.
 
 ## Users
 
@@ -33,25 +41,29 @@ The app combines three independent engines and shows physical differences next t
 ## Operating Context
 
 - Live demo flow: region on the polar map → site overview (featured patch) → ranked Earth analogs → one Moon–Earth pair comparison.
-- All data is precomputed (CSV/JSON/PNG); nothing runs live.
+- Catalogue results are precomputed. Environment CSV uploads are scored in a browser worker and labelled user-supplied.
 - Lunar coordinates use a south-polar stereographic projection; Earth results use lat/lon.
 
 ## Capabilities and Constraints
 
-- **A. Terrain similarity CNN:** 960 m × 960 m lunar patch (32×32 at 30 m) → top-k Earth patches. Per result: Earth region, rank, cosine score, centre lat/lon, slope and relative-elevation PNGs (Moon and Earth), 5 physical checks (median slope, P90 slope, relief, plane residual, local elevation SD) with Moon–Earth difference and an in-band flag, slope/height CDFs.
+- **A. Terrain similarity CNN:** each 960 m lunar tile has 15 Earth matches, top three per Earth site. Results include ranks, cosine, coordinates, five physical checks, numeric terrain grids, and distribution charts. Similarity relief is p95 minus p5. Terrain-page relief is maximum minus minimum.
   - Earth sites: Northern Arizona, Lanzarote, Atacama (San Pedro), Death Valley, Wadi Rum.
   - Lunar regions with patches (7): Leibnitz Beta Plateau, Malapert Massif, de Gerlache–Kocher Massif, Haworth, Faustini Rim A, de Gerlache Rim 2, Connecting Ridge Extension.
-- **B. Environmental suitability engine:** per region (17 Artemis candidate regions; Apollo baselines unconfirmed). Nine domains, each check Passed / Failed / Unknown, per-domain score, and two final scores: **Ops** and **Survivability** (0–100). A failed hard gate leaves both blank and comes with a readable fail reason. Missing data is Unknown, never a pass. Whether an Unknown hard gate also blanks the scores is an open question. Thresholds are project test assumptions, not NASA certification.
+- **B. Environment scorer:** 17 Artemis scenarios, with six Apollo references displayed separately with best-effort input labels following Darrel's T3 answer. Operations and Survival have separate domains, statuses, reasons, and 0–100 scores. A Failed or Unknown assessment leaves only its own final score blank. Detailed gate evidence shows values, rules, and reasons. Thresholds and most inputs are project assumptions.
+  - Operations: thermal, solar illumination, dust, plasma charging, Earth visibility, and soil.
+  - Survival: radiation, thermal, plasma charging, and UV. Domain lists are read from the scorer output.
+  - Gates are enabled in the committed config. Current Artemis results are Operations 14 Pass / 3 Fail and Survival 17 Pass.
 - **C. Terrain CNN:** per lunar patch, rover class (operable / marginal / non-operable) and crew-on-foot walkability (easy / caution / unsuitable), each with probabilities, plus predicted rover-crossable directions (N–S, E–W, NW–SE, NE–SW). Trained on Earth terrain: predictions, not safety certifications.
-- **Data granularity:** environment is per region (17); terrain is per patch (7 regions, ~2,900 patches). The flow is region → patch. 10 regions have environment data only.
-- **Lunar terrain rendering:** the app draws slope and relative elevation from the 32×32 terrain grids (no PNG pipeline needed for the Moon side).
+- **Data granularity:** the current export uses region-scope environment scenarios and 2,910 terrain patches across seven regions. Ten scenarios have environment data only. Per-tile environment scoring requires the LOLA maps and a rerun.
+- **Terrain rendering:** Moon and Earth panels use numeric 32×32 grids. Each measurement shares a scale across the pair. No PNG fallback is implemented.
 - **Not yet built:** Earth simulation-readiness score (climate, land cover, OSM access/logistics). Shown as a designed slot marked "not yet computed."
 - General retrieval accuracy and operational suitability are unvalidated.
 
 ## Evidence on Hand
 
 - Notebooks 28–36 under `notebooks/modeling/terrain_similarity/` (similarity CNN, model comparison, slope/relative-elevation demo).
-- Environmental domain research: `darrel stuff/research/environmental_data.csv`.
+- Environmental research: `env_algo_task/research/environmental_data.csv`. Current scorer: `env_algo_task/env_pipeline/`.
+- Current engineering records: [status](../docs/STATUS.md), [architecture](../docs/architecture.md), and [app specs](../docs/specs/app/area.md).
 - No user testimonials, validation benchmarks or NASA endorsements exist; do not imply any.
 
 ## Product Principles

@@ -1,5 +1,8 @@
 # App developer handoff
 
+> Historical snapshot from 2026-11-13. It is not the current implementation status.
+> See [current status](../../docs/STATUS.md), [architecture](../../docs/architecture.md), and [app specs](../specs/app/area.md).
+
 Status as of 2026-11-13. The hackathon has about two days left. Following this folder's convention, add a new dated `developer_handoff_<YYYY-MM-DD>.md` for each handoff instead of editing this one.
 
 The app is planned but **no app code exists yet**. The stack is decided, the Python environment works, and two of the three teammates' outputs have arrived. Your first job is the **data export script** (see [Next steps](#next-steps)). It doesn't depend on the visual design.

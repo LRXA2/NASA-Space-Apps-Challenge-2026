@@ -9,7 +9,7 @@ This connects the data export to the UI before expanding coverage. See [shared c
 
 ## Done when
 
-- Running the export command on the pinned Hanxi run produces region metadata, patch metadata, and a binary terrain file for one patch.
+- Running the exporter on an integrated pipeline bundle produces region metadata, patch metadata, and a binary terrain file for the selected patch.
 - The export preserves the source patch ID, run ID, classes, probabilities, crossing predictions, physical summaries, and tensor location.
 - Decoded terrain contains two 32-by-32 grids: relative elevation in metres and slope in degrees. Quantization error is at most 0.05 in each unit.
 - In the running app, a region entry opens its real patch. The patch URL can be copied, reopened, and reached with browser navigation.
@@ -26,8 +26,8 @@ This connects the data export to the UI before expanding coverage. See [shared c
 ## Constraints
 
 - Follow Gareth's layouts and the [area decisions](area.md#decisions). A working screen is required. An isolated exporter is insufficient.
-- Run Python 3.12 on Gareth's Windows machine. Use repository-relative paths and an explicit input directory option for this checkout.
-- Read Hanxi's `20261112T120422201915Z_101366` inference run. Do not load model weights or rerun inference.
+- Run Python 3.12 with repository-relative paths. Select the integrated input bundle with `--pipeline-run`.
+- Read Hanxi's `20261112T120422201915Z_101366` run through the integrated bundle's manifest. Do not load model weights or rerun inference.
 - Read only the two required physical channels. Do not change normalization, orientation, heights, predictions, or source files.
 - Preserve source IDs separately from readable route names. Normalize Windows path separators and reject tensor paths outside the selected run.
 - Reject duplicate IDs, missing tensor references, invalid shapes, nonfinite values, and signed 16-bit overflow. Use `allow_pickle=False` for tensor files.
@@ -38,17 +38,17 @@ This connects the data export to the UI before expanding coverage. See [shared c
 ## Verify
 
 - Seam: run the exporter against the actual local input bundle, serve the app, and follow the region-to-patch flow in a browser.
-- The following commands are proposed interfaces. They do not exist yet. Introduce and document them during implementation.
+- These commands exist. Regeneration requires the integrated bundle and its referenced datasets. Building the committed app does not.
 
 ```powershell
-.\.venv\Scripts\python.exe app\scripts\export_data.py --input-dir temp --region leibnitz-beta-plateau --patch-id "A3CLR22_10_Leibnitz_Beta_Plateau:960:32:32" --output-dir app/public/data
+.\.venv\Scripts\python.exe app\scripts\export_data.py --pipeline-run data/processed/moon_pipeline/<run> --region leibnitz-beta-plateau --patch-id "A3CLR22_10_Leibnitz_Beta_Plateau:960:32:32" --output-dir app/public/data
 .\.venv\Scripts\python.exe -m unittest discover -s app/scripts/tests -p "test_*.py"
 npm --prefix app run dev
 npm --prefix app run build
 npm --prefix app run preview
 ```
 
-- On this checkout, use `--input-dir data/app_inputs` with its available Python environment. Do not claim Gareth's setup has been verified locally.
+- Replace `<run>` with a completed bundle on the machine running the export. This checkout currently lacks that bundle and `.venv`.
 - In the browser, check a known cell, back/forward navigation, a copied patch URL, a missing data file, and an invalid patch ID.
 - Until hosting is selected, verify URLs through the local development and preview servers. Hosted deep links belong to `publish-demo`.
 
@@ -63,7 +63,7 @@ npm --prefix app run preview
 ## My calls
 
 - Use Leibnitz Beta Plateau and source patch `A3CLR22_10_Leibnitz_Beta_Plateau:960:32:32` for the first walkthrough. This is a stable example, not a selected best site.
-- Use schema version 1. Pack each patch as relative elevation followed by slope, each in row-major order, using little-endian signed 16-bit values.
+- The first release used schema version 1. Integration now uses version 2, retaining the same little-endian terrain layout.
 - Round physical values multiplied by 10. Store byte offsets explicitly. Browser decoding must respect little-endian order and divide by 10.
 - Use neutral styles and labelled scales initially. Gareth's final tokens can replace the presentation without changing the data contract.
 - Select no routing or UI test library in this spec. Use the smallest approach that meets the browser checks and record any consequential choice before implementation.
@@ -81,7 +81,9 @@ npm --prefix app run preview
 
 ## Results
 
-Built and checked on 2026-11-13 on this macOS checkout (Python 3.12.3, NumPy 2.4.4, Node 26.5, Vite 8.3). Nothing is committed.
+Historical checks from 2026-11-13 used this macOS checkout (Python 3.12.3, NumPy 2.4.4, Node 26.5, Vite 8.3).
+The initial app was committed in `3458c47`. Integration later replaced its raw-input CLI with `--pipeline-run`.
+Commands and observations below describe that initial release, not a fresh rerun.
 
 - Export: `python3 app/scripts/export_data.py --input-dir data/app_inputs --region leibnitz-beta-plateau --patch-id "A3CLR22_10_Leibnitz_Beta_Plateau:960:32:32"` wrote `regions.json`, `patches/leibnitz-beta-plateau.json` and a 4,096-byte `grids/leibnitz-beta-plateau.bin`.
 - Exporter tests: 10 pass (`python3 -m unittest discover -s app/scripts/tests -p "test_*.py"`). They cover preserved source values, patch selection, duplicate IDs, unknown classes and regions, Windows path separators, paths outside the run, tensor identity, quantization tolerance, int16 overflow, non-finite values, wrong shapes, missing files and bad tensor indices.
@@ -92,10 +94,23 @@ Built and checked on 2026-11-13 on this macOS checkout (Python 3.12.3, NumPy 2.4
 - Error states, checked on the built files: a truncated grid file (4,000 bytes), a missing grid file, a missing `regions.json`, an unknown region, an unknown patch and an unknown route each show a readable message. Predictions stay visible when only the grid file is bad.
 - Also checked: arrow-key readout, phone width (375 px, no sideways scroll), light and dark colour schemes.
 
-Not done or not checked:
+Limitations recorded at the initial check:
 
-- Gareth's Windows setup and `temp/` paths are untested. The commands are in `app/README.md`.
-- `app/package-lock.json` exists but is left out of the commits. `publish-demo` adds it.
+- The initial check did not test Gareth's Windows setup. Later team checks are recorded in `docs/architecture.md`.
+- The package lockfile was outside the initial commit. It is now tracked in `app/package-lock.json`. A fresh install remains a publishing check.
 - The boot task touched more than three files (Vite needs `package.json`, `tsconfig.json`, `vite.config.ts`, `index.html` and `src/main.tsx`).
 - Styling is neutral. Gareth's layout and tokens are not applied.
 - `.claude/launch.json` was added for local preview servers. It is a local tool file and is not in the commits.
+
+Current record review, 2026-11-14: schema v2, the hash router, and committed exports are present.
+`python3 -m unittest discover -s app/scripts/tests -p 'test_*.py'` passes all 27 app-script tests.
+`npm --prefix app run build` passes the TypeScript check and Vite build. No new browser walkthrough was run.
+All existing tasks remain checked. Final acceptance and `Status: done` remain for review.
+
+### Verification, 2026-11-15
+
+Checked `8769b86` plus the local interaction fixes with `npm --prefix app run check:browser`.
+Copied links, refresh, browser history, invalid region/patch routes, and truncated terrain files pass the production browser check.
+Automated accessibility and page-overflow checks pass at 1440 px and 375 px.
+The production build and all 29 app-script tests pass. These results replace earlier pending local checks above.
+Final feature acceptance remains for review.

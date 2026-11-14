@@ -1,5 +1,13 @@
 # Implementing the exploration theme
 
+> Updated 2026-11-15: phases 1–4, phase 5 items 1–4, and the pair-table toggle are merged in `gareth/app` through `dd3503f`.
+> The instructions below describe the implementation sequence, including its original baseline. They are not an unfinished task list.
+> Gareth's `8769b86` also implements T3 and adds the environment input guide. Both are retained during local reconciliation.
+> Current files include `components/Shell.tsx`, `components/SkyPanel.tsx`, and `demo.ts`. `useColorScheme.ts` was removed.
+> Fonts are self-hosted. Ramps use the fitted shared domains. Earth tiles use the existing CSS filter.
+> Phase 5 item 5 still awaits T6. Terrain upload still awaits T1. See [current status](STATUS.md) and [specs](specs/app/area.md).
+
+
 How to build the chosen visual design into `app/`. Written 2026-11-14 for whoever implements it, person or Claude session.
 
 The look itself (tokens, components, screen layouts, what not to copy from Stitch) is specified in [design/exploration-theme/DESIGN.md](../design/exploration-theme/DESIGN.md). The reference renders are in [design/exploration-theme/screens/](../design/exploration-theme/screens/) and the mockup markup and CSS in [design/exploration-theme/mockups/](../design/exploration-theme/mockups/). Read DESIGN.md first; this file says where each part goes in the code.
@@ -20,7 +28,7 @@ The look itself (tokens, components, screen layouts, what not to copy from Stitc
 - Work on a new branch from `gareth/app`, such as `gareth/exploration-theme`. Ask the owner before committing, pushing or merging.
 - Don't edit `.impeccable/` or `design/wireframes.html`.
 
-## Where things are now
+## Original implementation baseline (before the theme)
 
 | Part | File |
 | --- | --- |
@@ -99,7 +107,7 @@ Data it needs:
 | Region count with terrain, patch total, patch size | `regions.json` (`regions[].exported_patch_count`) and the patch files' `patch_size_m`, `spacing_m` |
 | 17 regions in total, scores and status per region | `environment.json` |
 | Earth site count, matches per patch | `regions.json` `pipeline.earth_sites`, `pipeline.top_k_per_site` |
-| Rover class counts per region (the mix bar) | **Not exported yet.** The patch files hold it, but they total 3.2 MB, too much for the home page. Add per-region `rover_class_counts` (`operable`, `marginal`, `non_operable`) to each `regions.json` entry in `export_data.py`, with a test in `app/scripts/tests/test_export_data.py`, then re-export |
+| Rover class counts per region (the mix bar) | **Now exported.** Original implementation task: The patch files hold it, but they total 3.2 MB, too much for the home page. Add per-region `rover_class_counts` (`operable`, `marginal`, `non_operable`) to each `regions.json` entry in `export_data.py`, with a test in `app/scripts/tests/test_export_data.py`, then re-export |
 | Sky panel stars | Copy [design/exploration-theme/sky/sky.json](../design/exploration-theme/sky/sky.json) to `app/public/data/sky.json`, or trim it to magnitude ≤ 5 and the two named stars first (it is 68 KB). Star catalogue: `stars.6.json` from the d3-celestial project (BSD licence), projected for 2026-11-14 12:00 TT by [sky.py](../design/exploration-theme/sky/sky.py). Credit it in the footer or the about text |
 | Pair panel values and tiles | `analogs/leibnitz-beta-plateau.json` for patch `r192-c192`: rank 1 and the candidate with the most checks in band (rank 5), their cosines and checks in band. Draw the three slope tiles with `TerrainCanvas` (or a small static variant) on one shared domain |
 
@@ -126,3 +134,5 @@ These are new features shown in the mockups. Each is independent; do them in thi
 - Contrast: body text at least 4.5:1, large text at least 3:1, on the panel gradient as well as on the page.
 - The content rules above, checked on the environment list, a Fail scenario (`eda_007`), the analogs page and the upload results.
 - Update [STATUS.md](STATUS.md) with what was done and what is left.
+
+Verification on 2026-11-15: all five browser-check groups pass, including automated accessibility at desktop and 375 px. Real screen-reader verification remains open.

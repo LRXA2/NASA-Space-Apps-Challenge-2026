@@ -1,5 +1,8 @@
 # App design handoff
 
+> Historical snapshot from 2026-11-13. It is not the current implementation status.
+> See [current status](../../docs/STATUS.md), [architecture](../../docs/architecture.md), and [app specs](../../docs/specs/app/area.md).
+
 Status as of 2026-11-13. Handoff files in this folder are named `design_handoff_<YYYY-MM-DD>.md`; add a new dated file for each handoff instead of editing an old one. This covers the app (frontend) work only. The models and pipelines are owned by Aarron, Darrel and Hanxi.
 
 ## Where things are
