@@ -178,7 +178,7 @@ Vercel was the alternative. It needs a personal account that then owns the demo 
 
 ## Regenerating the export (T7)
 
-Run by hand, by Gareth, on a machine holding the git-ignored inputs in `data/`. Only when a CNN, the scorer or its template, the regions or the export format changes. Step-by-step instructions for whoever runs it: [regenerate-export.md](regenerate-export.md). CI's `CommittedExportTests` fails when the published scorer or template no longer matches `env_algo_task/env_pipeline/`.
+Confirmed (T7): run by hand, by Gareth, on a machine holding the git-ignored inputs in `data/`. Only when a CNN, the scorer or its template, the regions or the export format changes. Step-by-step instructions for whoever runs it: [regenerate-export.md](regenerate-export.md). CI's `CommittedExportTests` fails when the published scorer or template no longer matches `env_algo_task/env_pipeline/`.
 
 ## Decisions
 

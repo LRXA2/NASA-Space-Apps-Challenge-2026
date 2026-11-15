@@ -63,7 +63,7 @@ The app combines three independent engines and shows physical differences next t
 
 - Notebooks 28–36 under `notebooks/modeling/terrain_similarity/` (similarity CNN, model comparison, slope/relative-elevation demo).
 - Environmental research: `env_algo_task/research/environmental_data.csv`. Current scorer: `env_algo_task/env_pipeline/`.
-- Current engineering records: [status](../docs/STATUS.md), [architecture](../docs/architecture.md), and [app specs](../docs/specs/app/area.md).
+- Current engineering records: [architecture](../docs/architecture.md) and [app specs](../docs/specs/app/area.md).
 - No user testimonials, validation benchmarks or NASA endorsements exist; do not imply any.
 
 ## Product Principles

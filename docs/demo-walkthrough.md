@@ -53,7 +53,7 @@ All 83 template rows match the current Python scorer in the Pyodide parity check
 - Environment scores are region-wide (T4). Every patch in a region shares them.
 - CNN classes are model predictions from Earth-trained models. They do not certify lunar safety.
 - Earth simulation readiness is uncomputed. Terrain uploads are deferred after the submission (T1).
-- A real screen-reader pass, final feature acceptance and export ownership (T7) remain open.
+- A real screen-reader pass and final feature acceptance remain open. Gareth owns export regeneration (T7).
 - `scripts/prepare_demo` defaults to Haworth only and needs ignored research bundles. Use the Node build for the full committed catalogue.
 
 Current decisions and teammate answers are in [team-blockers.md](team-blockers.md).

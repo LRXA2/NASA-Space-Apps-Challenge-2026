@@ -10,6 +10,5 @@ Engineering docs for the Lunar Analog Finder app and its pipelines. UI designs l
 | [featured-tiles.md](featured-tiles.md) | The three featured patches per region (T6) |
 | [team-blockers.md](team-blockers.md) | Questions for each teammate and their recorded answers |
 | [specs/app/](specs/app/area.md) | Feature specs, verification records, and decisions |
-| [STATUS.md](STATUS.md) | Current progress and next steps. Internal: **remove before submission** |
 
 Folder-level guides stay next to their code: [`data/README.md`](../data/README.md) (what goes where under `data/`) and [`app/README.md`](../app/README.md) (running the app and the export).

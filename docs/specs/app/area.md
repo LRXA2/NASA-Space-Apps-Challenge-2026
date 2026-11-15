@@ -20,14 +20,13 @@ Checked tasks record prior implementation. A spec is not formally done until its
 
 ### Current records and designs
 
-- [Team status](../../STATUS.md): current work and blockers.
 - [Architecture](../../architecture.md): pipeline, export schema, routes, and browser upload.
 - [Team questions](../../team-blockers.md): recorded answers and remaining team choices.
 - [Featured tiles](../../featured-tiles.md): the three demonstration patches per region (T6).
 - [Product brief](../../../design/PRODUCT.md): current product scope and constraints.
 - [Design handoff](../../../design/handoff/design_handoff_2026-11-13.md) and [wireframes](../../../design/wireframes.html): historical planning snapshots.
 - [App README](../../../app/README.md): commands, data format, and routes.
-- Ian handles app integration and verification. Gareth designed the app and its theme, chose the host, and proposes to own export regeneration (T7).
+- Ian handles app integration and verification. Gareth designed the app and its theme, chose the host, and owns export regeneration (T7).
 
 ### Implemented data flow
 
@@ -84,8 +83,9 @@ Historical 13 November entries below explain the earlier plan. The dated replace
 - **Team answers T1, T2 and T4–T6, 2026-11-15.** Environment-only uploads for the submission, with elevation uploads later (T1). GitHub Pages, chosen by Gareth once the repo was public (T2). Region-scope environment scores, labelled as shared by every patch in a region (T4). The static architecture is kept (T5). Three featured tiles per region: strong match, misleading high cosine, not Atacama (T6). (2026-11-15)
 - **Remove finished planning docs.** The theme build guide and the 13 Nov developer handoff were superseded by the code, [architecture](../../architecture.md) and this file. They remain in git history. (2026-11-15)
 
+- **Gareth regenerates the export by hand (T7).** Only when a CNN, the scorer or its template, the regions or the export format changes. See [regenerate-export.md](../../regenerate-export.md). (2026-11-15)
+
 ## Open questions
 
-- Does the team confirm that Gareth regenerates the export by hand when an input changes (T7)?
 - Which inputs or configuration explain Darrel's differing Survival Unknown count?
 - Does the team approve the completed feature acceptance after a real screen-reader pass?

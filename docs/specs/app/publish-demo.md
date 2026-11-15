@@ -53,7 +53,7 @@ npm --prefix app run preview
 
 - **Host: GitHub Pages (T2), 2026-11-15.** Ian deferred hosting on 2026-11-14, then left it to the app designer once the repo was public. `.github/workflows/pages.yml` builds and deploys `app/dist` on each push to `main`. Vercel was not chosen: it needs a personal account that then owns the URL.
 - **Implemented:** Hash URLs in `app/src/router.ts` and relative asset paths in `app/vite.config.ts` need no host rewrite rules. Verified on the live project path.
-- **Export regeneration (T7):** manual, by Gareth, on a machine holding the `data/` inputs. Proposed 2026-11-15 and awaiting team confirmation. See [regenerate-export.md](../../regenerate-export.md).
+- **Export regeneration (T7):** manual, by Gareth, on a machine holding the `data/` inputs. Confirmed 2026-11-15. See [regenerate-export.md](../../regenerate-export.md).
 
 ## My calls
 
@@ -62,7 +62,7 @@ npm --prefix app run preview
 
 ## Tasks
 
-- [x] Record the selected host, route handling, and export-maintenance responsibility with the user. Host recorded (T2). Export ownership proposed, not yet confirmed (T7).
+- [x] Record the selected host, route handling, and export-maintenance responsibility with the user. Host recorded (T2). Export ownership: Gareth (T7).
 - [x] Add the package lockfile and clean-install documentation. Verify a fresh production build consumes committed exports without local research inputs. Historical note, 14 Nov: `npm --prefix app run build` passed on the existing install. A clean install was not rerun.
 - [x] Configure the selected host's build and static-asset base paths. Verify local production preview resolves region data and binary grids.
 - [x] Make hosted direct links and refresh behaviour match the selected route strategy. Verify region, patch, unknown-route, and missing-asset cases, plus analog and pair routes if they exist.
