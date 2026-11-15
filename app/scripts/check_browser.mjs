@@ -65,6 +65,17 @@ cases.set("data", async () => {
     }
   }
   assert.equal(count, 2910);
+  // The T6 featured patches (src/featured.json) must still fit their kinds after a re-export.
+  const featured = JSON.parse(await readFile(resolve(app, "src", "featured.json"), "utf8"));
+  assert.deepEqual(Object.keys(featured).sort(), catalogue.regions.map((region) => region.slug).sort());
+  for (const region of catalogue.regions) {
+    const tiles = (await json(region.analogs_file)).tiles;
+    const best = (kind) => tiles[featured[region.slug][kind]]?.matches[0];
+    const inBand = (match) => match.within.filter(Boolean).length;
+    assert.equal(inBand(best("strong")), 5, `${region.slug} strong pick`);
+    assert.equal(inBand(best("misleading")), 0, `${region.slug} misleading pick`);
+    assert.notEqual(earth.candidates[best("not_atacama").candidate].site, "atacama_san_pedro", `${region.slug} not-Atacama pick`);
+  }
   assert.equal(environment.scenarios.filter((row) => row.kind === "artemis").length, 17);
   assert.equal(environment.scenarios.filter((row) => row.kind === "apollo").length, 6);
   for (const row of environment.scenarios) {
@@ -77,7 +88,7 @@ cases.set("data", async () => {
     const bytes = await readFile(resolve(data, file.file));
     assert.equal(createHash("sha256").update(bytes).digest("hex"), file.sha256, `Hash mismatch: ${file.file}`);
   }
-  console.log(`  ${count} tiles, ${count * 15} matches, and published scorer hashes checked`);
+  console.log(`  ${count} tiles, ${count * 15} matches, featured patches, and published scorer hashes checked`);
 });
 
 cases.set("routes", async (context) => {
@@ -114,6 +125,12 @@ cases.set("routes", async (context) => {
   await page.goForward();
   await page.locator(".terrain-plot").first().waitFor();
   await page.reload();
+  await page.locator(".terrain-plot").first().waitFor();
+  await page.goto(base + "#/region/haworth");
+  await page.getByRole("heading", { name: "Three patches to start with" }).waitFor();
+  assert.equal(await page.locator(".featured-list li").count(), 3);
+  await page.locator(".featured-list .text-earth").first().waitFor();
+  await page.locator(".featured-list li").first().getByRole("link").first().click();
   await page.locator(".terrain-plot").first().waitFor();
   await page.goto(base + "#/environment");
   await page.getByRole("heading", { name: "Environment checks for 17 potential landing regions" }).waitFor();

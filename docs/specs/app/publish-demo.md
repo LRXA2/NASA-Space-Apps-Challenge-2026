@@ -53,7 +53,7 @@ npm --prefix app run preview
 
 - **Host: GitHub Pages (T2), 2026-11-15.** Ian deferred hosting on 2026-11-14, then left it to the app designer once the repo was public. `.github/workflows/pages.yml` builds and deploys `app/dist` on each push to `main`. Vercel was not chosen: it needs a personal account that then owns the URL.
 - **Implemented:** Hash URLs in `app/src/router.ts` and relative asset paths in `app/vite.config.ts` need no host rewrite rules. Verified on the live project path.
-- **Export regeneration (T7):** manual, by Gareth, on a machine holding the `data/` inputs. Proposed 2026-11-15 and awaiting team confirmation. See [architecture](../../architecture.md#regenerating-the-export-t7).
+- **Export regeneration (T7):** manual, by Gareth, on a machine holding the `data/` inputs. Proposed 2026-11-15 and awaiting team confirmation. See [regenerate-export.md](../../regenerate-export.md).
 
 ## My calls
 
@@ -79,4 +79,4 @@ Live at <https://lrxa2.github.io/NASA-Space-Apps-Challenge-2026/>, deployed by `
 - The served JavaScript bundle matches the local build, and the 8.7 MB Earth grid file is served whole.
 
 Missing-asset and map-tile failure states are checked locally by `npm --prefix app run check:browser` (all five groups pass), not on the live host.
-Regeneration steps are in [architecture](../../architecture.md#regenerating-the-export-t7). A real screen-reader pass remains open.
+Regeneration steps are in [regenerate-export.md](../../regenerate-export.md). A real screen-reader pass remains open.

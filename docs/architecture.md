@@ -178,16 +178,7 @@ Vercel was the alternative. It needs a personal account that then owns the demo 
 
 ## Regenerating the export (T7)
 
-Run by hand, by Gareth, on a machine holding the git-ignored inputs in `data/` (CI can't: they are not in the repo). Pushing the new `app/public/data/` to `main` redeploys the site.
-
-Run it only when an app input changes: a CNN is retrained or rerun (Aarron, Hanxi), Darrel changes `env_pipeline.py`, `config.yml` or `sample_input.csv`, a region is added, or the export schema changes. App and docs changes need no re-export. Frozen for the submission from 2026-11-15 unless a teammate reports a real change.
-
-1. `python -m integration.run_all --environment-scope region`
-2. `python app/scripts/export_data.py`, with no `--region`, so all seven regions are written.
-3. `npm --prefix app run build`, `npm --prefix app run check:scorer -- <run>/environment_detailed.csv` and `npm --prefix app run check:browser`.
-4. Review the diff under `app/public/data/`, then commit.
-
-CI guards the likeliest drift: `CommittedExportTests` in `app/scripts/tests/test_export_data.py` fails when the published scorer or template no longer matches `env_algo_task/env_pipeline/`.
+Run by hand, by Gareth, on a machine holding the git-ignored inputs in `data/`. Only when a CNN, the scorer or its template, the regions or the export format changes. Step-by-step instructions for whoever runs it: [regenerate-export.md](regenerate-export.md). CI's `CommittedExportTests` fails when the published scorer or template no longer matches `env_algo_task/env_pipeline/`.
 
 ## Decisions
 
@@ -203,7 +194,7 @@ CI guards the likeliest drift: `CommittedExportTests` in `app/scripts/tests/test
 | Host | **GitHub Pages (T2)**, deployed from `main` by `pages.yml` |
 | Upload scope: environment only, or environment plus both CNNs | **Environment only (T1)** for the submission. Elevation uploads can follow later |
 | Environment per region, or per tile with the LOLA maps | **Per region (T4)**, labelled as shared by every tile in the region. Per tile can follow later |
-| Featured tiles | **Three per region (T6)**: strong match, misleading high cosine, not Atacama |
+| Featured tiles | **Three per region (T6)**: strong match, misleading high cosine, not Atacama. Shown on the region page from `app/src/featured.json` |
 | Show the Apollo reference rows | **Yes (T3)**, labelled as equatorial comparison sites scored from best-effort estimates |
 | Distribution charts | Built with plain SVG in `DistributionChart.tsx`, no chart dependency (`b0b4641`) |
 | Visual direction | Exploration theme selected by Gareth after Aarron's reconnaissance rationale. It is merged through `dd3503f`. See the app area decision |

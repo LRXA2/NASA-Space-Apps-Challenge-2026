@@ -846,6 +846,48 @@ h3 {
   font-size: 0.8125rem;
 }
 
+/* ───────── Featured patches (region page) ───────── */
+.featured-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.featured-list li {
+  display: flex;
+  gap: 14px;
+  padding: 14px 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.featured-list li:hover,
+.featured-list li:focus-within {
+  background: var(--surface-hover);
+}
+
+.featured-list .region-number {
+  margin: 2px 0 0;
+}
+
+.featured-body {
+  min-width: 0;
+}
+
+.featured-title {
+  margin: 0 0 2px;
+  font-size: 1rem;
+}
+
+.featured-why {
+  margin: 0 0 6px;
+  font-size: 0.875rem;
+}
+
+.featured-facts {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+}
+
 /* ───────── Region switcher ───────── */
 .region-switch {
   display: flex;

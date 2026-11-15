@@ -24,6 +24,8 @@ npm --prefix app run preview
 
 ## Export the data
 
+To update the published data after a teammate's change, follow [docs/regenerate-export.md](../docs/regenerate-export.md). The commands below are the core of it.
+
 The export reads one integrated pipeline run, `data/processed/moon_pipeline/<run>/`. Make one first (see [`data/README.md`](../data/README.md) for the inputs):
 
 ```powershell
@@ -95,6 +97,8 @@ Route names such as `haworth` and `r32-c32` are for URLs. Every record also keep
 URLs use `#` so static hosts need no rewrite rules. `src/router.ts` owns the URL form. Pair links use Earth patch IDs. Numeric candidate-index URLs are accepted for compatibility, but a rank is not a candidate ID.
 
 The environment page shows the six Apollo references in their own table (T3), labelled as equatorial comparison sites scored from best-effort estimates.
+
+The region page opens with three featured patches per region (T6). They are listed in `src/featured.json`, and `check:browser` fails if a new export breaks one.
 
 ## Patch map
 

@@ -1,12 +1,15 @@
 import { memo, useEffect, useState } from "react";
 import type { SyntheticEvent } from "react";
+import { CheckCount } from "../components/CheckCount";
 import { Loading, PageMessage } from "../components/PageState";
 import { PatchMap } from "../components/PatchMap";
 import type { ClassMode } from "../components/PatchMap";
 import { StatusBadge } from "../components/StatusBadge";
-import { DataError, loadPatches, loadRegions } from "../data/loaders";
+import { candidateOf, checksWithin, siteName } from "../data/analogs";
+import { DataError, loadAnalogs, loadEarth, loadPatches, loadRegions } from "../data/loaders";
 import type { PatchesDocument } from "../data/types";
 import { useData } from "../data/useData";
+import { FEATURED_KINDS, featuredFor } from "../featured";
 import { links } from "../router";
 
 const MODES: { value: ClassMode; label: string }[] = [
@@ -94,6 +97,86 @@ const PatchTable = memo(function PatchTable(props: {
   );
 });
 
+async function loadRegionMatches(region: string) {
+  const entry = (await loadRegions()).regions.find((candidate) => candidate.slug === region);
+  if (!entry) throw new DataError(`No region named "${region}" is in this build.`);
+  const [analogs, earth] = await Promise.all([loadAnalogs(entry.analogs_file), loadEarth()]);
+  return { analogs, earth };
+}
+
+/**
+ * The team's three featured patches (T6): each with its closest Earth match by shape and how many physical checks
+ * agree. Pointing at or focusing one highlights it on the map.
+ */
+function FeaturedPatches({ listing, onActive }: { listing: PatchesDocument; onActive: (patch: string | null) => void }) {
+  const slug = listing.region.slug;
+  const picks = featuredFor(slug);
+  const matches = useData(`region-matches:${slug}`, () => loadRegionMatches(slug));
+  const featured = FEATURED_KINDS.flatMap((kind) => {
+    const record = picks && listing.patches.find((patch) => patch.slug === picks[kind.kind]);
+    return record ? [{ ...kind, record }] : [];
+  });
+  if (featured.length === 0) return null;
+  return (
+    <section className="card" aria-labelledby="featured-title">
+      <div className="panel-head">
+        <div>
+          <h2 id="featured-title">
+            {featured.length === 3 ? "Three" : featured.length} patches to start with
+          </h2>
+          <p className="panel-sub">
+            Picked by the team to show the range. Each shows its closest Earth match by shape and how many of its
+            physical checks agree.
+          </p>
+        </div>
+      </div>
+      {matches.status === "loading" && <p role="status">Loading Earth matches…</p>}
+      {matches.status === "error" && (
+        <p className="inline-error" role="alert">
+          {matches.message}
+        </p>
+      )}
+      <ol className="featured-list">
+        {featured.map(({ kind, title, why, record }, index) => {
+          const match = matches.status === "ready" ? matches.data.analogs.tiles[record.slug]?.matches[0] : undefined;
+          const earth = matches.status === "ready" ? matches.data.earth : undefined;
+          const point = () => onActive(record.slug);
+          const clear = () => onActive(null);
+          return (
+            <li key={kind} onMouseEnter={point} onMouseLeave={clear} onFocus={point} onBlur={clear}>
+              <span className="region-number" aria-hidden="true">
+                {index + 1}
+              </span>
+              <div className="featured-body">
+                <h3 className="featured-title">
+                  <a href={links.patch(slug, record.slug)}>
+                    {title}: row {record.top_row}, column {record.top_col}
+                  </a>
+                </h3>
+                <p className="muted featured-why">{why}</p>
+                {match && earth && (
+                  <p className="featured-facts">
+                    Closest by shape:{" "}
+                    <a href={links.pair(slug, record.slug, candidateOf(earth, match).id)}>
+                      <span className="text-earth">{siteName(earth, candidateOf(earth, match).site)}</span>
+                    </a>
+                    , cosine <span className="data">{match.cosine.toFixed(3)}</span> ·{" "}
+                    <CheckCount within={checksWithin(match)} total={match.within.length} /> physical checks in band
+                  </p>
+                )}
+                <p className="featured-facts">
+                  Rover <StatusBadge value={record.rover.class} /> · Crew on foot{" "}
+                  <StatusBadge value={record.walking.class} />
+                </p>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
 export function RegionPage({ region }: { region: string }) {
   const patches = useData(`region:${region}`, () => loadRegionPatches(region));
   const catalogue = useData("regions", loadRegions);
@@ -137,6 +220,7 @@ export function RegionPage({ region }: { region: string }) {
         {listing.patches.length} terrain {listing.patches.length === 1 ? "patch" : "patches"} in this build. Each is{" "}
         {listing.patch_size_m} m × {listing.patch_size_m} m on a {listing.spacing_m} m grid.
       </p>
+      <FeaturedPatches listing={listing} onActive={setActive} />
       <section className="card" aria-labelledby="map-title">
         <div className="panel-head">
           <h2 id="map-title">{mode === "rover" ? "Rover class" : "Crew-on-foot class"} by patch</h2>

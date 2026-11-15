@@ -19,7 +19,7 @@ They follow Gareth's current example in `app/src/demo.ts`:
 5. Explain that cosine measures learned shape similarity. It is not a percentage or a suitability rating.
 
 The automated browser check reopens all four header destinations from the production files.
-The team chose three featured tiles per region (T6): see [featured-tiles.md](featured-tiles.md). The app does not show them yet.
+Each region page opens with its three featured patches (T6): see [featured-tiles.md](featured-tiles.md).
 
 ## Additional verified examples
 

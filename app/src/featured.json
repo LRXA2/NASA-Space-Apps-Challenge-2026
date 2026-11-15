@@ -1,0 +1,9 @@
+{
+  "leibnitz-beta-plateau": { "strong": "r448-c480", "misleading": "r192-c192", "not_atacama": "r320-c480" },
+  "malapert-massif": { "strong": "r320-c480", "misleading": "r128-c384", "not_atacama": "r96-c384" },
+  "de-gerlache-kocher-massif": { "strong": "r256-c608", "misleading": "r480-c96", "not_atacama": "r224-c288" },
+  "haworth": { "strong": "r544-c544", "misleading": "r512-c480", "not_atacama": "r544-c160" },
+  "faustini-rim-a": { "strong": "r192-c64", "misleading": "r320-c128", "not_atacama": "r32-c192" },
+  "de-gerlache-rim-2": { "strong": "r128-c224", "misleading": "r64-c480", "not_atacama": "r544-c128" },
+  "connecting-ridge-extension": { "strong": "r320-c448", "misleading": "r32-c608", "not_atacama": "r160-c544" }
+}

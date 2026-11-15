@@ -2,7 +2,7 @@
 
 Picked by a script, 2026-11-14, from `moon_pipeline/20261114T023547307090Z_39a681` (region environment scope). Still valid for the current run `20261114T081013177916Z_da70aa`: its Earth matches and terrain classes are identical.
 
-**T6 decided 2026-11-15:** feature three tiles per region: a strong physical match, a high-cosine match with poor physical agreement, and a match outside Atacama. The app does not show them yet.
+**T6 decided 2026-11-15:** feature three tiles per region: a strong physical match, a high-cosine match with poor physical agreement, and a match outside Atacama. The region page shows them as "Three patches to start with", from `app/src/featured.json`. `npm --prefix app run check:browser` fails if a new export breaks a pick's kind.
 
 ## How they were picked
 

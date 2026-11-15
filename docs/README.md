@@ -5,6 +5,7 @@ Engineering docs for the Lunar Analog Finder app and its pipelines. UI designs l
 | File | What it covers |
 | --- | --- |
 | [architecture.md](architecture.md) | How the pipelines, the integration step, the export and the static app fit together, hosting, regenerating the export, and the decisions |
+| [regenerate-export.md](regenerate-export.md) | How to rebuild the app's data after a model or scorer change (T7) |
 | [demo-walkthrough.md](demo-walkthrough.md) | The demo path, verified examples, and known limits |
 | [featured-tiles.md](featured-tiles.md) | The three featured patches per region (T6) |
 | [team-blockers.md](team-blockers.md) | Questions for each teammate and their recorded answers |
