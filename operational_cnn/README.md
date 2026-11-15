@@ -4,15 +4,15 @@ This package is separate from `terrain_similarity`. It builds provisional
 directional route-connectivity labels, performs focused EDA and trains a small
 multi-task CNN that imitates those generated labels.
 
-For the slow beginner walkthrough, start at
-[`docs/00_START_HERE.md`](docs/00_START_HERE.md).
+The [terrain analysis notebook](notebooks/37_operational_terrain_eda.ipynb) explains the generated labels.
+The [CNN experiment notebook](notebooks/38_operability_cnn_experiment.ipynb) trains and evaluates the model.
 
 The current labels are scenario-based development evidence, not measured rover
 safety. The model must not be used to claim lunar safety or habitability.
 
 ## Reproduce
 
-From the D: project root with its Python 3.12 environment:
+Run from the repository root with a Python 3.12 environment:
 
 ```powershell
 uv pip install --python .venv\Scripts\python.exe torch --index-url https://download.pytorch.org/whl/cpu
