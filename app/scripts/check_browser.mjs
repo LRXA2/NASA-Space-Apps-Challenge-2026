@@ -100,6 +100,11 @@ cases.set("routes", async (context) => {
     await page.locator("h1").waitFor();
     await page.waitForFunction(() => !document.querySelector('[role="status"]')?.textContent?.startsWith("Loading"));
     assert.notEqual(await page.locator("h1").innerText(), "Page not found", route);
+    assert.equal(
+      await page.getByRole("contentinfo").getByRole("link", { name: "Source code", exact: true }).getAttribute("href"),
+      "https://github.com/LRXA2/NASA-Space-Apps-Challenge-2026",
+      `Source repository link: ${route}`,
+    );
     if (route.includes("/analogs")) await page.locator("tbody tr").first().waitFor({ state: "attached" });
     const desktop = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
     assert.deepEqual(desktop.violations.map(({ id, nodes }) => ({ id, nodes: nodes.length })), [], route);

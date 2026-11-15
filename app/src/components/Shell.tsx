@@ -144,6 +144,7 @@ export function Footer() {
         )}
         <p className="footer-note">
           Precomputed results · Earth and Moon only. Star positions from the d3-celestial catalogue (BSD licence).
+          {" "}<a href="https://github.com/LRXA2/NASA-Space-Apps-Challenge-2026">Source code</a>
         </p>
       </div>
     </footer>
