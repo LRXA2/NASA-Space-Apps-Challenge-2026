@@ -18,7 +18,7 @@ const QUANTILES: [string, number][] = [
 ];
 
 /** The smallest value that at least this share of cells are at or below. */
-export function quantile(sorted: Float32Array, share: number): number {
+function quantile(sorted: Float32Array, share: number): number {
   return sorted[Math.max(0, Math.ceil(share * sorted.length) - 1)];
 }
 

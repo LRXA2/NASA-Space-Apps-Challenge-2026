@@ -2,7 +2,7 @@
 // Runs Darrel's unmodified environment scorer in Pyodide, off the main thread.
 // The Python side (score_upload.py) is shared with app/scripts/check_scorer_parity.mjs.
 
-export const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/";
+const PYODIDE_URL = "https://cdn.jsdelivr.net/pyodide/v0.28.3/full/";
 
 export interface ScorerFile {
   name: string;

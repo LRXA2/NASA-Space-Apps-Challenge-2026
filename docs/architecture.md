@@ -34,7 +34,7 @@ The app is a static website with no application backend. Offline integration joi
    app/public/data/   (committed to git)
                 │
                 ▼  npm run build
-   app/dist/  →  GitHub Pages (pages.yml)              ← planned (T2)
+   app/dist/  →  GitHub Pages (pages.yml)              ← live (T2)
                 │
                 ▼
    Browser: React app reads JSON and binary files.
@@ -151,13 +151,13 @@ app/
 
 Maps use Leaflet without react-leaflet. The Moon uses `L.CRS.Simple` in stored grid cells, with no north-up basemap. Earth uses latitude/longitude tiles with attribution. Canvas terrain panels share one scale per measurement. `DistributionChart.tsx` draws cumulative distributions in plain SVG from each 1,024-cell grid. No chart library is required.
 
-## Upload in the browser (environment exists, terrain open)
+## Upload in the browser (environment exists, terrain deferred)
 
 | Pipeline | Runs as | Template | Status |
 | --- | --- | --- | --- |
-| Environment | Darrel's unmodified `env_pipeline.py` and `config.yml` in Pyodide 0.28.3 (stdlib + PyYAML), in a Web Worker | Darrel's `sample_input.csv` | **Exists.** Output identical to the CLI for all 83 sample rows (`npm --prefix app run check:scorer`). Upload checked in headless Chrome |
-| Similarity CNN | Planned: ONNX inference, 8 orientations, and cosine against the Earth embedding bank (5,693 × 64) | Elevation grid (below) | Offline ONNX export checked. Browser integration is not built |
-| Walkability CNN | Planned: ONNX inference with softmax and sigmoid in the model | Same elevation grid | Offline ONNX export checked. Browser integration is not built |
+| Environment | Darrel's unmodified `env_pipeline.py` and `config.yml` in Pyodide 0.28.3 (stdlib + PyYAML), in a Web Worker | Darrel's `sample_input.csv`, with a collapsible input guide (`InputGuide.tsx`) summarising the scorer README. Keep the two aligned | **Exists.** Output identical to the CLI for all 83 sample rows (`npm --prefix app run check:scorer`) |
+| Similarity CNN | Deferred (T1): ONNX inference, 8 orientations, and cosine against the Earth embedding bank (5,693 × 64) | Elevation grid (below) | Offline ONNX export checked. Browser integration is not built |
+| Walkability CNN | Deferred (T1): ONNX inference with softmax and sigmoid in the model | Same elevation grid | Offline ONNX export checked. Browser integration is not built |
 
 **ONNX check (2026-11-14).**
 
@@ -166,23 +166,34 @@ Maps use Leaflet without react-leaflet. The Moon uses `L.CRS.Simple` in stored g
 
 Rerun with `app/scripts/check_onnx_parity.py`.
 
-**Terrain template (confirmed by Aarron, not implemented in the UI):** a 42 × 42 `.asc` elevation grid at 30 m spacing, in metres, with no missing values. This surrounds the 32 × 32 tile with a five-cell margin. A proposed TypeScript preprocessing port would need to match `processing.py:terrain` before browser CNN results could be accepted. Models must ship with their own saved scalers. See A1–A2 and H1–H3 in the team answers.
-
-**Fallback:** a small hosted Python backend running the real code. Only if the TypeScript port can't match, because it adds a server to keep running during judging.
+**Terrain template, for a later elevation upload (confirmed by Aarron, not built):** a 42 × 42 `.asc` elevation grid at 30 m spacing, in metres, with no missing values. This surrounds the 32 × 32 tile with a five-cell margin. A proposed TypeScript preprocessing port would need to match `processing.py:terrain` before browser CNN results could be accepted. Models must ship with their own saved scalers. See A1–A2 and H1–H3 in the team answers.
 
 ## Hosting: GitHub Pages (T2)
 
 The build is fully static: `npm --prefix app run build` → `app/dist/`. Hash routes and a relative `base` mean any static host works without rewrite rules.
 
-The repo is public, so the site deploys to GitHub Pages. [pages.yml](../.github/workflows/pages.yml) builds `app/` and publishes `app/dist` on every push to `main`, or by hand from the Actions tab. A repo admin sets Settings → Pages → Source to "GitHub Actions" once. The site is served at `https://lrxa2.github.io/NASA-Space-Apps-Challenge-2026/`. Pyodide still loads from jsDelivr on the first upload.
+The repo is public, so the site deploys to GitHub Pages. [pages.yml](../.github/workflows/pages.yml) builds `app/` and publishes `app/dist` on every push to `main`, or by hand from the Actions tab. A repo admin sets Settings → Pages → Source to "GitHub Actions" once. The site is live at <https://lrxa2.github.io/NASA-Space-Apps-Challenge-2026/>. Pyodide still loads from jsDelivr on the first upload.
 
 Vercel was the alternative. It needs a personal account that then owns the demo URL, and its preview deploys aren't needed for the submission.
+
+## Regenerating the export (T7)
+
+Run by hand, by Gareth, on a machine holding the git-ignored inputs in `data/` (CI can't: they are not in the repo). Pushing the new `app/public/data/` to `main` redeploys the site.
+
+Run it only when an app input changes: a CNN is retrained or rerun (Aarron, Hanxi), Darrel changes `env_pipeline.py`, `config.yml` or `sample_input.csv`, a region is added, or the export schema changes. App and docs changes need no re-export. Frozen for the submission from 2026-11-15 unless a teammate reports a real change.
+
+1. `python -m integration.run_all --environment-scope region`
+2. `python app/scripts/export_data.py`, with no `--region`, so all seven regions are written.
+3. `npm --prefix app run build`, `npm --prefix app run check:scorer -- <run>/environment_detailed.csv` and `npm --prefix app run check:browser`.
+4. Review the diff under `app/public/data/`, then commit.
+
+CI guards the likeliest drift: `CommittedExportTests` in `app/scripts/tests/test_export_data.py` fails when the published scorer or template no longer matches `env_algo_task/env_pipeline/`.
 
 ## Decisions
 
 | Decision | Status |
 | --- | --- |
-| Static site, no backend, exports committed | Decided (group sign-off still requested) |
+| Static site, no backend, exports committed | Decided, kept by the team (T5) |
 | Vite + React + TypeScript, Leaflet without react-leaflet, canvas terrain | Decided |
 | Int16 × 10 binary grids per region | Decided |
 | Hash routes, relative base path | Decided (Ian) |
@@ -192,7 +203,6 @@ Vercel was the alternative. It needs a personal account that then owns the demo 
 | Host | **GitHub Pages (T2)**, deployed from `main` by `pages.yml` |
 | Upload scope: environment only, or environment plus both CNNs | **Environment only (T1)** for the submission. Elevation uploads can follow later |
 | Environment per region, or per tile with the LOLA maps | **Per region (T4)**, labelled as shared by every tile in the region. Per tile can follow later |
-| Static architecture sign-off | **Kept (T5)**. The environment upload covers testing a new input set |
 | Featured tiles | **Three per region (T6)**: strong match, misleading high cosine, not Atacama |
 | Show the Apollo reference rows | **Yes (T3)**, labelled as equatorial comparison sites scored from best-effort estimates |
 | Distribution charts | Built with plain SVG in `DistributionChart.tsx`, no chart dependency (`b0b4641`) |
@@ -207,7 +217,3 @@ Questions for teammates are in [team-blockers.md](team-blockers.md).
 - Atacama is the best match for about 88% of tiles. It also has 3,078 of the 5,693 Earth patches.
 - 193 match rows have cosine above 0.95 with 0 of 5 physical checks in band. Keep these visible: they show why physical checks matter.
 - The Earth simulation-readiness score does not exist. Show it as not computed.
-
-Gareth's exploration theme, Apollo references, and upload input guide are merged through `8769b86`. Feature specs live in `docs/specs/app/` and engineering handoffs in `docs/handoff/`. Hosting is GitHub Pages (T2), set up locally and not yet enabled.
-
-The upload page includes `InputGuide.tsx`, a collapsible summary of the scorer README's input sources and preparation steps. Keep it aligned with the source guide.

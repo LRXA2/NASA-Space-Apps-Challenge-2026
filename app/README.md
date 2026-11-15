@@ -94,7 +94,7 @@ Route names such as `haworth` and `r32-c32` are for URLs. Every record also keep
 
 URLs use `#` so static hosts need no rewrite rules. `src/router.ts` owns the URL form. Pair links use Earth patch IDs. Numeric candidate-index URLs are accepted for compatibility, but a rank is not a candidate ID.
 
-`SHOW_APOLLO` in `src/pages/EnvironmentPage.tsx` switches the six Apollo reference scenarios on. It is on: the team said yes to T3, with every input labelled a best-effort estimate.
+The environment page shows the six Apollo references in their own table (T3), labelled as equatorial comparison sites scored from best-effort estimates.
 
 ## Patch map
 
@@ -154,6 +154,6 @@ The parity script may download Pyodide's pinned YAML package on its first run.
 
 See [demo walkthrough](../docs/demo-walkthrough.md) for examples and [feature specs](../docs/specs/app/area.md) for acceptance records.
 
-Pushes to `main` deploy `app/dist` to GitHub Pages through [pages.yml](../.github/workflows/pages.yml), once a repo admin sets the Pages source to "GitHub Actions".
+Live at <https://lrxa2.github.io/NASA-Space-Apps-Challenge-2026/>. Pushes to `main` deploy `app/dist` to GitHub Pages through [pages.yml](../.github/workflows/pages.yml), once a repo admin sets the Pages source to "GitHub Actions".
 The repository's `scripts/prepare_demo` scripts rerun research integration and default to Haworth only. They need the ignored input bundles.
 Use the Node commands above to build all seven regions from committed exports. Review a full re-export with no `--region` before replacing them.

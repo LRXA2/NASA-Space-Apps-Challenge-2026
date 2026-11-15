@@ -18,7 +18,7 @@ const CLASS_ORDER: Record<ClassMode, (RoverClass | WalkingClass)[]> = {
  * Map units are source grid cells. x is the grid column. y is minus the grid row, because
  * Leaflet's y axis points up and grid rows grow downwards. Each patch is 32 by 32 cells.
  */
-export function patchBounds(patch: PatchRecord): L.LatLngBoundsLiteral {
+function patchBounds(patch: PatchRecord): L.LatLngBoundsLiteral {
   return [
     [-(patch.top_row + PATCH_CELLS), patch.top_col],
     [-patch.top_row, patch.top_col + PATCH_CELLS],

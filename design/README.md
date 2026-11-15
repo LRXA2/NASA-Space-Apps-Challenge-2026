@@ -9,4 +9,4 @@ UI design for the Lunar Analog Finder app: who it is for, how the screens are la
 | [handoff/design_handoff_2026-11-13.md](handoff/design_handoff_2026-11-13.md) | Screens, routes and UI rules as handed over on 13 Nov |
 | [exploration-theme/](exploration-theme/) | **The chosen visual design (14 Nov).** [DESIGN.md](exploration-theme/DESIGN.md) holds tokens, components and screen layouts; `screens/` has renders at 1440 and 375 px, `mockups/` the markup and CSS, `sky/` the star data for the home page |
 
-The exploration theme is implemented in `app/`. See [docs/ui-theme-implementation.md](../docs/ui-theme-implementation.md) for delivered phases and remaining work.
+The exploration theme is implemented in `app/` (`app/src/styles/`). The 14 Nov build guide is in git history.

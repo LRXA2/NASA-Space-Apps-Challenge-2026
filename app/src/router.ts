@@ -14,7 +14,7 @@ export type Route =
   | { name: "upload" }
   | { name: "not-found"; path: string };
 
-export function parseRoute(hash: string): Route {
+function parseRoute(hash: string): Route {
   const path = hash.replace(/^#/, "").replace(/\/+$/, "") || "/";
   let parts: string[];
   try {

@@ -424,8 +424,7 @@ h3 {
 
 /* ───────── Panels ───────── */
 .card,
-.message,
-.link-list {
+.message {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--panel-fill);
@@ -845,30 +844,6 @@ h3 {
 .gate-rationale {
   margin: 4px 0;
   font-size: 0.8125rem;
-}
-
-/* ───────── Lists ───────── */
-.link-list {
-  margin: 20px 0;
-  padding: 0;
-  list-style: none;
-}
-
-.link-list li {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 4px 16px;
-  padding: 14px 20px;
-}
-
-.link-list li + li {
-  border-top: 1px solid var(--hairline);
-}
-
-.link-list a {
-  font-weight: 600;
 }
 
 /* ───────── Region switcher ───────── */

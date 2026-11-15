@@ -5,7 +5,7 @@ import { links } from "../router";
 import type { Route } from "../router";
 
 /** Horizon line, Earth as a gold half-disc, three stars. */
-export function Logo() {
+function Logo() {
   return (
     <span className="brand-logo" aria-hidden="true">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -72,7 +72,7 @@ function Check() {
 }
 
 /** The four demo steps in one pill. Steps before the current one show a check. */
-export function DemoPath({ route }: { route: Route }) {
+function DemoPath({ route }: { route: Route }) {
   const current = demoStep(route);
   return (
     <nav className="demo-path" aria-label="Demo path">

@@ -2,7 +2,7 @@
 
 The chosen visual direction for Lunar Analog Finder, agreed on 2026-11-14. It comes from a Google Stitch exploration ("Artemis Frontier" / "Cosmic Wonder"), rebuilt on the app's real data and content rules.
 
-This file says what the theme looks like. How to build it into `app/` is in [docs/ui-theme-implementation.md](../../docs/ui-theme-implementation.md).
+This file says what the theme looks like. It is implemented in `app/src/styles/tokens.css` and `app/src/styles/app.css`.
 
 | Reference | Where |
 | --- | --- |

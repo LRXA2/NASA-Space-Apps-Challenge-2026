@@ -142,7 +142,7 @@ function quantity(value: number, unit: string): string {
 }
 
 /** The rule a gate checks, in words a reader can compare with the value. */
-export function gateRule(check: GateCheck): string {
+function gateRule(check: GateCheck): string {
   if (check.operator === "between" && check.lower !== null && check.upper !== null) {
     return `between ${quantity(check.lower, "")} and ${quantity(check.upper, check.unit)}`;
   }

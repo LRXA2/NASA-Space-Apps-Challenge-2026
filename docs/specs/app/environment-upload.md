@@ -2,7 +2,7 @@
 
 Needs: environment-assessment
 Due: 2026-11-15
-Implementation exists. Hosted acceptance waits on `publish-demo`. See [area decisions](area.md#decisions).
+Implementation exists and works on the live site (2026-11-15). Formal acceptance open. See [area decisions](area.md#decisions).
 
 ## Goal
 
@@ -69,7 +69,7 @@ npm --prefix app run preview
 - [x] Add the Pyodide worker that loads PyYAML, runs Darrel's `run()` and the environment adapter on an uploaded CSV, and returns results or the error message. Add `check_scorer_parity.mjs` and verify all 83 sample rows match the CLI output. Historical note, 14 Nov: the 83-row comparison passed in `test_score_upload.py`. `check_scorer_parity.mjs` was not run, because no reference CSV is on this machine.
 - [x] Add the upload page with the sample download, file picker, loading state, and error display. Verify each invalid-file case shows Darrel's message and no partial results. Historical note, 14 Nov: checked one invalid file on the preview. It showed the scorer's message and no results.
 - [x] Render uploaded rows with the environment tab's Operations and Survival components and the user-supplied label. Verify a passing row and a blank-score row against the CLI output. Historical note, 14 Nov: 83 rows rendered on the preview. A blank-score row was not checked.
-- [ ] Run the upload walkthrough on the production preview and the hosted site. Verify the sample download, one upload, and that a second upload does not reload Pyodide. (blocked: hosting deferred by Ian. Local checks passed on 15 Nov: scorer/template hashes, Pass/Fail/Unknown uploads, row navigation, five invalid files, and worker reuse. The 83-row Pyodide parity check also passed)
+- [x] Run the upload walkthrough on the production preview and the hosted site. Verify the sample download, one upload, and that a second upload does not reload Pyodide. (Hosted, 15 Nov: the template downloads with 83 rows, the 83-row upload scores, and a second upload scores in 0.3 s with no second Pyodide download. Local checks passed on 15 Nov: scorer/template hashes, Pass/Fail/Unknown uploads, row navigation, five invalid files, and worker reuse. The 83-row Pyodide parity check also passed)
 
 ## Results
 
@@ -82,4 +82,4 @@ The reference was generated with the current scorer's `--detailed` mode. See Ver
 Duplicate IDs, unknown columns, out-of-range values, empty input, and ragged rows show errors and clear old results.
 Opening a result now expands and focuses its details without changing the app route. This fixes a reproduced Page not found error.
 All 29 app-script tests and the production build pass. Automated accessibility checks pass on expanded upload results.
-Hosted acceptance is deferred. Gate/weight editing and CNN terrain uploads are not implemented.
+The hosted walkthrough passed on 2026-11-15 (see the last task). Gate/weight editing is not implemented. CNN terrain uploads are deferred after the submission (T1).

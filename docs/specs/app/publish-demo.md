@@ -1,6 +1,6 @@
 # Publish the app demonstration
 
-Status: blocked: hosting deferred by Ian
+Status: in review: live on GitHub Pages and checked 2026-11-15. Formal acceptance open
 Needs: browse-first-patch
 Due: 2026-11-15
 
@@ -51,9 +51,9 @@ npm --prefix app run preview
 
 ## Decisions
 
-- **Deferred, 2026-11-14:** Ian asked to leave hosting out. No host is selected. Resume host selection and hosted checks only when that scope returns.
-- **Implemented:** Hash URLs in `app/src/router.ts` and relative asset paths in `app/vite.config.ts` avoid a host rewrite requirement. Hosted verification remains open.
-- **Open:** The team has not assigned responsibility for regenerating and reviewing app exports when a model changes.
+- **Host: GitHub Pages (T2), 2026-11-15.** Ian deferred hosting on 2026-11-14, then left it to the app designer once the repo was public. `.github/workflows/pages.yml` builds and deploys `app/dist` on each push to `main`. Vercel was not chosen: it needs a personal account that then owns the URL.
+- **Implemented:** Hash URLs in `app/src/router.ts` and relative asset paths in `app/vite.config.ts` need no host rewrite rules. Verified on the live project path.
+- **Export regeneration (T7):** manual, by Gareth, on a machine holding the `data/` inputs. Proposed 2026-11-15 and awaiting team confirmation. See [architecture](../../architecture.md#regenerating-the-export-t7).
 
 ## My calls
 
@@ -62,21 +62,21 @@ npm --prefix app run preview
 
 ## Tasks
 
-- [ ] Record the selected host, route handling, and export-maintenance responsibility with the user. Preserve unresolved ownership explicitly rather than assigning a teammate.
+- [x] Record the selected host, route handling, and export-maintenance responsibility with the user. Host recorded (T2). Export ownership proposed, not yet confirmed (T7).
 - [x] Add the package lockfile and clean-install documentation. Verify a fresh production build consumes committed exports without local research inputs. Historical note, 14 Nov: `npm --prefix app run build` passed on the existing install. A clean install was not rerun.
-- [ ] Configure the selected host's build and static-asset base paths. Verify local production preview resolves region data and binary grids.
-- [ ] Make hosted direct links and refresh behaviour match the selected route strategy. Verify region, patch, unknown-route, and missing-asset cases, plus analog and pair routes if they exist.
-- [ ] Publish through the authorized hosting workflow and record the real hosted walkthrough, input-regeneration instructions, and known coverage limits (blocked: Ian deferred hosting).
+- [x] Configure the selected host's build and static-asset base paths. Verify local production preview resolves region data and binary grids.
+- [x] Make hosted direct links and refresh behaviour match the selected route strategy. Verify region, patch, unknown-route, and missing-asset cases, plus analog and pair routes if they exist.
+- [x] Publish through the authorized hosting workflow and record the real hosted walkthrough, input-regeneration instructions, and known coverage limits.
 - [x] Verify `npm --prefix app ci` and the production build from a clean dependency installation. Checked 2026-11-15 after pulling `dd3503f`; 37 packages installed, production build passed.
 
 ## Results
 
-Verified on 2026-11-15 against `8769b86` plus the local interaction fixes.
-`npm --prefix app ci` succeeded earlier on `dd3503f` with the combined lockfile, including theme fonts and browser-check tools.
-The upstream `8769b86` update did not change dependencies. Build and browser checks were rerun after reconciliation.
-`npm --prefix app run build` passes its TypeScript check and production build.
-`npm --prefix app run check:browser` passes all five check groups using production files at an intercepted `/demo/` path.
-It checks ten page URLs at 1440 px and 375 px, direct links, history, refresh, demo links, failure states, and uploads.
-It opens no listening port. This is local browser evidence, not a hosted walkthrough.
-No public host or URL is recorded. Export maintenance remains unassigned.
-See [demo walkthrough](../../demo-walkthrough.md) and [app README](../../../app/README.md) for reproducible commands.
+Live at <https://lrxa2.github.io/NASA-Space-Apps-Challenge-2026/>, deployed by `pages.yml` from `main`. Checked on 2026-11-15 in headless Chrome:
+
+- Direct links to the home, region, patch, analogs, pair, environment, scenario and upload routes load with no failed requests or script errors. Refresh, back and forward keep the route. An unknown route shows "Page not found" and an unknown region its own message.
+- The 83-row template uploads and scores in the browser, with Pyodide from jsDelivr.
+- No horizontal scroll at 375 px on seven routes. axe finds no violations on eight routes in light and dark.
+- The served JavaScript bundle matches the local build, and the 8.7 MB Earth grid file is served whole.
+
+Missing-asset and map-tile failure states are checked locally by `npm --prefix app run check:browser` (all five groups pass), not on the live host.
+Regeneration steps are in [architecture](../../architecture.md#regenerating-the-export-t7). A real screen-reader pass remains open.

@@ -503,5 +503,33 @@ class EnvironmentTests(ExportCase):
             self.export()
 
 
+class CommittedExportTests(unittest.TestCase):
+    """The committed export must match the scorer and template in this checkout.
+
+    If this fails, someone changed env_algo_task/ without re-running the export, so the website's upload scorer
+    and template differ from the team's. Re-run the export (app/README.md) and commit app/public/data.
+    """
+
+    def test_scorer_copies_and_template_match_their_sources(self) -> None:
+        repo = Path(__file__).resolve().parents[3]
+        published = repo / "app" / "public" / "data"
+        if not (repo / export_data.SCORER).is_file() or not (published / "environment.json").is_file():
+            self.skipTest("scorer or committed export not in this checkout")
+        document = json.loads((published / "environment.json").read_text(encoding="utf-8"))
+        sources = {
+            "env_pipeline.py": repo / export_data.SCORER,
+            "config.yml": repo / export_data.DEFAULT_SCORER_CONFIG,
+            "environment_data.py": repo / "app" / "scripts" / "environment_data.py",
+            "score_upload.py": repo / "app" / "scripts" / "score_upload.py",
+        }
+        entries = [(entry["file"], sources[entry["name"]], entry["sha256"]) for entry in document["upload_files"]]
+        sample = document["sample_input"]
+        entries.append((sample["file"], repo / sample["source"], sample["sha256"]))
+        for file, source, sha256 in entries:
+            written = (published / file).read_bytes()
+            self.assertEqual(written, export_data.lf_bytes(source), f"{file} is out of date with {source.name}")
+            self.assertEqual(sha256, hashlib.sha256(written).hexdigest(), f"{file} hash in environment.json")
+
+
 if __name__ == "__main__":
     unittest.main()

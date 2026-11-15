@@ -9,12 +9,12 @@ These seven specs describe the implemented app and its remaining acceptance work
 Checked tasks record prior implementation. A spec is not formally done until its acceptance is reviewed and `Status: done` is recorded.
 
 - `browse-first-patch`: Open a real region and patch, inspect predictions, and view terrain grids.
-- `publish-demo`: Publish the existing app and verify hosted routes, assets, and the walkthrough. Needs: browse-first-patch.
+- `publish-demo`: Publish the existing app and verify hosted routes, assets, and the walkthrough. Live on GitHub Pages. Needs: browse-first-patch.
 - `browse-regions`: Browse seven terrain regions and all 2,910 patches. Needs: browse-first-patch.
 - `earth-analogs`: Inspect each patch's 15 Earth matches from the integrated run. Needs: browse-regions.
 - `compare-terrain`: Compare actual Moon–Earth grids, five physical checks, and distributions. Needs: earth-analogs.
 - `environment-assessment`: Inspect Operations and Survival scores, gate evidence, and environment-only regions. Needs: browse-regions.
-- `environment-upload`: Score a filled environment CSV in Pyodide. Local implementation exists. Hosted verification needs publish-demo. Needs: environment-assessment.
+- `environment-upload`: Score a filled environment CSV in Pyodide. Works locally and on the live site. Needs: environment-assessment.
 
 ## Shared context
 
@@ -23,11 +23,11 @@ Checked tasks record prior implementation. A spec is not formally done until its
 - [Team status](../../STATUS.md): current work and blockers.
 - [Architecture](../../architecture.md): pipeline, export schema, routes, and browser upload.
 - [Team questions](../../team-blockers.md): recorded answers and remaining team choices.
-- [Featured tiles](../../featured-tiles.md): draft demonstration examples.
+- [Featured tiles](../../featured-tiles.md): the three demonstration patches per region (T6).
 - [Product brief](../../../design/PRODUCT.md): current product scope and constraints.
-- [Design handoff](../../../design/handoff/design_handoff_2026-11-13.md), [developer handoff](../../handoff/developer_handoff_2026-11-13.md), and [wireframes](../../../design/wireframes.html): historical planning snapshots.
+- [Design handoff](../../../design/handoff/design_handoff_2026-11-13.md) and [wireframes](../../../design/wireframes.html): historical planning snapshots.
 - [App README](../../../app/README.md): commands, data format, and routes.
-- Ian handles app integration and verification. Gareth's exploration theme is merged. Detailed future ownership remains unassigned.
+- Ian handles app integration and verification. Gareth designed the app and its theme, chose the host, and proposes to own export regeneration (T7).
 
 ### Implemented data flow
 
@@ -38,7 +38,7 @@ Checked tasks record prior implementation. A spec is not formally done until its
 - Darrel's scorer supplies separate Operations and Survival assessments. Their domain lists are read by prefix, not hardcoded in the UI.
 - The committed environment catalogue contains 17 Artemis scenarios and six separately labelled Apollo references. Synthetic and dummy test rows are excluded.
 - The detailed export supplies gate values, thresholds, statuses, reasons, and coverage. Failed or Unknown assessments keep their final scores blank.
-- Current Artemis results are Operations 14 Pass / 3 Fail and Survival 17 Pass. Thresholds and most environmental inputs remain project test assumptions.
+- Current Artemis results are Operations 14 Pass / 3 Fail and Survival 17 Pass. Thresholds are project test values, and most environmental inputs are best-effort estimates.
 - Environment CSV uploads run the unmodified scorer logic in a Pyodide worker. Published text uses LF line endings and SHA-256 hashes.
 - CNN ONNX exports were checked offline. No terrain-upload worker or model bank is shipped by the current app.
 - Similarity, environment, and terrain predictions stay separate. Earth simulation readiness remains uncomputed.
@@ -51,7 +51,7 @@ Checked tasks record prior implementation. A spec is not formally done until its
 - `app/public/data/`: committed schema v2 JSON, grid binaries, environment template, and scorer files.
 - Keep PascalCase React filenames, snake_case Python filenames, and lowercase route names with dashes.
 - Route names preserve original source IDs inside the data. Pair links use Earth candidate IDs, with numeric-index compatibility.
-- Gareth's Windows setup uses Python 3.12 and `.venv\Scripts\python.exe`. This checkout currently has no `.venv` or full pipeline bundle.
+- Gareth's Windows setup uses Python 3.12 and `.venv\Scripts\python.exe`. This checkout has no full pipeline bundle.
 - Use `--pipeline-run` to select a bundle. The exporter no longer accepts the earlier `--input-dir`, `--analogs-dir`, or `--environment-file` proposals.
 - Python dependencies are locked in `uv.lock`. Both `scripts/prepare_demo.ps1` and `scripts/prepare_demo.sh` now exist.
 - The preparation scripts rerun research integration. Viewing or building committed app exports needs only the Node app setup.
@@ -75,18 +75,17 @@ Historical 13 November entries below explain the earlier plan. The dated replace
 - **Use schema v2 and hash routes with a relative base path.** These are implemented in the exporter, router, and Vite configuration. (2026-11-14)
 - **Draw pair distributions in plain SVG in the browser.** This replaces the proposed chart-library choice and offline curve export. See [comparison decisions](compare-terrain.md#decisions). (2026-11-14)
 - **Keep engineering status in `docs/` and feature specs in `design/docs/specs/`.** This was the earlier layout. (2026-11-14, replaced 2026-11-15)
-- **Keep engineering records together under `docs/`.** Gareth moved specs to `docs/specs/app/` and the developer handoff to `docs/handoff/`. UI designs remain under `design/`. This replaces the split records layout. (2026-11-15)
+- **Keep engineering records together under `docs/`.** Gareth moved specs to `docs/specs/app/`. UI designs remain under `design/`. This replaces the split records layout. (2026-11-15)
 - **Use the exploration theme instead of the mission-control theme.** Aarron preferred it because the project supports reconnaissance. Gareth confirmed that direction at 20:12 in the team chat. Implementation and design review remain separate. (2026-11-14)
-
 
 - **Use Playwright and axe-core for repeatable browser checks.** These are development dependencies only. They verify real production files, including the Pyodide worker, without opening a listening port. This replaces one-off browser probes for the current acceptance checks. ^[inferred] (2026-11-15)
 - **Present Apollo references separately with best-effort input labels.** Darrel's T3 answer permits Operations and Survival comparisons, while requiring clearer input caveats. No terrain coverage or suitability is implied. (2026-11-15)
 
+- **Team answers T1, T2 and T4–T6, 2026-11-15.** Environment-only uploads for the submission, with elevation uploads later (T1). GitHub Pages, chosen by Gareth once the repo was public (T2). Region-scope environment scores, labelled as shared by every patch in a region (T4). The static architecture is kept (T5). Three featured tiles per region: strong match, misleading high cosine, not Atacama (T6). (2026-11-15)
+- **Remove finished planning docs.** The theme build guide and the 13 Nov developer handoff were superseded by the code, [architecture](../../architecture.md) and this file. They remain in git history. (2026-11-15)
+
 ## Open questions
 
-- Does the team want CNN terrain uploads, and should that work ship before the deadline?
-- Hosting is deferred by Ian. Which host and account will serve a future public demo?
-- Should environment scoring use region or tile scope?
-- Which draft tiles form the final demonstration, and who maintains future exports?
-- Does the team approve the static architecture and the completed feature acceptance?
+- Does the team confirm that Gareth regenerates the export by hand when an input changes (T7)?
 - Which inputs or configuration explain Darrel's differing Survival Unknown count?
+- Does the team approve the completed feature acceptance after a real screen-reader pass?

@@ -1,6 +1,6 @@
-# Local app demonstration
+# Demo walkthrough
 
-Verified on 2026-11-15 against `8769b86` and local interaction fixes. The GitHub Pages workflow exists locally; no public URL is live yet.
+Live at <https://lrxa2.github.io/NASA-Space-Apps-Challenge-2026/>. Verified there and locally on 2026-11-15.
 The committed exports contain seven regions, 2,910 tiles, and 43,650 Earth matches.
 
 Build the app with `npm --prefix app ci` and `npm --prefix app run build`.
@@ -49,11 +49,11 @@ All 83 template rows match the current Python scorer in the Pyodide parity check
 
 ## Limits and handoff
 
-- Environment inputs are mostly assumptions. Potential sites need better measurements before suitability can be assessed.
-- Scores are region-wide in this export. They do not distinguish patches within a region.
+- Environment inputs are best-effort estimates. A Pass marks a potential site; an uncrewed rover survey would give measured inputs.
+- Environment scores are region-wide (T4). Every patch in a region shares them.
 - CNN classes are model predictions from Earth-trained models. They do not certify lunar safety.
-- Earth simulation readiness is uncomputed. Terrain uploads and browser CNN inference are not implemented.
-- A real screen-reader pass, final feature acceptance, export ownership, and hosted verification remain open.
+- Earth simulation readiness is uncomputed. Terrain uploads are deferred after the submission (T1).
+- A real screen-reader pass, final feature acceptance and export ownership (T7) remain open.
 - `scripts/prepare_demo` defaults to Haworth only and needs ignored research bundles. Use the Node build for the full committed catalogue.
 
 Current decisions and teammate answers are in [team-blockers.md](team-blockers.md).

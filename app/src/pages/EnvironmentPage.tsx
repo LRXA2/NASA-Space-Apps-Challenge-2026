@@ -15,9 +15,6 @@ import type { AssessmentName, AssessmentStatus, EnvironmentDocument, RegionEntry
 import { useData } from "../data/useData";
 import { links } from "../router";
 
-// Team blocker T3 (answered yes): show the six Apollo reference scenarios beside the south-pole regions.
-export const SHOW_APOLLO = true;
-
 const LIMITS = [
   "The inputs are best-effort estimates, not measurements of the sites. Only four map values for the first seven regions are measured.",
   "A Pass marks a potential site worth a closer look, not a confirmed or safe one.",
@@ -123,20 +120,18 @@ export function EnvironmentPage() {
     );
   }
   const { environment, terrain, numbers } = loaded.data;
-  const shown = environment.scenarios.filter(
-    (scenario) => scenario.kind === "artemis" || (SHOW_APOLLO && scenario.kind === "apollo"),
-  );
-  const artemis = shown.filter((scenario) => scenario.kind === "artemis");
+  const artemis = environment.scenarios.filter((scenario) => scenario.kind === "artemis");
   const hasTerrain = (scenario: Scenario) => scenario.terrain_region != null && terrain.has(scenario.terrain_region);
   const withTerrain = artemis.filter(hasTerrain);
   const environmentOnly = artemis.filter((scenario) => !hasTerrain(scenario));
   const groups: { title: string; scenarios: Scenario[]; terrainColumn: boolean }[] = [
     { title: `${withTerrain.length} with terrain patches`, scenarios: withTerrain, terrainColumn: true },
     { title: `${environmentOnly.length} with environment data only`, scenarios: environmentOnly, terrainColumn: false },
+    // T3: the Apollo references are shown, apart from the south-pole regions.
     {
       title:
         "Apollo landing sites, for comparison. Equatorial, not south-pole candidates, scored from mission records, models and best-effort estimates",
-      scenarios: shown.filter((scenario) => scenario.kind === "apollo"),
+      scenarios: environment.scenarios.filter((scenario) => scenario.kind === "apollo"),
       terrainColumn: false,
     },
   ].filter((group) => group.scenarios.length > 0);
@@ -210,7 +205,7 @@ export function ScenarioPage({ scenario: scenarioId }: { scenario: string }) {
   const loaded = useData(`scenario:${scenarioId}`, async () => {
     const catalogue = await loadCatalogue();
     const scenario = catalogue.environment.scenarios.find((entry) => entry.id === scenarioId);
-    if (!scenario || (scenario.kind === "apollo" && !SHOW_APOLLO)) {
+    if (!scenario) {
       throw new DataError(`No environment scenario named "${scenarioId}" is in this build.`);
     }
     return { ...catalogue, scenario };
