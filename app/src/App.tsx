@@ -19,7 +19,7 @@ export function App() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [page]);
   useEffect(() => {
-    if (notFound) document.title = "Page not found · Lunar Analog Finder";
+    if (notFound) document.title = "Page not found · LEAP";
   }, [notFound]);
   return (
     <div className="shell">

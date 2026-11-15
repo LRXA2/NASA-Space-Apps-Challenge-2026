@@ -109,7 +109,7 @@ function SampleDownload({ file }: { file: string }) {
 export function EnvironmentPage() {
   const loaded = useData("environment", loadCatalogue);
   useEffect(() => {
-    document.title = "Environment · Lunar Analog Finder";
+    document.title = "Environment · LEAP";
   }, []);
   if (loaded.status === "loading") return <Loading what="environment results" />;
   if (loaded.status === "error") {
@@ -212,7 +212,7 @@ export function ScenarioPage({ scenario: scenarioId }: { scenario: string }) {
   });
   const title = loaded.status === "ready" ? `${loaded.data.scenario.name} · Environment` : "Environment";
   useEffect(() => {
-    document.title = `${title} · Lunar Analog Finder`;
+    document.title = `${title} · LEAP`;
   }, [title]);
   if (loaded.status === "loading") return <Loading what="environment results" />;
   if (loaded.status === "error") {

@@ -1,8 +1,8 @@
-# Lunar Analog Finder
+# LEAP: Lunar Exploration & Assessment Platform
 
 [Live app](https://lrxa2.github.io/NASA-Space-Apps-Challenge-2026/) · [Source code](https://github.com/LRXA2/NASA-Space-Apps-Challenge-2026) · [Walkthrough](app/README.md#walkthrough) · [Research notebooks](notebooks/README.md)
 
-Lunar Analog Finder compares lunar south-pole terrain with Earth sites that could support mission training.
+LEAP (Lunar Exploration & Assessment Platform) compares lunar south-pole terrain with Earth sites that could support mission training.
 Choose a lunar patch to see the models' rover and on-foot predictions. Compare its Earth matches using terrain measurements.
 Environment scenarios score Operations and Survival separately.
 This is a proof of concept for the NASA Space Apps Challenge 2026.

@@ -64,7 +64,7 @@ export function AnalogsPage({ region, patch }: { region: string; patch: string }
   const title =
     loaded.status === "ready" ? `Earth analogs · Patch ${patch} · ${loaded.data.patches.region.name}` : "Earth analogs";
   useEffect(() => {
-    document.title = `${title} · Lunar Analog Finder`;
+    document.title = `${title} · LEAP`;
   }, [title]);
 
   const rows = useMemo(() => {

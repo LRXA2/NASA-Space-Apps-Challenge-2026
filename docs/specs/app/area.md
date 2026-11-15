@@ -1,6 +1,6 @@
 # App
 
-Owns data export, React screens, maps, charts, navigation, and publishing for the Lunar Analog Finder.
+Owns data export, React screens, maps, charts, navigation, and publishing for LEAP (Lunar Exploration & Assessment Platform).
 Code lives in `app/`. Research pipelines and model training remain owned by the pipeline teammates.
 
 ## Specs

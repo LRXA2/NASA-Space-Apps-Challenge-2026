@@ -413,7 +413,7 @@ function LooksAlike() {
 export function RegionsPage() {
   const loaded = useData("home", loadHome);
   useEffect(() => {
-    document.title = "Regions · Lunar Analog Finder";
+    document.title = "Regions · LEAP";
   }, []);
 
   if (loaded.status === "loading") return <Loading what="regions" />;

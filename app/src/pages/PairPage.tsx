@@ -226,7 +226,7 @@ export function PairPage({ region, patch, candidate }: { region: string; patch: 
   const loaded = useData(`pair:${region}/${patch}/${candidate}`, () => loadPair(region, patch, candidate));
   const title = loaded.status === "ready" ? `Moon–Earth pair · Patch ${patch}` : "Moon–Earth pair";
   useEffect(() => {
-    document.title = `${title} · Lunar Analog Finder`;
+    document.title = `${title} · LEAP`;
   }, [title]);
 
   if (loaded.status === "loading") return <Loading what="comparison" />;

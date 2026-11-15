@@ -1,4 +1,4 @@
-# Lunar Analog Finder app
+# LEAP app
 
 A static React site built with Vite and TypeScript. It reads precomputed files from `public/data/`.
 Environment CSV uploads run the environment scorer in Pyodide inside a browser worker. The app has no application backend.

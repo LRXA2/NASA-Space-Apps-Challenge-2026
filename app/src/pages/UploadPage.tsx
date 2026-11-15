@@ -127,7 +127,7 @@ export function UploadPage() {
   const [state, setState] = useState<State>({ stage: "idle" });
   const cancel = useRef<(() => void) | null>(null);
   useEffect(() => {
-    document.title = "Try your own data · Lunar Analog Finder";
+    document.title = "Try your own data · LEAP";
     return () => cancel.current?.();
   }, []);
 

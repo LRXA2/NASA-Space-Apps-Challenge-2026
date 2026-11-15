@@ -184,7 +184,7 @@ export function RegionPage({ region }: { region: string }) {
   const [active, setActive] = useState<string | null>(null);
   const name = patches.status === "ready" ? patches.data.region.name : "Region";
   useEffect(() => {
-    document.title = `${name} · Lunar Analog Finder`;
+    document.title = `${name} · LEAP`;
   }, [name]);
 
   if (patches.status === "loading") return <Loading what="region" />;

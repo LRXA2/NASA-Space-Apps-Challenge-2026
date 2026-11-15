@@ -195,7 +195,7 @@ export function PatchPage({ region, patch }: { region: string; patch: string }) 
   const title =
     loaded.status === "ready" ? `Patch ${loaded.data.record.slug} · ${loaded.data.document.region.name}` : "Patch";
   useEffect(() => {
-    document.title = `${title} · Lunar Analog Finder`;
+    document.title = `${title} · LEAP`;
   }, [title]);
 
   if (loaded.status === "loading") return <Loading what="patch" />;

@@ -114,8 +114,8 @@ export function Header({ route }: { route: Route }) {
       <a className="brand" href={links.regions()}>
         <Logo />
         <span className="brand-text">
-          Lunar Analog Finder
-          <span className="brand-sub">NASA Space Apps 2026</span>
+          LEAP
+          <span className="brand-sub">Lunar Exploration & Assessment Platform</span>
         </span>
       </a>
       <nav className="topbar-links" aria-label="Sections">
@@ -135,7 +135,7 @@ export function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <p className="footer-name">Lunar Analog Finder · NASA Space Apps Challenge 2026</p>
+        <p className="footer-name">LEAP: Lunar Exploration & Assessment Platform · NASA Space Apps Challenge 2026</p>
         {regions.status === "ready" && (
           <p className="footer-runs">
             Inference run <code>{regions.data.source.run_id}</code> · pipeline run{" "}

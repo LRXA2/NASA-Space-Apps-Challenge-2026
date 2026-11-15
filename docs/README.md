@@ -1,6 +1,6 @@
 # Engineering documentation
 
-This folder describes the Lunar Analog Finder app, its pipelines, and feature verification.
+This folder describes the LEAP (Lunar Exploration & Assessment Platform) app, its pipelines, and feature verification.
 UI designs live in [`design/`](../design/). The app is live at <https://lrxa2.github.io/NASA-Space-Apps-Challenge-2026/>.
 
 | File | What it covers |
