@@ -83,7 +83,7 @@ npm --prefix app run preview
 
 Reconciled on 2026-11-15 against `8769b86` and the current committed `environment.json`.
 All 23 published scenarios have per-check evidence. Operations and Survival hard gates are active.
-The 17 Artemis scenarios have Operations 14 Pass / three Fail and Survival 17 Pass.
+The 17 Artemis scenarios have Operations 14 Pass / three Fail and Survival 15 Pass / two Unknown (`eda_016`, `eda_017`, re-exported 2026-11-15).
 Darrel's T3 answer is recorded in [team-blockers.md](../../team-blockers.md).
 Gareth's `8769b86` presents six Apollo scenarios separately with best-effort input labels, including on their detail pages. The local duplicate was removed during reconciliation.
 They do not change the 17-region summary or imply measured site suitability.

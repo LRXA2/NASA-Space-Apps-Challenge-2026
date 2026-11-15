@@ -77,10 +77,8 @@ Historical scores below come from `moon_pipeline/20261114T014850261930Z_7de0f3`,
 | G2: `physical_comparison.csv` missing from `moon_pipeline/<run>/` | `run_all` now copies it | 2026-11-14 |
 | G3: `stage_runs` paths used backslashes | Written as POSIX paths | 2026-11-14 |
 
-## Remaining scorer reconciliation
+## Scorer reconciliation (resolved 2026-11-15)
 
-The recorded gated rerun produced Operations 60 Pass / 21 Fail / 2 Unknown and Survival 70 / 11 / 2.
-Darrel reported Survival 68 / 11 / 4. Ask which four IDs are Unknown and compare exact input/config versions.
-This does not change the committed Artemis subset: Operations 14 / 3 / 0 and Survival 17 / 0 / 0.
+Darrel's Survival count (68 / 11 / 4) differed from ours (70 / 11 / 2) because he scored his default `inputs/sites.csv` (git-ignored), while the pipeline and the app used `sample_input.csv`. Same scorer and config. The two files differed only for `eda_016` (Mons Mouton) and `eda_017` (Slater Plain): `median_visible_sky_fraction` and both radiation counters were blank in `sites.csv`.
 
-2026-11-15: Darrel resent his summary: Operations 60 / 21 / 2 (matches) and Survival 68 / 11 / 4 (still differs). The `env_pipeline.py`, `config.yml` and `sample_input.csv` on `main` give 70 / 11 / 2, from the CLI with `--compact` or `--detailed`, and from the live site's upload of the downloaded template (Survival Unknown: `dummy_003`, `dummy_007`). No remote branch has different scorer files, so his run likely used local, uncommitted changes. Asked him for `git status` and `git diff` on `env_algo_task/env_pipeline/` and his four Unknown IDs.
+Darrel confirmed the blanks are intended. `sample_input.csv` now matches `sites.csv` cell for cell, and the export was regenerated from run `20261115T062530728257Z_8d761b`. Both regions' Survival is now Unknown (radiation inputs missing). All 83 rows now give Operations 60 / 21 / 2 and Survival 68 / 11 / 4, the same as Darrel's run. Artemis: Operations 14 Pass / 3 Fail, Survival 15 Pass / 2 Unknown. Nothing else in the export changed.
