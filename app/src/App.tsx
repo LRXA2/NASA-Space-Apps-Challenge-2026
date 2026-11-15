@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { PageMessage } from "./components/PageState";
 import { Footer, Header } from "./components/Shell";
 import { AnalogsPage } from "./pages/AnalogsPage";
@@ -13,6 +13,11 @@ import { links, useRoute } from "./router";
 export function App() {
   const route = useRoute();
   const notFound = route.name === "not-found";
+  // A hash change keeps the old scroll position, so a new page would open part-way down. Start each page at the top.
+  const page = JSON.stringify(route);
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [page]);
   useEffect(() => {
     if (notFound) document.title = "Page not found · Lunar Analog Finder";
   }, [notFound]);
