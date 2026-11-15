@@ -33,11 +33,11 @@ Checked tasks record prior implementation. A spec is not formally done until its
 - `integration.run_all` joins terrain, similarity, and environment outputs through a shared lunar `tile_id`.
 - All 2,910 exported patches have terrain predictions and 15 Earth matches: top three from each of five Earth sites.
 - Schema v2 exports come from one `moon_pipeline/<run>/` bundle. The exporter also reads its referenced terrain and similarity dataset runs.
-- The committed app uses run `20261115T062530728257Z_8d761b` with region-scope environment scores. Rebuilding tile scope needs the LOLA maps.
+- The committed app uses run `20261115T070913357556Z_0070bc` with region-scope environment scores. Rebuilding tile scope needs the LOLA maps.
 - Darrel's scorer supplies separate Operations and Survival assessments. Their domain lists are read by prefix, not hardcoded in the UI.
 - The committed environment catalogue contains 17 Artemis scenarios and six separately labelled Apollo references. Synthetic and dummy test rows are excluded.
 - The detailed export supplies gate values, thresholds, statuses, reasons, and coverage. Failed or Unknown assessments keep their final scores blank.
-- Current Artemis results are Operations 14 Pass / 3 Fail and Survival 15 Pass / 2 Unknown (`eda_016`, `eda_017`: radiation inputs blank by design). Thresholds are project test values, and most environmental inputs are best-effort estimates.
+- Current Artemis results are Operations 14 Pass / 3 Fail and Survival 17 Pass. Thresholds are project test values, and most environmental inputs are best-effort estimates.
 - Environment CSV uploads run the unmodified scorer logic in a Pyodide worker. Published text uses LF line endings and SHA-256 hashes.
 - CNN ONNX exports were checked offline. No terrain-upload worker or model bank is shipped by the current app.
 - Similarity, environment, and terrain predictions stay separate. Earth simulation readiness remains uncomputed.
@@ -85,7 +85,7 @@ Historical 13 November entries below explain the earlier plan. The dated replace
 
 - **Gareth regenerates the export by hand (T7).** Only when a CNN, the scorer or its template, the regions or the export format changes. See [regenerate-export.md](../../regenerate-export.md). (2026-11-15)
 
-- **Score from Darrel's default input.** `sample_input.csv` now matches his `inputs/sites.csv`; `eda_016` and `eda_017` keep blank sky and radiation inputs, so their Survival is Unknown. Export regenerated from `20261115T062530728257Z_8d761b`. (2026-11-15)
+- **Keep the missing-column test on a dummy row.** Darrel's default `inputs/sites.csv` had blanked sky and radiation inputs on `eda_016` and `eda_017` to show the scorer's missing-value check. Darrel moved that test to `dummy_009` (hidden on the site) and restored both regions' values. `sample_input.csv` matches his file. Export regenerated from `20261115T070913357556Z_0070bc`. (2026-11-15)
 
 ## Open questions
 

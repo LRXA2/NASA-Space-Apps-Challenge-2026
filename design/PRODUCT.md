@@ -52,7 +52,7 @@ The app combines three independent engines and shows physical differences next t
 - **B. Environment scorer:** 17 Artemis scenarios, with six Apollo references displayed separately with best-effort input labels following Darrel's T3 answer. Operations and Survival have separate domains, statuses, reasons, and 0–100 scores. A Failed or Unknown assessment leaves only its own final score blank. Detailed gate evidence shows values, rules, and reasons. Thresholds and most inputs are project assumptions.
   - Operations: thermal, solar illumination, dust, plasma charging, Earth visibility, and soil.
   - Survival: radiation, thermal, plasma charging, and UV. Domain lists are read from the scorer output.
-  - Gates are enabled in the committed config. Current Artemis results are Operations 14 Pass / 3 Fail and Survival 15 Pass / 2 Unknown.
+  - Gates are enabled in the committed config. Current Artemis results are Operations 14 Pass / 3 Fail and Survival 17 Pass.
 - **C. Terrain CNN:** per lunar patch, rover class (operable / marginal / non-operable) and crew-on-foot walkability (easy / caution / unsuitable), each with probabilities, plus predicted rover-crossable directions (N–S, E–W, NW–SE, NE–SW). Trained on Earth terrain: predictions, not safety certifications.
 - **Data granularity:** the current export uses region-scope environment scenarios and 2,910 terrain patches across seven regions. Ten scenarios have environment data only. Per-tile environment scoring requires the LOLA maps and a rerun.
 - **Terrain rendering:** Moon and Earth panels use numeric 32×32 grids. Each measurement shares a scale across the pair. No PNG fallback is implemented.
