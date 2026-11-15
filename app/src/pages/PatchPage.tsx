@@ -144,7 +144,7 @@ function EnvironmentSummary({ regionSourceId }: { regionSourceId: string }) {
         ))}
       </dl>
       <p className="muted">
-        Region-wide scenario <code>{scenario.id}</code> from mostly assumed inputs. It is the same for every patch in
+        Region-wide scenario <code>{scenario.id}</code> from best-effort estimates. It is the same for every patch in
         this region. <a href={links.scenario(scenario.id)}>See the domain scores</a>
       </p>
     </>

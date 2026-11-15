@@ -7,7 +7,7 @@ Engineering docs for the Lunar Analog Finder app and its pipelines. UI designs l
 | [architecture.md](architecture.md) | How the pipelines, the integration step, the export and the static app fit together, and which decisions are still open |
 | [ui-theme-implementation.md](ui-theme-implementation.md) | Theme implementation sequence, delivered phases, remaining gaps, and checks |
 | [demo-walkthrough.md](demo-walkthrough.md) | Verified local walkthrough, example values, and known limits |
-| [featured-tiles.md](featured-tiles.md) | Draft featured patches per region, waiting on team decision T6 |
+| [featured-tiles.md](featured-tiles.md) | Three featured patches per region, chosen in T6 |
 | [team-blockers.md](team-blockers.md) | Open questions for each teammate, collected in one place |
 | [specs/app/](specs/app/) | Current feature specs, tasks, verification commands, and historical decisions |
 | [handoff/developer_handoff_2026-11-13.md](handoff/developer_handoff_2026-11-13.md) | The first developer handoff: stack, data and blockers as of 13 Nov. Several blockers are since resolved |

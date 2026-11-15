@@ -154,6 +154,6 @@ The parity script may download Pyodide's pinned YAML package on its first run.
 
 See [demo walkthrough](../docs/demo-walkthrough.md) for examples and [feature specs](../docs/specs/app/area.md) for acceptance records.
 
-Hosting is deferred. A local build does not create a public URL.
+Pushes to `main` deploy `app/dist` to GitHub Pages through [pages.yml](../.github/workflows/pages.yml), once a repo admin sets the Pages source to "GitHub Actions".
 The repository's `scripts/prepare_demo` scripts rerun research integration and default to Haworth only. They need the ignored input bundles.
 Use the Node commands above to build all seven regions from committed exports. Review a full re-export with no `--region` before replacing them.

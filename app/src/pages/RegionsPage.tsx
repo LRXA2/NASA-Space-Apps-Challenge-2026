@@ -32,7 +32,7 @@ import { links } from "../router";
 
 const LIMITS = [
   "Rover and on-foot classes are predictions from a CNN trained on Earth terrain, not measured EVA performance or safety.",
-  "Environment checks are region-wide scenarios built mostly from assumed inputs. Gate thresholds are project test values, not NASA limits.",
+  "Environment checks are region-wide scenarios built from best-effort estimates and shared by every patch in a region. Gate thresholds are project test values, not NASA limits.",
   "Cosine compares shapes the model learned. It is not a percentage or a suitability rating.",
 ];
 

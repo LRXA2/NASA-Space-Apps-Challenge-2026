@@ -34,7 +34,7 @@ The app is a static website with no application backend. Offline integration joi
    app/public/data/   (committed to git)
                 │
                 ▼  npm run build
-   app/dist/  →  static host                           ← planned (host open, T2)
+   app/dist/  →  GitHub Pages (pages.yml)              ← planned (T2)
                 │
                 ▼
    Browser: React app reads JSON and binary files.
@@ -170,14 +170,13 @@ Rerun with `app/scripts/check_onnx_parity.py`.
 
 **Fallback:** a small hosted Python backend running the real code. Only if the TypeScript port can't match, because it adds a server to keep running during judging.
 
-## Hosting (deferred by Ian)
+## Hosting: GitHub Pages (T2)
 
 The build is fully static: `npm --prefix app run build` → `app/dist/`. Hash routes and a relative `base` mean any static host works without rewrite rules.
 
-- **GitHub Pages:** needs a public repo, or an admin to enable Pages on a private one.
-- **Vercel:**
-  - Connecting the repo builds on every push, but the repo owner has to grant access.
-  - The Vercel CLI (`npx vercel`) uploads a local build from your own machine instead. That needs only a free Vercel account, not repo access, but every redeploy is a manual command.
+The repo is public, so the site deploys to GitHub Pages. [pages.yml](../.github/workflows/pages.yml) builds `app/` and publishes `app/dist` on every push to `main`, or by hand from the Actions tab. A repo admin sets Settings → Pages → Source to "GitHub Actions" once. The site is served at `https://lrxa2.github.io/NASA-Space-Apps-Challenge-2026/`. Pyodide still loads from jsDelivr on the first upload.
+
+Vercel was the alternative. It needs a personal account that then owns the demo URL, and its preview deploys aren't needed for the submission.
 
 ## Decisions
 
@@ -190,9 +189,11 @@ The build is fully static: `npm --prefix app run build` → `app/dist/`. Hash ro
 | Integration output (`moon_pipeline/<run>/`) is the only export input | Decided and built 2026-11-14 |
 | `tile_id` is the join key across all three pipelines | Decided 2026-11-14 |
 | Pair URLs use the Earth candidate ID, not the rank | Decided (Ian) |
-| Host | Deferred by Ian, no host selected |
-| Upload scope: environment only, or environment plus both CNNs | **Open, team input** |
-| Environment per region, or per tile with the LOLA maps | **Open** |
+| Host | **GitHub Pages (T2)**, deployed from `main` by `pages.yml` |
+| Upload scope: environment only, or environment plus both CNNs | **Environment only (T1)** for the submission. Elevation uploads can follow later |
+| Environment per region, or per tile with the LOLA maps | **Per region (T4)**, labelled as shared by every tile in the region. Per tile can follow later |
+| Static architecture sign-off | **Kept (T5)**. The environment upload covers testing a new input set |
+| Featured tiles | **Three per region (T6)**: strong match, misleading high cosine, not Atacama |
 | Show the Apollo reference rows | **Yes (T3)**, labelled as equatorial comparison sites scored from best-effort estimates |
 | Distribution charts | Built with plain SVG in `DistributionChart.tsx`, no chart dependency (`b0b4641`) |
 | Visual direction | Exploration theme selected by Gareth after Aarron's reconnaissance rationale. It is merged through `dd3503f`. See the app area decision |
@@ -207,6 +208,6 @@ Questions for teammates are in [team-blockers.md](team-blockers.md).
 - 193 match rows have cosine above 0.95 with 0 of 5 physical checks in band. Keep these visible: they show why physical checks matter.
 - The Earth simulation-readiness score does not exist. Show it as not computed.
 
-Gareth's exploration theme, Apollo references, and upload input guide are merged through `8769b86`. Feature specs live in `docs/specs/app/` and engineering handoffs in `docs/handoff/`. Hosting is deferred at Ian's request.
+Gareth's exploration theme, Apollo references, and upload input guide are merged through `8769b86`. Feature specs live in `docs/specs/app/` and engineering handoffs in `docs/handoff/`. Hosting is GitHub Pages (T2), set up locally and not yet enabled.
 
 The upload page includes `InputGuide.tsx`, a collapsible summary of the scorer README's input sources and preparation steps. Keep it aligned with the source guide.

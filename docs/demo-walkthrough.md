@@ -1,6 +1,6 @@
 # Local app demonstration
 
-Verified on 2026-11-15 against `8769b86` and local interaction fixes. No public host is configured.
+Verified on 2026-11-15 against `8769b86` and local interaction fixes. The GitHub Pages workflow exists locally; no public URL is live yet.
 The committed exports contain seven regions, 2,910 tiles, and 43,650 Earth matches.
 
 Build the app with `npm --prefix app ci` and `npm --prefix app run build`.
@@ -19,7 +19,7 @@ They follow Gareth's current example in `app/src/demo.ts`:
 5. Explain that cosine measures learned shape similarity. It is not a percentage or a suitability rating.
 
 The automated browser check reopens all four header destinations from the production files.
-The team has not selected the final featured list for each region (T6).
+The team chose three featured tiles per region (T6): see [featured-tiles.md](featured-tiles.md). The app does not show them yet.
 
 ## Additional verified examples
 
@@ -33,7 +33,7 @@ These use each tile's rank 1 match. They remain alternatives to the header walkt
 
 Open `#/region/<region>/patch/<patch>/analogs`, then select rank 1.
 Use region slugs `haworth`, `malapert-massif`, and `de-gerlache-kocher-massif`.
-The longer [featured-tile draft](featured-tiles.md) still needs team selection.
+All three examples are among the T6 featured tiles.
 
 ## Environment and upload
 

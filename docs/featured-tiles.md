@@ -1,6 +1,8 @@
-# Featured tiles (draft for T6)
+# Featured tiles (T6)
 
-Draft for the team to choose from, 2026-11-14. Picked by a script from `moon_pipeline/20261114T023547307090Z_39a681` (region environment scope). Still valid for the current run `20261114T081013177916Z_da70aa`: its Earth matches and terrain classes are identical. The team still decides the final 3–5 per region ([T6](team-blockers.md)).
+Picked by a script, 2026-11-14, from `moon_pipeline/20261114T023547307090Z_39a681` (region environment scope). Still valid for the current run `20261114T081013177916Z_da70aa`: its Earth matches and terrain classes are identical.
+
+**T6 decided 2026-11-15:** feature three tiles per region, the **Strong match**, **Misleading** and **Not Atacama** rows below. The Easy terrain and Hard terrain rows are kept for reference but are not featured.
 
 ## How they were picked
 
